@@ -1,0 +1,1652 @@
+"use client";
+
+import type { UIMessage } from "@ai-sdk/react";
+import type { UIDataTypes, UIMessagePart } from "ai";
+import {
+  ArrowUpIcon,
+  BrainIcon,
+  CheckIcon,
+  CopyIcon,
+  Link2Icon,
+  Maximize2,
+  MicIcon,
+  MicOffIcon,
+  Minimize2,
+  SparklesIcon,
+  SquarePen,
+  ThumbsDown,
+  ThumbsUp,
+  XIcon,
+} from "lucide-react";
+import { marked, type Tokens } from "marked";
+import type React from "react";
+import {
+  type ComponentPropsWithoutRef,
+  type CSSProperties,
+  type FC,
+  memo,
+  startTransition,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { createPortal } from "react-dom";
+import { useSearchBox } from "react-instantsearch";
+import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  AgentStudioConfig,
+  useAgentStudio,
+} from "@/components/sidepanel-agent-studio/hooks/use-agent-studio";
+
+import {
+  FALLBACK_FOLLOW_UP_QUESTIONS,
+  useFollowUpQuestions,
+} from "@/components/sidepanel-agent-studio/hooks/use-follow-up-questions";
+import { useUrlSuggestionTrigger } from "@/components/sidepanel-agent-studio/hooks/use-url-suggestion-trigger";
+import { useSidepanel } from "@/components/sidepanel-agent-studio/context/sidepanel-context";
+import { Product } from "@/lib/types/product";
+import { useSpeechRecognition } from "@/hooks/use-speech-recognition";
+import { CompactProductListItem } from "@/components/ProductCard";
+import { getObjectsByIds } from "@/lib/getObjectByIDs";
+import { ALGOLIA_CONFIG } from "@/lib/algolia-config";
+
+// ============================================================================
+// Types
+// ============================================================================
+
+export interface SidepanelAskAIConfig {
+  /** Algolia Application ID (required) */
+  applicationId: string;
+  /** Algolia API Key (required) */
+  apiKey: string;
+  /** Algolia Index Name (required) */
+  indexName: string;
+  /** AI Assistant ID (required for chat functionality) */
+  assistantId: string;
+  /** Suggested Questions Enabled (optional, defaults to false) */
+  suggestedQuestionsEnabled?: boolean;
+  /** Placeholder text for input (optional, defaults to "Ask AI anything about Algolia") */
+  placeholder?: string;
+  /** Custom button text (optional, defaults to "Ask AI") */
+  buttonText?: string;
+  /** Custom button props (optional) */
+  buttonProps?: React.ComponentProps<typeof Button>;
+  /** Display variant (optional, defaults to 'floating') */
+  variant?: "floating" | "inline";
+}
+
+export interface AlgoliaSearchIndexTool {
+  input: {
+    query: string;
+  };
+  output: {
+    query: string;
+    hits: Product[];
+  };
+}
+
+export interface ShowItemsTool {
+  input: {
+    objectIDs: string[];
+  };
+  output: {
+    status: string;
+    products: Product[];
+  };
+}
+
+export type Message = UIMessage<
+  unknown,
+  UIDataTypes,
+  {
+    algolia_search_index: AlgoliaSearchIndexTool;
+    showItems: ShowItemsTool;
+  }
+>;
+
+export type AIMessagePart = UIMessagePart<
+  UIDataTypes,
+  {
+    algolia_search_index: AlgoliaSearchIndexTool;
+    showItems: ShowItemsTool;
+  }
+>;
+
+interface Exchange {
+  id: string;
+  userMessage: Message;
+  assistantMessage: Message | null;
+}
+
+interface ExtractedLink {
+  url: string;
+  title?: string;
+}
+
+// ============================================================================
+// Utilities & Helpers
+// ============================================================================
+
+function useClipboard() {
+  const copyText = useCallback(async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      // Silently fail - clipboard access might be blocked
+    }
+  }, []);
+
+  return { copyText };
+}
+
+function escapeHtml(html: string): string {
+  return html
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function extractLinksFromMessage(message: Message | null): ExtractedLink[] {
+  const links: ExtractedLink[] = [];
+
+  // Used to dedupe multiple urls
+  const seen = new Set<string>();
+
+  if (!message) {
+    return [];
+  }
+
+  message.parts.forEach((part) => {
+    if (part.type !== "text") {
+      return;
+    }
+
+    if (part.text.length === 0) {
+      return;
+    }
+
+    const markdownLinkRegex = /\[([^\]]*)\]\(([^)]+)\)/g;
+    const markdownImageRegex = /!\[([^\]]*)\]\(([^)]+)\)/g;
+    const plainLinkRegex = /(?<!\]\()https?:\/\/[^\s<>"{}|\\^`[\]]+/g;
+
+    // Strip out all code blocks e.g. ```
+    const textWithoutCodeBlocks = part.text.replace(/```[\s\S]*?```/g, "");
+
+    // Strip out all inline code blocks e.g. `
+    const cleanText = textWithoutCodeBlocks.replace(/`[^`]*`/g, "");
+
+    // Get all markdown image links to exclude them
+    const imageMatches = cleanText.matchAll(markdownImageRegex);
+    const imageUrls = new Set<string>();
+    for (const match of imageMatches) {
+      imageUrls.add(match[2]);
+    }
+
+    // Get all markdown based links e.g. []()
+    const markdownMatches = cleanText.matchAll(markdownLinkRegex);
+
+    // Parses the title and url from the found links
+    for (const match of markdownMatches) {
+      const title = match[1].trim();
+      const url = match[2];
+
+      // Skip image URLs
+      if (imageUrls.has(url)) {
+        continue;
+      }
+
+      if (!seen.has(url)) {
+        seen.add(url);
+        links.push({ url, title: title || undefined });
+      }
+    }
+
+    // Get all "plain" links e.g. https://algolia.com/doc
+    const plainUrls = cleanText.matchAll(plainLinkRegex);
+
+    for (const match of plainUrls) {
+      // Strip any extra punctuation
+      const cleanUrl = match[0].replace(/[.,;:!?]+$/, "");
+
+      // Skip image URLs
+      if (imageUrls.has(cleanUrl)) {
+        continue;
+      }
+
+      if (!seen.has(cleanUrl)) {
+        seen.add(cleanUrl);
+        links.push({ url: cleanUrl });
+      }
+    }
+  });
+
+  return links;
+}
+
+// ============================================================================
+// Markdown Renderer
+// ============================================================================
+
+const markdownRenderer = new marked.Renderer();
+
+markdownRenderer.code = ({ text, lang = "", escaped }: Tokens.Code): string => {
+  const languageClass = lang ? `language-${lang}` : "";
+  const safeCode = escaped ? text : escapeHtml(text);
+  const encodedCode = encodeURIComponent(text);
+
+  const copyIconSvg = `
+    <svg class="markdown-copy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+      <path d="m5 15-4-4 4-4"></path>
+    </svg>
+  `;
+
+  const checkIconSvg = `
+    <svg class="markdown-check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="20,6 9,17 4,12"></polyline>
+    </svg>
+  `;
+
+  return `
+    <div class="markdown-code-snippet">
+      <button class="markdown-copy-button" data-code="${encodedCode}" aria-label="Copy code to clipboard" title="Copy code">
+        ${copyIconSvg}${checkIconSvg}
+        <span class="markdown-copy-label">Copy</span>
+      </button>
+      <pre><code class="${languageClass}">${safeCode}</code></pre>
+    </div>
+  `;
+};
+
+markdownRenderer.link = ({ href, title, text }: Tokens.Link): string => {
+  const titleAttr = title ? ` title="${escapeHtml(title)}"` : "";
+  const hrefAttr = href ? escapeHtml(href) : "";
+  const textContent = text || "";
+
+  return `<a href="${hrefAttr}" target="_blank" rel="noopener noreferrer"${titleAttr}>${textContent}</a>`;
+};
+
+// ============================================================================
+// UI Helper Components
+// ============================================================================
+export interface AnimatedShinyTextProps
+  extends ComponentPropsWithoutRef<"span"> {
+  shimmerWidth?: number;
+}
+export const AnimatedShinyText: FC<AnimatedShinyTextProps> = ({
+  children,
+  shimmerWidth = 100,
+  ...props
+}) => {
+  return (
+    <span
+      style={
+        {
+          "--shiny-width": `${shimmerWidth}px`,
+        } as CSSProperties
+      }
+      className="text-neutral-600/70 dark:text-neutral-400/70 animate-shiny-text bg-size-[var(--shiny-width)_100%] bg-clip-text bg-position-[0_0] bg-no-repeat [transition:background-position_1s_cubic-bezier(.6,.6,0,1)_infinite] bg-linear-to-r from-transparent via-black/80 via-50% to-transparent dark:via-white/80"
+      {...props}
+    >
+      {children}
+    </span>
+  );
+};
+
+// ============================================================================
+// Markdown Component
+// ============================================================================
+
+interface MemoizedMarkdownProps {
+  children: string;
+  className?: string;
+}
+
+const MemoizedMarkdown = memo(function MemoizedMarkdown({
+  children,
+  className = "",
+}: MemoizedMarkdownProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const html = useMemo(() => {
+    try {
+      return marked(children, {
+        renderer: markdownRenderer,
+        breaks: true,
+        gfm: true,
+      });
+    } catch (error) {
+      console.error("Error parsing markdown:", error);
+      return escapeHtml(children);
+    }
+  }, [children]);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: expected
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleCopyClick = async (event: Event) => {
+      const target = event.target as HTMLElement;
+      const button = target.closest(
+        ".markdown-copy-button"
+      ) as HTMLButtonElement;
+
+      if (!button) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      const encodedCode = button.getAttribute("data-code");
+      if (!encodedCode) return;
+
+      try {
+        const code = decodeURIComponent(encodedCode);
+        await navigator.clipboard.writeText(code);
+
+        button.classList.add("markdown-copied");
+
+        setTimeout(() => {
+          button.classList.remove("markdown-copied");
+        }, 2000);
+      } catch (error) {
+        console.error("Failed to copy code:", error);
+      }
+    };
+
+    container.addEventListener("click", handleCopyClick);
+
+    return () => {
+      container.removeEventListener("click", handleCopyClick);
+    };
+  }, [html]);
+
+  return (
+    <div
+      ref={containerRef}
+      className={`text-foreground [word-break:break-word] leading-relaxed max-w-none flex flex-col word [&_h1]:font-semibold [&_h1]:leading-tight [&_h1]:mb-2 [&_h1]:text-foreground [&_h1]:text-2xl [&_h1]:border-b [&_h1]:border-border [&_h1]:pb-2
+        [&_h2]:font-semibold [&_h2]:leading-tight [&_h2]:mb-2 [&_h2]:text-foreground [&_h2]:text-xl
+        [&_h3]:font-semibold [&_h3]:leading-tight [&_h3]:mb-2 [&_h3]:text-foreground [&_h3]:text-lg
+        [&_h4]:font-semibold [&_h4]:leading-tight [&_h4]:mb-2 [&_h4]:text-foreground [&_h4]:text-base
+        [&_h5]:font-semibold [&_h5]:leading-tight [&_h5]:mb-2 [&_h5]:text-foreground [&_h5]:text-base
+        [&_h6]:font-semibold [&_h6]:leading-tight [&_h6]:mb-2 [&_h6]:text-foreground [&_h6]:text-base
+        [&_p]:p-0 [&_p]:my-2 [&_p:last-child]:mb-0
+        [&_a]:text-blue-600 [&_a]:no-underline [&_a]:border-b [&_a]:border-transparent [&_a]:transition-all [&_a]:duration-200 [&_a:hover]:border-blue-600 [&_a:hover]:bg-blue-50 dark:[&_a:hover]:bg-slate-900
+        [&_ul]:ps-6 [&_ul]:mt-0 [&_ul]:mb-0 [&_ul]:list-disc
+        [&_ol]:ps-6 [&_ol]:mt-0 [&_ol]:mb-0 [&_ol]:list-decimal
+        [&_li]:mb-1 [&_li::marker]:text-muted-foreground
+        [&_ul_ul]:mb-0 [&_ul_ul]:mt-1 [&_ol_ol]:mb-0 [&_ol_ol]:mt-1 [&_ul_ol]:mb-0 [&_ul_ol]:mt-1 [&_ol_ul]:mb-0 [&_ol_ul]:mt-1
+        [&_code:not(.markdown-code-snippet_code)]:bg-muted [&_code:not(.markdown-code-snippet_code)]:text-foreground [&_code:not(.markdown-code-snippet_code)]:text-sm [&_code:not(.markdown-code-snippet_code)]:font-mono [&_code:not(.markdown-code-snippet_code)]:px-1 [&_code:not(.markdown-code-snippet_code)]:py-0.5 [&_code:not(.markdown-code-snippet_code)]:rounded [&_code:not(.markdown-code-snippet_code)]:border [&_code:not(.markdown-code-snippet_code)]:border-border
+        [&_.markdown-code-snippet]:relative [&_.markdown-code-snippet]:my-4 [&_.markdown-code-snippet]:rounded-lg [&_.markdown-code-snippet]:overflow-hidden [&_.markdown-code-snippet]:border [&_.markdown-code-snippet]:border-border [&_.markdown-code-snippet]:bg-muted
+        [&_.markdown-code-snippet_pre]:m-0 [&_.markdown-code-snippet_pre]:p-4 [&_.markdown-code-snippet_pre]:overflow-x-auto [&_.markdown-code-snippet_pre]:text-sm [&_.markdown-code-snippet_pre]:leading-normal [&_.markdown-code-snippet_pre]:font-mono [&_.markdown-code-snippet_pre]:bg-transparent
+        [&_.markdown-code-snippet_code]:bg-transparent [&_.markdown-code-snippet_code]:text-foreground [&_.markdown-code-snippet_code]:p-0 [&_.markdown-code-snippet_code]:border-none
+        [&_.markdown-copy-button]:absolute [&_.markdown-copy-button]:top-2 [&_.markdown-copy-button]:right-2 [&_.markdown-copy-button]:flex [&_.markdown-copy-button]:items-center [&_.markdown-copy-button]:gap-1 [&_.markdown-copy-button]:px-3 [&_.markdown-copy-button]:py-1.5 [&_.markdown-copy-button]:bg-background [&_.markdown-copy-button]:border [&_.markdown-copy-button]:border-border [&_.markdown-copy-button]:rounded-md [&_.markdown-copy-button]:text-xs [&_.markdown-copy-button]:cursor-pointer [&_.markdown-copy-button]:transition-all [&_.markdown-copy-button]:duration-200 [&_.markdown-copy-button]:text-foreground [&_.markdown-copy-button]:opacity-0 [&_.markdown-copy-button]:-translate-y-1
+        [&_.markdown-code-snippet:hover_.markdown-copy-button]:opacity-100 [&_.markdown-code-snippet:hover_.markdown-copy-button]:translate-y-0
+        [&_.markdown-copy-button:hover]:bg-blue-50 dark:[&_.markdown-copy-button:hover]:bg-slate-900 [&_.markdown-copy-button:hover]:shadow-sm
+        [&_.markdown-copy-button_.markdown-check-icon]:hidden
+        [&_.markdown-copy-button.markdown-copied_.markdown-copy-icon]:hidden
+        [&_.markdown-copy-button.markdown-copied_.markdown-check-icon]:block
+        [&_.markdown-copy-button.markdown-copied]:text-green-600 [&_.markdown-copy-button.markdown-copied]:border-green-600
+        [&_.markdown-copy-label]:font-medium
+        [&_.markdown-copied_.markdown-copy-label]:after:content-['ed']
+        [&_table]:w-full [&_table]:border-collapse [&_table]:text-sm [&_table]:bg-background [&_table]:my-4 [&_table]:rounded-lg [&_table]:border [&_table]:border-border [&_table]:overflow-hidden
+        [&_thead]:bg-muted
+        [&_th]:px-4 [&_th]:py-3 [&_th]:text-left [&_th]:font-semibold [&_th]:text-foreground [&_th]:border-b-2 [&_th]:border-border
+        [&_td]:px-4 [&_td]:py-3 [&_td]:border-b [&_td]:border-border [&_td]:text-foreground
+        [&_tr:last-child_td]:border-b-0
+        [&_tbody_tr:hover]:bg-blue-50 dark:[&_tbody_tr:hover]:bg-slate-900
+        [&_blockquote]:border-l-4 [&_blockquote]:border-blue-600 [&_blockquote]:my-4 [&_blockquote]:py-2 [&_blockquote]:px-4 [&_blockquote]:bg-blue-50 [&_blockquote]:text-foreground [&_blockquote]:italic
+        [&_blockquote_p]:mb-2 [&_blockquote_p:last-child]:mb-0
+        [&_strong]:font-semibold [&_strong]:text-foreground
+        [&_em]:italic
+        [&_hr]:border-none [&_hr]:border-t [&_hr]:border-border [&_hr]:my-6
+        [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-md [&_img]:my-2
+        ${className}`.trim()}
+      // biome-ignore lint/security/noDangerouslySetInnerHtml: its alright :)
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
+  );
+});
+
+// ============================================================================
+// Related Sources Component
+// ============================================================================
+
+// ============================================================================
+// Show Items Component (displays products from showItems tool)
+// ============================================================================
+
+interface ShowItemsDisplayProps {
+  products: Product[];
+  isLoading?: boolean;
+}
+
+const ShowItemsDisplay = memo(function ShowItemsDisplay({
+  products,
+  isLoading,
+}: ShowItemsDisplayProps) {
+  if (isLoading) {
+    return (
+      <div className="my-3 p-4 rounded-lg border border-border bg-muted/30">
+        <div className="flex items-center gap-2 text-muted-foreground text-sm">
+          <SparklesIcon size={14} className="animate-pulse" />
+          <AnimatedShinyText>Caricamento prodotti...</AnimatedShinyText>
+        </div>
+      </div>
+    );
+  }
+
+  if (!products || products.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="my-3">
+      <div className="grid gap-2">
+        {products.map((product, index) => (
+          <CompactProductListItem
+            key={product.objectID || product.productid || index}
+            product={product}
+          />
+        ))}
+      </div>
+    </div>
+  );
+});
+
+// ============================================================================
+// Search Results Preview Component (fetches full product data with images)
+// ============================================================================
+
+interface SearchResultsPreviewProps {
+  hits: Product[];
+  onViewMore: () => void;
+}
+
+const SearchResultsPreview = memo(function SearchResultsPreview({
+  hits,
+  onViewMore,
+}: SearchResultsPreviewProps) {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      if (!hits || hits.length === 0) {
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const objectIDs = hits
+          .slice(0, 3)
+          .map((hit) => hit.objectID || hit.productid)
+          .filter(Boolean) as string[];
+
+        if (objectIDs.length === 0) {
+          setProducts(hits.slice(0, 3));
+          setIsLoading(false);
+          return;
+        }
+
+        const fullProducts = await getObjectsByIds<Product>(
+          objectIDs,
+          ALGOLIA_CONFIG.INDEX_NAME
+        );
+        setProducts(fullProducts.filter(Boolean));
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        setProducts(hits.slice(0, 3));
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [hits]);
+
+  if (isLoading) {
+    return (
+      <div className="p-4">
+        <div className="flex items-center gap-2 text-muted-foreground text-sm">
+          <SparklesIcon size={14} className="animate-pulse" />
+          <AnimatedShinyText>Loading products...</AnimatedShinyText>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div className="grid gap-3">
+        {products.map((product) => (
+          <CompactProductListItem
+            key={product.objectID || product.productid}
+            product={product}
+          />
+        ))}
+      </div>
+      {hits.length > 3 && (
+        <button
+          type="button"
+          className="w-full text-xs text-muted-foreground text-center pt-3 mt-2 border-t border-border cursor-pointer hover:text-foreground transition-colors"
+          onClick={onViewMore}
+        >
+          +{hits.length - 3} more result{hits.length - 3 !== 1 ? "s" : ""}
+        </button>
+      )}
+    </>
+  );
+});
+
+// ============================================================================
+// Follow-up Questions Component
+// ============================================================================
+
+interface FollowUpQuestionsProps {
+  questions: string[];
+  isGenerating: boolean;
+  onQuestionClick: (question: string) => void;
+}
+
+const FollowUpQuestions = memo(function FollowUpQuestions({
+  questions,
+  isGenerating,
+  onQuestionClick,
+}: FollowUpQuestionsProps) {
+  if (isGenerating) {
+    return (
+      <div className="mt-4 pt-4 border-t border-border">
+        <div className="flex items-center gap-2 text-muted-foreground text-sm">
+          <SparklesIcon size={14} className="animate-pulse" />
+          <AnimatedShinyText>
+            Generating suggestions...
+          </AnimatedShinyText>
+        </div>
+      </div>
+    );
+  }
+
+  if (questions.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="mt-4 pt-4 border-t border-border">
+      <h3 className="text-xs font-medium text-muted-foreground mb-3 flex items-center gap-1.5">
+        <SparklesIcon size={12} />
+        Try saying
+      </h3>
+      <div className="flex flex-col gap-2">
+        {questions.map((question, index) => (
+          <button
+            key={`followup-${index}`}
+            type="button"
+            onClick={() => onQuestionClick(question)}
+            className="text-left px-3 py-2 text-sm rounded-md border border-border bg-background text-foreground hover:bg-blue-50 dark:hover:bg-slate-900 hover:border-blue-600 transition-colors duration-200 cursor-pointer"
+          >
+            {question}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+});
+
+// ============================================================================
+// Chat Component
+// ============================================================================
+
+interface ChatWidgetProps {
+  messages: Message[];
+  error: Error | null;
+  isGenerating: boolean;
+  onCopy?: (text: string) => Promise<void> | void;
+  onThumbsUp?: (userMessageId: string) => Promise<void> | void;
+  onThumbsDown?: (userMessageId: string) => Promise<void> | void;
+  applicationId: string;
+  assistantId: string;
+  onSuggestedQuestionClick: (question: string) => void;
+  followUpQuestions: string[];
+  isFollowUpGenerating: boolean;
+}
+
+const ChatWidget = memo(function ChatWidget({
+  messages,
+  error,
+  isGenerating,
+  onCopy,
+  onSuggestedQuestionClick,
+  followUpQuestions,
+  isFollowUpGenerating,
+}: ChatWidgetProps) {
+  const { copyText } = useClipboard();
+  const { refine } = useSearchBox();
+  const [copiedExchangeId, setCopiedExchangeId] = useState<string | null>(null);
+  const copyResetTimeoutRef = useRef<number | null>(null);
+  const [acknowledgedExchangeIds, setAcknowledgedExchangeIds] = useState<
+    Set<string>
+  >(new Set());
+  const [submittingExchangeId, setSubmittingExchangeId] = useState<
+    string | null
+  >(null);
+  const [hoveredQueryIndex, setHoveredQueryIndex] = useState<string | null>(
+    null
+  );
+  const hoverTimeoutRef = useRef<number | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Group messages into exchanges (user + assistant pairs)
+  const exchanges = useMemo(() => {
+    const grouped: Exchange[] = [];
+    for (let i = 0; i < messages.length; i++) {
+      const current = messages[i];
+      if (current.role === "user") {
+        const userMessage = current as Message;
+        const nextMessage = messages[i + 1];
+        if (nextMessage?.role === "assistant") {
+          grouped.push({
+            id: userMessage.id,
+            userMessage,
+            assistantMessage: nextMessage as Message,
+          });
+          i++; // Skip the assistant message since we've already processed it
+        } else {
+          // No assistant yet – show a pending exchange immediately
+          grouped.push({
+            id: userMessage.id,
+            userMessage,
+            assistantMessage: null,
+          });
+        }
+      }
+    }
+    return grouped;
+  }, [messages]);
+
+  // Auto-scroll to bottom when new messages arrive
+  // biome-ignore lint/correctness/useExhaustiveDependencies: scroll on message changes
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [exchanges.length, isGenerating]);
+
+  // Cleanup any pending reset timers on unmount
+  useEffect(() => {
+    return () => {
+      if (copyResetTimeoutRef.current) {
+        window.clearTimeout(copyResetTimeoutRef.current);
+      }
+      if (hoverTimeoutRef.current) {
+        window.clearTimeout(hoverTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  return (
+    <div className="flex flex-col h-full overflow-y-auto p-4 bg-muted">
+      <div className="flex flex-col gap-4">
+        {exchanges.length === 0 && (
+          <div className="flex flex-col gap-4 py-8">
+            <h2 className="text-2xl font-semibold text-foreground">
+              Come posso aiutarti oggi?
+            </h2>
+            <p className="text-muted-foreground">
+              Sono qui per aiutarti a trovare i prodotti perfetti per il tuo
+              animale!
+            </p>
+            {/* Show suggested questions from Algolia if available, otherwise show fallback */}
+
+            <div className="flex flex-col gap-2">
+              <h3 className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+                <SparklesIcon size={12} />
+                Try saying
+              </h3>
+              {isFollowUpGenerating && followUpQuestions.length === 0 ? (
+                <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                  <SparklesIcon size={14} className="animate-pulse" />
+                  <AnimatedShinyText>
+                    Generating suggestions...
+                  </AnimatedShinyText>
+                </div>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {(followUpQuestions.length > 0
+                    ? followUpQuestions
+                    : FALLBACK_FOLLOW_UP_QUESTIONS
+                  ).map((question, index) => (
+                    <Button
+                      key={`suggestion-${index}`}
+                      type="button"
+                      variant="outline"
+                      className="cursor-pointer text-left"
+                      onClick={() => onSuggestedQuestionClick(question)}
+                    >
+                      {question}
+                    </Button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+        {/* errors */}
+        {error && (
+          <div className="border border-red-300 bg-red-100 text-red-900 px-4 py-3 rounded-lg">
+            {error.message}
+          </div>
+        )}
+
+        {/* exchanges */}
+        {exchanges.map((exchange) => {
+          const isLastExchange =
+            exchanges[exchanges.length - 1]?.id === exchange.id;
+
+          return (
+            <article key={exchange.id} className="rounded-sm bg-background p-4">
+              <div className="flex items-start gap-3">
+                <div className="font-semibold text-xl text-foreground mb-2">
+                  {exchange.userMessage.parts.map((part, index) =>
+                    part.type === "text" ? (
+                      <span key={index}>{part.text}</span>
+                    ) : null
+                  )}
+                </div>
+              </div>
+
+              <div className="mt-3 flex items-start gap-3">
+                <div className="flex-1 gap-3">
+                  {exchange.assistantMessage ? (
+                    <>
+                      <div className="text-foreground">
+                        {exchange.assistantMessage.parts.map((part, index) => {
+                          if (typeof part === "string") {
+                            return <p key={`${index}`}>{part}</p>;
+                          }
+                          if (part.type === "text") {
+                            return (
+                              <MemoizedMarkdown key={`${index}`}>
+                                {part.text}
+                              </MemoizedMarkdown>
+                            );
+                          } else if (
+                            part.type === "reasoning" &&
+                            part.state === "streaming"
+                          ) {
+                            return (
+                              <p
+                                className="text-[0.95rem] flex my-2 gap-2 items-center text-muted-foreground"
+                                key={`${index}`}
+                              >
+                                <BrainIcon />{" "}
+                                <AnimatedShinyText>
+                                  Reasoning...
+                                </AnimatedShinyText>
+                              </p>
+                            );
+                          } else if (
+                            part.type === "tool-algolia_search_index"
+                          ) {
+                            if (part.state === "input-streaming") {
+                              return (
+                                <p
+                                  className="text-[0.95rem] flex my-2 gap-2 items-center text-muted-foreground"
+                                  key={`${index}`}
+                                >
+                                  <AnimatedShinyText>
+                                    Searching...
+                                  </AnimatedShinyText>
+                                </p>
+                              );
+                            } else if (part.state === "input-available") {
+                              const query = part.input?.query || "";
+                              return (
+                                <p
+                                  className="text-[0.95rem] flex my-2 gap-2 items-center text-muted-foreground"
+                                  key={`${index}`}
+                                >
+                                  <AnimatedShinyText>
+                                    Looking for{" "}
+                                    <button
+                                      type="button"
+                                      onClick={() => refine(query)}
+                                      className="bg-transparent text-muted-foreground underline decoration-2 underline-offset-4 cursor-pointer hover:text-foreground transition-colors"
+                                    >
+                                      &quot;{query}&quot;
+                                    </button>
+                                  </AnimatedShinyText>
+                                </p>
+                              );
+                            } else if (part.state === "output-available") {
+                              const query = part.input?.query || "";
+                              const hits = part.output?.hits || [];
+                              const queryKey = `${exchange.id}-${index}`;
+                              const isHovered = hoveredQueryIndex === queryKey;
+
+                              const handleMouseEnter = () => {
+                                if (hoverTimeoutRef.current) {
+                                  window.clearTimeout(hoverTimeoutRef.current);
+                                }
+                                setHoveredQueryIndex(queryKey);
+                              };
+
+                              const handleMouseLeave = () => {
+                                hoverTimeoutRef.current = window.setTimeout(
+                                  () => {
+                                    setHoveredQueryIndex(null);
+                                  },
+                                  200
+                                );
+                              };
+
+                              return (
+                                <p
+                                  key={`${index}`}
+                                  className="text-[0.95rem] flex my-2 gap-2 items-center text-muted-foreground"
+                                >
+                                  <span>
+                                    Searched for{" "}
+                                    {hits.length > 0 ? (
+                                      <Popover
+                                        open={isHovered}
+                                        onOpenChange={(open) => {
+                                          if (!open) {
+                                            setHoveredQueryIndex(null);
+                                          }
+                                        }}
+                                      >
+                                        <PopoverTrigger asChild>
+                                          <button
+                                            type="button"
+                                            onClick={() => refine(query)}
+                                            onMouseEnter={handleMouseEnter}
+                                            onMouseLeave={handleMouseLeave}
+                                            className="bg-transparent text-muted-foreground underline decoration-1 underline-offset-4 cursor-pointer hover:text-foreground transition-colors"
+                                          >
+                                            &quot;{query}&quot;
+                                          </button>
+                                        </PopoverTrigger>
+                                        <PopoverContent
+                                          className="w-[420px] max-h-[600px] overflow-y-auto p-4"
+                                          onMouseEnter={handleMouseEnter}
+                                          onMouseLeave={handleMouseLeave}
+                                          align="start"
+                                          side="bottom"
+                                        >
+                                          <SearchResultsPreview
+                                            hits={hits}
+                                            onViewMore={() => refine(query)}
+                                          />
+                                        </PopoverContent>
+                                      </Popover>
+                                    ) : (
+                                      <button
+                                        type="button"
+                                        onClick={() => refine(query)}
+                                        className="bg-transparent text-muted-foreground underline decoration-1 underline-offset-4 cursor-pointer hover:text-foreground transition-colors"
+                                      >
+                                        &quot;{query}&quot;
+                                      </button>
+                                    )}{" "}
+                                    found {hits.length || "no"} results
+                                  </span>
+                                </p>
+                              );
+                            } else if (part.state === "output-error") {
+                              return (
+                                <p
+                                  className="text-[0.95rem] flex my-2 gap-2 items-center text-muted-foreground"
+                                  key={`${index}`}
+                                >
+                                  {part.errorText}
+                                </p>
+                              );
+                            } else {
+                              return null;
+                            }
+                          } else if (part.type === "tool-showItems") {
+                            if (
+                              part.state === "input-streaming" ||
+                              part.state === "input-available"
+                            ) {
+                              return (
+                                <ShowItemsDisplay
+                                  key={`${index}`}
+                                  products={[]}
+                                  isLoading={true}
+                                />
+                              );
+                            } else if (part.state === "output-available") {
+                              const products = part.output?.products || [];
+                              return (
+                                <ShowItemsDisplay
+                                  key={`${index}`}
+                                  products={products}
+                                />
+                              );
+                            } else if (part.state === "output-error") {
+                              return (
+                                <p
+                                  className="text-[0.95rem] flex my-2 gap-2 items-center text-red-500"
+                                  key={`${index}`}
+                                >
+                                  Errore nel caricamento dei prodotti
+                                </p>
+                              );
+                            } else {
+                              return null;
+                            }
+                          } else {
+                            return null;
+                          }
+                        })}
+                        {/* Show loading indicator while generating more content */}
+                        {isGenerating && isLastExchange && (
+                          <div className="text-muted-foreground mt-2">
+                            <AnimatedShinyText>Generating...</AnimatedShinyText>
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="text-muted-foreground">
+                      <AnimatedShinyText>
+                        {isGenerating && isLastExchange ? "Thinking..." : ""}
+                      </AnimatedShinyText>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {exchange.assistantMessage && !isGenerating ? (
+                <div className="mt-4 flex items-center justify-start gap-2">
+                  {acknowledgedExchangeIds.has(exchange.id) ? (
+                    <span className="text-muted-foreground text-[0.85rem] animate-in fade-in slide-in-from-bottom-1">
+                      Thanks for your feedback!
+                    </span>
+                  ) : submittingExchangeId === exchange.id ? (
+                    <span className="text-muted-foreground text-[0.85rem] shimmer-text">
+                      Submitting...
+                    </span>
+                  ) : null}
+                  <div className="inline-flex items-center gap-2">
+                    <button
+                      type="button"
+                      title="Like"
+                      aria-label="Like"
+                      className="border-none bg-transparent rounded-md px-2.5 py-1.5 text-muted-foreground cursor-pointer flex items-center justify-center gap-2 transition-all duration-150 hover:bg-blue-50 dark:hover:bg-slate-900 disabled:text-foreground disabled:cursor-not-allowed"
+                      disabled={
+                        !exchange.assistantMessage ||
+                        submittingExchangeId === exchange.id
+                      }
+                      onClick={async () => {
+                        if (!exchange.assistantMessage) return;
+                        try {
+                          setSubmittingExchangeId(exchange.id);
+                          setAcknowledgedExchangeIds((prev) => {
+                            const next = new Set(prev);
+                            next.add(exchange.id);
+                            return next;
+                          });
+                        } catch {
+                          // ignore errors
+                        } finally {
+                          setSubmittingExchangeId(null);
+                        }
+                      }}
+                    >
+                      <ThumbsUp size={18} />
+                    </button>
+                    <button
+                      type="button"
+                      title="Dislike"
+                      aria-label="Dislike"
+                      className="border-none bg-transparent rounded-md px-2.5 py-1.5 text-muted-foreground cursor-pointer flex items-center justify-center gap-2 transition-all duration-150 hover:bg-blue-50 dark:hover:bg-slate-900 disabled:text-foreground disabled:cursor-not-allowed"
+                      disabled={
+                        !exchange.assistantMessage ||
+                        submittingExchangeId === exchange.id
+                      }
+                      onClick={async () => {
+                        if (!exchange.assistantMessage) return;
+                        try {
+                          setSubmittingExchangeId(exchange.id);
+                          setAcknowledgedExchangeIds((prev) => {
+                            const next = new Set(prev);
+                            next.add(exchange.id);
+                            return next;
+                          });
+                        } catch {
+                          // ignore errors
+                        } finally {
+                          setSubmittingExchangeId(null);
+                        }
+                      }}
+                    >
+                      <ThumbsDown size={18} />
+                    </button>
+                  </div>
+                  <button
+                    type="button"
+                    className={`border-none bg-transparent rounded-md px-2.5 py-1.5 text-muted-foreground cursor-pointer flex items-center justify-center gap-2 transition-all duration-150 hover:bg-blue-50 dark:hover:bg-slate-900 disabled:text-foreground disabled:cursor-not-allowed ${
+                      copiedExchangeId === exchange.id
+                        ? "bg-blue-50 dark:bg-slate-900 text-blue-600 -translate-y-px"
+                        : ""
+                    }`}
+                    aria-label={
+                      copiedExchangeId === exchange.id
+                        ? "Copied"
+                        : "Copy answer"
+                    }
+                    title={
+                      copiedExchangeId === exchange.id
+                        ? "Copied"
+                        : "Copy answer"
+                    }
+                    disabled={
+                      !exchange.assistantMessage ||
+                      copiedExchangeId === exchange.id
+                    }
+                    onClick={async () => {
+                      const parts = exchange.assistantMessage?.parts ?? [];
+                      const textContent = parts
+                        .filter((part) => part.type === "text")
+                        .map((part) => part.text)
+                        .join("")
+                        .trim();
+                      if (!textContent) return;
+                      try {
+                        if (onCopy) {
+                          await onCopy(textContent);
+                        } else {
+                          await copyText(textContent);
+                        }
+                        setCopiedExchangeId(exchange.id);
+                        if (copyResetTimeoutRef.current) {
+                          window.clearTimeout(copyResetTimeoutRef.current);
+                        }
+                        copyResetTimeoutRef.current = window.setTimeout(() => {
+                          setCopiedExchangeId(null);
+                        }, 1500);
+                      } catch {
+                        // noop – copy may fail silently
+                      }
+                    }}
+                  >
+                    {copiedExchangeId === exchange.id ? (
+                      <CheckIcon size={18} />
+                    ) : (
+                      <CopyIcon size={18} />
+                    )}
+                  </button>
+                </div>
+              ) : null}
+
+              {/* Show follow-up questions only for the last exchange */}
+              {isLastExchange && exchange.assistantMessage && !isGenerating && (
+                <FollowUpQuestions
+                  questions={followUpQuestions}
+                  isGenerating={isFollowUpGenerating}
+                  onQuestionClick={onSuggestedQuestionClick}
+                />
+              )}
+            </article>
+          );
+        })}
+        <div ref={messagesEndRef} />
+      </div>
+    </div>
+  );
+});
+
+// ============================================================================
+// Sidepanel Component
+// ============================================================================
+
+interface SidepanelProps {
+  isOpen: boolean;
+  onClose: () => void;
+  config: SidepanelAskAIConfig;
+  messages: Message[];
+  error: Error | null;
+  isGenerating: boolean;
+  sendMessage: (options: { text: string }) => void | Promise<void>;
+  inputRef: React.RefObject<HTMLTextAreaElement | null>;
+  onOpenNewConversation: () => void;
+  followUpQuestions: string[];
+  isFollowUpGenerating: boolean;
+}
+
+const MAX_PROMPT_ROWS = 20;
+
+const Sidepanel = memo(function Sidepanel({
+  isOpen,
+  onClose,
+  config,
+  messages,
+  error,
+  isGenerating,
+  sendMessage,
+  inputRef,
+  onOpenNewConversation,
+  followUpQuestions,
+  isFollowUpGenerating,
+}: SidepanelProps) {
+  const [inputValue, setInputValue] = useState("");
+  const [shouldRender, setShouldRender] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [isMaximized, setIsMaximized] = useState(false);
+  const variant = config.variant || "floating";
+
+  // Speech recognition for voice input
+  const handleTranscriptEnd = useCallback((finalTranscript: string) => {
+    setInputValue(finalTranscript);
+  }, []);
+
+  const {
+    supported: speechSupported,
+    listening,
+    transcript,
+    toggle: toggleSpeech,
+  } = useSpeechRecognition({
+    lang: "it-IT",
+    onTranscriptEnd: handleTranscriptEnd,
+  });
+
+  // When listening, display transcript; otherwise display typed input
+  const displayValue = listening && transcript ? transcript : inputValue;
+
+  // Handle mount/unmount and closing animation
+  useEffect(() => {
+    if (isOpen) {
+      // Use startTransition to prevent cascading renders
+      startTransition(() => {
+        setShouldRender(true);
+      });
+      // Allow initial render before animating in (double rAF for paint)
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setIsVisible(true);
+        });
+      });
+      // Focus input when opening
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
+    } else if (shouldRender) {
+      // Start closing animation immediately
+      // Use startTransition to prevent cascading renders
+      startTransition(() => {
+        setIsVisible(false);
+      });
+      // Unmount after animation completes (match 0.28s duration + buffer)
+      const timer = setTimeout(() => {
+        setShouldRender(false);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen, shouldRender, inputRef]);
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && isOpen) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("keydown", handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [isOpen, onClose]);
+
+  // Inline variant: push page content by adjusting body padding-right on desktop
+  useEffect(() => {
+    if (variant !== "inline") return;
+    if (typeof window === "undefined") return;
+
+    const isDesktop = window.matchMedia("(min-width: 768px)").matches;
+    const panelWidth = isMaximized ? 580 : 360;
+
+    if (isOpen && isDesktop) {
+      const prevPadding = document.body.style.paddingRight;
+      const prevTransition = document.body.style.transition;
+      document.body.style.transition =
+        "padding-right 0.28s cubic-bezier(0.22, 1, 0.36, 1)";
+      document.body.style.paddingRight = `${panelWidth}px`;
+      return () => {
+        document.body.style.paddingRight = prevPadding;
+        document.body.style.transition = prevTransition;
+      };
+    }
+
+    return;
+  }, [variant, isOpen, isMaximized]);
+
+  const managePromptHeight = useCallback((): void => {
+    if (!inputRef.current) return;
+
+    const textArea = inputRef.current;
+
+    textArea.style.height = "auto";
+
+    const styles = getComputedStyle(textArea);
+
+    const lineHeight = parseFloat(styles.lineHeight);
+    const paddingTop = parseFloat(styles.paddingTop);
+    const paddingBottom = parseFloat(styles.paddingBottom);
+    const padding = paddingTop + paddingBottom;
+
+    const fullHeight = textArea.scrollHeight;
+    const maxHeight = MAX_PROMPT_ROWS * lineHeight + padding;
+
+    textArea.style.overflowY = fullHeight > maxHeight ? "auto" : "hidden";
+    textArea.style.height = `${Math.min(fullHeight, maxHeight)}px`;
+  }, [inputRef]);
+
+  const sendMessageAndReset = useCallback(
+    (text: string) => {
+      const trimmed = text.trim();
+      if (!trimmed || isGenerating) return;
+
+      sendMessage({ text: trimmed });
+      setInputValue("");
+      // Reset textarea height after clearing input
+      setTimeout(() => {
+        managePromptHeight();
+        inputRef.current?.focus();
+      }, 50);
+    },
+    [isGenerating, sendMessage, inputRef, managePromptHeight]
+  );
+
+  const handleSubmit = useCallback(
+    (e?: React.FormEvent) => {
+      e?.preventDefault();
+      sendMessageAndReset(displayValue);
+    },
+    [displayValue, sendMessageAndReset]
+  );
+
+  const handleSuggestedQuestionClick = useCallback(
+    (question: string) => {
+      sendMessageAndReset(question);
+    },
+    [sendMessageAndReset]
+  );
+
+  const resizeSidepanel = useCallback(() => {
+    setIsMaximized((prev) => !prev);
+  }, []);
+
+  if (!shouldRender) return null;
+
+  return createPortal(
+    <div
+      className={`fixed inset-0 z-50 ${
+        variant === "inline"
+          ? "bg-transparent dark:bg-transparent md:p-0"
+          : "bg-black/20 dark:bg-black/60 md:p-4"
+      } flex items-center justify-end pointer-events-none ${
+        isVisible ? "animate-in fade-in-0" : "animate-out fade-out-0"
+      }`}
+      style={{ animationDuration: "0.2s" }}
+    >
+      <div
+        className={`bg-background h-screen w-full md:h-full flex flex-col pointer-events-auto transition-all duration-300 ease-out ${
+          variant === "inline"
+            ? "rounded-none border-l border-border"
+            : "md:rounded-lg shadow-2xl"
+        } ${
+          isVisible
+            ? "animate-in slide-in-from-right"
+            : "animate-out slide-out-to-right"
+        } ${isMaximized ? "md:w-[580px]" : "md:w-[360px]"}`}
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          animationDuration: "0.28s",
+          animationTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
+          animationFillMode: "both",
+        }}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-primary/50">
+          <div className="flex items-center gap-2">
+            <SparklesIcon
+              size={20}
+              className="text-foreground dark:text-white"
+            />
+            <h2 className="text-sm font-semibold text-foreground">Arca AI</h2>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              onClick={onOpenNewConversation}
+              disabled={messages.length === 0}
+              className="px-1 text-muted-foreground disabled:cursor-not-allowed"
+              aria-label="Open new conversation"
+              title="Open new conversation"
+            >
+              <SquarePen size={18} />
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={resizeSidepanel}
+              className="hidden md:flex px-1 cursor-pointer text-muted-foreground"
+              aria-label={isMaximized ? "Minimize" : "Maximize"}
+              title={isMaximized ? "Minimize" : "Maximize"}
+            >
+              {isMaximized ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
+            </Button>
+            <Button
+              variant="ghost"
+              className="px-1 text-xs text-muted-foreground cursor-pointer"
+              onClick={onClose}
+              aria-label="Close"
+              title="Close"
+            >
+              <span className="hidden md:inline">
+                <XIcon size={18} />
+              </span>
+              <span className="md:hidden">
+                <XIcon />
+              </span>
+            </Button>
+          </div>
+        </div>
+
+        {/* Chat Content */}
+        <ChatWidget
+          messages={messages}
+          error={error}
+          isGenerating={isGenerating}
+          applicationId={config.applicationId}
+          assistantId={config.assistantId}
+          onSuggestedQuestionClick={handleSuggestedQuestionClick}
+          followUpQuestions={followUpQuestions}
+          isFollowUpGenerating={isFollowUpGenerating}
+        />
+
+        {/* Input Bar */}
+        <div className="border-t border-border p-4">
+          <form
+            onSubmit={handleSubmit}
+            className="flex border-border border rounded-md gap-2 p-2 focus-within:ring-1 focus-within:ring-blue-600 focus-within:border-transparent transition-all"
+          >
+            <textarea
+              ref={inputRef}
+              value={displayValue}
+              id="sidepanel-input"
+              onChange={(e) => {
+                setInputValue(e.target.value);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSubmit();
+                }
+              }}
+              onInput={managePromptHeight}
+              rows={1}
+              placeholder={config.placeholder || "Ask AI anything"}
+              disabled={isGenerating}
+              className="flex-1 pt-1 border-none outline-none bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-0 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed resize-none overflow-y-hidden"
+            />
+            {speechSupported && (
+              <button
+                type="button"
+                onClick={toggleSpeech}
+                disabled={isGenerating}
+                className={`self-end p-1.5 rounded-full transition-colors ${
+                  listening
+                    ? "bg-red-500 text-white animate-pulse"
+                    : "text-muted-foreground hover:bg-muted"
+                } disabled:opacity-50 disabled:cursor-not-allowed`}
+                aria-label={
+                  listening ? "Stop voice input" : "Start voice input"
+                }
+              >
+                {listening ? <MicOffIcon size={18} /> : <MicIcon size={18} />}
+              </button>
+            )}
+            <Button
+              size="icon-sm"
+              type="submit"
+              className="self-end"
+              disabled={!displayValue.trim() || isGenerating}
+            >
+              <ArrowUpIcon size={18} />
+            </Button>
+          </form>
+          <div className="mt-2 flex items-center justify-center text-xs text-muted-foreground">
+            <p className="m-0 text-center">
+              Answers are generated with AI which can make mistakes.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+});
+
+// ============================================================================
+// Main Export Component
+// ============================================================================
+
+export default function SidepanelExperience(config: AgentStudioConfig) {
+  const [isOpen, setIsOpen] = useState(false);
+  const inputRef = useRef<HTMLTextAreaElement | null>(null);
+  const variant = config.variant || "floating";
+  const prevIsGeneratingRef = useRef(false);
+  const pendingMessageRef = useRef<string | null>(null);
+  const isOpenRef = useRef(false);
+  const sendMessageRef = useRef<((options: { text: string }) => void) | null>(
+    null
+  );
+  const sidepanelContext = useSidepanel();
+
+  // Keep ref in sync with state
+  useEffect(() => {
+    isOpenRef.current = isOpen;
+  }, [isOpen]);
+
+  const { messages, setMessages, error, isGenerating, sendMessage } =
+    useAgentStudio({
+      applicationId: config.applicationId,
+      apiKey: config.apiKey,
+      agentId: config.agentId,
+    });
+
+  // Keep sendMessage ref in sync
+  useEffect(() => {
+    sendMessageRef.current = sendMessage;
+  }, [sendMessage]);
+
+  // Follow-up questions agent (uses a separate agent ID for generating follow-ups)
+  const {
+    followUpQuestions,
+    generateFollowUps,
+    generateInitialSuggestions,
+    isGenerating: isFollowUpGenerating,
+    reset: resetFollowUps,
+  } = useFollowUpQuestions({
+    applicationId: config.applicationId,
+    apiKey: config.apiKey,
+    agentId:
+      process.env.NEXT_PUBLIC_ALGOLIA_SUGGESTION_AGENT_ID || config.agentId,
+  });
+
+  // Register controls with context
+  useEffect(() => {
+    const handleOpenSidepanel = (message?: string) => {
+      if (isOpenRef.current && message && sendMessageRef.current) {
+        // Already open, send message directly
+        sendMessageRef.current({ text: message });
+      } else {
+        setIsOpen(true);
+        if (message) {
+          // Store message to send after sidepanel opens
+          pendingMessageRef.current = message;
+        }
+      }
+    };
+
+    const handleCloseSidepanel = () => {
+      setIsOpen(false);
+    };
+
+    const handleSendMessage = (message: string) => {
+      if (isOpenRef.current && sendMessageRef.current) {
+        sendMessageRef.current({ text: message });
+      } else {
+        // If not open, open it first and store message
+        pendingMessageRef.current = message;
+        setIsOpen(true);
+      }
+    };
+
+    const unregister = sidepanelContext.register({
+      openSidepanel: handleOpenSidepanel,
+      closeSidepanel: handleCloseSidepanel,
+      sendMessage: handleSendMessage,
+      isOpen: () => isOpenRef.current,
+    });
+
+    return unregister;
+  }, [sidepanelContext]);
+
+  // Send pending message when sidepanel opens
+  useEffect(() => {
+    if (isOpen && pendingMessageRef.current && sendMessageRef.current) {
+      const message = pendingMessageRef.current;
+      pendingMessageRef.current = null;
+      // Small delay to ensure sidepanel is fully rendered
+      setTimeout(() => {
+        sendMessageRef.current?.({ text: message });
+      }, 150);
+    }
+  }, [isOpen, sendMessage]);
+
+  // Trigger follow-up question generation when main agent finishes
+  useEffect(() => {
+    // Detect transition from generating to not generating
+    if (prevIsGeneratingRef.current && !isGenerating && messages.length >= 2) {
+      // Get the last exchange ID (user message ID)
+      const lastUserMessage = [...messages]
+        .reverse()
+        .find((m) => m.role === "user");
+      if (lastUserMessage) {
+        generateFollowUps(messages, lastUserMessage.id);
+      }
+    }
+    prevIsGeneratingRef.current = isGenerating;
+  }, [isGenerating, messages, generateFollowUps]);
+
+  // Generate initial suggestions when page state changes (only when chat is empty)
+  // Uses singleton hook to prevent duplicate triggers from mobile + desktop instances
+  useUrlSuggestionTrigger(
+    (signature) => {
+      if (messages.length === 0) {
+        generateInitialSuggestions(signature);
+      }
+    },
+    true // enabled
+  );
+
+  // Keyboard shortcut: Command+I (Mac) or Ctrl+I (Windows)
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const isModifierPressed = event.metaKey || event.ctrlKey;
+
+      if (isModifierPressed && event.key.toLowerCase() === "i") {
+        event.preventDefault();
+        setIsOpen((prev) => !prev);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  const openSidepanel = useCallback(() => {
+    setIsOpen(true);
+  }, []);
+
+  const closeSidepanel = useCallback(() => {
+    setIsOpen(false);
+  }, []);
+
+  const openNewConversation = () => {
+    setMessages?.([]);
+    resetFollowUps();
+    setIsOpen(true);
+  };
+
+  const showTrigger = config.showTrigger !== false; // Default to true
+
+  return (
+    <>
+      {/* Trigger button - only show for floating variant and if showTrigger is true */}
+      {variant === "floating" && showTrigger && (
+        <Button
+          onClick={openSidepanel}
+          variant="outline"
+          className="justify-between hover:shadow-md transition-transform duration-400 translate-y-0 py-3 h-auto cursor-pointer hover:bg-transparent hover:translate-y-[-2px] border shadow-none"
+        >
+          <span className="flex items-center gap-2 opacity-80">
+            <span className="inline text-muted-foreground">
+              {config.buttonText || "Ask AI"}
+            </span>
+          </span>
+          <div className="hidden md:inline-block rounded bg-muted px-1.5 py-0.5 text-xs font-mono text-muted-foreground">
+            ⌘ I
+          </div>
+        </Button>
+      )}
+
+      {/* For inline variant, auto-open or provide external control - only if showTrigger is true */}
+      {variant === "inline" && !isOpen && showTrigger && (
+        <Button
+          onClick={openSidepanel}
+          variant="default"
+          size="icon-lg"
+          className="cursor-pointer"
+          aria-label="Open AI chat"
+        >
+          <SparklesIcon className="size-8" />
+        </Button>
+      )}
+
+      <Sidepanel
+        isOpen={isOpen}
+        onClose={closeSidepanel}
+        config={{
+          applicationId: config.applicationId,
+          apiKey: config.apiKey,
+          indexName: ALGOLIA_CONFIG.INDEX_NAME,
+          assistantId: config.agentId,
+          variant: variant, // Pass variant through
+          placeholder: config.placeholder,
+        }}
+        messages={messages as unknown as Message[]}
+        error={error as Error | null}
+        isGenerating={isGenerating}
+        sendMessage={sendMessage}
+        inputRef={inputRef}
+        onOpenNewConversation={openNewConversation}
+        followUpQuestions={followUpQuestions}
+        isFollowUpGenerating={isFollowUpGenerating}
+      />
+    </>
+  );
+}
