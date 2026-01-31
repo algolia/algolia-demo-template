@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useInfiniteHits, useSearchBox, useInstantSearch } from "react-instantsearch";
 import { algoliasearch } from "algoliasearch";
 import Image from "next/image";
@@ -10,6 +10,7 @@ import { ProductToolbar } from "@/components/ProductToolbar";
 import { FiltersSidebar, ActiveFilters } from "@/components/filters-sidebar";
 import { Configure } from "react-instantsearch";
 import { ALGOLIA_CONFIG } from "@/lib/algolia-config";
+import { AgentSuggestions } from "@/components/agent-suggestions";
 
 // Lazy-initialize search client to avoid issues during SSR/build
 let searchClient: ReturnType<typeof algoliasearch> | null = null;
@@ -232,7 +233,7 @@ function CustomHits({ viewMode }: { viewMode: "grid" | "list" }) {
       <div className="ais-InfiniteHits">
         <div className="ais-InfiniteHits-list space-y-4">
           {hits.map((hit, index) => (
-            <ProductListItem key={`${hit.objectID}-${index}`} product={hit} />
+            <ProductListItem key={`${hit.objectID}-${index}`} product={hit} selectable />
           ))}
           <div ref={sentinelRef} className="ais-InfiniteHits-sentinel" aria-hidden="true" />
         </div>
@@ -244,7 +245,7 @@ function CustomHits({ viewMode }: { viewMode: "grid" | "list" }) {
     <div className="ais-InfiniteHits">
       <div className="ais-InfiniteHits-list grid grid-cols-2 lg:grid-cols-4 gap-4">
         {hits.map((hit, index) => (
-          <ProductCard key={`${hit.objectID}-${index}`} product={hit} />
+          <ProductCard key={`${hit.objectID}-${index}`} product={hit} selectable />
         ))}
         <div ref={sentinelRef} className="ais-InfiniteHits-sentinel col-span-full" aria-hidden="true" />
       </div>
@@ -284,6 +285,9 @@ export default function SearchPage() {
           <span className="text-primary">&quot;{query}&quot;</span>
         </h1>
       </div>
+
+      {/* Agent Suggestions - AI-powered contextual suggestions */}
+      <AgentSuggestions />
 
       {/* Query Suggestions */}
       <QuerySuggestions

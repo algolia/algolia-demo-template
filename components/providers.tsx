@@ -5,6 +5,7 @@ import { InstantSearch, useConfigure, useInstantSearch } from "react-instantsear
 import { CartProvider } from "@/components/cart/cart-context";
 import { NavBar } from "@/components/navbar/navbar";
 import { SidepanelProvider } from "@/components/sidepanel-agent-studio/context/sidepanel-context";
+import { SelectionProvider } from "@/components/selection/selection-context";
 import { UserProvider, useUser } from "@/components/user/user-context";
 import { compositionClient } from "@algolia/composition";
 import { ALGOLIA_CONFIG } from "@/lib/algolia-config";
@@ -62,7 +63,8 @@ export function Providers({ children }: { children: ReactNode }) {
   return (
     <CartProvider>
       <UserProvider>
-        <SidepanelProvider>
+        <SelectionProvider>
+          <SidepanelProvider>
           <InstantSearch
             compositionID={ALGOLIA_CONFIG.COMPOSITION_ID}
             searchClient={searchClient}
@@ -77,7 +79,8 @@ export function Providers({ children }: { children: ReactNode }) {
             </Suspense>
             {children}
           </InstantSearch>
-        </SidepanelProvider>
+          </SidepanelProvider>
+        </SelectionProvider>
       </UserProvider>
     </CartProvider>
   );

@@ -3,11 +3,33 @@ import { Product } from '@/lib/types/product';
 import { User, users } from '@/lib/types/user';
 import { ALGOLIA_CONFIG } from '@/lib/algolia-config';
 
+// Type for InstantSearch UI state (from useInstantSearch().indexUiState)
+type IndexUiState = {
+  query?: string;
+  refinementList?: Record<string, string[]>;
+  range?: Record<string, { min?: number; max?: number } | string>;
+  sortBy?: string;
+  page?: number;
+  menu?: Record<string, string>;
+  hierarchicalMenu?: Record<string, string[]>;
+  toggle?: Record<string, boolean>;
+  // Allow additional unknown properties
+  [key: string]: unknown;
+};
+
 // ============================================================================
 // Types
 // ============================================================================
 
-export type PageType = 'search' | 'product' | 'category' | 'other';
+export type PageType = 'search' | 'product' | 'category' | 'home' | 'other';
+
+export type SearchState = {
+  query?: string;
+  filters: Record<string, string[]>;
+  range?: Record<string, { min?: number; max?: number } | string>;
+  sort?: string;
+  page?: number;
+};
 
 export type ContextSnapshot = {
   page: {
@@ -17,7 +39,9 @@ export type ContextSnapshot = {
   };
   algolia: {
     indexName: string;
-    urlState: Record<string, string>;
+    searchState: SearchState;
+    /** @deprecated Use searchState instead */
+    urlState?: Record<string, string>;
   };
   product?: {
     objectID: string;
@@ -27,6 +51,12 @@ export type ContextSnapshot = {
     description?: string;
   };
   user?: User;
+  selectedProducts?: Array<{
+    objectID: string;
+    name: string;
+    brand?: string;
+    price?: string;
+  }>;
 };
 
 // Simple in-memory cache for product data
@@ -94,7 +124,69 @@ export function resolveContextFromUrl(): Omit<ContextSnapshot, 'product'> & { ob
     },
     algolia: {
       indexName: ALGOLIA_CONFIG.INDEX_NAME,
+      searchState: {
+        query: urlState.query || urlState.q,
+        filters: {},
+      },
       urlState,
+    },
+    objectID,
+  };
+}
+
+/**
+ * Resolves the current context using InstantSearch's clean uiState.
+ * This is the preferred method - avoids manual URL parsing and composition prefix issues.
+ *
+ * @param indexUiState - The clean IndexUiState from useInstantSearch()
+ */
+export function resolveContextWithUiState(
+  indexUiState: IndexUiState | undefined
+): Omit<ContextSnapshot, 'product'> & { objectID?: string } {
+  const url = new URL(window.location.href);
+  const path = url.pathname;
+
+  // Build clean searchState from IndexUiState
+  const searchState: SearchState = {
+    query: indexUiState?.query,
+    filters: indexUiState?.refinementList || {},
+    range: indexUiState?.range,
+    sort: indexUiState?.sortBy,
+    page: indexUiState?.page,
+  };
+
+  // Detect page type and extract objectID if on product page
+  let pageType: PageType = 'other';
+  let objectID: string | undefined;
+
+  // Product page: /products/[id]
+  const productMatch = path.match(/^\/products\/([^/]+)$/);
+  if (productMatch) {
+    pageType = 'product';
+    objectID = decodeURIComponent(productMatch[1]);
+  }
+  // Category page: /category/[...slug]
+  else if (path.startsWith('/category/')) {
+    pageType = 'category';
+  }
+  // Home page: root path with no search
+  else if (path === '/' && !searchState.query && Object.keys(searchState.filters).length === 0) {
+    pageType = 'home';
+  }
+  // Search page: has query or filters
+  else if (searchState.query || Object.keys(searchState.filters).length > 0) {
+    pageType = 'search';
+  }
+
+  return {
+    page: {
+      path,
+      url: url.toString(),
+      pageType,
+    },
+    algolia: {
+      indexName: ALGOLIA_CONFIG.INDEX_NAME,
+      searchState,
     },
     objectID,
   };
@@ -139,9 +231,9 @@ export async function hydrateContext(
     if (product) {
       const productSnapshot: ContextSnapshot['product'] = {
         objectID: product.objectID || objectID,
-        name: product.productname || product.producttitle,
+        name: product.title,
         brand: product.brand,
-        price: product.fullSellingPrice?.toString(),
+        price: product.price?.toString(),
         description: product.description?.slice(0, 200), // Truncate for token efficiency
       };
 

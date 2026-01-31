@@ -11,10 +11,12 @@ import SidepanelExperience from "@/components/sidepanel-agent-studio/components/
 import { LiveSearchBar } from "./live-search-bar";
 import { UserSelector } from "./user-selector";
 import { useSidepanel } from "@/components/sidepanel-agent-studio/context/sidepanel-context";
+import { useSelection } from "@/components/selection/selection-context";
 
 export function NavBar() {
   const { refine } = useSearchBox();
   const { openSidepanel } = useSidepanel();
+  const { selectionCount } = useSelection();
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background backdrop-blur pb-4 pt-4">
@@ -49,10 +51,15 @@ export function NavBar() {
               variant="ghost"
               size="icon"
               onClick={() => openSidepanel()}
-              className="hover:bg-muted [&>svg]:hover:stroke-[2.5]"
+              className="hover:bg-muted [&>svg]:hover:stroke-[2.5] relative"
               aria-label="Open AI Assistant"
             >
               <BrainIcon className="size-8" />
+              {selectionCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full min-w-5 h-5 flex items-center justify-center font-medium">
+                  {selectionCount}
+                </span>
+              )}
             </Button>
             <CartSheet />
           </div>
@@ -71,10 +78,15 @@ export function NavBar() {
                 variant="ghost"
                 size="icon"
                 onClick={() => openSidepanel()}
-                className="hover:bg-muted [&>svg]:hover:stroke-[2.5]"
+                className="hover:bg-muted [&>svg]:hover:stroke-[2.5] relative"
                 aria-label="Open AI Assistant"
               >
                 <BrainIcon className="size-8" />
+                {selectionCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full min-w-5 h-5 flex items-center justify-center font-medium">
+                    {selectionCount}
+                  </span>
+                )}
               </Button>
               <CartSheet />
             </div>

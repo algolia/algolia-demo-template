@@ -83,6 +83,8 @@ import Image from "next/image";
 import { Product } from "@/lib/types/product";
 import { useCart } from "@/components/cart/cart-context";
 import { useUser } from "@/components/user/user-context";
+import { useSelection } from "@/components/selection/selection-context";
+import { Checkbox } from "@/components/ui/checkbox";
 import { PREFERENCE_METADATA, PreferenceKey, extractProductFieldValues } from "@/lib/types/user";
 import { Button } from "@/components/ui/button";
 import { Plus, Minus, Check, Sparkles } from "lucide-react";
@@ -362,6 +364,51 @@ function QuantityControls({
 }
 
 // ============================================================================
+// Selection Checkbox Component
+// ============================================================================
+
+interface SelectionCheckboxProps {
+  product: Product;
+  compact?: boolean;
+}
+
+function SelectionCheckbox({ product, compact = false }: SelectionCheckboxProps) {
+  const { isSelected, toggleSelection } = useSelection();
+  const productId = product.objectID;
+  const selected = isSelected(productId);
+
+  const handleToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleSelection({
+      objectID: productId,
+      title: product.title || "Untitled Product",
+      brand: product.brand,
+      price: product.price,
+      imageUrl: product.imageUrl,
+    });
+  };
+
+  const size = compact ? "h-4 w-4" : "h-5 w-5";
+
+  return (
+    <div
+      className="absolute top-2 left-2 z-10"
+      onClick={handleToggle}
+    >
+      <Checkbox
+        checked={selected}
+        className={cn(
+          size,
+          "bg-background/90 backdrop-blur-sm border-2",
+          selected && "border-primary"
+        )}
+      />
+    </div>
+  );
+}
+
+// ============================================================================
 // Product Card Component (Full Size)
 // ============================================================================
 
@@ -369,9 +416,11 @@ interface ProductCardProps {
   product: Product;
   showCartControls?: boolean;
   showBadges?: boolean;
+  selectable?: boolean;
 }
 
-export function ProductCard({ product, showCartControls = true, showBadges = true }: ProductCardProps) {
+export function ProductCard({ product, showCartControls = true, showBadges = true, selectable = false }: ProductCardProps) {
+  const { isSelected } = useSelection();
   const imageUrl = product.imageUrl || "";
   const productName = product.title || "Untitled Product";
   const productId = product.objectID;
@@ -395,16 +444,19 @@ export function ProductCard({ product, showCartControls = true, showBadges = tru
     product.categories?.lvl0?.[0];
 
   const smartGroupKey = getSmartGroupKey(product);
+  const selected = selectable && isSelected(productId);
 
   return (
     <Link
       href={`/products/${productId}`}
       className={cn(
         "border rounded-lg p-4 hover:shadow-lg transition-shadow cursor-pointer block relative",
-        smartGroupKey && "border-2 border-amber-400"
+        smartGroupKey && "border-2 border-amber-400",
+        selected && "border-2 border-primary"
       )}
     >
       <SmartGroupBadge product={product} />
+      {selectable && <SelectionCheckbox product={product} />}
       {showBadges && <ProductBadges product={product} />}
       {showCartControls && (
         <QuantityControls
@@ -473,9 +525,11 @@ interface ProductListItemProps {
   product: Product;
   showCartControls?: boolean;
   showBadges?: boolean;
+  selectable?: boolean;
 }
 
-export function ProductListItem({ product, showCartControls = true, showBadges = true }: ProductListItemProps) {
+export function ProductListItem({ product, showCartControls = true, showBadges = true, selectable = false }: ProductListItemProps) {
+  const { isSelected } = useSelection();
   const imageUrl = product.imageUrl || "";
   const productName = product.title || "Untitled Product";
   const productLink = `/products/${product.objectID}`;
@@ -494,6 +548,7 @@ export function ProductListItem({ product, showCartControls = true, showBadges =
     product.categories?.lvl0?.[0];
 
   const smartGroupKey = getSmartGroupKey(product);
+  const selected = selectable && isSelected(productId);
 
   if (!productId) {
     return null;
@@ -504,10 +559,12 @@ export function ProductListItem({ product, showCartControls = true, showBadges =
       href={productLink}
       className={cn(
         "group flex gap-4 border border-border rounded-lg overflow-hidden bg-background hover:shadow-lg transition-all duration-300 p-4 relative",
-        smartGroupKey && "border-2 border-amber-400"
+        smartGroupKey && "border-2 border-amber-400",
+        selected && "border-2 border-primary"
       )}
     >
       <SmartGroupBadge product={product} />
+      {selectable && <SelectionCheckbox product={product} />}
       {showBadges && <ProductBadges product={product} />}
       {showCartControls && (
         <QuantityControls

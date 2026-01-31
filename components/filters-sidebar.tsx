@@ -538,11 +538,80 @@ export function RangeFilter({
 export function PriceRangeFilter() {
   return (
     <RangeFilter
-      attribute="prezzo"
+      attribute="price"
       title="Price"
-      minPlaceholder="Min"
-      maxPlaceholder="Max"
+      minPlaceholder="Min €"
+      maxPlaceholder="Max €"
     />
+  );
+}
+
+export function CharacteristicsFilter() {
+  return (
+    <RefinementListFilter
+      attribute="characteristics"
+      title="Characteristics"
+      searchable
+      searchPlaceholder="Search characteristics..."
+      limit={10}
+      showMoreLimit={30}
+    />
+  );
+}
+
+export function IngredientsFilter() {
+  return (
+    <RefinementListFilter
+      attribute="ingredients"
+      title="Ingredients"
+      searchable
+      searchPlaceholder="Search ingredients..."
+      limit={10}
+      showMoreLimit={50}
+    />
+  );
+}
+
+export function FormatFilter() {
+  return (
+    <RefinementListFilter
+      attribute="format"
+      title="Format"
+      limit={10}
+      showMoreLimit={20}
+    />
+  );
+}
+
+export function InStockFilter() {
+  const { items, refine } = useRefinementList({
+    attribute: "inStock",
+  });
+  const [isExpanded, setIsExpanded] = useState(true);
+
+  const inStockItem = items.find((item) => item.value === "true");
+
+  if (!inStockItem) return null;
+
+  return (
+    <FilterSection
+      title="Availability"
+      isExpanded={isExpanded}
+      onToggle={() => setIsExpanded(!isExpanded)}
+    >
+      <label className="flex items-center gap-2 cursor-pointer group">
+        <Checkbox
+          checked={inStockItem.isRefined}
+          onCheckedChange={() => refine("true")}
+        />
+        <span className="text-sm flex-1 group-hover:text-primary transition-colors">
+          In Stock Only
+        </span>
+        <span className="text-xs text-muted-foreground">
+          ({inStockItem.count})
+        </span>
+      </label>
+    </FilterSection>
   );
 }
 
@@ -579,6 +648,7 @@ export function FiltersSidebar() {
   return (
     <aside className="space-y-4">
       <ForYouFilter />
+      <InStockFilter />
       <HierarchicalCategoryFilter
         attributes={[
           "hierarchicalCategories.lvl0",
@@ -589,7 +659,10 @@ export function FiltersSidebar() {
         title="Category"
       />
       <BrandFilter />
+      <FormatFilter />
       <PriceRangeFilter />
+      <CharacteristicsFilter />
+      <IngredientsFilter />
     </aside>
   );
 }

@@ -1,8 +1,9 @@
 import { useChat, type UIMessage } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState, useEffect } from 'react';
+import { useInstantSearch } from 'react-instantsearch';
 import {
-  resolveContextFromUrl,
+  resolveContextWithUiState,
   hydrateContext,
   makeContextSystemMessage,
 } from '@/components/sidepanel-agent-studio/lib/context-snapshot';
@@ -32,11 +33,11 @@ export type FollowUpQuestionsToolCall = {
 
 // Fallback suggestions to show in empty state or when generation fails
 export const FALLBACK_FOLLOW_UP_QUESTIONS = [
-  "Mostrami gli ingredienti di questo prodotto",
-  "Dimmi se questo prodotto è adatto al mio animale",
-  "Trova alternative a questo prodotto",
-  "Spiegami come si usa questo prodotto",
-  "Cerca promozioni disponibili",
+  "Muéstrame los ingredientes de este producto",
+  "Buscar suplementos de proteína",
+  "Ver opciones veganas disponibles",
+  "Comparar con productos similares",
+  "Explorar vitaminas y minerales",
 ];
 
 // Extract questions from assistant message parts
@@ -90,9 +91,14 @@ export function useFollowUpQuestions(config: FollowUpQuestionsConfig) {
     throw new Error('config is required for useFollowUpQuestions');
   }
 
+  const { indexUiState } = useInstantSearch();
+
   const [followUpQuestions, setFollowUpQuestions] = useState<string[]>([]);
   const lastProcessedExchangeIdRef = useRef<string | null>(null);
   const lastProcessedStateSigRef = useRef<string | null>(null);
+
+  // Conversation ID for tracking - generate fresh ID for each suggestion request
+  const conversationIdRef = useRef<string>(crypto.randomUUID());
 
   // Agent Studio completions endpoint (AI SDK v5 compatible + streaming)
   const apiUrl = useMemo(
@@ -111,8 +117,8 @@ export function useFollowUpQuestions(config: FollowUpQuestionsConfig) {
       },
       prepareSendMessagesRequest: async ({ messages, trigger, messageId }) => {
         try {
-          // Resolve context from current URL state
-          const baseCtx = resolveContextFromUrl();
+          // Resolve context using InstantSearch's clean uiState (avoids composition prefix issues)
+          const baseCtx = resolveContextWithUiState(indexUiState);
           // Hydrate with product data if on a product page
           const ctx = await hydrateContext(baseCtx);
           // Create context message
@@ -127,6 +133,7 @@ export function useFollowUpQuestions(config: FollowUpQuestionsConfig) {
               messages: [ctxMsg, ...messages],
               trigger,
               messageId,
+              conversationId: conversationIdRef.current,
             },
           };
         } catch (error) {
@@ -139,12 +146,13 @@ export function useFollowUpQuestions(config: FollowUpQuestionsConfig) {
               messages,
               trigger,
               messageId,
+              conversationId: conversationIdRef.current,
             },
           };
         }
       },
     });
-  }, [apiUrl, config.applicationId, config.apiKey]);
+  }, [apiUrl, config.applicationId, config.apiKey, indexUiState]);
 
   const chat = useChat({
     transport,
@@ -183,8 +191,10 @@ export function useFollowUpQuestions(config: FollowUpQuestionsConfig) {
       }
       lastProcessedExchangeIdRef.current = exchangeId;
 
-      // Clear previous questions
+      // Clear previous questions and messages, generate fresh conversation ID
       setFollowUpQuestions([]);
+      chat.setMessages?.([]);
+      conversationIdRef.current = crypto.randomUUID();
 
       // Build a summary of the conversation for the follow-up agent
       const conversationSummary = conversationHistory
@@ -199,7 +209,7 @@ export function useFollowUpQuestions(config: FollowUpQuestionsConfig) {
 
       // Send to follow-up agent
       chat.sendMessage({
-        text: `In base a questa conversazione, genera 3 suggerimenti brevi e azionabili che l'utente potrebbe dire dopo. Devono essere frasi che l'utente potrebbe scrivere, non domande:\n\n${conversationSummary}`,
+        text: `\n\n${conversationSummary}`,
       });
     },
     [chat]
@@ -214,8 +224,10 @@ export function useFollowUpQuestions(config: FollowUpQuestionsConfig) {
       }
       lastProcessedStateSigRef.current = stateSig;
 
-      // Clear previous questions
+      // Clear previous questions and messages, generate fresh conversation ID
       setFollowUpQuestions([]);
+      chat.setMessages?.([]);
+      conversationIdRef.current = crypto.randomUUID();
 
       if (process.env.NODE_ENV === 'development') {
         console.debug('[Suggestion Agent] Generating initial suggestions for state:', stateSig);
@@ -224,10 +236,10 @@ export function useFollowUpQuestions(config: FollowUpQuestionsConfig) {
       // Send to follow-up agent - context is injected via transport
       chat.sendMessage({
         text:
-          'Genera esattamente 3 suggerimenti brevi e azionabili che un utente potrebbe scrivere. ' +
-          'Devono essere frasi che l\'utente potrebbe dire, non domande. ' +
-          'Pertinenti al contesto della pagina/ricerca corrente. ' +
-          'Restituiscile SOLO tramite la chiamata al tool suggestedQuestions in input.questions.',
+          'Genera esattamente 3 suggerimenti brevi y accionables que un usuario podría escribir. ' +
+          'Deben ser frases que el usuario podría decir, no preguntas. ' +
+          'Relevantes al contexto de la página/búsqueda actual. ' +
+          'Devuélvelas SOLO mediante la llamada al tool suggestedQuestions en input.questions.',
       });
     },
     [chat]

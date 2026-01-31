@@ -10,4 +10,9 @@ export const ALGOLIA_CONFIG = {
   CATEGORIES_INDEX: process.env.NEXT_PUBLIC_ALGOLIA_CATEGORIES_INDEX || "",
   // Default to arcaplanet composition if using that index, otherwise empty
   COMPOSITION_ID: process.env.NEXT_PUBLIC_ALGOLIA_COMPOSITION_ID || "",
+  // Agent Studio configuration
+  AGENT_API_KEY: process.env.NEXT_PUBLIC_AGENT_API_KEY || "",
+  AGENT_ID: process.env.NEXT_PUBLIC_ALGOLIA_AGENT_ID || "",
+  SUGGESTION_AGENT_ID: process.env.NEXT_PUBLIC_ALGOLIA_SUGGESTION_AGENT_ID || "",
+  CHECKOUT_AGENT_ID: process.env.NEXT_PUBLIC_ALGOLIA_CHECKOUT_AGENT_ID || "",
 };

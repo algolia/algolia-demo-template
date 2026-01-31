@@ -12,6 +12,7 @@ import {
   MicIcon,
   MicOffIcon,
   Minimize2,
+  ShoppingCartIcon,
   SparklesIcon,
   SquarePen,
   ThumbsDown,
@@ -33,7 +34,7 @@ import {
   useState,
 } from "react";
 import { createPortal } from "react-dom";
-import { useSearchBox } from "react-instantsearch";
+import { useSearchBox, useInstantSearch } from "react-instantsearch";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -52,10 +53,12 @@ import {
 import { useUrlSuggestionTrigger } from "@/components/sidepanel-agent-studio/hooks/use-url-suggestion-trigger";
 import { useSidepanel } from "@/components/sidepanel-agent-studio/context/sidepanel-context";
 import { Product } from "@/lib/types/product";
+import { HealthClaim, isHealthClaim } from "@/lib/types/health-claim";
 import { useSpeechRecognition } from "@/hooks/use-speech-recognition";
 import { CompactProductListItem } from "@/components/ProductCard";
 import { getObjectsByIds } from "@/lib/getObjectByIDs";
 import { ALGOLIA_CONFIG } from "@/lib/algolia-config";
+import { HealthClaimsPreview } from "./health-claims-preview";
 
 // ============================================================================
 // Types
@@ -85,14 +88,36 @@ export interface SidepanelAskAIConfig {
 export interface AlgoliaSearchIndexTool {
   input: {
     query: string;
+    index?: string;
+    filters?: string;
+    facet_filters?: string[][];
+    number_of_results?: number;
   };
   output: {
     query: string;
+    filters?: string;
+    facet_filters?: string[][];
     hits: Product[];
+    nbHits?: number;
+    queryID?: string;
   };
 }
 
 export interface ShowItemsTool {
+  input: {
+    objectIDs: string[];
+    title?: string;
+    explanation?: string;
+  };
+  output: {
+    status: string;
+    products: Product[];
+    title?: string;
+    explanation?: string;
+  };
+}
+
+export interface AddToCartTool {
   input: {
     objectIDs: string[];
   };
@@ -108,6 +133,7 @@ export type Message = UIMessage<
   {
     algolia_search_index: AlgoliaSearchIndexTool;
     showItems: ShowItemsTool;
+    addToCart: AddToCartTool;
   }
 >;
 
@@ -116,6 +142,7 @@ export type AIMessagePart = UIMessagePart<
   {
     algolia_search_index: AlgoliaSearchIndexTool;
     showItems: ShowItemsTool;
+    addToCart: AddToCartTool;
   }
 >;
 
@@ -153,6 +180,25 @@ function escapeHtml(html: string): string {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
+}
+
+/**
+ * Formats facet_filters array into a readable string.
+ * Input: [["inStock:true"], ["categories.lvl1: Vitaminas", "categories.lvl1: Minerales"]]
+ * Output: "inStock:true AND (categories.lvl1: Vitaminas OR categories.lvl1: Minerales)"
+ */
+function formatFacetFilters(facetFilters: string[][] | undefined): string | null {
+  if (!facetFilters || facetFilters.length === 0) return null;
+
+  const formatted = facetFilters.map((group) => {
+    if (group.length === 1) {
+      return group[0];
+    }
+    // Multiple values in a group are OR'd together
+    return `(${group.join(" OR ")})`;
+  });
+
+  return formatted.join(" AND ");
 }
 
 function extractLinksFromMessage(message: Message | null): ExtractedLink[] {
@@ -427,11 +473,15 @@ const MemoizedMarkdown = memo(function MemoizedMarkdown({
 
 interface ShowItemsDisplayProps {
   products: Product[];
+  title?: string;
+  explanation?: string;
   isLoading?: boolean;
 }
 
 const ShowItemsDisplay = memo(function ShowItemsDisplay({
   products,
+  title,
+  explanation,
   isLoading,
 }: ShowItemsDisplayProps) {
   if (isLoading) {
@@ -451,10 +501,20 @@ const ShowItemsDisplay = memo(function ShowItemsDisplay({
 
   return (
     <div className="my-3">
+      {(title || explanation) && (
+        <div className="mb-3">
+          {title && (
+            <h4 className="font-semibold text-foreground text-sm mb-1">{title}</h4>
+          )}
+          {explanation && (
+            <p className="text-muted-foreground text-sm">{explanation}</p>
+          )}
+        </div>
+      )}
       <div className="grid gap-2">
         {products.map((product, index) => (
           <CompactProductListItem
-            key={product.objectID || product.productid || index}
+            key={product.objectID || index}
             product={product}
           />
         ))}
@@ -489,7 +549,7 @@ const SearchResultsPreview = memo(function SearchResultsPreview({
       try {
         const objectIDs = hits
           .slice(0, 3)
-          .map((hit) => hit.objectID || hit.productid)
+          .map((hit) => hit.objectID)
           .filter(Boolean) as string[];
 
         if (objectIDs.length === 0) {
@@ -530,7 +590,7 @@ const SearchResultsPreview = memo(function SearchResultsPreview({
       <div className="grid gap-3">
         {products.map((product) => (
           <CompactProductListItem
-            key={product.objectID || product.productid}
+            key={product.objectID}
             product={product}
           />
         ))}
@@ -630,8 +690,52 @@ const ChatWidget = memo(function ChatWidget({
   isFollowUpGenerating,
 }: ChatWidgetProps) {
   const { copyText } = useClipboard();
-  const { refine } = useSearchBox();
+  const { setIndexUiState } = useInstantSearch();
   const [copiedExchangeId, setCopiedExchangeId] = useState<string | null>(null);
+
+  // Apply search query and facet filters to InstantSearch in a single atomic update
+  const applySearchWithFilters = useCallback(
+    (query: string, facetFilters?: string[][]) => {
+      setIndexUiState((prevState) => {
+        const newState: typeof prevState = {
+          ...prevState,
+          query, // Set query directly in state
+        };
+
+        // Apply facet filters if present
+        if (facetFilters && facetFilters.length > 0) {
+          const refinementList: Record<string, string[]> = {};
+
+          // Convert facet_filters to refinementList format
+          // facet_filters: [["inStock:true"], ["categories.lvl1:Vitaminas", "categories.lvl1:Minerales"]]
+          for (const group of facetFilters) {
+            for (const filter of group) {
+              // Parse "facetName:value" format (note: value may contain colons)
+              const colonIndex = filter.indexOf(":");
+              if (colonIndex > 0) {
+                const facetName = filter.slice(0, colonIndex).trim();
+                const facetValue = filter.slice(colonIndex + 1).trim();
+                if (!refinementList[facetName]) {
+                  refinementList[facetName] = [];
+                }
+                if (!refinementList[facetName].includes(facetValue)) {
+                  refinementList[facetName].push(facetValue);
+                }
+              }
+            }
+          }
+
+          newState.refinementList = {
+            ...prevState.refinementList,
+            ...refinementList,
+          };
+        }
+
+        return newState;
+      });
+    },
+    [setIndexUiState]
+  );
   const copyResetTimeoutRef = useRef<number | null>(null);
   const [acknowledgedExchangeIds, setAcknowledgedExchangeIds] = useState<
     Set<string>
@@ -808,28 +912,46 @@ const ChatWidget = memo(function ChatWidget({
                               );
                             } else if (part.state === "input-available") {
                               const query = part.input?.query || "";
+                              const facetFilters = part.input?.facet_filters;
+                              const facetFiltersStr = formatFacetFilters(facetFilters);
+                              const filtersDisplay = part.input?.filters || facetFiltersStr;
                               return (
-                                <p
-                                  className="text-[0.95rem] flex my-2 gap-2 items-center text-muted-foreground"
+                                <div
+                                  className="text-[0.95rem] flex flex-col my-2 gap-1 text-muted-foreground"
                                   key={`${index}`}
                                 >
                                   <AnimatedShinyText>
                                     Looking for{" "}
                                     <button
                                       type="button"
-                                      onClick={() => refine(query)}
+                                      onClick={() => applySearchWithFilters(query, facetFilters)}
                                       className="bg-transparent text-muted-foreground underline decoration-2 underline-offset-4 cursor-pointer hover:text-foreground transition-colors"
                                     >
                                       &quot;{query}&quot;
                                     </button>
                                   </AnimatedShinyText>
-                                </p>
+                                  {filtersDisplay && (
+                                    <span className="text-xs text-muted-foreground/70 flex items-center gap-1">
+                                      <span>Filter:</span>
+                                      <code className="px-1.5 py-0.5 rounded bg-muted border border-border font-mono">
+                                        {filtersDisplay}
+                                      </code>
+                                    </span>
+                                  )}
+                                </div>
                               );
                             } else if (part.state === "output-available") {
                               const query = part.input?.query || "";
+                              const facetFilters = part.input?.facet_filters || part.output?.facet_filters;
+                              const facetFiltersStr = formatFacetFilters(facetFilters);
+                              const filtersDisplay = part.input?.filters || part.output?.filters || facetFiltersStr;
                               const hits = part.output?.hits || [];
                               const queryKey = `${exchange.id}-${index}`;
                               const isHovered = hoveredQueryIndex === queryKey;
+
+                              // Detect if results are health claims
+                              const isHealthClaimResults =
+                                hits.length > 0 && isHealthClaim(hits[0]);
 
                               const handleMouseEnter = () => {
                                 if (hoverTimeoutRef.current) {
@@ -847,12 +969,68 @@ const ChatWidget = memo(function ChatWidget({
                                 );
                               };
 
+                              // Render health claims differently
+                              if (isHealthClaimResults) {
+                                const healthClaims = hits as unknown as HealthClaim[];
+                                return (
+                                  <div
+                                    key={`${index}`}
+                                    className="text-[0.95rem] flex flex-col my-2 gap-1 text-green-600 dark:text-green-500"
+                                  >
+                                    <span className="flex items-center gap-1 flex-wrap">
+                                      Verified{" "}
+                                      <Popover
+                                        open={isHovered}
+                                        onOpenChange={(open) => {
+                                          if (!open) {
+                                            setHoveredQueryIndex(null);
+                                          }
+                                        }}
+                                      >
+                                        <PopoverTrigger asChild>
+                                          <button
+                                            type="button"
+                                            onMouseEnter={handleMouseEnter}
+                                            onMouseLeave={handleMouseLeave}
+                                            className="bg-transparent text-green-600 dark:text-green-500 underline decoration-1 underline-offset-4 cursor-pointer hover:text-green-700 dark:hover:text-green-400 transition-colors"
+                                          >
+                                            {hits.length} health claim
+                                            {hits.length !== 1 ? "s" : ""}
+                                          </button>
+                                        </PopoverTrigger>
+                                        <PopoverContent
+                                          className="w-[420px] max-h-[600px] overflow-y-auto p-4"
+                                          onMouseEnter={handleMouseEnter}
+                                          onMouseLeave={handleMouseLeave}
+                                          align="start"
+                                          side="bottom"
+                                        >
+                                          <HealthClaimsPreview
+                                            claims={healthClaims}
+                                          />
+                                        </PopoverContent>
+                                      </Popover>{" "}
+                                      for &quot;{query}&quot;
+                                    </span>
+                                    {filtersDisplay && (
+                                      <span className="text-xs text-green-600/70 dark:text-green-500/70 flex items-center gap-1">
+                                        <span>Filter:</span>
+                                        <code className="px-1.5 py-0.5 rounded bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 font-mono">
+                                          {filtersDisplay}
+                                        </code>
+                                      </span>
+                                    )}
+                                  </div>
+                                );
+                              }
+
+                              // Render product search results (existing behavior)
                               return (
-                                <p
+                                <div
                                   key={`${index}`}
-                                  className="text-[0.95rem] flex my-2 gap-2 items-center text-muted-foreground"
+                                  className="text-[0.95rem] flex flex-col my-2 gap-1 text-muted-foreground"
                                 >
-                                  <span>
+                                  <span className="flex items-center gap-1 flex-wrap">
                                     Searched for{" "}
                                     {hits.length > 0 ? (
                                       <Popover
@@ -866,7 +1044,7 @@ const ChatWidget = memo(function ChatWidget({
                                         <PopoverTrigger asChild>
                                           <button
                                             type="button"
-                                            onClick={() => refine(query)}
+                                            onClick={() => applySearchWithFilters(query, facetFilters)}
                                             onMouseEnter={handleMouseEnter}
                                             onMouseLeave={handleMouseLeave}
                                             className="bg-transparent text-muted-foreground underline decoration-1 underline-offset-4 cursor-pointer hover:text-foreground transition-colors"
@@ -883,14 +1061,14 @@ const ChatWidget = memo(function ChatWidget({
                                         >
                                           <SearchResultsPreview
                                             hits={hits}
-                                            onViewMore={() => refine(query)}
+                                            onViewMore={() => applySearchWithFilters(query, facetFilters)}
                                           />
                                         </PopoverContent>
                                       </Popover>
                                     ) : (
                                       <button
                                         type="button"
-                                        onClick={() => refine(query)}
+                                        onClick={() => applySearchWithFilters(query, facetFilters)}
                                         className="bg-transparent text-muted-foreground underline decoration-1 underline-offset-4 cursor-pointer hover:text-foreground transition-colors"
                                       >
                                         &quot;{query}&quot;
@@ -898,7 +1076,15 @@ const ChatWidget = memo(function ChatWidget({
                                     )}{" "}
                                     found {hits.length || "no"} results
                                   </span>
-                                </p>
+                                  {filtersDisplay && (
+                                    <span className="text-xs text-muted-foreground/70 flex items-center gap-1">
+                                      <span>Filter:</span>
+                                      <code className="px-1.5 py-0.5 rounded bg-muted border border-border font-mono">
+                                        {filtersDisplay}
+                                      </code>
+                                    </span>
+                                  )}
+                                </div>
                               );
                             } else if (part.state === "output-error") {
                               return (
@@ -926,10 +1112,14 @@ const ChatWidget = memo(function ChatWidget({
                               );
                             } else if (part.state === "output-available") {
                               const products = part.output?.products || [];
+                              const title = part.output?.title;
+                              const explanation = part.output?.explanation;
                               return (
                                 <ShowItemsDisplay
                                   key={`${index}`}
                                   products={products}
+                                  title={title}
+                                  explanation={explanation}
                                 />
                               );
                             } else if (part.state === "output-error") {
@@ -939,6 +1129,80 @@ const ChatWidget = memo(function ChatWidget({
                                   key={`${index}`}
                                 >
                                   Errore nel caricamento dei prodotti
+                                </p>
+                              );
+                            } else {
+                              return null;
+                            }
+                          } else if (part.type === "tool-addToCart") {
+                            if (
+                              part.state === "input-streaming" ||
+                              part.state === "input-available"
+                            ) {
+                              return (
+                                <div
+                                  key={`${index}`}
+                                  className="my-3 p-3 rounded-lg border border-border bg-muted/30"
+                                >
+                                  <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                                    <ShoppingCartIcon
+                                      size={16}
+                                      className="animate-pulse"
+                                    />
+                                    <AnimatedShinyText>
+                                      Adding to cart...
+                                    </AnimatedShinyText>
+                                  </div>
+                                </div>
+                              );
+                            } else if (part.state === "output-available") {
+                              const products = part.output?.products || [];
+                              return (
+                                <div
+                                  key={`${index}`}
+                                  className="my-3 p-3 rounded-lg border border-green-200 bg-green-50/50 dark:border-green-900 dark:bg-green-950/30"
+                                >
+                                  <div className="flex items-center gap-2 text-green-600 dark:text-green-500 text-sm font-medium mb-2">
+                                    <ShoppingCartIcon size={16} />
+                                    <span>
+                                      Added {products.length} item
+                                      {products.length !== 1 ? "s" : ""} to cart
+                                    </span>
+                                  </div>
+                                  <div className="grid gap-2">
+                                    {products.slice(0, 3).map((product) => (
+                                      <div
+                                        key={product.objectID}
+                                        className="flex items-center gap-2 text-sm"
+                                      >
+                                        {product.imageUrl && (
+                                          <img
+                                            src={product.imageUrl}
+                                            alt={product.title}
+                                            className="w-8 h-8 object-cover rounded"
+                                          />
+                                        )}
+                                        <span className="text-foreground truncate">
+                                          {product.title}
+                                        </span>
+                                      </div>
+                                    ))}
+                                    {products.length > 3 && (
+                                      <p className="text-xs text-muted-foreground">
+                                        +{products.length - 3} more item
+                                        {products.length - 3 !== 1 ? "s" : ""}
+                                      </p>
+                                    )}
+                                  </div>
+                                </div>
+                              );
+                            } else if (part.state === "output-error") {
+                              return (
+                                <p
+                                  className="text-[0.95rem] flex my-2 gap-2 items-center text-red-500"
+                                  key={`${index}`}
+                                >
+                                  Failed to add items to cart
                                 </p>
                               );
                             } else {
