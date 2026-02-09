@@ -93,6 +93,13 @@ export function useFollowUpQuestions(config: FollowUpQuestionsConfig) {
 
   const { indexUiState } = useInstantSearch();
 
+  // Keep a ref to always read the latest indexUiState at call time,
+  // avoiding stale closures in the memoized transport.
+  const indexUiStateRef = useRef(indexUiState);
+  useEffect(() => {
+    indexUiStateRef.current = indexUiState;
+  }, [indexUiState]);
+
   const [followUpQuestions, setFollowUpQuestions] = useState<string[]>([]);
   const lastProcessedExchangeIdRef = useRef<string | null>(null);
   const lastProcessedStateSigRef = useRef<string | null>(null);
@@ -115,7 +122,7 @@ export function useFollowUpQuestions(config: FollowUpQuestionsConfig) {
       prepareSendMessagesRequest: async ({ messages, trigger, messageId }) => {
         try {
           // Resolve context using InstantSearch's clean uiState (avoids composition prefix issues)
-          const baseCtx = resolveContextWithUiState(indexUiState);
+          const baseCtx = resolveContextWithUiState(indexUiStateRef.current);
           // Hydrate with product data if on a product page
           const ctx = await hydrateContext(baseCtx);
           // Create context message
@@ -147,7 +154,7 @@ export function useFollowUpQuestions(config: FollowUpQuestionsConfig) {
         }
       },
     });
-  }, [apiUrl, config.applicationId, config.apiKey, indexUiState]);
+  }, [apiUrl, config.applicationId, config.apiKey]);
 
   const chat = useChat({
     transport,
