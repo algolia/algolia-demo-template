@@ -37,9 +37,9 @@ export function UserProvider({ children }: { children: ReactNode }) {
    *
    * Example output:
    * [
-   *   "età.value:PUPPY<score=20>",
-   *   "brand:ROYAL CANIN<score=17>",
-   *   "categoryPageId:Cane > Cibo Secco<score=18>"
+   *   "categories.lvl0:Nutrición deportiva<score=20>",
+   *   "brand:Sport Series<score=17>",
+   *   "categories.lvl1:Proteínas<score=18>"
    * ]
    */
   const personalizationFilters = useMemo(() => {

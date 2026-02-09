@@ -8,7 +8,7 @@ import {
   useCurrentRefinements,
   useClearRefinements,
 } from "react-instantsearch";
-import { ChevronDown, X, Dog, Cat, Rabbit, Home } from "lucide-react";
+import { ChevronDown, X, HeartPulse, Dumbbell, Apple, ShoppingBag, FlaskConical, Sparkles, Percent } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -26,10 +26,13 @@ const CATEGORY_ICONS: Record<
   string,
   React.ComponentType<{ className?: string }>
 > = {
-  Cane: Dog,
-  Gatto: Cat,
-  "Piccoli Animali": Rabbit,
-  "Persona e Casa": Home,
+  "Salud y bienestar": HeartPulse,
+  "Nutrición deportiva": Dumbbell,
+  "Alimentación saludable": Apple,
+  "Accesorios": ShoppingBag,
+  "Ingredientes": FlaskConical,
+  "Especialidades": Sparkles,
+  "Promociones": Percent,
 };
 
 /**
@@ -55,9 +58,9 @@ interface ParsedPreference {
  *
  * Input format: "facetName:value<score=N>"
  * Examples:
- *   - "età.value:PUPPY<score=20>"
- *   - "brand:ROYAL CANIN<score=17>"
- *   - "hierarchicalCategories.lvl0:Gatto<score=20>"
+ *   - "categories.lvl0:Nutrición deportiva<score=20>"
+ *   - "brand:Sport Series<score=17>"
+ *   - "categories.lvl1:Proteínas<score=18>"
  *
  * @param filters - Array of personalization filter strings from UserContext
  * @returns Parsed preferences sorted by score (descending)
@@ -170,7 +173,7 @@ function ForYouFacetFilter({
  * apply filters matching their profile (e.g., age, brand, category preferences).
  *
  * Format: "Facet Name: Value (count)"
- * Example: "Age (Età): PUPPY (42)"
+ * Example: "Main Categories: Nutrición deportiva (42)"
  */
 export function ForYouFilter() {
   const { personalizationFilters, currentUser } = useUser();
