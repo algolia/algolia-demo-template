@@ -97,9 +97,6 @@ export function useFollowUpQuestions(config: FollowUpQuestionsConfig) {
   const lastProcessedExchangeIdRef = useRef<string | null>(null);
   const lastProcessedStateSigRef = useRef<string | null>(null);
 
-  // Conversation ID for tracking - generate fresh ID for each suggestion request
-  const conversationIdRef = useRef<string>(crypto.randomUUID());
-
   // Agent Studio completions endpoint (AI SDK v5 compatible + streaming)
   const apiUrl = useMemo(
     () =>
@@ -133,7 +130,6 @@ export function useFollowUpQuestions(config: FollowUpQuestionsConfig) {
               messages: [ctxMsg, ...messages],
               trigger,
               messageId,
-              conversationId: conversationIdRef.current,
             },
           };
         } catch (error) {
@@ -146,7 +142,6 @@ export function useFollowUpQuestions(config: FollowUpQuestionsConfig) {
               messages,
               trigger,
               messageId,
-              conversationId: conversationIdRef.current,
             },
           };
         }
@@ -191,10 +186,9 @@ export function useFollowUpQuestions(config: FollowUpQuestionsConfig) {
       }
       lastProcessedExchangeIdRef.current = exchangeId;
 
-      // Clear previous questions and messages, generate fresh conversation ID
+      // Clear previous questions and messages
       setFollowUpQuestions([]);
       chat.setMessages?.([]);
-      conversationIdRef.current = crypto.randomUUID();
 
       // Build a summary of the conversation for the follow-up agent
       const conversationSummary = conversationHistory
@@ -224,10 +218,9 @@ export function useFollowUpQuestions(config: FollowUpQuestionsConfig) {
       }
       lastProcessedStateSigRef.current = stateSig;
 
-      // Clear previous questions and messages, generate fresh conversation ID
+      // Clear previous questions and messages
       setFollowUpQuestions([]);
       chat.setMessages?.([]);
-      conversationIdRef.current = crypto.randomUUID();
 
       if (process.env.NODE_ENV === 'development') {
         console.debug('[Suggestion Agent] Generating initial suggestions for state:', stateSig);

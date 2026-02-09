@@ -297,7 +297,6 @@ export async function hydrateWithUserProfile(
  */
 export function makeContextSystemMessage(ctx: ContextSnapshot) {
   return {
-    id: `ctx-${Date.now()}`,
     role: 'user' as const,
     parts: [
       {

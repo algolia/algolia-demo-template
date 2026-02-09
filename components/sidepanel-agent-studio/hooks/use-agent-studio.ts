@@ -82,9 +82,6 @@ export function useAgentStudio(config: AgentStudioConfig) {
     indexUiStateRef.current = indexUiState;
   }, [indexUiState]);
 
-  // Conversation ID for tracking in Algolia Agent Studio dashboard
-  const conversationIdRef = useRef<string>(crypto.randomUUID());
-
   // Agent Studio completions endpoint (AI SDK v5 compatible + streaming)
   const apiUrl = useMemo(
     () =>
@@ -133,7 +130,6 @@ export function useAgentStudio(config: AgentStudioConfig) {
               messages: [ctxMsg, ...messages],
               trigger,
               messageId,
-              conversationId: conversationIdRef.current,
             },
           };
         } catch (error) {
@@ -146,7 +142,6 @@ export function useAgentStudio(config: AgentStudioConfig) {
               messages,
               trigger,
               messageId,
-              conversationId: conversationIdRef.current,
             },
           };
         }
@@ -246,9 +241,8 @@ export function useAgentStudio(config: AgentStudioConfig) {
   const isGenerating =
     chat.status === 'submitted' || chat.status === 'streaming';
 
-  // Reset conversation ID when starting a new conversation
+  // Reset conversation state
   const resetConversation = useCallback(() => {
-    conversationIdRef.current = crypto.randomUUID();
     chat.setMessages?.([]);
   }, [chat]);
 
@@ -256,6 +250,5 @@ export function useAgentStudio(config: AgentStudioConfig) {
     ...chat,
     isGenerating,
     resetConversation,
-    conversationId: conversationIdRef.current,
   };
 }
