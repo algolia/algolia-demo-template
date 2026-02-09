@@ -9,18 +9,19 @@ import {
   useConfigure,
   useSearchBox,
 } from "react-instantsearch";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Product } from "@/lib/types/product";
 import { ProductCard, ProductListItem } from "@/components/ProductCard";
 import { ProductToolbar } from "@/components/ProductToolbar";
 import { FiltersSidebar, ActiveFilters } from "@/components/filters-sidebar";
+import { useSidepanel } from "@/components/sidepanel-agent-studio/context/sidepanel-context";
 
 // ============================================================================
 // Product Grid
 // ============================================================================
 
-function ProductGrid({ viewMode }: { viewMode: "grid" | "list" }) {
+function ProductGrid({ viewMode, compact }: { viewMode: "grid" | "list"; compact?: boolean }) {
   const { results } = useHits();
   const hits = (results?.hits || []) as unknown as Product[];
 
@@ -46,7 +47,7 @@ function ProductGrid({ viewMode }: { viewMode: "grid" | "list" }) {
   }
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+    <div className={`grid grid-cols-2 md:grid-cols-3 ${compact ? "" : "xl:grid-cols-4"} gap-4`}>
       {hits.map((hit) => (
         <ProductCard key={hit.objectID} product={hit} />
       ))}
@@ -109,7 +110,24 @@ function CategoryContent({
   categoryPath: string[];
 }) {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [filtersOpen, setFiltersOpen] = useState(true);
+  const { isSidepanelOpen } = useSidepanel();
+  const userToggledRef = useRef(false);
   const categoryName = categoryPath[categoryPath.length - 1] || "All Products";
+
+  // Auto-collapse filters when sidepanel opens, restore when it closes
+  useEffect(() => {
+    if (isSidepanelOpen) {
+      setFiltersOpen(false);
+    } else if (!userToggledRef.current) {
+      setFiltersOpen(true);
+    }
+  }, [isSidepanelOpen]);
+
+  const toggleFilters = () => {
+    userToggledRef.current = true;
+    setFiltersOpen((prev) => !prev);
+  };
 
   // Build the hierarchical filter based on category depth
   // Level 0: "Salud y bienestar" -> hierarchicalCategories.lvl0:"Salud y bienestar"
@@ -173,20 +191,42 @@ function CategoryContent({
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 pb-16">
         <div className="flex gap-8">
-          {/* Desktop Sidebar */}
-          <div className="hidden lg:block w-64 shrink-0">
-            <FiltersSidebar />
+          {/* Desktop Sidebar - collapsible */}
+          <div
+            className={`hidden lg:block shrink-0 transition-all duration-300 ease-in-out overflow-hidden ${
+              filtersOpen ? "w-64" : "w-0"
+            }`}
+          >
+            <div className="w-64">
+              <FiltersSidebar />
+            </div>
           </div>
 
           {/* Product Listing */}
           <div className="flex-1 min-w-0">
             <ActiveFilters />
-            <ProductToolbar
-              viewMode={viewMode}
-              setViewMode={setViewMode}
-              sidebar={<FiltersSidebar />}
-            />
-            <ProductGrid viewMode={viewMode} />
+            <div className="flex items-center gap-2">
+              <button
+                onClick={toggleFilters}
+                className="hidden lg:flex items-center gap-1.5 px-2 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-muted"
+                aria-label={filtersOpen ? "Hide filters" : "Show filters"}
+              >
+                {filtersOpen ? (
+                  <PanelLeftClose className="w-4 h-4" />
+                ) : (
+                  <PanelLeftOpen className="w-4 h-4" />
+                )}
+                <span>{filtersOpen ? "Hide filters" : "Filters"}</span>
+              </button>
+              <div className="flex-1">
+                <ProductToolbar
+                  viewMode={viewMode}
+                  setViewMode={setViewMode}
+                  sidebar={<FiltersSidebar />}
+                />
+              </div>
+            </div>
+            <ProductGrid viewMode={viewMode} compact={isSidepanelOpen} />
             <Pagination />
           </div>
         </div>

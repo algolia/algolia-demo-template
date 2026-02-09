@@ -30,17 +30,16 @@ export default function ProductPage({ product }: ProductPageProps) {
   const [isWishlisted, setIsWishlisted] = useState(false);
   const { addItem } = useCart();
 
-  const images = product.images || [];
-  const productName =
-    product.productname || product.producttitle || "Untitled Product";
-  const categories = product.categories || [];
+  const images = product.imageUrl ? [product.imageUrl] : [];
+  const productName = product.title || "Untitled Product";
+  const categoryList = product.categories?.lvl0 || [];
 
   // Price and discount calculations
-  const price = product.fullSellingPrice || product.price || 0;
-  const originalPrice = product.listPrice || product.priceWithoutDiscount || 0;
+  const price = product.price || 0;
+  const originalPrice = product.normalPrice || 0;
   const hasDiscount = originalPrice > price && price > 0;
   const discountPercentage = hasDiscount
-    ? Math.round(((originalPrice - price) / originalPrice) * 100)
+    ? product.discountPercentage || Math.round(((originalPrice - price) / originalPrice) * 100)
     : 0;
 
   const nextImage = () => {
@@ -55,14 +54,14 @@ export default function ProductPage({ product }: ProductPageProps) {
   const decrementQuantity = () => setQuantity((q) => Math.max(1, q - 1));
 
   const handleAddToCart = () => {
-    const productId = product.objectID || product.productid || product.productreference || "";
+    const productId = product.objectID || product.id || product.sku || "";
     if (!productId) return;
 
     // Extract category - prefer lvl1 for a good balance of specificity
     const category =
-      product.hierarchicalCategories?.lvl1 ||
-      product.hierarchicalCategories?.lvl0 ||
-      product.categories?.[0];
+      product.hierarchicalCategories?.lvl1?.[0] ||
+      product.hierarchicalCategories?.lvl0?.[0] ||
+      product.categories?.lvl0?.[0];
 
     addItem({
       id: productId,
@@ -77,20 +76,6 @@ export default function ProductPage({ product }: ProductPageProps) {
 
   const specifications = extractSpecifications(product);
 
-  // Extract HTML content from object fields
-  const getHtmlContent = (field: string | Record<string, unknown> | undefined): string | null => {
-    if (!field) return null;
-    if (typeof field === 'string') return field;
-    if (typeof field === 'object' && !Array.isArray(field)) {
-      const value = Object.values(field)[0];
-      return typeof value === 'string' ? value : null;
-    }
-    return null;
-  };
-
-  const dosaggiContent = getHtmlContent(product.dosaggio);
-  const additionalContent = getHtmlContent(product.additional);
-
   return (
     <div className="min-h-screen bg-background">
       {/* Breadcrumbs */}
@@ -101,7 +86,7 @@ export default function ProductPage({ product }: ProductPageProps) {
               Home
             </Link>
           </li>
-          {categories.map((category, idx) => (
+          {categoryList.map((category, idx) => (
             <li key={idx} className="flex items-center gap-2">
               <span>/</span>
               <Link
@@ -219,9 +204,9 @@ export default function ProductPage({ product }: ProductPageProps) {
             </h1>
 
             {/* Product ID */}
-            {(product.productid || product.productreference) && (
+            {(product.sku || product.id) && (
               <p className="text-sm text-muted-foreground">
-                SKU: {product.productid || product.productreference}
+                SKU: {product.sku || product.id}
               </p>
             )}
 
@@ -252,9 +237,9 @@ export default function ProductPage({ product }: ProductPageProps) {
             )}
 
             {/* Short Description */}
-            {product.metatagdescription && (
+            {product.shortDescription && (
               <p className="text-muted-foreground leading-relaxed">
-                {product.metatagdescription}
+                {product.shortDescription}
               </p>
             )}
 
@@ -282,7 +267,7 @@ export default function ProductPage({ product }: ProductPageProps) {
               {/* Add to Cart Button */}
               <Button size="lg" className="flex-1 gap-2" onClick={handleAddToCart}>
                 <ShoppingCart className="w-5 h-5" />
-                Aggiungi al Carrello
+                Añadir al carrito
               </Button>
 
               {/* Wishlist Button */}
@@ -349,27 +334,6 @@ export default function ProductPage({ product }: ProductPageProps) {
           </section>
         )}
 
-        {/* Dosaggio - Full width below both columns */}
-        {dosaggiContent && (
-          <section className="mt-8 pt-8 border-t border-border">
-            <h2 className="text-xl font-semibold mb-4">Dosaggio (Dosage)</h2>
-            <div
-              className="prose prose-sm max-w-none text-muted-foreground [&_table]:border-collapse [&_table]:w-full [&_td]:border [&_td]:border-border [&_td]:px-3 [&_td]:py-2 [&_th]:border [&_th]:border-border [&_th]:px-3 [&_th]:py-2 [&_th]:bg-muted"
-              dangerouslySetInnerHTML={{ __html: dosaggiContent }}
-            />
-          </section>
-        )}
-
-        {/* Additional Information - Full width below both columns */}
-        {additionalContent && (
-          <section className="mt-8 pt-8 border-t border-border">
-            <h2 className="text-xl font-semibold mb-4">Additional Information</h2>
-            <div
-              className="prose prose-sm max-w-none text-muted-foreground"
-              dangerouslySetInnerHTML={{ __html: additionalContent }}
-            />
-          </section>
-        )}
       </main>
     </div>
   );
@@ -381,34 +345,20 @@ function extractSpecifications(
 ): { label: string; value: string }[] {
   const specs: { label: string; value: string }[] = [];
 
-  const addSpec = (label: string, value: unknown) => {
-    if (value && typeof value === "string" && value.trim()) {
-      specs.push({ label, value: value.trim() });
-    } else if (value && typeof value === "object" && !Array.isArray(value)) {
-      const val = Object.values(value)[0];
-      if (typeof val === "string" && val.trim()) {
-        specs.push({ label, value: val.trim() });
-      }
-    } else if (Array.isArray(value) && value.length > 0) {
-      const stringValues = value
-        .map((v) => (typeof v === "string" ? v : ""))
-        .filter(Boolean);
-      if (stringValues.length > 0) {
-        specs.push({ label, value: stringValues.join(", ") });
-      }
-    }
-  };
-
-  addSpec("Razza (Breed)", product.razza);
-  addSpec("Età (Age)", product.età);
-  addSpec("Peso (Weight)", product.peso);
-  addSpec("Taglia (Size)", product.taglia);
-  // Dosaggio is rendered separately as it contains HTML tables
-  addSpec("Caratteristica (Features)", product.caratteristica);
-  addSpec("Tipo (Type)", product.tipo);
-
   if (product.brand) {
     specs.push({ label: "Brand", value: product.brand });
+  }
+  if (product.format) {
+    specs.push({ label: "Format", value: product.format });
+  }
+  if (product.characteristics?.length > 0) {
+    specs.push({ label: "Characteristics", value: product.characteristics.join(", ") });
+  }
+  if (product.ingredients?.length > 0) {
+    specs.push({ label: "Ingredients", value: product.ingredients.join(", ") });
+  }
+  if (product.productType) {
+    specs.push({ label: "Type", value: product.productType });
   }
 
   return specs;

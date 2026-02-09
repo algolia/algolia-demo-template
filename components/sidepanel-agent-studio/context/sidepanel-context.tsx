@@ -5,6 +5,7 @@ import {
   useContext,
   useCallback,
   useRef,
+  useState,
   type ReactNode,
 } from "react";
 
@@ -20,6 +21,10 @@ interface SidepanelContextValue {
   openSidepanel: (message?: string) => void;
   closeSidepanel: () => void;
   sendMessage: (message: string) => void;
+  /** Reactive boolean tracking whether the sidepanel is currently open */
+  isSidepanelOpen: boolean;
+  /** Called by the sidepanel component to sync its open state */
+  notifyOpenChange: (isOpen: boolean) => void;
 }
 
 const SidepanelContext = createContext<SidepanelContextValue | null>(null);
@@ -30,6 +35,7 @@ interface SidepanelProviderProps {
 
 export function SidepanelProvider({ children }: SidepanelProviderProps) {
   const controlsRef = useRef<SidepanelControls | null>(null);
+  const [isSidepanelOpen, setIsSidepanelOpen] = useState(false);
 
   const register = useCallback((controls: SidepanelControls) => {
     controlsRef.current = controls;
@@ -38,6 +44,10 @@ export function SidepanelProvider({ children }: SidepanelProviderProps) {
         controlsRef.current = null;
       }
     };
+  }, []);
+
+  const notifyOpenChange = useCallback((isOpen: boolean) => {
+    setIsSidepanelOpen(isOpen);
   }, []);
 
   const openSidepanel = useCallback(
@@ -68,6 +78,8 @@ export function SidepanelProvider({ children }: SidepanelProviderProps) {
         openSidepanel,
         closeSidepanel,
         sendMessage,
+        isSidepanelOpen,
+        notifyOpenChange,
       }}
     >
       {children}

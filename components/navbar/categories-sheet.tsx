@@ -380,7 +380,7 @@ export function CategoriesSheet() {
             <SheetHeader className="border-b p-4">
               <div className="flex items-center justify-between">
                 {isAtRoot ? (
-                  <SheetTitle>Categorie</SheetTitle>
+                  <SheetTitle>Categorías</SheetTitle>
                 ) : (
                   <div className="flex items-center gap-2">
                     <Button
@@ -450,7 +450,7 @@ export function CategoriesSheet() {
                       href={buildPath(mobilePath.length, mobilePath[mobilePath.length - 1])}
                       className="flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-primary transition-colors hover:bg-muted"
                     >
-                      <span>Vedi tutti</span>
+                      <span>Ver todo</span>
                       {currentCategory?.count && (
                         <span className="text-xs text-muted-foreground">
                           {currentCategory.count}
@@ -535,7 +535,7 @@ export function CategoriesSheet() {
           <div className="flex w-60 shrink-0 flex-col border-r">
             <SheetHeader className="border-b p-4">
               <div className="flex items-center justify-between">
-                <SheetTitle>Categorie</SheetTitle>
+                <SheetTitle>Categorías</SheetTitle>
                 <SheetClose asChild>
                   <Button variant="ghost" size="icon-sm" className="h-8 w-8">
                     <X className="h-4 w-4" />

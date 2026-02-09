@@ -1719,10 +1719,11 @@ export default function SidepanelExperience(config: AgentStudioConfig) {
   );
   const sidepanelContext = useSidepanel();
 
-  // Keep ref in sync with state
+  // Keep ref and context in sync with state
   useEffect(() => {
     isOpenRef.current = isOpen;
-  }, [isOpen]);
+    sidepanelContext.notifyOpenChange(isOpen);
+  }, [isOpen, sidepanelContext]);
 
   const { messages, setMessages, error, isGenerating, sendMessage } =
     useAgentStudio({

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useInfiniteHits, useSearchBox, useInstantSearch } from "react-instantsearch";
 import { algoliasearch } from "algoliasearch";
 import Image from "next/image";
+import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { Product } from "@/lib/types/product";
 import { ProductCard, ProductListItem } from "@/components/ProductCard";
 import { ProductToolbar } from "@/components/ProductToolbar";
@@ -11,6 +12,7 @@ import { FiltersSidebar, ActiveFilters } from "@/components/filters-sidebar";
 import { Configure } from "react-instantsearch";
 import { ALGOLIA_CONFIG } from "@/lib/algolia-config";
 import { AgentSuggestions } from "@/components/agent-suggestions";
+import { useSidepanel } from "@/components/sidepanel-agent-studio/context/sidepanel-context";
 
 // Lazy-initialize search client to avoid issues during SSR/build
 let searchClient: ReturnType<typeof algoliasearch> | null = null;
@@ -194,7 +196,7 @@ function RuleBanner() {
   );
 }
 
-function CustomHits({ viewMode }: { viewMode: "grid" | "list" }) {
+function CustomHits({ viewMode, compact }: { viewMode: "grid" | "list"; compact?: boolean }) {
   const { hits, showMore, isLastPage } = useInfiniteHits<Product>();
   const sentinelRef = useRef<HTMLDivElement>(null);
 
@@ -243,7 +245,7 @@ function CustomHits({ viewMode }: { viewMode: "grid" | "list" }) {
 
   return (
     <div className="ais-InfiniteHits">
-      <div className="ais-InfiniteHits-list grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className={`ais-InfiniteHits-list grid grid-cols-2 ${compact ? "lg:grid-cols-3" : "lg:grid-cols-4"} gap-4`}>
         {hits.map((hit, index) => (
           <ProductCard key={`${hit.objectID}-${index}`} product={hit} selectable />
         ))}
@@ -256,6 +258,23 @@ function CustomHits({ viewMode }: { viewMode: "grid" | "list" }) {
 export default function SearchPage() {
   const { query, refine } = useSearchBox();
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [filtersOpen, setFiltersOpen] = useState(true);
+  const { isSidepanelOpen } = useSidepanel();
+  const userToggledRef = useRef(false);
+
+  // Auto-collapse filters when sidepanel opens, restore when it closes
+  useEffect(() => {
+    if (isSidepanelOpen) {
+      setFiltersOpen(false);
+    } else if (!userToggledRef.current) {
+      setFiltersOpen(true);
+    }
+  }, [isSidepanelOpen]);
+
+  const toggleFilters = () => {
+    userToggledRef.current = true;
+    setFiltersOpen((prev) => !prev);
+  };
 
   const handleSuggestionClick = (suggestionQuery: string) => {
     refine(suggestionQuery);
@@ -296,22 +315,44 @@ export default function SearchPage() {
       />
 
       <div className="flex gap-8">
-        {/* Desktop Sidebar */}
-        <div className="hidden lg:block w-64 shrink-0">
-          <FiltersSidebar />
+        {/* Desktop Sidebar - collapsible */}
+        <div
+          className={`hidden lg:block shrink-0 transition-all duration-300 ease-in-out overflow-hidden ${
+            filtersOpen ? "w-64" : "w-0"
+          }`}
+        >
+          <div className="w-64">
+            <FiltersSidebar />
+          </div>
         </div>
 
         {/* Product Listing */}
         <div className="flex-1 min-w-0">
           <RuleBanner />
           <ActiveFilters />
-          <ProductToolbar
-            viewMode={viewMode}
-            setViewMode={setViewMode}
-            sidebar={<FiltersSidebar />}
-          />
+          <div className="flex items-center gap-2">
+            <button
+              onClick={toggleFilters}
+              className="hidden lg:flex items-center gap-1.5 px-2 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-muted"
+              aria-label={filtersOpen ? "Hide filters" : "Show filters"}
+            >
+              {filtersOpen ? (
+                <PanelLeftClose className="w-4 h-4" />
+              ) : (
+                <PanelLeftOpen className="w-4 h-4" />
+              )}
+              <span>{filtersOpen ? "Hide filters" : "Filters"}</span>
+            </button>
+            <div className="flex-1">
+              <ProductToolbar
+                viewMode={viewMode}
+                setViewMode={setViewMode}
+                sidebar={<FiltersSidebar />}
+              />
+            </div>
+          </div>
           <Configure getRankingInfo={true} />
-          <CustomHits viewMode={viewMode} />
+          <CustomHits viewMode={viewMode} compact={isSidepanelOpen} />
         </div>
       </div>
     </div>
