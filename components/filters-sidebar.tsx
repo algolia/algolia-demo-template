@@ -259,13 +259,22 @@ export function RefinementListFilter({
   defaultExpanded = true,
   maxHeight = "max-h-60",
 }: RefinementListFilterProps) {
-  const { items, refine, searchForItems } = useRefinementList({
+  const { items, refine } = useRefinementList({
     attribute,
     limit,
     showMore: true,
     showMoreLimit,
   });
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Client-side filtering instead of searchForItems (which calls
+  // searchForFacetValues and fails with the Composition API)
+  const filteredItems = searchQuery
+    ? items.filter((item) =>
+        item.label.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : items;
 
   return (
     <FilterSection
@@ -277,12 +286,13 @@ export function RefinementListFilter({
         <Input
           type="search"
           placeholder={searchPlaceholder}
-          onChange={(e) => searchForItems(e.target.value)}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
           className="mb-3 h-9 text-sm"
         />
       )}
       <div className={`space-y-2 ${maxHeight} overflow-y-auto`}>
-        {items.map((item) => (
+        {filteredItems.map((item) => (
           <label
             key={item.value}
             className="flex items-center gap-2 cursor-pointer group"
