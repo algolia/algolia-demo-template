@@ -312,42 +312,53 @@ async function main() {
   await client.setSettings({
     indexName: INDEX_NAME,
     indexSettings: {
-      // Searchable attributes configuration:
-      // - Order defines priority: attributes higher in the list are more relevant
-      // - "ordered" (default): matches at the beginning of the attribute rank higher
-      // - "unordered()": match position doesn't affect ranking
-      // - Comma-separated attributes on the same line have equal priority (always unordered)
-      //
-      // Strategy:
-      // - title is ordered: "Protein Bar" should rank higher than "Bar Protein Mix" for query "protein"
-      // - All other attributes are unordered: match position doesn't matter for brand, description, etc.
       searchableAttributes: [
-        "unordered(brand)",             // Brand is important but position doesn't matter
-        "unordered(titleEn)",           // English title fallback
-        "title",                        // Highest priority, ordered (beginning matches rank higher)
-        "unordered(categories.lvl0), unordered(categories.lvl1), unordered(categories.lvl2)", // Same priority
-        "unordered(characteristics), unordered(ingredients)", // Same priority - detailed attributes
-        "unordered(shortDescription)",  // Product summary
-        "unordered(description)",       // Lowest priority - long text, prone to noise
-        "unordered(sku)",               // SKU for exact product lookups
+        "categories.lvl1,categories.lvl2,categories.lvl0",
+        "unordered(brand)",
+        "titleEn",
+        "title",
+        "unordered(characteristics)",
+        "unordered(ingredients)",
+        "unordered(sku)",
+        "unordered(id)",
+        "unordered(shortDescription)",
       ],
       attributesForFaceting: [
         "searchable(brand)",
         "searchable(categories.lvl0)",
         "searchable(categories.lvl1)",
         "searchable(categories.lvl2)",
-        "searchable(hierarchicalCategories.lvl0)",
-        "searchable(hierarchicalCategories.lvl1)",
-        "searchable(hierarchicalCategories.lvl2)",
-        "searchable(hierarchicalCategories.lvl3)",
         "characteristics",
-        "ingredients",
         "format",
-        "inStock",
+        "hierarchicalCategories.lvl0",
+        "hierarchicalCategories.lvl1",
+        "searchable(hierarchicalCategories.lvl2)",
+        "hierarchicalCategories.lvl3",
+        "ingredients",
         "filterOnly(price)",
         "filterOnly(rating)",
       ],
       customRanking: ["desc(inStock)", "desc(rating)", "desc(reviewCount)"],
+      ranking: [
+        "typo",
+        "geo",
+        "words",
+        "filters",
+        "attribute",
+        "proximity",
+        "exact",
+        "custom",
+      ],
+      ignorePlurals: ["es"],
+      indexLanguages: ["es"],
+      queryLanguages: ["es"],
+      removeStopWords: ["es"],
+      removeWordsIfNoResults: "allOptional",
+      mode: "neuralSearch",
+      semanticSearch: {
+        eventSources: [INDEX_NAME],
+        neuralSearchPreset: "default",
+      },
       attributesToRetrieve: [
         "objectID",
         "id",
