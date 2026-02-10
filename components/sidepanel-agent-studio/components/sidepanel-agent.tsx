@@ -6,12 +6,14 @@ import {
   ArrowUpIcon,
   BrainIcon,
   CheckIcon,
+  ChevronDown,
   CopyIcon,
   Link2Icon,
   Maximize2,
   MicIcon,
   MicOffIcon,
   Minimize2,
+  SearchIcon,
   ShoppingCartIcon,
   SparklesIcon,
   SquarePen,
@@ -609,6 +611,115 @@ const SearchResultsPreview = memo(function SearchResultsPreview({
 });
 
 // ============================================================================
+// Collapsible Search Group (groups 2+ consecutive search tool calls)
+// ============================================================================
+
+const CollapsibleSearchGroup = memo(function CollapsibleSearchGroup({
+  queries,
+  children,
+}: {
+  queries: string[];
+  children: React.ReactNode;
+}) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  return (
+    <div className="my-1">
+      <button
+        type="button"
+        onClick={() => setIsExpanded((prev) => !prev)}
+        className="flex items-start gap-1.5 text-[0.85rem] text-muted-foreground hover:text-foreground transition-colors cursor-pointer py-0.5 text-left"
+      >
+        <ChevronDown
+          size={14}
+          className={`shrink-0 mt-0.5 transition-transform duration-200 ${
+            isExpanded ? "" : "-rotate-90"
+          }`}
+        />
+        <SearchIcon size={12} className="shrink-0 mt-0.5" />
+        <span className="min-w-0">
+          {queries.length} searches
+          {!isExpanded && queries.length > 0 && (
+            <span className="text-muted-foreground/60">
+              {" — "}
+              {queries.map((q) => `"${q}"`).join(", ")}
+            </span>
+          )}
+        </span>
+      </button>
+      {isExpanded && (
+        <div className="ml-5 mt-1 border-l-2 border-border pl-3">
+          {children}
+        </div>
+      )}
+    </div>
+  );
+});
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+function groupConsecutiveSearches(
+  elements: React.ReactNode[],
+  parts: any[]
+): React.ReactNode[] {
+  // Fast path: check if there are 2+ consecutive search parts
+  let consecutive = 0;
+  let hasGroup = false;
+  for (let i = 0; i < parts.length; i++) {
+    const p = parts[i];
+    if (typeof p !== "string" && p?.type === "tool-algolia_search_index") {
+      consecutive++;
+      if (consecutive >= 2) {
+        hasGroup = true;
+        break;
+      }
+    } else {
+      consecutive = 0;
+    }
+  }
+  if (!hasGroup) return elements;
+
+  const result: React.ReactNode[] = [];
+  let i = 0;
+  while (i < elements.length) {
+    const p = parts[i];
+    if (typeof p !== "string" && p?.type === "tool-algolia_search_index") {
+      const start = i;
+      const queries: string[] = [];
+      while (i < elements.length) {
+        const curr = parts[i];
+        if (
+          typeof curr !== "string" &&
+          curr?.type === "tool-algolia_search_index"
+        ) {
+          const q = curr.input?.query || curr.output?.query || "";
+          if (q) queries.push(q);
+          i++;
+        } else {
+          break;
+        }
+      }
+      if (i - start >= 2) {
+        result.push(
+          <CollapsibleSearchGroup
+            key={`search-group-${start}`}
+            queries={queries}
+          >
+            {elements.slice(start, i)}
+          </CollapsibleSearchGroup>
+        );
+      } else {
+        result.push(elements[start]);
+      }
+    } else {
+      result.push(elements[i]);
+      i++;
+    }
+  }
+  return result;
+}
+/* eslint-enable @typescript-eslint/no-explicit-any */
+
+// ============================================================================
 // Follow-up Questions Component
 // ============================================================================
 
@@ -871,7 +982,7 @@ const ChatWidget = memo(function ChatWidget({
                   {exchange.assistantMessage ? (
                     <>
                       <div className="text-foreground">
-                        {exchange.assistantMessage.parts.map((part, index) => {
+                        {groupConsecutiveSearches(exchange.assistantMessage.parts.map((part, index) => {
                           if (typeof part === "string") {
                             return <p key={`${index}`}>{part}</p>;
                           }
@@ -1211,7 +1322,7 @@ const ChatWidget = memo(function ChatWidget({
                           } else {
                             return null;
                           }
-                        })}
+                        }), exchange.assistantMessage.parts)}
                         {/* Show loading indicator while generating more content */}
                         {isGenerating && isLastExchange && (
                           <div className="text-muted-foreground mt-2">
@@ -1589,7 +1700,7 @@ const Sidepanel = memo(function Sidepanel({
               size={20}
               className="text-foreground dark:text-white"
             />
-            <h2 className="text-sm font-semibold text-foreground">Arca AI</h2>
+            <h2 className="text-sm font-semibold text-foreground">HSN AI</h2>
           </div>
           <div className="flex items-center gap-2">
             <Button

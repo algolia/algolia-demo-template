@@ -26,6 +26,7 @@ export interface Product {
   // Product attributes
   characteristics: string[];
   ingredients: string[];
+  flavour: string[];
 
   // Reviews and ratings
   reviewCount: number;

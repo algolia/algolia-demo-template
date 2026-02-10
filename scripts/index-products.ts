@@ -48,6 +48,7 @@ interface XmlProduct {
   "sqr:is_parent"?: string[];
   "sqr:manage_stock"?: string[];
   "sqr:backorders"?: string[];
+  "sqr:sabor"?: string[];
 }
 
 interface AlgoliaProduct {
@@ -67,6 +68,7 @@ interface AlgoliaProduct {
   status: string;
   characteristics: string[];
   ingredients: string[];
+  flavour: string[];
   titleEn: string;
   format: string;
   reviewCount: number;
@@ -203,6 +205,11 @@ function transformProduct(xmlProduct: XmlProduct): AlgoliaProduct | null {
     .map((i) => i.trim())
     .filter(Boolean);
 
+  const flavour = extractText(xmlProduct["sqr:sabor"])
+    .split(",")
+    .map((f) => f.trim())
+    .filter(Boolean);
+
   return {
     objectID: id,
     id,
@@ -220,6 +227,7 @@ function transformProduct(xmlProduct: XmlProduct): AlgoliaProduct | null {
     status,
     characteristics,
     ingredients,
+    flavour,
     titleEn: extractText(xmlProduct["sqr:product_name_en"]),
     format: extractText(xmlProduct["sqr:producttypes"]),
     reviewCount: extractNumber(xmlProduct["sqr:qty_reviews_sooqr"]),
@@ -319,6 +327,7 @@ async function main() {
         "title",
         "unordered(characteristics)",
         "unordered(ingredients)",
+        "unordered(flavour)",
         "unordered(sku)",
         "unordered(id)",
         "unordered(shortDescription)",
@@ -335,6 +344,7 @@ async function main() {
         "searchable(hierarchicalCategories.lvl2)",
         "hierarchicalCategories.lvl3",
         "ingredients",
+        "searchable(flavour)",
         "filterOnly(price)",
         "filterOnly(rating)",
       ],
@@ -354,11 +364,6 @@ async function main() {
       queryLanguages: ["es"],
       removeStopWords: ["es"],
       removeWordsIfNoResults: "allOptional",
-      mode: "neuralSearch",
-      semanticSearch: {
-        eventSources: [INDEX_NAME],
-        neuralSearchPreset: "default",
-      },
       attributesToRetrieve: [
         "objectID",
         "id",
@@ -378,6 +383,7 @@ async function main() {
         "hierarchicalCategories",
         "characteristics",
         "ingredients",
+        "flavour",
         "price",
         "normalPrice",
         "discount",

@@ -104,18 +104,21 @@ export function useAgentStudio(config: AgentStudioConfig) {
           // Hydrate with product data if on a product page
           let ctx = await hydrateContext(baseCtx);
 
-          // Add selected products to context if any are selected
-          const currentSelectedProducts = selectedProductsRef.current;
-          if (currentSelectedProducts.length > 0) {
-            ctx = {
-              ...ctx,
-              selectedProducts: currentSelectedProducts.map((p) => ({
-                objectID: p.objectID,
-                name: p.title,
-                brand: p.brand,
-                price: p.price?.toString(),
-              })),
-            } as ContextSnapshot;
+          // Add selected products to context only when NOT on a product page
+          // (product pages should only have the current product in context)
+          if (ctx.page.pageType !== 'product') {
+            const currentSelectedProducts = selectedProductsRef.current;
+            if (currentSelectedProducts.length > 0) {
+              ctx = {
+                ...ctx,
+                selectedProducts: currentSelectedProducts.map((p) => ({
+                  objectID: p.objectID,
+                  name: p.title,
+                  brand: p.brand,
+                  price: p.price?.toString(),
+                })),
+              } as ContextSnapshot;
+            }
           }
 
           // Create system message with context

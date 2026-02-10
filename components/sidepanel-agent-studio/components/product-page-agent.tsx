@@ -91,7 +91,7 @@ export default function ProductAskAI({ product }: ProductAskAIProps) {
                 <button
                   key={idx}
                   type="button"
-                  onClick={() => handleSubmit(question)}
+                  onClick={() => handleSubmit(`${question}: ${product.productname || product.producttitle || product.title}`)}
                   className="text-xs px-3 py-1.5 rounded-full border border-border bg-background text-foreground hover:bg-blue-50 dark:hover:bg-slate-800 hover:border-blue-600 transition-colors"
                 >
                   {question}
