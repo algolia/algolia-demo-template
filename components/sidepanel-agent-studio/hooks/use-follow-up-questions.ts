@@ -33,11 +33,11 @@ export type FollowUpQuestionsToolCall = {
 
 // Fallback suggestions to show in empty state or when generation fails
 export const FALLBACK_FOLLOW_UP_QUESTIONS = [
-  "Muéstrame los ingredientes de este producto",
-  "Buscar suplementos de proteína",
-  "Ver opciones veganas disponibles",
-  "Comparar con productos similares",
-  "Explorar vitaminas y minerales",
+  "Show me the ingredients of this product",
+  "Search for protein supplements",
+  "Show vegan options available",
+  "Compare with similar products",
+  "Explore vitamins and minerals",
 ];
 
 // Extract questions from assistant message parts

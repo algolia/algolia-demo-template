@@ -85,7 +85,8 @@ import { useCart } from "@/components/cart/cart-context";
 import { useUser } from "@/components/user/user-context";
 import { useSelection } from "@/components/selection/selection-context";
 import { Checkbox } from "@/components/ui/checkbox";
-import { PREFERENCE_METADATA, PreferenceKey, extractProductFieldValues } from "@/lib/types/user";
+import { PreferenceKey, extractProductFieldValues } from "@/lib/types/user";
+import { PREFERENCE_METADATA } from "@/lib/demo-config/users";
 import { Button } from "@/components/ui/button";
 import { Plus, Minus, Check, Sparkles } from "lucide-react";
 import {
@@ -95,6 +96,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { formatPrice } from "@/lib/utils/format";
 import { ALGOLIA_CONFIG } from "@/lib/algolia-config";
 
 function getHighestCategoryLevel(
@@ -226,7 +228,7 @@ function ProductBadges({ product, compact = false }: ProductBadgesProps) {
           </TooltipTrigger>
           <TooltipContent side="right" className="max-w-xs">
             <div className="text-sm">
-              <p className="font-semibold mb-2">Personalizzato per te</p>
+              <p className="font-semibold mb-2">Personalized for you</p>
               <div className="space-y-1">
                 {personalizationMatches.map((match, index) => (
                   <div key={index} className="text-xs">
@@ -499,12 +501,12 @@ export function ProductCard({ product, showCartControls = true, showBadges = tru
       {price > 0 && (
         <div className="flex items-center gap-2">
           <p className="text-xl font-bold text-foreground">
-            €{price.toFixed(2)}
+            {formatPrice(price)}
           </p>
           {hasDiscount && (
             <>
               <p className="text-sm text-muted-foreground line-through">
-                €{originalPrice.toFixed(2)}
+                {formatPrice(originalPrice)}
               </p>
               <span className="text-xs font-semibold bg-red-500 text-white px-2 py-0.5 rounded">
                 -{discountPercentage}%
@@ -622,11 +624,11 @@ export function ProductListItem({ product, showCartControls = true, showBadges =
       <div className="shrink-0 text-right">
         {price > 0 && (
           <div className="flex flex-col items-end gap-1">
-            <p className="text-xl font-bold text-foreground">€{price.toFixed(2)}</p>
+            <p className="text-xl font-bold text-foreground">{formatPrice(price)}</p>
             {hasDiscount && (
               <>
                 <p className="text-sm text-muted-foreground line-through">
-                  €{originalPrice.toFixed(2)}
+                  {formatPrice(originalPrice)}
                 </p>
                 <span className="text-xs font-semibold bg-red-500 text-white px-2 py-0.5 rounded">
                   -{discountPercentage}%
@@ -656,7 +658,7 @@ export const CompactProductCard = memo(function CompactProductCard({
   showBadges = true,
 }: CompactProductCardProps) {
   const imageUrl = product.imageUrl || "";
-  const productName = product.title || "Prodotto";
+  const productName = product.title || "Product";
   const productId = product.objectID;
   const price = product.price || 0;
   const originalPrice = product.normalPrice || 0;
@@ -723,7 +725,7 @@ export const CompactProductCard = memo(function CompactProductCard({
           <div className="mt-1">
             <div className="flex items-center gap-1">
               <p className="text-sm font-bold text-foreground">
-                €{price.toFixed(2)}
+                {formatPrice(price)}
               </p>
               {hasDiscount && (
                 <span className="text-[9px] font-semibold bg-red-500 text-white px-1 py-0.5 rounded">
@@ -733,7 +735,7 @@ export const CompactProductCard = memo(function CompactProductCard({
             </div>
             {hasDiscount && (
               <p className="text-[10px] text-muted-foreground line-through">
-                €{originalPrice.toFixed(2)}
+                {formatPrice(originalPrice)}
               </p>
             )}
           </div>
@@ -761,7 +763,7 @@ export const CompactProductListItem = memo(function CompactProductListItem({
   className = "",
 }: CompactProductListItemProps) {
   const imageUrl = product.imageUrl || "";
-  const productName = product.title || "Prodotto";
+  const productName = product.title || "Product";
   const productId = product.objectID;
   const price = product.price || 0;
   const originalPrice = product.normalPrice || 0;
@@ -830,7 +832,7 @@ export const CompactProductListItem = memo(function CompactProductListItem({
           <div className="mt-1">
             <div className="flex items-center gap-1">
               <p className="text-sm font-bold text-foreground">
-                €{price.toFixed(2)}
+                {formatPrice(price)}
               </p>
               {hasDiscount && (
                 <span className="text-[9px] font-semibold bg-red-500 text-white px-1 py-0.5 rounded">
@@ -840,7 +842,7 @@ export const CompactProductListItem = memo(function CompactProductListItem({
             </div>
             {hasDiscount && (
               <p className="text-xs text-muted-foreground line-through">
-                €{originalPrice.toFixed(2)}
+                {formatPrice(originalPrice)}
               </p>
             )}
           </div>

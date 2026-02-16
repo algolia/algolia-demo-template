@@ -1,7 +1,8 @@
 "use client";
 
 import { createContext, useContext, useState, useCallback, useMemo, ReactNode } from "react";
-import { User, users } from "@/lib/types/user";
+import { User } from "@/lib/types/user";
+import { users } from "@/lib/demo-config/users";
 
 interface UserContextType {
   currentUser: User | null;

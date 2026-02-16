@@ -8,32 +8,18 @@ import {
   useCurrentRefinements,
   useClearRefinements,
 } from "react-instantsearch";
-import { ChevronDown, X, HeartPulse, Dumbbell, Apple, ShoppingBag, FlaskConical, Sparkles, Percent } from "lucide-react";
+import { ChevronDown, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useUser } from "@/components/user/user-context";
-import { PREFERENCE_METADATA, type PreferenceKey } from "@/lib/types/user";
+import { type PreferenceKey } from "@/lib/types/user";
+import { PREFERENCE_METADATA } from "@/lib/demo-config/users";
+import { CATEGORY_ICONS } from "@/lib/demo-config/categories";
 
 // ============================================================================
 // Helper Types and Functions
 // ============================================================================
-
-/**
- * Category icon mapping for hierarchicalCategories.lvl0
- */
-const CATEGORY_ICONS: Record<
-  string,
-  React.ComponentType<{ className?: string }>
-> = {
-  "Salud y bienestar": HeartPulse,
-  "Nutrición deportiva": Dumbbell,
-  "Alimentación saludable": Apple,
-  "Accesorios": ShoppingBag,
-  "Ingredientes": FlaskConical,
-  "Especialidades": Sparkles,
-  "Promociones": Percent,
-};
 
 /**
  * Get icon component for a category name
@@ -553,8 +539,8 @@ export function PriceRangeFilter() {
     <RangeFilter
       attribute="price"
       title="Price"
-      minPlaceholder="Min €"
-      maxPlaceholder="Max €"
+      minPlaceholder="Min"
+      maxPlaceholder="Max"
     />
   );
 }

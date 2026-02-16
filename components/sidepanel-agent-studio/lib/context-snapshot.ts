@@ -1,6 +1,7 @@
 import { getObjectsByIds } from '@/lib/getObjectByIDs';
 import { Product } from '@/lib/types/product';
-import { User, users } from '@/lib/types/user';
+import { User } from '@/lib/types/user';
+import { users } from '@/lib/demo-config/users';
 import { ALGOLIA_CONFIG } from '@/lib/algolia-config';
 
 // Type for InstantSearch UI state (from useInstantSearch().indexUiState)

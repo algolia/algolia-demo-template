@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Product } from "@/lib/types/product";
+import { formatPrice } from "@/lib/utils/format";
 import ProductAskAI from "@/components/sidepanel-agent-studio/components/product-page-agent";
 import { useCart } from "@/components/cart/cart-context";
 
@@ -215,11 +216,11 @@ export default function ProductPage({ product }: ProductPageProps) {
               <div className="space-y-2">
                 <div className="flex items-baseline gap-3">
                   <span className="text-3xl font-bold text-foreground">
-                    €{price.toFixed(2)}
+                    {formatPrice(price)}
                   </span>
                   {hasDiscount && (
                     <span className="text-lg text-muted-foreground line-through">
-                      €{originalPrice.toFixed(2)}
+                      {formatPrice(originalPrice)}
                     </span>
                   )}
                 </div>
@@ -229,7 +230,7 @@ export default function ProductPage({ product }: ProductPageProps) {
                       Save {discountPercentage}%
                     </span>
                     <span className="text-sm text-muted-foreground">
-                      You save €{(originalPrice - price).toFixed(2)}
+                      You save {formatPrice(originalPrice - price)}
                     </span>
                   </div>
                 )}
@@ -267,7 +268,7 @@ export default function ProductPage({ product }: ProductPageProps) {
               {/* Add to Cart Button */}
               <Button size="lg" className="flex-1 gap-2" onClick={handleAddToCart}>
                 <ShoppingCart className="w-5 h-5" />
-                Añadir al carrito
+                Add to cart
               </Button>
 
               {/* Wishlist Button */}
@@ -292,7 +293,7 @@ export default function ProductPage({ product }: ProductPageProps) {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-border">
               <div className="flex items-center gap-3 text-sm">
                 <Truck className="w-5 h-5 text-primary" />
-                <span>Free shipping over €49</span>
+                <span>Free shipping over {formatPrice(49)}</span>
               </div>
               <div className="flex items-center gap-3 text-sm">
                 <RotateCcw className="w-5 h-5 text-primary" />

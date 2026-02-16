@@ -27,7 +27,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import CheckoutAIBlock from "@/components/checkout-agent/components/checkout-suggestion-agent";
+import { formatPrice } from "@/lib/utils/format";
 
 function CheckoutPage() {
   const { items, removeItem, updateQuantity, itemCount, total, clearCart } =
@@ -48,13 +48,13 @@ function CheckoutPage() {
           <div className="flex flex-col items-center justify-center text-center">
             <ShoppingCart className="h-24 w-24 text-muted-foreground mb-6" />
             <h1 className="text-2xl font-bold text-foreground mb-2">
-              Il tuo carrello è vuoto
+              Your cart is empty
             </h1>
             <p className="text-muted-foreground mb-8">
-              Aggiungi prodotti per iniziare lo shopping
+              Add products to start shopping
             </p>
             <Button asChild>
-              <Link href="/">Continua lo shopping</Link>
+              <Link href="/">Continue shopping</Link>
             </Button>
           </div>
         </div>
@@ -72,22 +72,16 @@ function CheckoutPage() {
             className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors mb-4"
           >
             <ChevronLeft className="h-4 w-4 mr-1" />
-            Continua lo shopping
+            Continue shopping
           </Link>
           <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
             <ShoppingBag className="h-8 w-8" />
             Checkout
           </h1>
           <p className="text-muted-foreground mt-1">
-            {itemCount} {itemCount === 1 ? "articolo" : "articoli"} nel carrello
+            {itemCount} {itemCount === 1 ? "item" : "items"} in cart
           </p>
         </div>
-              {/* Checkout Suggestion Agent */}
-      <CheckoutAIBlock
-        applicationId={process.env.NEXT_PUBLIC_ALGOLIA_APP_ID!}
-        apiKey={process.env.NEXT_PUBLIC_AGENT_API_KEY!}
-        agentId={process.env.NEXT_PUBLIC_ALGOLIA_CHECKOUT_SUGGESTION_AGENT_ID!}
-      />
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Left Column - Forms */}
@@ -97,55 +91,55 @@ function CheckoutPage() {
               <div className="flex items-center gap-2 mb-6">
                 <Truck className="h-5 w-5 text-primary" />
                 <h2 className="text-xl font-semibold">
-                  Informazioni di spedizione
+                  Shipping information
                 </h2>
               </div>
 
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName">Nome *</Label>
-                  <Input id="firstName" placeholder="Mario" />
+                  <Label htmlFor="firstName">First name *</Label>
+                  <Input id="firstName" placeholder="John" />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="lastName">Cognome *</Label>
-                  <Input id="lastName" placeholder="Rossi" />
+                  <Label htmlFor="lastName">Last name *</Label>
+                  <Input id="lastName" placeholder="Doe" />
                 </div>
                 <div className="space-y-2 sm:col-span-2">
                   <Label htmlFor="email">Email *</Label>
                   <Input
                     id="email"
                     type="email"
-                    placeholder="mario.rossi@email.com"
+                    placeholder="john.doe@email.com"
                   />
                 </div>
                 <div className="space-y-2 sm:col-span-2">
-                  <Label htmlFor="phone">Telefono *</Label>
-                  <Input id="phone" type="tel" placeholder="+39 123 456 7890" />
+                  <Label htmlFor="phone">Phone *</Label>
+                  <Input id="phone" type="tel" placeholder="+1 234 567 8900" />
                 </div>
                 <div className="space-y-2 sm:col-span-2">
-                  <Label htmlFor="address">Indirizzo *</Label>
-                  <Input id="address" placeholder="Via Roma 123" />
+                  <Label htmlFor="address">Address *</Label>
+                  <Input id="address" placeholder="123 Main St" />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="city">Città *</Label>
-                  <Input id="city" placeholder="Milano" />
+                  <Label htmlFor="city">City *</Label>
+                  <Input id="city" placeholder="New York" />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="postalCode">CAP *</Label>
-                  <Input id="postalCode" placeholder="20100" />
+                  <Label htmlFor="postalCode">Postal code *</Label>
+                  <Input id="postalCode" placeholder="10001" />
                 </div>
                 <div className="space-y-2 sm:col-span-2">
-                  <Label htmlFor="province">Provincia *</Label>
+                  <Label htmlFor="state">State *</Label>
                   <Select>
                     <SelectTrigger>
-                      <SelectValue placeholder="Seleziona provincia" />
+                      <SelectValue placeholder="Select state" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="MI">Milano</SelectItem>
-                      <SelectItem value="RM">Roma</SelectItem>
-                      <SelectItem value="NA">Napoli</SelectItem>
-                      <SelectItem value="TO">Torino</SelectItem>
-                      <SelectItem value="FI">Firenze</SelectItem>
+                      <SelectItem value="NY">New York</SelectItem>
+                      <SelectItem value="CA">California</SelectItem>
+                      <SelectItem value="TX">Texas</SelectItem>
+                      <SelectItem value="FL">Florida</SelectItem>
+                      <SelectItem value="IL">Illinois</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -155,7 +149,7 @@ function CheckoutPage() {
 
               {/* Shipping Method */}
               <div>
-                <h3 className="font-medium mb-4">Metodo di spedizione</h3>
+                <h3 className="font-medium mb-4">Shipping method</h3>
                 <RadioGroup
                   value={shippingMethod}
                   onValueChange={setShippingMethod}
@@ -172,13 +166,13 @@ function CheckoutPage() {
                     <div className="flex items-center gap-3">
                       <RadioGroupItem value="standard" id="standard" />
                       <div>
-                        <p className="font-medium">Spedizione Standard</p>
+                        <p className="font-medium">Standard Shipping</p>
                         <p className="text-sm text-muted-foreground">
-                          3-5 giorni lavorativi
+                          3-5 business days
                         </p>
                       </div>
                     </div>
-                    <span className="font-semibold">€4.99</span>
+                    <span className="font-semibold">{formatPrice(4.99)}</span>
                   </label>
                   <label
                     htmlFor="express"
@@ -191,13 +185,13 @@ function CheckoutPage() {
                     <div className="flex items-center gap-3">
                       <RadioGroupItem value="express" id="express" />
                       <div>
-                        <p className="font-medium">Spedizione Express</p>
+                        <p className="font-medium">Express Shipping</p>
                         <p className="text-sm text-muted-foreground">
-                          1-2 giorni lavorativi
+                          1-2 business days
                         </p>
                       </div>
                     </div>
-                    <span className="font-semibold">€9.99</span>
+                    <span className="font-semibold">{formatPrice(9.99)}</span>
                   </label>
                 </RadioGroup>
               </div>
@@ -207,7 +201,7 @@ function CheckoutPage() {
             <div className="bg-card border border-border rounded-lg p-6">
               <div className="flex items-center gap-2 mb-6">
                 <CreditCard className="h-5 w-5 text-primary" />
-                <h2 className="text-xl font-semibold">Metodo di pagamento</h2>
+                <h2 className="text-xl font-semibold">Payment method</h2>
               </div>
 
               <RadioGroup
@@ -225,7 +219,7 @@ function CheckoutPage() {
                 >
                   <RadioGroupItem value="card" id="card" />
                   <CreditCard className="h-5 w-5" />
-                  <span className="font-medium">Carta di credito/debito</span>
+                  <span className="font-medium">Credit/debit card</span>
                 </label>
                 <label
                   htmlFor="paypal"
@@ -244,7 +238,7 @@ function CheckoutPage() {
               {paymentMethod === "card" && (
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="cardNumber">Numero carta *</Label>
+                    <Label htmlFor="cardNumber">Card number *</Label>
                     <Input
                       id="cardNumber"
                       placeholder="1234 5678 9012 3456"
@@ -252,13 +246,13 @@ function CheckoutPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="cardName">Nome sulla carta *</Label>
-                    <Input id="cardName" placeholder="MARIO ROSSI" />
+                    <Label htmlFor="cardName">Name on card *</Label>
+                    <Input id="cardName" placeholder="JOHN DOE" />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="expiry">Scadenza *</Label>
-                      <Input id="expiry" placeholder="MM/AA" maxLength={5} />
+                      <Label htmlFor="expiry">Expiry *</Label>
+                      <Input id="expiry" placeholder="MM/YY" maxLength={5} />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="cvv">CVV *</Label>
@@ -270,7 +264,7 @@ function CheckoutPage() {
 
               <div className="flex items-center gap-2 mt-6 text-sm text-muted-foreground">
                 <Lock className="h-4 w-4" />
-                <span>I tuoi dati di pagamento sono protetti e crittografati</span>
+                <span>Your payment information is secure and encrypted</span>
               </div>
             </div>
           </div>
@@ -278,7 +272,7 @@ function CheckoutPage() {
           {/* Right Column - Order Summary */}
           <div className="lg:col-span-1">
             <div className="bg-card border border-border rounded-lg p-6 sticky top-8">
-              <h2 className="text-xl font-semibold mb-6">Riepilogo ordine</h2>
+              <h2 className="text-xl font-semibold mb-6">Order summary</h2>
 
               {/* Cart Items */}
               <div className="space-y-4 max-h-80 overflow-y-auto">
@@ -315,7 +309,7 @@ function CheckoutPage() {
                               updateQuantity(item.id, item.quantity - 1)
                             }
                             className="p-1 hover:bg-muted transition-colors"
-                            aria-label="Diminuisci quantità"
+                            aria-label="Decrease quantity"
                           >
                             <Minus className="h-3 w-3" />
                           </button>
@@ -327,18 +321,18 @@ function CheckoutPage() {
                               updateQuantity(item.id, item.quantity + 1)
                             }
                             className="p-1 hover:bg-muted transition-colors"
-                            aria-label="Aumenta quantità"
+                            aria-label="Increase quantity"
                           >
                             <Plus className="h-3 w-3" />
                           </button>
                         </div>
                         <div className="text-right">
                           <span className="text-sm font-semibold">
-                            €{(item.price * item.quantity).toFixed(2)}
+                            {formatPrice(item.price * item.quantity)}
                           </span>
                           {item.originalPrice && item.originalPrice > item.price && (
                             <span className="text-xs text-muted-foreground line-through ml-1">
-                              €{(item.originalPrice * item.quantity).toFixed(2)}
+                              {formatPrice(item.originalPrice * item.quantity)}
                             </span>
                           )}
                         </div>
@@ -347,7 +341,7 @@ function CheckoutPage() {
                     <button
                       onClick={() => removeItem(item.id)}
                       className="p-1 h-fit text-muted-foreground hover:text-destructive transition-colors"
-                      aria-label="Rimuovi articolo"
+                      aria-label="Remove item"
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
@@ -360,22 +354,22 @@ function CheckoutPage() {
               {/* Totals */}
               <div className="space-y-3">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Subtotale</span>
-                  <span>€{total.toFixed(2)}</span>
+                  <span className="text-muted-foreground">Subtotal</span>
+                  <span>{formatPrice(total)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Spedizione</span>
-                  <span>€{shippingCost.toFixed(2)}</span>
+                  <span className="text-muted-foreground">Shipping</span>
+                  <span>{formatPrice(shippingCost)}</span>
                 </div>
                 <Separator />
                 <div className="flex justify-between text-lg font-bold">
-                  <span>Totale</span>
-                  <span>€{orderTotal.toFixed(2)}</span>
+                  <span>Total</span>
+                  <span>{formatPrice(orderTotal)}</span>
                 </div>
               </div>
 
               <Button className="w-full mt-6" size="lg">
-                Completa ordine
+                Complete order
               </Button>
 
               <Button
@@ -383,7 +377,7 @@ function CheckoutPage() {
                 className="w-full mt-2 text-muted-foreground"
                 onClick={clearCart}
               >
-                Svuota carrello
+                Clear cart
               </Button>
             </div>
           </div>

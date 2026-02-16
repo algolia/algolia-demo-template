@@ -55,12 +55,11 @@ import {
 import { useUrlSuggestionTrigger } from "@/components/sidepanel-agent-studio/hooks/use-url-suggestion-trigger";
 import { useSidepanel } from "@/components/sidepanel-agent-studio/context/sidepanel-context";
 import { Product } from "@/lib/types/product";
-import { HealthClaim, isHealthClaim } from "@/lib/types/health-claim";
 import { useSpeechRecognition } from "@/hooks/use-speech-recognition";
 import { CompactProductListItem } from "@/components/ProductCard";
 import { getObjectsByIds } from "@/lib/getObjectByIDs";
 import { ALGOLIA_CONFIG } from "@/lib/algolia-config";
-import { HealthClaimsPreview } from "./health-claims-preview";
+import { DEMO_CONFIG } from "@/lib/demo-config";
 
 // ============================================================================
 // Types
@@ -491,7 +490,7 @@ const ShowItemsDisplay = memo(function ShowItemsDisplay({
       <div className="my-3 p-4 rounded-lg border border-border bg-muted/30">
         <div className="flex items-center gap-2 text-muted-foreground text-sm">
           <SparklesIcon size={14} className="animate-pulse" />
-          <AnimatedShinyText>Caricamento prodotti...</AnimatedShinyText>
+          <AnimatedShinyText>Loading products...</AnimatedShinyText>
         </div>
       </div>
     );
@@ -912,11 +911,10 @@ const ChatWidget = memo(function ChatWidget({
         {exchanges.length === 0 && (
           <div className="flex flex-col gap-4 py-8">
             <h2 className="text-2xl font-semibold text-foreground">
-              Come posso aiutarti oggi?
+              How can I help you today?
             </h2>
             <p className="text-muted-foreground">
-              Sono qui per aiutarti a trovare i prodotti perfetti per il tuo
-              animale!
+              I&apos;m here to help you find the perfect products!
             </p>
             {/* Show suggested questions from Algolia if available, otherwise show fallback */}
 
@@ -1060,10 +1058,6 @@ const ChatWidget = memo(function ChatWidget({
                               const queryKey = `${exchange.id}-${index}`;
                               const isHovered = hoveredQueryIndex === queryKey;
 
-                              // Detect if results are health claims
-                              const isHealthClaimResults =
-                                hits.length > 0 && isHealthClaim(hits[0]);
-
                               const handleMouseEnter = () => {
                                 if (hoverTimeoutRef.current) {
                                   window.clearTimeout(hoverTimeoutRef.current);
@@ -1080,62 +1074,7 @@ const ChatWidget = memo(function ChatWidget({
                                 );
                               };
 
-                              // Render health claims differently
-                              if (isHealthClaimResults) {
-                                const healthClaims = hits as unknown as HealthClaim[];
-                                return (
-                                  <div
-                                    key={`${index}`}
-                                    className="text-[0.95rem] flex flex-col my-2 gap-1 text-green-600 dark:text-green-500"
-                                  >
-                                    <span className="flex items-center gap-1 flex-wrap">
-                                      Verified{" "}
-                                      <Popover
-                                        open={isHovered}
-                                        onOpenChange={(open) => {
-                                          if (!open) {
-                                            setHoveredQueryIndex(null);
-                                          }
-                                        }}
-                                      >
-                                        <PopoverTrigger asChild>
-                                          <button
-                                            type="button"
-                                            onMouseEnter={handleMouseEnter}
-                                            onMouseLeave={handleMouseLeave}
-                                            className="bg-transparent text-green-600 dark:text-green-500 underline decoration-1 underline-offset-4 cursor-pointer hover:text-green-700 dark:hover:text-green-400 transition-colors"
-                                          >
-                                            {hits.length} health claim
-                                            {hits.length !== 1 ? "s" : ""}
-                                          </button>
-                                        </PopoverTrigger>
-                                        <PopoverContent
-                                          className="w-[420px] max-h-[600px] overflow-y-auto p-4"
-                                          onMouseEnter={handleMouseEnter}
-                                          onMouseLeave={handleMouseLeave}
-                                          align="start"
-                                          side="bottom"
-                                        >
-                                          <HealthClaimsPreview
-                                            claims={healthClaims}
-                                          />
-                                        </PopoverContent>
-                                      </Popover>{" "}
-                                      for &quot;{query}&quot;
-                                    </span>
-                                    {filtersDisplay && (
-                                      <span className="text-xs text-green-600/70 dark:text-green-500/70 flex items-center gap-1">
-                                        <span>Filter:</span>
-                                        <code className="px-1.5 py-0.5 rounded bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 font-mono">
-                                          {filtersDisplay}
-                                        </code>
-                                      </span>
-                                    )}
-                                  </div>
-                                );
-                              }
-
-                              // Render product search results (existing behavior)
+                              // Render product search results
                               return (
                                 <div
                                   key={`${index}`}
@@ -1239,7 +1178,7 @@ const ChatWidget = memo(function ChatWidget({
                                   className="text-[0.95rem] flex my-2 gap-2 items-center text-red-500"
                                   key={`${index}`}
                                 >
-                                  Errore nel caricamento dei prodotti
+                                  Error loading products
                                 </p>
                               );
                             } else {
@@ -1531,7 +1470,7 @@ const Sidepanel = memo(function Sidepanel({
     transcript,
     toggle: toggleSpeech,
   } = useSpeechRecognition({
-    lang: "it-IT",
+    lang: "en-US",
     onTranscriptEnd: handleTranscriptEnd,
   });
 
@@ -1700,7 +1639,7 @@ const Sidepanel = memo(function Sidepanel({
               size={20}
               className="text-foreground dark:text-white"
             />
-            <h2 className="text-sm font-semibold text-foreground">HSN AI</h2>
+            <h2 className="text-sm font-semibold text-foreground">{DEMO_CONFIG.brand.agentName}</h2>
           </div>
           <div className="flex items-center gap-2">
             <Button

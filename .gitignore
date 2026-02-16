@@ -19,6 +19,13 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
+# Data feeds (add your feed to data/ but don't commit it)
+data/*.xml
+data/*.csv
+data/*.xls
+data/*.mdb
+data/*.pdf
+
 # OS files
 .DS_Store
 Thumbs.db

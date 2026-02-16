@@ -157,7 +157,7 @@ export function useAgentStudio(config: AgentStudioConfig) {
 
   // Custom condition: only auto-send when client-side tools have outputs
   // This prevents duplicate sends when server-side tools (algolia_search_index) are used
-  const shouldAutoSend = useCallback((messages: UIMessage[]): boolean => {
+  const shouldAutoSend = useCallback(({ messages }: { messages: UIMessage[] }): boolean => {
     if (messages.length === 0) return false;
 
     const lastMessage = messages[messages.length - 1];

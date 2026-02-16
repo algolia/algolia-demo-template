@@ -1,6 +1,6 @@
 
 import UserPage from "@/components/UserPage";
-import { users } from "@/lib/types/user";
+import { users } from "@/lib/demo-config/users";
 import { notFound } from "next/navigation";
 
 interface UserPageParams {

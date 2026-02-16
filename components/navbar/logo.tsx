@@ -1,12 +1,13 @@
 import Image from "next/image";
+import { DEMO_CONFIG } from "@/lib/demo-config";
 
 export function Logo() {
   return (
     <Image
-      src="https://www.hsnstore.com/skin/frontend/default/hsnreborn/images/logoHSNReduced.svg"
-      alt="HSN Store"
-      width={120}
-      height={40}
+      src={DEMO_CONFIG.brand.logoUrl}
+      alt={DEMO_CONFIG.brand.name}
+      width={DEMO_CONFIG.brand.logoWidth}
+      height={DEMO_CONFIG.brand.logoHeight}
       priority
     />
   );

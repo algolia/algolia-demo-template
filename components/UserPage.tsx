@@ -2,7 +2,8 @@
 
 import { useMemo } from "react";
 import { Info, Tag, Calendar, Target, Package, Layers } from "lucide-react";
-import { User, PREFERENCE_METADATA, PreferenceKey } from "@/lib/types/user";
+import { User, PreferenceKey } from "@/lib/types/user";
+import { PREFERENCE_METADATA } from "@/lib/demo-config/users";
 
 interface AffinityItem {
   label: string;

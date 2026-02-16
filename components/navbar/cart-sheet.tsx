@@ -20,6 +20,7 @@ import {
 import { useCart } from "@/components/cart/cart-context";
 import { Separator } from "@/components/ui/separator";
 import { useRouter } from "next/navigation";
+import { formatPrice } from "@/lib/utils/format";
 
 export function CartSheet() {
   const {
@@ -52,7 +53,7 @@ export function CartSheet() {
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2">
             <ShoppingBag className="h-5 w-5" />
-            Carrello ({itemCount} {itemCount === 1 ? "articolo" : "articoli"})
+            Cart ({itemCount} {itemCount === 1 ? "item" : "items"})
           </SheetTitle>
         </SheetHeader>
 
@@ -60,10 +61,10 @@ export function CartSheet() {
           <div className="flex-1 flex flex-col items-center justify-center text-center py-12">
             <ShoppingCart className="h-16 w-16 text-muted-foreground mb-4" />
             <h3 className="text-lg font-medium text-foreground mb-2">
-              Il tuo carrello è vuoto
+              Your cart is empty
             </h3>
             <p className="text-sm text-muted-foreground">
-              Aggiungi prodotti per iniziare lo shopping
+              Add products to start shopping
             </p>
           </div>
         ) : (
@@ -97,11 +98,11 @@ export function CartSheet() {
                     </h4>
                     <div className="flex items-center gap-2 mt-1">
                       <p className="text-sm font-bold text-foreground">
-                        €{item.price.toFixed(2)}
+                        {formatPrice(item.price)}
                       </p>
                       {item.originalPrice && item.originalPrice > item.price && (
                         <p className="text-xs text-muted-foreground line-through">
-                          €{item.originalPrice.toFixed(2)}
+                          {formatPrice(item.originalPrice)}
                         </p>
                       )}
                     </div>
@@ -145,8 +146,8 @@ export function CartSheet() {
 
             <SheetFooter className="flex-col gap-4 border-t pt-4">
               <div className="flex items-center justify-between w-full">
-                <span className="text-muted-foreground">Subtotale</span>
-                <span className="text-lg font-bold">€{total.toFixed(2)}</span>
+                <span className="text-muted-foreground">Subtotal</span>
+                <span className="text-lg font-bold">{formatPrice(total)}</span>
               </div>
 
               <Separator />
@@ -157,7 +158,7 @@ export function CartSheet() {
                   className="flex-1"
                   onClick={clearCart}
                 >
-                  Svuota
+                  Clear
                 </Button>
                 <Button className="flex-1" onClick={() => router.push("/checkout")}>Checkout</Button>
               </div>

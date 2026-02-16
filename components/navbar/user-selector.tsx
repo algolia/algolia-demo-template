@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { users } from "@/lib/types/user";
+import { users } from "@/lib/demo-config/users";
 import { useUser } from "@/components/user/user-context";
 
 export function UserSelector() {

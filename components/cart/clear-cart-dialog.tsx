@@ -35,18 +35,18 @@ export function ClearCartDialog({
           <AlertDialogMedia className="bg-destructive/10">
             <AlertTriangle className="h-8 w-8 text-destructive" />
           </AlertDialogMedia>
-          <AlertDialogTitle>Svuotare il carrello?</AlertDialogTitle>
+          <AlertDialogTitle>Clear your cart?</AlertDialogTitle>
           <AlertDialogDescription>
-            Hai {itemCount} {itemCount === 1 ? "articolo" : "articoli"} nel
-            carrello. Cambiando negozio o posizione, il carrello verrà svuotato.
+            You have {itemCount} {itemCount === 1 ? "item" : "items"} in your
+            cart. Changing store or location will clear your cart.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel onClick={onCancel}>
-            Mantieni carrello
+            Keep cart
           </AlertDialogCancel>
           <AlertDialogAction variant="destructive" onClick={onConfirmClear}>
-            Svuota e cambia
+            Clear and change
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

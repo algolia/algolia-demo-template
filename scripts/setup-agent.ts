@@ -1,136 +1,16 @@
 import "dotenv/config";
+import { AGENT_CONFIG } from "../lib/demo-config/agents";
 
 const ALGOLIA_APP_ID = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID!;
 const ALGOLIA_ADMIN_KEY = process.env.ALGOLIA_ADMIN_API_KEY!;
 const AGENT_API_KEY = process.env.NEXT_PUBLIC_AGENT_API_KEY!;
 const AGENT_ID = process.env.NEXT_PUBLIC_ALGOLIA_AGENT_ID!;
 const SUGGESTION_AGENT_ID = process.env.NEXT_PUBLIC_ALGOLIA_SUGGESTION_AGENT_ID!;
-const INDEX_NAME = process.env.NEXT_PUBLIC_ALGOLIA_INDEX_NAME || "hsnstore_products";
-const HEALTH_CLAIMS_INDEX = "eu_health_claims";
+const INDEX_NAME = process.env.NEXT_PUBLIC_ALGOLIA_INDEX_NAME || "";
 
 // Default model and provider - can be overridden via environment variables
 const DEFAULT_MODEL = "gpt-5";
 const DEFAULT_PROVIDER_ID = process.env.ALGOLIA_AGENT_PROVIDER_ID;
-
-const AGENT_INSTRUCTIONS = `**AGENT ROLE**
-You are a Health & Nutrition Shopping Assistant for HSN Store. You help customers find vitamins, supplements, sports nutrition, and health products while ensuring EU regulatory compliance.
-
-**CRITICAL COMPLIANCE RULE**
-Before making ANY statement about health benefits of a product or ingredient, you MUST:
-1. Search the eu_health_claims index with filter "isAuthorized:true"
-2. Only state benefits that appear in the search results as authorized claims
-3. NEVER make any health claims that are not in the EU authorized database
-
-**RESPONSE STYLE**
-- State health benefits naturally and conversationally - do NOT prefix with "Authorized claims:" or similar
-- Do NOT cite sources or mention the EU register to the user
-- Keep responses concise and helpful
-- Always offer clear next actions (learn more about benefits, add to cart, etc.)
-
-**Tools**
-- algolia_search_index (hsnstore_products) - Search the HSN product catalog.
-- algolia_search_index (eu_health_claims) - Verify health claims against EU register. ALWAYS use filter "isAuthorized:true"
-- addToCart - Add products to the customer's cart
-- showItems - Display product recommendations
-
-**Behavior**
-1. Understand customer health goals (fitness, immunity, energy, etc.)
-2. [If applicable] Search eu_health_claims to find authorized claims for relevant ingredients (internal verification - don't mention to user)
-3. Recommend products based on verified health benefits (if found in the eu_health_claims index)
-4. Use showItems to present 2-4 options
-5. Offer clear next steps
-
-**Example Interaction 1 - General Request**
-User: "Find me something for muscle recovery"
-Agent: [Search products, use showItems to display results]
-"I found some great options for muscle recovery. Would you like to know the health benefits or add something to your cart?"
-
-**Example Interaction 2 - Specific Request**
-User: "I want something for energy"
-Agent: [Search health claims for "energy", then search products]
-"Here are some energy supplements. Vitamin B6 helps support normal energy metabolism. Would you like me to add one to your cart?"
-
-**Example Interaction 3 - Benefits Question**
-User: "What are the benefits of zinc?"
-Agent: [Search health claims for "zinc"]
-"Zinc contributes to normal immune function, supports protein synthesis, and helps maintain healthy skin. Want me to show you some zinc supplements?"
-
-**Language**
-- Respond in the language the customer uses but default to Spanish
-- Health claims from EU register are in English - translate naturally into the user's language`;
-
-const INDEX_ENHANCED_DESCRIPTION = `HSN Store product catalog containing health supplements, sports nutrition, vitamins, and wellness products.
-
-**CRITICAL: NEVER use hierarchicalCategories for filtering. Only use categories.lvl0, categories.lvl1, categories.lvl2.**
-
-**Key filterable fields:**
-- price: Product price (numeric, EUR)
-- brand: Brand name
-- categories.lvl0, categories.lvl1, categories.lvl2: Category hierarchy (use EXACT values from lists below)
-- inStock: Boolean, true if available
-
-**DO NOT USE: hierarchicalCategories (this field exists but should NOT be used for filtering)**
-
-**IMPORTANT: Only use these EXACT category values for filtering:**
-
-categories.lvl0 values:
-- "Salud y bienestar", "Nutrición deportiva", "Especialidades", "Alimentación saludable", "Marcas", "Promociones", "Accesorios"
-
-categories.lvl1 values (most common):
-- "Vitaminas", "Minerales", "Aminoácidos", "Proteínas", "Control peso", "Digestión", "Sistema inmune", "Huesos y articulaciones", "Antioxidantes", "Circulación-corazón", "Concentración y memoria", "Estrés y ansiedad", "Piel, pelo y uñas", "Sueño/Descanso", "Ácidos grasos esenciales", "Pre-entrenamiento", "Post-entrenamiento y recuperación", "Carbohidratos"
-
-categories.lvl2 values (most common):
-- "Whey protein (proteína de suero)", "Proteínas vegetales", "Probióticos", "Enzimas", "Quemadores termogénicos", "Aminoácidos aislados", "Glutamina", "BCAA's (aminoácidos ramificados)", "Caseínas"
-
-brand values:
-- "Essential Series", "Now Foods", "HSN Packs", "Swanson", "Food Series", "Sport Series", "Raw Series"
-
-**WRONG (do NOT do this):**
-- facet_filter [["hierarchicalCategories.lvl1:Salud y bienestar > Vitaminas"]] <- NEVER use hierarchicalCategories`;
-
-// Suggestion Agent Instructions
-const SUGGESTION_AGENT_INSTRUCTIONS = `**AGENT ROLE**
-You generate contextual follow-up suggestions for users browsing HSN Store. Based on the current page context and conversation history, suggest actionable phrases the user might want to say next.
-
-**Context Injection**
-You receive page context in [CONTEXT]...[/CONTEXT] blocks containing:
-- pageType: "search", "product", "category", or "home"
-- urlState: Current search query, filters, category
-- product: Current product details (on product pages)
-- user: User preferences (if logged in)
-
-**Tool**
-- suggestedQuestions: Return exactly 3 short, actionable suggestions via input.questions array
-
-**Rules**
-1. Generate exactly 3 suggestions
-2. Make them short (5-10 words max)
-3. Write them as user statements, not questions (e.g., "Show me vegan options" not "Do you have vegan options?")
-4. Make them contextually relevant to the current page/search
-5. Vary the suggestions: one about filtering/narrowing, one about alternatives, one about product details or actions
-6. Write in Spanish (the store's primary language)
-
-**Examples by Page Type**
-
-Search page (query: "proteina"):
-- "Filtrar por marca HSN"
-- "Ver opciones veganas"
-- "Ordenar por precio más bajo"
-
-Product page (Whey Protein):
-- "Comparar con otras proteínas"
-- "Ver información nutricional"
-- "Añadir al carrito"
-
-Category page (Vitaminas):
-- "Buscar vitamina D"
-- "Ver las más vendidas"
-- "Filtrar por precio"
-
-Empty/Home page:
-- "Buscar suplementos de proteína"
-- "Ver ofertas del día"
-- "Explorar vitaminas y minerales"`;
 
 interface AgentTool {
   name: string;
@@ -144,7 +24,7 @@ interface AgentTool {
   }>;
 }
 
-interface AgentConfig {
+interface AgentConfigPayload {
   name: string;
   instructions: string;
   model?: string;
@@ -203,9 +83,9 @@ async function setupAgent(): Promise<{ apiKey: string; providerId: string } | { 
     }
   }
 
-  const agentConfig: AgentConfig = {
-    name: "HSN Store Shopping Assistant",
-    instructions: AGENT_INSTRUCTIONS,
+  const agentConfig: AgentConfigPayload = {
+    name: AGENT_CONFIG.main.name,
+    instructions: AGENT_CONFIG.main.instructions,
     model: DEFAULT_MODEL,
     providerId: providerId,
     tools: [
@@ -215,13 +95,8 @@ async function setupAgent(): Promise<{ apiKey: string; providerId: string } | { 
         indices: [
           {
             index: INDEX_NAME,
-            description: "HSN Store product catalog",
-            enhancedDescription: INDEX_ENHANCED_DESCRIPTION,
-          },
-          {
-            index: HEALTH_CLAIMS_INDEX,
-            description: "EU Register of authorized health claims - ALWAYS filter by isAuthorized:true",
-            // enhancedDescription: HEALTH_CLAIMS_ENHANCED_DESCRIPTION,
+            description: "Product catalog",
+            enhancedDescription: AGENT_CONFIG.main.indexDescription,
           },
         ],
       },
@@ -255,7 +130,7 @@ async function setupAgent(): Promise<{ apiKey: string; providerId: string } | { 
             },
             title: {
               type: "string",
-              description: "A short title for the recommendation section (e.g., 'Top Protein Powders')",
+              description: "A short title for the recommendation section",
             },
             explanation: {
               type: "string",
@@ -316,7 +191,7 @@ async function setupAgent(): Promise<{ apiKey: string; providerId: string } | { 
     console.log(`2. Select or create agent with ID: ${AGENT_ID}`);
     console.log("3. Use the following configuration:\n");
     console.log("Instructions:");
-    console.log(AGENT_INSTRUCTIONS);
+    console.log(AGENT_CONFIG.main.instructions);
     console.log("\nTools: See the JSON output above for tool configuration");
     return { apiKey: null, providerId: null };
   }
@@ -377,23 +252,23 @@ async function setupSuggestionAgent(apiKey: string, providerId: string) {
     return;
   }
 
-  const agentConfig: AgentConfig = {
-    name: "HSN Store Suggestion Agent",
-    instructions: SUGGESTION_AGENT_INSTRUCTIONS,
+  const agentConfig: AgentConfigPayload = {
+    name: AGENT_CONFIG.suggestion.name,
+    instructions: AGENT_CONFIG.suggestion.instructions,
     model: DEFAULT_MODEL,
     providerId: providerId,
     tools: [
       {
         name: "suggestedQuestions",
         type: "client_side",
-        description: "Return follow-up suggestions for the user. Call this with exactly 3 short, actionable suggestions in Spanish.",
+        description: "Return follow-up suggestions for the user. Call this with exactly 3 short, actionable suggestions.",
         inputSchema: {
           type: "object",
           properties: {
             questions: {
               type: "array",
               items: { type: "string" },
-              description: "Array of exactly 3 short suggestion phrases in Spanish",
+              description: "Array of exactly 3 short suggestion phrases",
               minItems: 3,
               maxItems: 3,
             },
@@ -500,7 +375,6 @@ async function updateAgentApiKeyRestrictions(adminKey: string) {
     return;
   }
 
-  // Minimal attributes for products (what agent needs to reference in conversation)
   const productAttributes = [
     "objectID",
     "title",
@@ -513,23 +387,11 @@ async function updateAgentApiKeyRestrictions(adminKey: string) {
     "categories",
   ];
 
-  // Minimal attributes for health claims (what agent needs for EU compliance)
-  const healthClaimAttributes = [
-    "claim",
-    "nutrientOrFood",
-    "conditionsOfUse",
-    "isAuthorized",
-  ];
-
-  // Combined unique attributes for both indices
-  // When querying products, health-specific attrs won't exist (and vice versa)
-  const allAttributes = [...new Set([...productAttributes, ...healthClaimAttributes])];
-
-  const queryParameters = `attributesToRetrieve=${allAttributes.join(",")}`;
+  const queryParameters = `attributesToRetrieve=${productAttributes.join(",")}`;
 
   console.log(`Agent API key: ${AGENT_API_KEY.slice(0, 8)}...${AGENT_API_KEY.slice(-4)}`);
-  console.log(`Restricting to indices: ${INDEX_NAME}, ${HEALTH_CLAIMS_INDEX}`);
-  console.log(`Restricting attributes to: ${allAttributes.join(", ")}`);
+  console.log(`Restricting to index: ${INDEX_NAME}`);
+  console.log(`Restricting attributes to: ${productAttributes.join(", ")}`);
 
   const response = await fetch(
     `https://${ALGOLIA_APP_ID}.algolia.net/1/keys/${AGENT_API_KEY}`,
@@ -542,9 +404,9 @@ async function updateAgentApiKeyRestrictions(adminKey: string) {
       },
       body: JSON.stringify({
         acl: ["search", "browse", "inference"],
-        indexes: [INDEX_NAME, HEALTH_CLAIMS_INDEX],
+        indexes: [INDEX_NAME],
         queryParameters,
-        description: "Agent API key with restricted attributes for HSN Store agents",
+        description: "Agent API key with restricted attributes",
       }),
     }
   );
