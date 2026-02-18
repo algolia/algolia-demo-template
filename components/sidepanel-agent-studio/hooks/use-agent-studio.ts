@@ -1,5 +1,4 @@
 import { useChat, type UIMessage } from '@ai-sdk/react';
-import { DefaultChatTransport } from 'ai';
 import { useMemo, useRef, useEffect, useCallback } from 'react';
 import { useInstantSearch } from 'react-instantsearch';
 
@@ -8,12 +7,8 @@ import { useSelection, SelectedProduct } from '@/components/selection/selection-
 import { getObjectsByIds } from '@/lib/getObjectByIDs';
 import { Product } from '@/lib/types/product';
 import { ALGOLIA_CONFIG } from '@/lib/algolia-config';
-import {
-  resolveContextWithUiState,
-  hydrateContext,
-  makeContextSystemMessage,
-  ContextSnapshot,
-} from '@/components/sidepanel-agent-studio/lib/context-snapshot';
+import { ContextSnapshot } from '@/components/sidepanel-agent-studio/lib/context-snapshot';
+import { buildAgentApiUrl, createAgentTransport } from '@/components/sidepanel-agent-studio/lib/create-agent-transport';
 
 // use-agent-studio.ts
 export interface AgentStudioConfig {
@@ -82,75 +77,31 @@ export function useAgentStudio(config: AgentStudioConfig) {
     indexUiStateRef.current = indexUiState;
   }, [indexUiState]);
 
-  // Agent Studio completions endpoint (AI SDK v5 compatible + streaming)
-  const apiUrl = useMemo(
-    () =>
-      `https://${config.applicationId}.algolia.net/agent-studio/1/agents/${config.agentId}/completions?stream=true&compatibilityMode=ai-sdk-5`,
-    [config.applicationId, config.agentId]
-  );
+  const apiUrl = useMemo(() => buildAgentApiUrl(config), [config.applicationId, config.agentId]);
 
   const transport = useMemo(() => {
-    return new DefaultChatTransport({
-      api: apiUrl,
-      headers: {
-        'x-algolia-application-id': config.applicationId,
-        'x-algolia-api-key': config.apiKey,
-        'content-type': 'application/json',
-      },
-      prepareSendMessagesRequest: async ({ messages, trigger, messageId }) => {
-        try {
-          // Resolve context using InstantSearch's clean uiState (avoids composition prefix issues)
-          const baseCtx = resolveContextWithUiState(indexUiStateRef.current);
-          // Hydrate with product data if on a product page
-          let ctx = await hydrateContext(baseCtx);
-
-          // Add selected products to context only when NOT on a product page
-          // (product pages should only have the current product in context)
-          if (ctx.page.pageType !== 'product') {
-            const currentSelectedProducts = selectedProductsRef.current;
-            if (currentSelectedProducts.length > 0) {
-              ctx = {
-                ...ctx,
-                selectedProducts: currentSelectedProducts.map((p) => ({
-                  objectID: p.objectID,
-                  name: p.title,
-                  brand: p.brand,
-                  price: p.price?.toString(),
-                })),
-              } as ContextSnapshot;
-            }
+    return createAgentTransport(apiUrl, config, indexUiStateRef, {
+      debugLabel: '[Agent Studio]',
+      enrichContext: (ctx) => {
+        // Add selected products to context only when NOT on a product page
+        if (ctx.page.pageType !== 'product') {
+          const currentSelectedProducts = selectedProductsRef.current;
+          if (currentSelectedProducts.length > 0) {
+            return {
+              ...ctx,
+              selectedProducts: currentSelectedProducts.map((p) => ({
+                objectID: p.objectID,
+                name: p.title,
+                brand: p.brand,
+                price: p.price?.toString(),
+              })),
+            } as ContextSnapshot;
           }
-
-          // Create system message with context
-          const ctxMsg = makeContextSystemMessage(ctx);
-
-          if (process.env.NODE_ENV === 'development') {
-            console.debug('[Agent Studio] Injected context:', ctx);
-          }
-
-          return {
-            body: {
-              messages: [ctxMsg, ...messages],
-              trigger,
-              messageId,
-            },
-          };
-        } catch (error) {
-          // If context resolution fails, proceed without context
-          if (process.env.NODE_ENV === 'development') {
-            console.warn('[Agent Studio] Failed to resolve context:', error);
-          }
-          return {
-            body: {
-              messages,
-              trigger,
-              messageId,
-            },
-          };
         }
+        return ctx;
       },
     });
-  }, [apiUrl, config.applicationId, config.apiKey]);
+  }, [apiUrl, config, indexUiStateRef]);
 
   // Client-side tools that we handle locally (not server-side like algolia_search_index)
   const CLIENT_SIDE_TOOLS = ['addToCart', 'showItems'];
@@ -192,12 +143,9 @@ export function useAgentStudio(config: AgentStudioConfig) {
     transport,
     sendAutomaticallyWhen: shouldAutoSend,
     async onToolCall({ toolCall }) {
-      // Handle client-side tools here if you define any on the agent.
-      console.log('toolCall', toolCall);
       if (toolCall.dynamic) return;
 
       if (toolCall.toolName === 'addToCart') {
-        console.log('toolCall.input', toolCall);
         const input = toolCall.input as CartToolCallInput;
         const products = await getObjectsByIds(input.objectIDs, ALGOLIA_CONFIG.INDEX_NAME) as Product[];
 
@@ -222,7 +170,6 @@ export function useAgentStudio(config: AgentStudioConfig) {
         });
       }
       if (toolCall.toolName === 'showItems') {
-        console.log('toolCall.input', toolCall);
         const input = toolCall.input as ShowItemsToolCallInput;
         const products = await getObjectsByIds(input.objectIDs, ALGOLIA_CONFIG.INDEX_NAME) as Product[];
 

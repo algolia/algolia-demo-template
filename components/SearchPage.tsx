@@ -13,6 +13,7 @@ import { Configure } from "react-instantsearch";
 import { ALGOLIA_CONFIG } from "@/lib/algolia-config";
 import { AgentSuggestions } from "@/components/agent-suggestions";
 import { useSidepanel } from "@/components/sidepanel-agent-studio/context/sidepanel-context";
+import { useCollapsibleFilters } from "@/components/hooks/use-collapsible-filters";
 
 // Lazy-initialize search client to avoid issues during SSR/build
 let searchClient: ReturnType<typeof algoliasearch> | null = null;
@@ -258,23 +259,8 @@ function CustomHits({ viewMode, compact }: { viewMode: "grid" | "list"; compact?
 export default function SearchPage() {
   const { query, refine } = useSearchBox();
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [filtersOpen, setFiltersOpen] = useState(true);
   const { isSidepanelOpen } = useSidepanel();
-  const userToggledRef = useRef(false);
-
-  // Auto-collapse filters when sidepanel opens, restore when it closes
-  useEffect(() => {
-    if (isSidepanelOpen) {
-      setFiltersOpen(false);
-    } else if (!userToggledRef.current) {
-      setFiltersOpen(true);
-    }
-  }, [isSidepanelOpen]);
-
-  const toggleFilters = () => {
-    userToggledRef.current = true;
-    setFiltersOpen((prev) => !prev);
-  };
+  const { filtersOpen, toggleFilters } = useCollapsibleFilters();
 
   const handleSuggestionClick = (suggestionQuery: string) => {
     refine(suggestionQuery);
@@ -300,7 +286,7 @@ export default function SearchPage() {
       {/* Display current search query */}
       <div className="mb-6">
         <h1 className="text-2xl font-semibold text-foreground">
-          Risultati per:{" "}
+          Results for:{" "}
           <span className="text-primary">&quot;{query}&quot;</span>
         </h1>
       </div>

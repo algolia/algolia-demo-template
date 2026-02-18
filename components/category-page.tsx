@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import {
@@ -16,6 +16,7 @@ import { ProductCard, ProductListItem } from "@/components/ProductCard";
 import { ProductToolbar } from "@/components/ProductToolbar";
 import { FiltersSidebar, ActiveFilters } from "@/components/filters-sidebar";
 import { useSidepanel } from "@/components/sidepanel-agent-studio/context/sidepanel-context";
+import { useCollapsibleFilters } from "@/components/hooks/use-collapsible-filters";
 
 // ============================================================================
 // Product Grid
@@ -110,24 +111,9 @@ function CategoryContent({
   categoryPath: string[];
 }) {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [filtersOpen, setFiltersOpen] = useState(true);
   const { isSidepanelOpen } = useSidepanel();
-  const userToggledRef = useRef(false);
+  const { filtersOpen, toggleFilters } = useCollapsibleFilters();
   const categoryName = categoryPath[categoryPath.length - 1] || "All Products";
-
-  // Auto-collapse filters when sidepanel opens, restore when it closes
-  useEffect(() => {
-    if (isSidepanelOpen) {
-      setFiltersOpen(false);
-    } else if (!userToggledRef.current) {
-      setFiltersOpen(true);
-    }
-  }, [isSidepanelOpen]);
-
-  const toggleFilters = () => {
-    userToggledRef.current = true;
-    setFiltersOpen((prev) => !prev);
-  };
 
   // Build the hierarchical filter based on category depth
   // Level 0: "Salud y bienestar" -> hierarchicalCategories.lvl0:"Salud y bienestar"

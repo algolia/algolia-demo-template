@@ -18,6 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Product } from "@/lib/types/product";
 import { formatPrice } from "@/lib/utils/format";
+import { getPriceInfo, getPreferredCategory } from "@/lib/utils/product";
 import ProductAskAI from "@/components/sidepanel-agent-studio/components/product-page-agent";
 import { useCart } from "@/components/cart/cart-context";
 
@@ -36,12 +37,7 @@ export default function ProductPage({ product }: ProductPageProps) {
   const categoryList = product.categories?.lvl0 || [];
 
   // Price and discount calculations
-  const price = product.price || 0;
-  const originalPrice = product.normalPrice || 0;
-  const hasDiscount = originalPrice > price && price > 0;
-  const discountPercentage = hasDiscount
-    ? product.discountPercentage || Math.round(((originalPrice - price) / originalPrice) * 100)
-    : 0;
+  const { price, originalPrice, hasDiscount, discountPercentage } = getPriceInfo(product);
 
   const nextImage = () => {
     setSelectedImageIndex((prev) => (prev + 1) % images.length);
@@ -58,11 +54,7 @@ export default function ProductPage({ product }: ProductPageProps) {
     const productId = product.objectID || product.id || product.sku || "";
     if (!productId) return;
 
-    // Extract category - prefer lvl1 for a good balance of specificity
-    const category =
-      product.hierarchicalCategories?.lvl1?.[0] ||
-      product.hierarchicalCategories?.lvl0?.[0] ||
-      product.categories?.lvl0?.[0];
+    const category = getPreferredCategory(product);
 
     addItem({
       id: productId,

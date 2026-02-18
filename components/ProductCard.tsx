@@ -97,6 +97,7 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { formatPrice } from "@/lib/utils/format";
+import { getPriceInfo, getPreferredCategory } from "@/lib/utils/product";
 import { ALGOLIA_CONFIG } from "@/lib/algolia-config";
 
 function getHighestCategoryLevel(
@@ -432,18 +433,8 @@ export function ProductCard({ product, showCartControls = true, showBadges = tru
   }
 
   const highestCategory = getHighestCategoryLevel(product.hierarchicalCategories);
-  const price = product.price || 0;
-  const originalPrice = product.normalPrice || 0;
-  const hasDiscount = originalPrice > price && price > 0;
-  const discountPercentage = product.discountPercentage || (hasDiscount
-    ? Math.round(((originalPrice - price) / originalPrice) * 100)
-    : 0);
-
-  // Extract category - prefer lvl1 for a good balance of specificity
-  const category =
-    product.hierarchicalCategories?.lvl1?.[0] ||
-    product.hierarchicalCategories?.lvl0?.[0] ||
-    product.categories?.lvl0?.[0];
+  const { price, originalPrice, hasDiscount, discountPercentage } = getPriceInfo(product);
+  const category = getPreferredCategory(product);
 
   const smartGroupKey = getSmartGroupKey(product);
   const selected = selectable && isSelected(productId);
@@ -536,18 +527,8 @@ export function ProductListItem({ product, showCartControls = true, showBadges =
   const productName = product.title || "Untitled Product";
   const productLink = `/products/${product.objectID}`;
   const productId = product.objectID;
-  const price = product.price || 0;
-  const originalPrice = product.normalPrice || 0;
-  const hasDiscount = originalPrice > price && price > 0;
-  const discountPercentage = product.discountPercentage || (hasDiscount
-    ? Math.round(((originalPrice - price) / originalPrice) * 100)
-    : 0);
-
-  // Extract category - prefer lvl1 for a good balance of specificity
-  const category =
-    product.hierarchicalCategories?.lvl1?.[0] ||
-    product.hierarchicalCategories?.lvl0?.[0] ||
-    product.categories?.lvl0?.[0];
+  const { price, originalPrice, hasDiscount, discountPercentage } = getPriceInfo(product);
+  const category = getPreferredCategory(product);
 
   const smartGroupKey = getSmartGroupKey(product);
   const selected = selectable && isSelected(productId);
@@ -660,18 +641,8 @@ export const CompactProductCard = memo(function CompactProductCard({
   const imageUrl = product.imageUrl || "";
   const productName = product.title || "Product";
   const productId = product.objectID;
-  const price = product.price || 0;
-  const originalPrice = product.normalPrice || 0;
-  const hasDiscount = originalPrice > price && price > 0;
-  const discountPercentage = product.discountPercentage || (hasDiscount
-    ? Math.round(((originalPrice - price) / originalPrice) * 100)
-    : 0);
-
-  // Extract category - prefer lvl1 for a good balance of specificity
-  const category =
-    product.hierarchicalCategories?.lvl1?.[0] ||
-    product.hierarchicalCategories?.lvl0?.[0] ||
-    product.categories?.lvl0?.[0];
+  const { price, originalPrice, hasDiscount, discountPercentage } = getPriceInfo(product);
+  const category = getPreferredCategory(product);
 
   if (!productId) {
     return null;
@@ -765,18 +736,8 @@ export const CompactProductListItem = memo(function CompactProductListItem({
   const imageUrl = product.imageUrl || "";
   const productName = product.title || "Product";
   const productId = product.objectID;
-  const price = product.price || 0;
-  const originalPrice = product.normalPrice || 0;
-  const hasDiscount = originalPrice > price && price > 0;
-  const discountPercentage = product.discountPercentage || (hasDiscount
-    ? Math.round(((originalPrice - price) / originalPrice) * 100)
-    : 0);
-
-  // Extract category - prefer lvl1 for a good balance of specificity
-  const category =
-    product.hierarchicalCategories?.lvl1?.[0] ||
-    product.hierarchicalCategories?.lvl0?.[0] ||
-    product.categories?.lvl0?.[0];
+  const { price, originalPrice, hasDiscount, discountPercentage } = getPriceInfo(product);
+  const category = getPreferredCategory(product);
 
   if (!productId) {
     return null;

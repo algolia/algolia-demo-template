@@ -43,6 +43,13 @@ You are a Shopping Assistant for ${DEMO_CONFIG.brand.name}. You help customers f
 
   suggestion: {
     name: `${DEMO_CONFIG.brand.name} Suggestion Agent`,
+    fallbackQuestions: [
+      "Show me today's best deals",
+      "Find popular products",
+      "Browse new arrivals",
+      "Compare top-rated items",
+      "Explore trending categories",
+    ] as string[],
     instructions: `**AGENT ROLE**
 You generate contextual follow-up suggestions for users browsing ${DEMO_CONFIG.brand.name}. Based on the current page context and conversation history, suggest actionable phrases the user might want to say next.
 

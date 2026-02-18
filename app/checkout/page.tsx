@@ -4,8 +4,6 @@ import { useState } from "react";
 import { useCart } from "@/components/cart/cart-context";
 import {
   ShoppingCart,
-  Minus,
-  Plus,
   Trash2,
   ShoppingBag,
   CreditCard,
@@ -28,6 +26,7 @@ import {
 } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { formatPrice } from "@/lib/utils/format";
+import { CartQuantityControls } from "@/components/cart-quantity-controls";
 
 function CheckoutPage() {
   const { items, removeItem, updateQuantity, itemCount, total, clearCart } =
@@ -303,29 +302,10 @@ function CheckoutPage() {
                         {item.name}
                       </h4>
                       <div className="flex items-center justify-between mt-1">
-                        <div className="flex items-center border border-border rounded">
-                          <button
-                            onClick={() =>
-                              updateQuantity(item.id, item.quantity - 1)
-                            }
-                            className="p-1 hover:bg-muted transition-colors"
-                            aria-label="Decrease quantity"
-                          >
-                            <Minus className="h-3 w-3" />
-                          </button>
-                          <span className="w-6 text-center text-xs">
-                            {item.quantity}
-                          </span>
-                          <button
-                            onClick={() =>
-                              updateQuantity(item.id, item.quantity + 1)
-                            }
-                            className="p-1 hover:bg-muted transition-colors"
-                            aria-label="Increase quantity"
-                          >
-                            <Plus className="h-3 w-3" />
-                          </button>
-                        </div>
+                        <CartQuantityControls
+                          quantity={item.quantity}
+                          onUpdate={(qty) => updateQuantity(item.id, qty)}
+                        />
                         <div className="text-right">
                           <span className="text-sm font-semibold">
                             {formatPrice(item.price * item.quantity)}

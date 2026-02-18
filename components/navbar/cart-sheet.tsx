@@ -3,8 +3,6 @@
 import Image from "next/image";
 import {
   ShoppingCart,
-  Minus,
-  Plus,
   Trash2,
   ShoppingBag,
 } from "lucide-react";
@@ -21,6 +19,7 @@ import { useCart } from "@/components/cart/cart-context";
 import { Separator } from "@/components/ui/separator";
 import { useRouter } from "next/navigation";
 import { formatPrice } from "@/lib/utils/format";
+import { CartQuantityControls } from "@/components/cart-quantity-controls";
 
 export function CartSheet() {
   const {
@@ -108,29 +107,11 @@ export function CartSheet() {
                     </div>
 
                     <div className="flex items-center gap-2 mt-2">
-                      <div className="flex items-center border border-border rounded">
-                        <button
-                          onClick={() =>
-                            updateQuantity(item.id, item.quantity - 1)
-                          }
-                          className="p-1 hover:bg-muted transition-colors"
-                          aria-label="Decrease quantity"
-                        >
-                          <Minus className="h-3 w-3" />
-                        </button>
-                        <span className="w-8 text-center text-sm">
-                          {item.quantity}
-                        </span>
-                        <button
-                          onClick={() =>
-                            updateQuantity(item.id, item.quantity + 1)
-                          }
-                          className="p-1 hover:bg-muted transition-colors"
-                          aria-label="Increase quantity"
-                        >
-                          <Plus className="h-3 w-3" />
-                        </button>
-                      </div>
+                      <CartQuantityControls
+                        quantity={item.quantity}
+                        onUpdate={(qty) => updateQuantity(item.id, qty)}
+                        spanClassName="w-8 text-center text-sm"
+                      />
                       <button
                         onClick={() => removeItem(item.id)}
                         className="p-1 text-muted-foreground hover:text-destructive transition-colors"

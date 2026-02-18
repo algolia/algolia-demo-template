@@ -1,12 +1,8 @@
 import { useChat, type UIMessage } from '@ai-sdk/react';
-import { DefaultChatTransport } from 'ai';
 import { useCallback, useMemo, useRef, useState, useEffect } from 'react';
 import { useInstantSearch } from 'react-instantsearch';
-import {
-  resolveContextWithUiState,
-  hydrateContext,
-  makeContextSystemMessage,
-} from '@/components/sidepanel-agent-studio/lib/context-snapshot';
+import { buildAgentApiUrl, createAgentTransport } from '@/components/sidepanel-agent-studio/lib/create-agent-transport';
+import { AGENT_CONFIG } from '@/lib/demo-config/agents';
 
 // Configuration for the follow-up questions agent
 export interface FollowUpQuestionsConfig {
@@ -31,14 +27,8 @@ export type FollowUpQuestionsToolCall = {
   output?: ToolCallOutput;
 };
 
-// Fallback suggestions to show in empty state or when generation fails
-export const FALLBACK_FOLLOW_UP_QUESTIONS = [
-  "Show me the ingredients of this product",
-  "Search for protein supplements",
-  "Show vegan options available",
-  "Compare with similar products",
-  "Explore vitamins and minerals",
-];
+// Re-export for backward compatibility
+export const FALLBACK_FOLLOW_UP_QUESTIONS = AGENT_CONFIG.suggestion.fallbackQuestions;
 
 // Extract questions from assistant message parts
 function extractQuestionsFromMessages(
@@ -104,57 +94,13 @@ export function useFollowUpQuestions(config: FollowUpQuestionsConfig) {
   const lastProcessedExchangeIdRef = useRef<string | null>(null);
   const lastProcessedStateSigRef = useRef<string | null>(null);
 
-  // Agent Studio completions endpoint (AI SDK v5 compatible + streaming)
-  const apiUrl = useMemo(
-    () =>
-      `https://${config.applicationId}.algolia.net/agent-studio/1/agents/${config.agentId}/completions?stream=true&compatibilityMode=ai-sdk-5`,
-    [config.applicationId, config.agentId]
-  );
+  const apiUrl = useMemo(() => buildAgentApiUrl(config), [config.applicationId, config.agentId]);
 
   const transport = useMemo(() => {
-    return new DefaultChatTransport({
-      api: apiUrl,
-      headers: {
-        'x-algolia-application-id': config.applicationId,
-        'x-algolia-api-key': config.apiKey,
-        'content-type': 'application/json',
-      },
-      prepareSendMessagesRequest: async ({ messages, trigger, messageId }) => {
-        try {
-          // Resolve context using InstantSearch's clean uiState (avoids composition prefix issues)
-          const baseCtx = resolveContextWithUiState(indexUiStateRef.current);
-          // Hydrate with product data if on a product page
-          const ctx = await hydrateContext(baseCtx);
-          // Create context message
-          const ctxMsg = makeContextSystemMessage(ctx);
-
-          if (process.env.NODE_ENV === 'development') {
-            console.debug('[Suggestion Agent] Injected context:', ctx);
-          }
-
-          return {
-            body: {
-              messages: [ctxMsg, ...messages],
-              trigger,
-              messageId,
-            },
-          };
-        } catch (error) {
-          // If context resolution fails, proceed without context
-          if (process.env.NODE_ENV === 'development') {
-            console.warn('[Suggestion Agent] Failed to resolve context:', error);
-          }
-          return {
-            body: {
-              messages,
-              trigger,
-              messageId,
-            },
-          };
-        }
-      },
+    return createAgentTransport(apiUrl, config, indexUiStateRef, {
+      debugLabel: '[Suggestion Agent]',
     });
-  }, [apiUrl, config.applicationId, config.apiKey]);
+  }, [apiUrl, config, indexUiStateRef]);
 
   const chat = useChat({
     transport,
@@ -236,10 +182,10 @@ export function useFollowUpQuestions(config: FollowUpQuestionsConfig) {
       // Send to follow-up agent - context is injected via transport
       chat.sendMessage({
         text:
-          'Genera esattamente 3 suggerimenti brevi y accionables que un usuario podría escribir. ' +
-          'Deben ser frases que el usuario podría decir, no preguntas. ' +
-          'Relevantes al contexto de la página/búsqueda actual. ' +
-          'Devuélvelas SOLO mediante la llamada al tool suggestedQuestions en input.questions.',
+          'Generate exactly 3 short, actionable suggestions that a user might type. ' +
+          'They should be phrases the user could say, not questions. ' +
+          'Make them relevant to the current page/search context. ' +
+          'Return them ONLY via the suggestedQuestions tool call in input.questions.',
       });
     },
     [chat]

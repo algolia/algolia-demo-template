@@ -49,7 +49,6 @@ function PersonalizedConfigure() {
 
     // Only refresh if user actually changed (not on initial mount)
     if (userChanged) {
-      console.log("[Personalization] User changed, refreshing search results");
       refresh();
     }
 
