@@ -1,9 +1,10 @@
 import "dotenv/config";
 import { querySuggestionsClient } from "@algolia/client-query-suggestions";
+import { ALGOLIA_CONFIG } from "../lib/algolia-config";
 
-const ALGOLIA_APP_ID = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID!;
+const ALGOLIA_APP_ID = ALGOLIA_CONFIG.APP_ID;
 const ALGOLIA_ADMIN_KEY = process.env.ALGOLIA_ADMIN_API_KEY!;
-const SOURCE_INDEX = process.env.NEXT_PUBLIC_ALGOLIA_INDEX_NAME || "";
+const SOURCE_INDEX = ALGOLIA_CONFIG.INDEX_NAME;
 const SUGGESTIONS_INDEX = `${SOURCE_INDEX}_query_suggestions`;
 
 async function main() {

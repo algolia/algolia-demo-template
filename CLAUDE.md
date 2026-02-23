@@ -44,18 +44,14 @@ All prices go through `lib/utils/format.ts` → `formatPrice()`, which reads `DE
 
 `next.config.ts` reads `DEMO_CONFIG.imageDomains` for Next.js `<Image>` remote patterns.
 
-## Environment Variables
+## Algolia Configuration
 
-Required variables in `.env`:
-- `NEXT_PUBLIC_ALGOLIA_APP_ID`: Algolia application ID
-- `NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY`: Algolia search API key
-- `ALGOLIA_ADMIN_API_KEY`: Algolia admin API key (for indexing, not exposed to client)
-- `NEXT_PUBLIC_ALGOLIA_INDEX_NAME`: Algolia index name
-- `NEXT_PUBLIC_ALGOLIA_COMPOSITION_ID`: Composition ID
-- `NEXT_PUBLIC_ALGOLIA_AGENT_ID`: Primary agent for sidepanel assistant
-- `NEXT_PUBLIC_ALGOLIA_SUGGESTION_AGENT_ID`: Suggestion agent
-- `NEXT_PUBLIC_ALGOLIA_CHECKOUT_AGENT_ID`: Checkout recommendations agent
-- `NEXT_PUBLIC_AGENT_API_KEY`: API key for Agent Studio
+All non-sensitive Algolia settings live in `lib/algolia-config.ts` (committed to the repo). This includes the APP_ID, search-only API key, index names, composition ID, and agent IDs. Environment variables can override any value when set.
+
+**Default app:** `3FKQCCIUWO` with search key `cf3b54fbfea633fb12808c8b2f59b990`.
+
+**`.env` (secret only):**
+- `ALGOLIA_ADMIN_API_KEY`: Algolia admin API key (for indexing scripts, never exposed to client)
 
 ## Architecture
 

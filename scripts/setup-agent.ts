@@ -1,12 +1,13 @@
 import "dotenv/config";
 import { AGENT_CONFIG } from "../lib/demo-config/agents";
+import { ALGOLIA_CONFIG } from "../lib/algolia-config";
 
-const ALGOLIA_APP_ID = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID!;
+const ALGOLIA_APP_ID = ALGOLIA_CONFIG.APP_ID;
 const ALGOLIA_ADMIN_KEY = process.env.ALGOLIA_ADMIN_API_KEY!;
-const AGENT_API_KEY = process.env.NEXT_PUBLIC_AGENT_API_KEY!;
-const AGENT_ID = process.env.NEXT_PUBLIC_ALGOLIA_AGENT_ID!;
-const SUGGESTION_AGENT_ID = process.env.NEXT_PUBLIC_ALGOLIA_SUGGESTION_AGENT_ID!;
-const INDEX_NAME = process.env.NEXT_PUBLIC_ALGOLIA_INDEX_NAME || "";
+const AGENT_API_KEY = ALGOLIA_CONFIG.AGENT_API_KEY;
+const AGENT_ID = ALGOLIA_CONFIG.AGENT_ID;
+const SUGGESTION_AGENT_ID = ALGOLIA_CONFIG.SUGGESTION_AGENT_ID;
+const INDEX_NAME = ALGOLIA_CONFIG.INDEX_NAME;
 
 // Default model and provider - can be overridden via environment variables
 const DEFAULT_MODEL = "gpt-5";

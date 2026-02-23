@@ -2,11 +2,12 @@ import "dotenv/config";
 import { readFileSync } from "fs";
 import { parseStringPromise } from "xml2js";
 import { algoliasearch } from "algoliasearch";
+import { ALGOLIA_CONFIG } from "../lib/algolia-config";
 
-const ALGOLIA_APP_ID = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID!;
+const ALGOLIA_APP_ID = ALGOLIA_CONFIG.APP_ID;
 const ALGOLIA_ADMIN_KEY = process.env.ALGOLIA_ADMIN_API_KEY!;
-const INDEX_NAME = process.env.NEXT_PUBLIC_ALGOLIA_INDEX_NAME || "";
-const COMPOSITION_ID = process.env.NEXT_PUBLIC_ALGOLIA_COMPOSITION_ID;
+const INDEX_NAME = ALGOLIA_CONFIG.INDEX_NAME;
+const COMPOSITION_ID = ALGOLIA_CONFIG.COMPOSITION_ID;
 
 interface XmlProduct {
   "sqr:content_type"?: string[];
