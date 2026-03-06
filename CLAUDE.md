@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Algolia E-Commerce Demo Template — A configurable e-commerce demo built with Next.js 16, React 19, and Algolia's Composition API with Agent Studio integration. The application features AI-powered product discovery, personalized user profiles, and intelligent shopping assistance. All demo-specific values (brand, categories, users, agent instructions) are centralized in `lib/demo-config/`.
+Algolia Demo Template — A configurable e-commerce demo built with Next.js 16, React 19, and Algolia's Composition API with Agent Studio integration. The application features AI-powered product discovery, personalized user profiles, and intelligent shopping assistance. All demo-specific values (brand, categories, users, agent instructions) are centralized in `lib/demo-config/`.
 
 See `SETUP.md` for step-by-step new demo setup instructions.
 

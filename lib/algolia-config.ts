@@ -15,8 +15,6 @@ export const ALGOLIA_CONFIG = {
 
   // Indices
   INDEX_NAME: "fashion_ns",
-  SUGGESTIONS_INDEX: "",
-  CATEGORIES_INDEX: "",
 
   // Composition
   COMPOSITION_ID: "fashion_ns_composition",

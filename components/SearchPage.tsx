@@ -89,7 +89,7 @@ function QuerySuggestions({
         const results = await client.search({
           requests: [
             {
-              indexName: ALGOLIA_CONFIG.SUGGESTIONS_INDEX || `${ALGOLIA_CONFIG.INDEX_NAME}_query_suggestions`,
+              indexName: `${ALGOLIA_CONFIG.INDEX_NAME}_query_suggestions`,
               query: query,
               hitsPerPage: 8,
             },

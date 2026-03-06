@@ -1,76 +1,101 @@
+/**
+ * Setup Algolia Query Suggestions (no analytics events required)
+ *
+ * This script configures Query Suggestions to generate suggestions purely from
+ * index data — no user click or conversion events are needed. Suggestions are
+ * derived by mining popular facet values and combinations from the source index,
+ * then matching them against record attributes.
+ *
+ * How it works without events:
+ *   1. Algolia scans the source index for attribute values defined in `generate`.
+ *   2. Each unique facet value (or combination) becomes a suggestion candidate.
+ *      - Single facets: brand, category (lvl0 & lvl1), gender, color
+ *      - Combinations: brand+category, brand+gender, gender+category
+ *      Combinations produce compound suggestions like "Nike Shoes" or "Women's Clothing".
+ *   3. Candidates are filtered by `minHits` (minimum matching records) and
+ *      `minLetters` (minimum query length) to keep suggestions relevant.
+ *   4. The resulting suggestions are written to a dedicated `_query_suggestions`
+ *      index that can be queried by autocomplete / search-as-you-type UIs.
+ *
+ * Because this approach relies solely on index content, it works immediately
+ * for new demos or apps that have no search traffic yet.
+ *
+ * Usage:
+ *   pnpm tsx scripts/setup-query-suggestions.ts
+ *
+ * Prerequisites:
+ *   - ALGOLIA_ADMIN_API_KEY set in .env
+ *   - Source index already populated with product data
+ */
 import "dotenv/config";
 import { querySuggestionsClient } from "@algolia/client-query-suggestions";
 import { ALGOLIA_CONFIG } from "../lib/algolia-config";
 
-const ALGOLIA_APP_ID = ALGOLIA_CONFIG.APP_ID;
-const ALGOLIA_ADMIN_KEY = process.env.ALGOLIA_ADMIN_API_KEY!;
-const SOURCE_INDEX = ALGOLIA_CONFIG.INDEX_NAME;
-const SUGGESTIONS_INDEX = `${SOURCE_INDEX}_query_suggestions`;
+const SUGGESTIONS_INDEX = `${ALGOLIA_CONFIG.INDEX_NAME}_query_suggestions`;
+
+const FACETS: string[][] = [
+  ["brand"],
+  ["hierarchical_categories.lvl0"],
+  ["hierarchical_categories.lvl1"],
+  ["gender"],
+  ["color.filter_group"],
+  ["brand", "hierarchical_categories.lvl0"],
+  ["brand", "gender"],
+  ["gender", "hierarchical_categories.lvl0"],
+];
+
+const CONFIGURATION = {
+  sourceIndices: [
+    {
+      indexName: ALGOLIA_CONFIG.INDEX_NAME,
+      minHits: 5,
+      minLetters: 4,
+      generate: FACETS,
+    },
+  ],
+  languages: ["en"],
+};
 
 async function main() {
-  if (!ALGOLIA_APP_ID || !ALGOLIA_ADMIN_KEY) {
-    console.error("Missing ALGOLIA_APP_ID or ALGOLIA_ADMIN_API_KEY");
+  const adminKey = process.env.ALGOLIA_ADMIN_API_KEY;
+  if (!adminKey) {
+    console.error("Missing ALGOLIA_ADMIN_API_KEY in .env");
     process.exit(1);
   }
 
-  console.log(`Setting up Query Suggestions for ${SOURCE_INDEX}...`);
-  console.log(`Suggestions index will be: ${SUGGESTIONS_INDEX}`);
+  const client = querySuggestionsClient(ALGOLIA_CONFIG.APP_ID, adminKey, "eu");
 
-  const client = querySuggestionsClient(ALGOLIA_APP_ID, ALGOLIA_ADMIN_KEY, "eu");
+  const configExists = (await client.getAllConfigs()).some(
+    (config) => config.indexName === SUGGESTIONS_INDEX
+  );
 
-  try {
-    // Check if config already exists
-    const existingConfigs = await client.getAllConfigs();
-    const existingConfig = existingConfigs.find(
-      (config) => config.indexName === SUGGESTIONS_INDEX
-    );
-
-    if (existingConfig) {
-      console.log("Configuration already exists. Updating...");
-      await client.updateConfig({
-        indexName: SUGGESTIONS_INDEX,
-        configuration: {
-          sourceIndices: [
-            {
-              indexName: SOURCE_INDEX,
-              minHits: 5,
-              minLetters: 4,
-              generate: [["brand"], ["hierarchical_categories.lvl0"]],
-            },
-          ],
-          languages: ["en"],
-        },
-      });
-      console.log("Configuration updated successfully!");
-    } else {
-      console.log("Creating new configuration...");
-      await client.createConfig({
-        indexName: SUGGESTIONS_INDEX,
-        sourceIndices: [
-          {
-            indexName: SOURCE_INDEX,
-            minHits: 5,
-            minLetters: 4,
-            generate: [["brand"], ["hierarchical_categories.lvl0"]],
-          },
-        ],
-        languages: ["en"],
-      });
-      console.log("Configuration created successfully!");
-    }
-
-    console.log("\nQuery Suggestions configuration:");
-    console.log(`  - Index name: ${SUGGESTIONS_INDEX}`);
-    console.log(`  - Source index: ${SOURCE_INDEX}`);
-    console.log("  - Min hits: 5");
-    console.log("  - Min letters: 4");
-    console.log("  - Facets: brand, hierarchical_categories.lvl0");
-    console.log("\nThe suggestions index will be built automatically.");
-    console.log("Check the Algolia dashboard to monitor progress.");
-  } catch (error) {
-    console.error("Error setting up Query Suggestions:", error);
-    process.exit(1);
+  if (configExists) {
+    console.log(`Updating Query Suggestions config for ${SUGGESTIONS_INDEX}...`);
+    await client.updateConfig({
+      indexName: SUGGESTIONS_INDEX,
+      configuration: CONFIGURATION,
+    });
+  } else {
+    console.log(`Creating Query Suggestions config for ${SUGGESTIONS_INDEX}...`);
+    await client.createConfig({
+      indexName: SUGGESTIONS_INDEX,
+      ...CONFIGURATION,
+    });
   }
+
+  const source = CONFIGURATION.sourceIndices[0];
+  const singles = FACETS.filter((f) => f.length === 1).map((f) => f[0]);
+  const combos = FACETS.filter((f) => f.length > 1).map((f) => f.join(" + "));
+
+  console.log(`Done! Configuration ${configExists ? "updated" : "created"}.`);
+  console.log(`  Source index: ${source.indexName}`);
+  console.log(`  Min hits: ${source.minHits} | Min letters: ${source.minLetters}`);
+  console.log(`  Single facets: ${singles.join(", ")}`);
+  console.log(`  Combinations: ${combos.join(", ")}`);
+  console.log("\nThe suggestions index will rebuild automatically.");
 }
 
-main();
+main().catch((error) => {
+  console.error("Error setting up Query Suggestions:", error);
+  process.exit(1);
+});
