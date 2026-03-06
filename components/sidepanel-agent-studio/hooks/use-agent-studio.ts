@@ -1,5 +1,5 @@
 import { useChat, type UIMessage } from '@ai-sdk/react';
-import { useMemo, useRef, useEffect, useCallback } from 'react';
+import { useMemo, useRef, useEffect, useCallback, useState } from 'react';
 import { useInstantSearch } from 'react-instantsearch';
 
 import { useCart } from '@/components/cart/cart-context';
@@ -103,6 +103,9 @@ export function useAgentStudio(config: AgentStudioConfig) {
     });
   }, [apiUrl, config, indexUiStateRef]);
 
+  // Suggestions from built-in Agent Studio suggestions feature
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+
   // Client-side tools that we handle locally (not server-side like algolia_search_index)
   const CLIENT_SIDE_TOOLS = ['addToCart', 'showItems'];
 
@@ -142,6 +145,14 @@ export function useAgentStudio(config: AgentStudioConfig) {
   const chat = useChat({
     transport,
     sendAutomaticallyWhen: shouldAutoSend,
+    onData(dataPart) {
+      if (dataPart.type === 'data-suggestions') {
+        const data = dataPart.data as { suggestions?: string[] };
+        if (data?.suggestions) {
+          setSuggestions(data.suggestions);
+        }
+      }
+    },
     async onToolCall({ toolCall }) {
       if (toolCall.dynamic) return;
 
@@ -191,14 +202,35 @@ export function useAgentStudio(config: AgentStudioConfig) {
   const isGenerating =
     chat.status === 'submitted' || chat.status === 'streaming';
 
+  // Fallback: extract suggestions from last assistant message parts
+  const extractedSuggestions = useMemo(() => {
+    if (suggestions.length > 0) return suggestions;
+    const lastAssistant = [...chat.messages].reverse().find(m => m.role === 'assistant');
+    if (!lastAssistant) return [];
+    for (const part of lastAssistant.parts) {
+      if (typeof part === 'object' && 'type' in part && (part as { type: string }).type === 'data' && 'data' in part) {
+        const d = part as { type: string; data: unknown };
+        if (d.data && typeof d.data === 'object' && 'type' in (d.data as Record<string, unknown>)) {
+          const dataObj = d.data as { type: string; data?: { suggestions?: string[] } };
+          if (dataObj.type === 'data-suggestions' && dataObj.data?.suggestions) {
+            return dataObj.data.suggestions;
+          }
+        }
+      }
+    }
+    return [];
+  }, [suggestions, chat.messages]);
+
   // Reset conversation state
   const resetConversation = useCallback(() => {
     chat.setMessages?.([]);
+    setSuggestions([]);
   }, [chat]);
 
   return {
     ...chat,
     isGenerating,
     resetConversation,
+    suggestions: extractedSuggestions,
   };
 }

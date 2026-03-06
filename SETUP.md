@@ -40,7 +40,7 @@ Edit `lib/demo-config/users.ts`:
 
 Edit `lib/demo-config/agents.ts`:
 
-- Customize agent instructions for main, suggestion, and checkout agents
+- Customize agent instructions for the main shopping assistant
 - Update `indexDescription` with your actual category values and filterable fields
 
 ## 6. Configure Image Domains

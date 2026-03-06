@@ -20,10 +20,5 @@ export const ALGOLIA_CONFIG = {
   COMPOSITION_ID: "fashion_ns_composition",
 
   // Agent Studio configuration
-  AGENT_API_KEY:  "",
-  AGENT_ID:  "",
-  SUGGESTION_AGENT_ID:
-    "",
-  CHECKOUT_AGENT_ID:
-    "",
+  AGENT_ID:  "3db1f581-4e8d-4570-a856-dd46204d360a",
 };

@@ -1,24 +1,16 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useCallback } from "react";
 import { useSidepanel } from "@/components/sidepanel-agent-studio/context/sidepanel-context";
 
 export function useCollapsibleFilters() {
-  const [filtersOpen, setFiltersOpen] = useState(true);
+  const [userChoice, setUserChoice] = useState<boolean | null>(null);
   const { isSidepanelOpen } = useSidepanel();
-  const userToggledRef = useRef(false);
 
-  // Auto-collapse filters when sidepanel opens, restore when it closes
-  useEffect(() => {
-    if (isSidepanelOpen) {
-      setFiltersOpen(false);
-    } else if (!userToggledRef.current) {
-      setFiltersOpen(true);
-    }
+  // Derive filter visibility: user's manual choice takes priority, otherwise auto-collapse when sidepanel is open
+  const filtersOpen = userChoice ?? !isSidepanelOpen;
+
+  const toggleFilters = useCallback(() => {
+    setUserChoice((prev) => !(prev ?? !isSidepanelOpen));
   }, [isSidepanelOpen]);
-
-  const toggleFilters = () => {
-    userToggledRef.current = true;
-    setFiltersOpen((prev) => !prev);
-  };
 
   return { filtersOpen, toggleFilters };
 }

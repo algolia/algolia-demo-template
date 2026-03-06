@@ -85,18 +85,15 @@ Nested provider structure in `components/providers.tsx`:
 
 ### AI Agent System
 
-Three specialized AI agents powered by Algolia Agent Studio. Instructions are configured in `lib/demo-config/agents.ts`.
+Two AI agents powered by Algolia Agent Studio. Instructions are configured in `lib/demo-config/agents.ts`.
 
 **1. Sidepanel Agent** (`components/sidepanel-agent-studio/`)
 - Context-aware assistant for search and product pages
 - Uses `context-snapshot.ts` to resolve page context before each message
+- Built-in suggestions enabled (`config.suggestions.enabled: true`) — every response includes contextual follow-up suggestions via `data-suggestions` SSE events
 - Tools: `addToCart`, `showItems`
 
-**2. Product Page Agent** (`components/sidepanel-agent-studio/components/product-page-agent.tsx`)
-- Specialized agent for product detail pages
-- Generates contextual follow-up questions via `useFollowUpQuestions()`
-
-**3. Checkout Agent** (`components/checkout-agent/`)
+**2. Checkout Agent** (`components/checkout-agent/`)
 - Provides complementary product recommendations during checkout
 
 **Context Injection Pattern:**
@@ -130,7 +127,7 @@ User profiles are defined in `lib/demo-config/users.ts`. Each profile has prefer
 - InstantSearch components use composition for search
 
 **Agent Studio:**
-- Three agents configured via `scripts/setup-agent.ts` (reads from `lib/demo-config/agents.ts`)
+- Agents configured via `scripts/setup-agent.ts` (reads from `lib/demo-config/agents.ts`)
 - Custom transport layer injects context via `prepareSendMessagesRequest`
 - Client-side tool execution for cart operations
 

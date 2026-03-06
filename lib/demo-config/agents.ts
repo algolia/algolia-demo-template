@@ -1,10 +1,26 @@
 /**
  * Agent Studio configuration
  *
- * Edit this file to customize AI agent instructions and metadata.
+ * Edit this file to customize AI agent instructions, tools, and metadata.
  * These are used by scripts/setup-agent.ts to configure agents in Algolia.
  */
 import { DEMO_CONFIG } from "./index";
+
+/**
+ * Product attributes exposed to the agent API key.
+ * Keep this list minimal — only what the agent needs to answer questions.
+ */
+export const AGENT_PRODUCT_ATTRIBUTES = [
+  "objectID",
+  "title",
+  "brand",
+  "price",
+  "shortDescription",
+  "ingredients",
+  "characteristics",
+  "inStock",
+  "categories",
+];
 
 export const AGENT_CONFIG = {
   main: {
@@ -39,41 +55,59 @@ You are a Shopping Assistant for ${DEMO_CONFIG.brand.name}. You help customers f
 - inStock: Boolean, true if available
 
 **IMPORTANT:** Only use exact category values that exist in your index for filtering.`,
+
+    tools: [
+      {
+        name: "addToCart",
+        type: "client_side",
+        description:
+          "Add products to the customer's shopping cart. Use this when the customer wants to buy or add items to their cart.",
+        inputSchema: {
+          type: "object",
+          properties: {
+            objectIDs: {
+              type: "array",
+              items: { type: "string" },
+              description: "Array of product objectIDs to add to cart",
+            },
+          },
+          required: ["objectIDs"],
+        },
+      },
+      {
+        name: "showItems",
+        type: "client_side",
+        description:
+          "Display product recommendations to the customer with a title and explanation. Use this to present products you want to recommend.",
+        inputSchema: {
+          type: "object",
+          properties: {
+            objectIDs: {
+              type: "array",
+              items: { type: "string" },
+              description: "Array of product objectIDs to display",
+            },
+            title: {
+              type: "string",
+              description: "A short title for the recommendation section",
+            },
+            explanation: {
+              type: "string",
+              description:
+                "Brief explanation of why these products are being recommended",
+            },
+          },
+          required: ["objectIDs", "title", "explanation"],
+        },
+      },
+    ],
   },
 
-  suggestion: {
-    name: `${DEMO_CONFIG.brand.name} Suggestion Agent`,
-    fallbackQuestions: [
-      "Show me today's best deals",
-      "Find popular products",
-      "Browse new arrivals",
-      "Compare top-rated items",
-      "Explore trending categories",
-    ] as string[],
-    instructions: `**AGENT ROLE**
-You generate contextual follow-up suggestions for users browsing ${DEMO_CONFIG.brand.name}. Based on the current page context and conversation history, suggest actionable phrases the user might want to say next.
-
-**Context Injection**
-You receive page context in [CONTEXT]...[/CONTEXT] blocks containing:
-- pageType: "search", "product", "category", or "home"
-- urlState: Current search query, filters, category
-- product: Current product details (on product pages)
-- user: User preferences (if logged in)
-
-**Tool**
-- suggestedQuestions: Return exactly 3 short, actionable suggestions via input.questions array
-
-**Rules**
-1. Generate exactly 3 suggestions
-2. Make them short (5-10 words max)
-3. Write them as user statements, not questions
-4. Make them contextually relevant to the current page/search
-5. Vary the suggestions: one about filtering/narrowing, one about alternatives, one about product details or actions
-6. Write in English`,
-  },
-
-  checkout: {
-    name: `${DEMO_CONFIG.brand.name} Checkout Agent`,
-    instructions: `You suggest complementary products based on the customer's cart contents for ${DEMO_CONFIG.brand.name}.`,
-  },
+  fallbackSuggestions: [
+    "Show me today's best deals",
+    "Find popular products",
+    "Browse new arrivals",
+    "Compare top-rated items",
+    "Explore trending categories",
+  ] as string[],
 };

@@ -48,12 +48,8 @@ import {
   useAgentStudio,
 } from "@/components/sidepanel-agent-studio/hooks/use-agent-studio";
 
-import {
-  FALLBACK_FOLLOW_UP_QUESTIONS,
-  useFollowUpQuestions,
-} from "@/components/sidepanel-agent-studio/hooks/use-follow-up-questions";
-import { useUrlSuggestionTrigger } from "@/components/sidepanel-agent-studio/hooks/use-url-suggestion-trigger";
 import { useSidepanel } from "@/components/sidepanel-agent-studio/context/sidepanel-context";
+import { AGENT_CONFIG } from "@/lib/demo-config/agents";
 import { Product } from "@/lib/types/product";
 import { useSpeechRecognition } from "@/hooks/use-speech-recognition";
 import { CompactProductListItem } from "@/components/ProductCard";
@@ -934,8 +930,8 @@ const ChatWidget = memo(function ChatWidget({
                 <div className="flex flex-wrap gap-2">
                   {(followUpQuestions.length > 0
                     ? followUpQuestions
-                    : FALLBACK_FOLLOW_UP_QUESTIONS
-                  ).map((question, index) => (
+                    : AGENT_CONFIG.fallbackSuggestions
+                  ).map((question: string, index: number) => (
                     <Button
                       key={`suggestion-${index}`}
                       type="button"
@@ -1761,7 +1757,6 @@ export default function SidepanelExperience(config: AgentStudioConfig) {
   const [isOpen, setIsOpen] = useState(false);
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
   const variant = config.variant || "floating";
-  const prevIsGeneratingRef = useRef(false);
   const pendingMessageRef = useRef<string | null>(null);
   const isOpenRef = useRef(false);
   const sendMessageRef = useRef<((options: { text: string }) => void) | null>(
@@ -1775,7 +1770,7 @@ export default function SidepanelExperience(config: AgentStudioConfig) {
     sidepanelContext.notifyOpenChange(isOpen);
   }, [isOpen, sidepanelContext]);
 
-  const { messages, setMessages, error, isGenerating, sendMessage } =
+  const { messages, setMessages, error, isGenerating, sendMessage, suggestions } =
     useAgentStudio({
       applicationId: config.applicationId,
       apiKey: config.apiKey,
@@ -1786,20 +1781,6 @@ export default function SidepanelExperience(config: AgentStudioConfig) {
   useEffect(() => {
     sendMessageRef.current = sendMessage;
   }, [sendMessage]);
-
-  // Follow-up questions agent (uses a separate agent ID for generating follow-ups)
-  const {
-    followUpQuestions,
-    generateFollowUps,
-    generateInitialSuggestions,
-    isGenerating: isFollowUpGenerating,
-    reset: resetFollowUps,
-  } = useFollowUpQuestions({
-    applicationId: config.applicationId,
-    apiKey: config.apiKey,
-    agentId:
-      process.env.NEXT_PUBLIC_ALGOLIA_SUGGESTION_AGENT_ID || config.agentId,
-  });
 
   // Register controls with context
   useEffect(() => {
@@ -1852,31 +1833,34 @@ export default function SidepanelExperience(config: AgentStudioConfig) {
     }
   }, [isOpen, sendMessage]);
 
-  // Trigger follow-up question generation when main agent finishes
-  useEffect(() => {
-    // Detect transition from generating to not generating
-    if (prevIsGeneratingRef.current && !isGenerating && messages.length >= 2) {
-      // Get the last exchange ID (user message ID)
-      const lastUserMessage = [...messages]
-        .reverse()
-        .find((m) => m.role === "user");
-      if (lastUserMessage) {
-        generateFollowUps(messages, lastUserMessage.id);
-      }
-    }
-    prevIsGeneratingRef.current = isGenerating;
-  }, [isGenerating, messages, generateFollowUps]);
+  // Hidden greeting: send a greeting to get contextual suggestions, then clear the exchange
+  const initialGreetingDoneRef = useRef(false);
+  const [initialSuggestionsLoading, setInitialSuggestionsLoading] = useState(false);
 
-  // Generate initial suggestions when page state changes (only when chat is empty)
-  // Uses singleton hook to prevent duplicate triggers from mobile + desktop instances
-  useUrlSuggestionTrigger(
-    (signature) => {
-      if (messages.length === 0) {
-        generateInitialSuggestions(signature);
-      }
-    },
-    true // enabled
-  );
+  useEffect(() => {
+    // Trigger when sidepanel is open, chat is empty, and greeting hasn't been done yet
+    if (!isOpen || messages.length > 0 || initialGreetingDoneRef.current || initialSuggestionsLoading) return;
+    if (!sendMessageRef.current) return;
+
+    initialGreetingDoneRef.current = true;
+    setInitialSuggestionsLoading(true);
+
+    // Small delay to ensure transport is ready
+    setTimeout(() => {
+      sendMessageRef.current?.({ text: "What can you help me with?" });
+    }, 100);
+  }, [isOpen, messages.length, initialSuggestionsLoading]);
+
+  // Clear chat after greeting response finishes (suggestions are captured via onData)
+  useEffect(() => {
+    if (!initialSuggestionsLoading) return;
+    if (isGenerating) return; // still streaming
+    if (messages.length === 0) return; // not yet received
+
+    // Response finished — clear the greeting exchange
+    setMessages?.([]);
+    setInitialSuggestionsLoading(false);
+  }, [initialSuggestionsLoading, isGenerating, messages.length, setMessages]);
 
   // Keyboard shortcut: Command+I (Mac) or Ctrl+I (Windows)
   useEffect(() => {
@@ -1903,7 +1887,7 @@ export default function SidepanelExperience(config: AgentStudioConfig) {
 
   const openNewConversation = () => {
     setMessages?.([]);
-    resetFollowUps();
+    initialGreetingDoneRef.current = false;
     setIsOpen(true);
   };
 
@@ -1959,8 +1943,8 @@ export default function SidepanelExperience(config: AgentStudioConfig) {
         sendMessage={sendMessage}
         inputRef={inputRef}
         onOpenNewConversation={openNewConversation}
-        followUpQuestions={followUpQuestions}
-        isFollowUpGenerating={isFollowUpGenerating}
+        followUpQuestions={suggestions}
+        isFollowUpGenerating={initialSuggestionsLoading}
       />
     </>
   );

@@ -11,7 +11,6 @@ import { ProductToolbar } from "@/components/ProductToolbar";
 import { FiltersSidebar, ActiveFilters } from "@/components/filters-sidebar";
 import { Configure } from "react-instantsearch";
 import { ALGOLIA_CONFIG } from "@/lib/algolia-config";
-import { AgentSuggestions } from "@/components/agent-suggestions";
 import { useSidepanel } from "@/components/sidepanel-agent-studio/context/sidepanel-context";
 import { useCollapsibleFilters } from "@/components/hooks/use-collapsible-filters";
 
@@ -290,9 +289,6 @@ export default function SearchPage() {
           <span className="text-primary">&quot;{query}&quot;</span>
         </h1>
       </div>
-
-      {/* Agent Suggestions - AI-powered contextual suggestions */}
-      <AgentSuggestions />
 
       {/* Query Suggestions */}
       <QuerySuggestions

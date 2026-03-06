@@ -1,12 +1,11 @@
 // components/ProductAskAI.tsx
 "use client";
 import { ArrowUpIcon, SparklesIcon } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Product } from "@/lib/types/product";
-import { useFollowUpQuestions } from "../hooks/use-follow-up-questions";
 import { useSidepanel } from "../context/sidepanel-context";
-import { getPageStateSignature } from "../lib/context-snapshot";
+import { AGENT_CONFIG } from "@/lib/demo-config/agents";
 
 // ============================================================================
 // Main Component
@@ -18,35 +17,9 @@ interface ProductAskAIProps {
 
 export default function ProductAskAI({ product }: ProductAskAIProps) {
   const [inputValue, setInputValue] = useState("");
-  const inputRef = useRef<HTMLTextAreaElement>(null);
-  const hasGeneratedRef = useRef(false);
-
-  // Separate instance of useFollowUpQuestions for product page
-  const {
-    followUpQuestions,
-    generateInitialSuggestions,
-    isGenerating,
-    fallbackQuestions,
-  } = useFollowUpQuestions({
-    applicationId: process.env.NEXT_PUBLIC_ALGOLIA_APP_ID || "",
-    apiKey: process.env.NEXT_PUBLIC_AGENT_API_KEY || "",
-    agentId:
-      process.env.NEXT_PUBLIC_ALGOLIA_SUGGESTION_AGENT_ID ||
-      process.env.NEXT_PUBLIC_ALGOLIA_AGENT_ID ||
-      "",
-  });
 
   // Get sidepanel context to open it and send messages
   const { openSidepanel } = useSidepanel();
-
-  // Generate initial suggestions on first render
-  useEffect(() => {
-    if (!hasGeneratedRef.current) {
-      hasGeneratedRef.current = true;
-      const stateSig = getPageStateSignature();
-      generateInitialSuggestions(stateSig);
-    }
-  }, [generateInitialSuggestions]);
 
   const handleSubmit = useCallback(
     (text: string) => {
@@ -57,9 +30,7 @@ export default function ProductAskAI({ product }: ProductAskAIProps) {
     [openSidepanel]
   );
 
-  // Use generated questions if available, otherwise fallback
-  const questionsToShow =
-    followUpQuestions.length > 0 ? followUpQuestions : fallbackQuestions;
+  const questionsToShow = AGENT_CONFIG.fallbackSuggestions;
 
   return (
     <div className="border border-border rounded-lg bg-background overflow-hidden">
@@ -80,30 +51,22 @@ export default function ProductAskAI({ product }: ProductAskAIProps) {
               {product.name || "this product"}
             </span>
           </p>
-          {isGenerating && followUpQuestions.length === 0 ? (
-            <div className="flex items-center gap-2 text-muted-foreground text-sm">
-              <SparklesIcon size={14} className="animate-pulse" />
-              <span>Generating suggestions...</span>
-            </div>
-          ) : (
-            <div className="flex flex-wrap gap-2">
-              {questionsToShow.map((question: string, idx: number) => (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => handleSubmit(`${question}: ${product.name || "this product"}`)}
-                  className="text-xs px-3 py-1.5 rounded-full border border-border bg-background text-foreground hover:bg-blue-50 dark:hover:bg-slate-800 hover:border-blue-600 transition-colors"
-                >
-                  {question}
-                </button>
-              ))}
-            </div>
-          )}
+          <div className="flex flex-wrap gap-2">
+            {questionsToShow.map((question: string, idx: number) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => handleSubmit(`${question}: ${product.name || "this product"}`)}
+                className="text-xs px-3 py-1.5 rounded-full border border-border bg-background text-foreground hover:bg-blue-50 dark:hover:bg-slate-800 hover:border-blue-600 transition-colors"
+              >
+                {question}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
       <div className="flex gap-2 p-3 border-t border-border">
         <textarea
-          ref={inputRef}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={(e) => {

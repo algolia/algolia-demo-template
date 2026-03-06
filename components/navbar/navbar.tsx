@@ -12,6 +12,7 @@ import { LiveSearchBar } from "./live-search-bar";
 import { UserSelector } from "./user-selector";
 import { useSidepanel } from "@/components/sidepanel-agent-studio/context/sidepanel-context";
 import { useSelection } from "@/components/selection/selection-context";
+import { ALGOLIA_CONFIG } from "@/lib/algolia-config";
 
 export function NavBar() {
   const { refine } = useSearchBox();
@@ -99,9 +100,9 @@ export function NavBar() {
 
       {/* Single AI Sidepanel instance (shared between mobile and desktop) */}
       <SidepanelExperience
-        applicationId={process.env.NEXT_PUBLIC_ALGOLIA_APP_ID!}
-        apiKey={process.env.NEXT_PUBLIC_AGENT_API_KEY!}
-        agentId={process.env.NEXT_PUBLIC_ALGOLIA_AGENT_ID!}
+        applicationId={ALGOLIA_CONFIG.APP_ID}
+        apiKey={ALGOLIA_CONFIG.SEARCH_API_KEY}
+        agentId={ALGOLIA_CONFIG.AGENT_ID}
         variant="inline"
         placeholder="Ask AI anything..."
         showTrigger={false}
