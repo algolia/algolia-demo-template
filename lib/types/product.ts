@@ -1,73 +1,74 @@
 export interface Product {
   // Identifiers
   objectID: string;
-  id: string;
+  name: string;
+  slug: string;
   sku: string;
-
-  // Basic product information
-  title: string;
-  titleEn: string;
-  brand: string;
+  parentID: string;
   description: string;
-  shortDescription: string;
+  brand: string;
+  gender: string;
+
+  // Status
+  isNew: boolean;
   url: string;
-  imageUrl: string;
-
-  // Stock and availability
   stock: number;
-  inStock: boolean;
-
-  // Product classification
-  productType: string;
-  visibility: string;
-  status: string;
-  format: string;
-
-  // Product attributes
-  characteristics: string[];
-  ingredients: string[];
-  flavour: string[];
-
-  // Reviews and ratings
-  reviewCount: number;
-  quantity: number;
-  rating: number;
-
-  // Categories (flat structure)
-  categories: {
-    lvl0: string[];
-    lvl1: string[];
-    lvl2: string[];
-    lvl3: string[];
-  };
-
-  // Hierarchical categories (for Algolia hierarchical faceting)
-  hierarchicalCategories: {
-    lvl0: string[];
-    lvl1: string[];
-    lvl2: string[];
-    lvl3: string[];
-  };
 
   // Pricing
-  currency: string;
-  price: number;
-  normalPrice: number;
-  discount: number;
-  discountPercentage: number;
+  price: { value: number };
+  color: { filter_group: string; original_name: string };
 
-  // Multi-currency pricing
-  prices: {
-    EUR: { price: number; normalPrice: number };
-    CHF: { price: number; normalPrice: number };
-    PLN: { price: number; normalPrice: number };
-    RON: { price: number; normalPrice: number };
-    SEK: { price: number; normalPrice: number };
+  // Images
+  primary_image: string;
+  image_urls: string[];
+  image_blurred: string;
+  image_description: string;
+
+  // Sizes
+  available_sizes: string[];
+
+  // Categories
+  hierarchical_categories: {
+    lvl0: string;
+    lvl1: string;
+    lvl2: string;
+  };
+  list_categories: string[];
+  categoryPageId: string[];
+
+  // Variants
+  variants: Array<{
+    color: { filter_group: string; original_name: string };
+    image_urls: string[];
+    objectID: string;
+    price: { value: number };
+  }>;
+
+  // Search & Discovery
+  keywords: string[];
+  semantic_attributes: string;
+
+  // Reviews
+  reviews: {
+    bayesian_avg: number;
+    count: number;
+    rating: number;
   };
 
-  // Product relationships
-  isParent: boolean;
-  associatedId: string;
+  // Store availability
+  availableInStores: Array<{
+    inStock: boolean;
+    objectID: string;
+  }>;
+
+  // Business metrics
+  margin: number;
+  discount_rate: number;
+  product_aov: number;
+  sales_last_24h: number;
+  sales_last_7d: number;
+  sales_last_30d: number;
+  sales_last_90d: number;
 
   // Algolia-specific fields (populated by search response)
   _highlightResult?: Record<string, unknown>;

@@ -19,7 +19,7 @@ Edit `lib/demo-config/index.ts`:
 - **brand.agentName** — Name shown in AI assistant header
 - **locale.language** — HTML lang attribute (e.g. `"en"`, `"es"`, `"it"`)
 - **locale.currency / currencySymbol** — Currency code and symbol for price formatting
-- **imageDomains** — Remote image domains for Next.js `<Image>` (protocol + hostname)
+- **imageDomains** — Remote image domains for Next.js `<Image>` (see step 6)
 
 ## 3. Configure Categories
 
@@ -43,42 +43,60 @@ Edit `lib/demo-config/agents.ts`:
 - Customize agent instructions for main, suggestion, and checkout agents
 - Update `indexDescription` with your actual category values and filterable fields
 
-## 6. Add Product Feed
+## 6. Configure Image Domains
 
-Place your product feed XML in `data/` (e.g. `data/feed.xml`).
+Product images are loaded via Next.js `<Image>`, which requires explicit allowlisting of remote hostnames.
 
-The XML should follow the structure expected by `scripts/index-data.ts`. Modify the script if your feed format differs.
+Edit the `imageDomains` array in `lib/demo-config/index.ts`:
 
-## 7. Set Environment Variables
+```ts
+imageDomains: [
+  { protocol: "https" as const, hostname: "cdn.example.com" },
+],
+```
 
-Create a `.env` file:
+**How to find the right hostname:** look at a product's image URL in your data (e.g. `primary_image` field in `data/products.json`). Extract the hostname and add it here. If images come from multiple CDNs, add all of them.
 
-```bash
-# Algolia Core
-NEXT_PUBLIC_ALGOLIA_APP_ID=your_app_id
-NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY=your_search_api_key
-ALGOLIA_ADMIN_API_KEY=your_admin_api_key
+> **If you skip this step**, product images will fail to load and Next.js will log an error like:
+> `hostname "..." is not configured under images in your next.config.js`
 
-# Index and Composition
-NEXT_PUBLIC_ALGOLIA_INDEX_NAME=your_index_name
-NEXT_PUBLIC_ALGOLIA_COMPOSITION_ID=your_composition_id
+## 7. Add Product Data
 
-# Agent Studio (optional - for AI features)
-NEXT_PUBLIC_AGENT_API_KEY=your_agent_api_key
-NEXT_PUBLIC_ALGOLIA_AGENT_ID=your_agent_id
-NEXT_PUBLIC_ALGOLIA_SUGGESTION_AGENT_ID=your_suggestion_agent_id
-NEXT_PUBLIC_ALGOLIA_CHECKOUT_AGENT_ID=your_checkout_agent_id
+Place your product data as JSON in `data/products.json`. Each record should already be in the shape you want indexed to Algolia (with `objectID` as the primary key).
 
-NODE_ENV=development
+If you're pulling from an existing Algolia index, you can use a download script like:
+
+```ts
+// scripts/download-index.ts (one-time use, gitignored)
+import "dotenv/config";
+import { algoliasearch } from "algoliasearch";
+import { writeFileSync, mkdirSync } from "fs";
+
+const client = algoliasearch("YOUR_APP_ID", process.env.ALGOLIA_ADMIN_API_KEY!);
+const records: Record<string, unknown>[] = [];
+
+await client.browseObjects({
+  indexName: "your_source_index",
+  browseParams: { hitsPerPage: 1000 },
+  aggregator: (response) => records.push(...response.hits as any[]),
+});
+
+mkdirSync("data", { recursive: true });
+writeFileSync("data/products.json", JSON.stringify(records, null, 2));
 ```
 
 ## 8. Index Products
 
 ```bash
-pnpm tsx scripts/index-data.ts [path/to/feed.xml]
+pnpm tsx scripts/index-data.ts [path/to/products.json]
 ```
 
-If no path is given, defaults to `data/feed.xml`. You can also set `DATA_FEED_PATH` env var.
+If no path is given, defaults to `data/products.json`.
+
+This script will:
+1. Index all records to Algolia
+2. Configure searchable attributes, facets, and ranking
+3. Create/update the Composition (uses `COMPOSITION_ID` from config, or derives one from the index name)
 
 ## 9. Set Up Agents
 
@@ -94,10 +112,27 @@ pnpm tsx scripts/setup-agent.ts
 ## 11. Set Up Query Suggestions (optional)
 
 ```bash
-pnpm setup:suggestions
+pnpm tsx scripts/setup-query-suggestions.ts
 ```
 
-## 12. Run Development Server
+This creates a `<index_name>_query_suggestions` index (e.g. `fashion_ns_query_suggestions`) that powers autocomplete. The suggestions index is rebuilt automatically by Algolia.
+
+## 13. Configure Relevance Tests (optional)
+
+Edit the `TEST_CASES` array in `scripts/test-relevance.ts` to define queries with expected objectIDs and ordering. Each test case has:
+
+- **name** — Human-readable label
+- **query** — The search query to test
+- **expectedIds** — objectIDs that must appear in this order in the results
+- **maxPosition** — (optional) How deep to look, defaults to top 20
+
+Run the tests with:
+
+```bash
+pnpm tsx scripts/test-relevance.ts
+```
+
+## 14. Run Development Server
 
 ```bash
 pnpm dev
@@ -113,4 +148,5 @@ Visit http://localhost:3000 to see the demo.
 | `lib/demo-config/categories.ts` | Category tree and icons |
 | `lib/demo-config/users.ts` | Demo user profiles and preference metadata |
 | `lib/demo-config/agents.ts` | AI agent instructions |
-| `.env` | Algolia credentials and IDs |
+| `lib/algolia-config.ts` | Algolia app ID, API keys, index/composition/agent IDs |
+| `.env` | Algolia admin API key |

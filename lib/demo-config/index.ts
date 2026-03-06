@@ -19,7 +19,7 @@ export const DEMO_CONFIG = {
     currencySymbol: "$",
   },
   imageDomains: [
-    // Add your product image CDN domains here:
-    // { protocol: "https" as const, hostname: "cdn.example.com" },
+    { protocol: "https" as const, hostname: "fxqklbpngldowtbkqezm.supabase.co" },
+    { protocol: "https" as const, hostname: "img.theproteinworks.com" },
   ],
 };

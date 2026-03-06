@@ -32,9 +32,9 @@ export default function ProductPage({ product }: ProductPageProps) {
   const [isWishlisted, setIsWishlisted] = useState(false);
   const { addItem } = useCart();
 
-  const images = product.imageUrl ? [product.imageUrl] : [];
-  const productName = product.title || "Untitled Product";
-  const categoryList = product.categories?.lvl0 || [];
+  const images = product.image_urls?.length ? product.image_urls : product.primary_image ? [product.primary_image] : [];
+  const productName = product.name || "Untitled Product";
+  const categoryList = product.list_categories || [];
 
   // Price and discount calculations
   const { price, originalPrice, hasDiscount, discountPercentage } = getPriceInfo(product);
@@ -51,7 +51,7 @@ export default function ProductPage({ product }: ProductPageProps) {
   const decrementQuantity = () => setQuantity((q) => Math.max(1, q - 1));
 
   const handleAddToCart = () => {
-    const productId = product.objectID || product.id || product.sku || "";
+    const productId = product.objectID || product.sku || "";
     if (!productId) return;
 
     const category = getPreferredCategory(product);
@@ -79,7 +79,7 @@ export default function ProductPage({ product }: ProductPageProps) {
               Home
             </Link>
           </li>
-          {categoryList.map((category, idx) => (
+          {categoryList.map((category: string, idx: number) => (
             <li key={idx} className="flex items-center gap-2">
               <span>/</span>
               <Link
@@ -197,9 +197,9 @@ export default function ProductPage({ product }: ProductPageProps) {
             </h1>
 
             {/* Product ID */}
-            {(product.sku || product.id) && (
+            {product.sku && (
               <p className="text-sm text-muted-foreground">
-                SKU: {product.sku || product.id}
+                SKU: {product.sku}
               </p>
             )}
 
@@ -222,7 +222,7 @@ export default function ProductPage({ product }: ProductPageProps) {
                       Save {discountPercentage}%
                     </span>
                     <span className="text-sm text-muted-foreground">
-                      You save {formatPrice(originalPrice - price)}
+                      You save {formatPrice(Math.round(originalPrice - price))}
                     </span>
                   </div>
                 )}
@@ -230,9 +230,9 @@ export default function ProductPage({ product }: ProductPageProps) {
             )}
 
             {/* Short Description */}
-            {product.shortDescription && (
-              <p className="text-muted-foreground leading-relaxed">
-                {product.shortDescription}
+            {product.description && (
+              <p className="text-muted-foreground leading-relaxed line-clamp-4">
+                {product.description}
               </p>
             )}
 
@@ -341,17 +341,14 @@ function extractSpecifications(
   if (product.brand) {
     specs.push({ label: "Brand", value: product.brand });
   }
-  if (product.format) {
-    specs.push({ label: "Format", value: product.format });
+  if (product.gender) {
+    specs.push({ label: "Gender", value: product.gender });
   }
-  if (product.characteristics?.length > 0) {
-    specs.push({ label: "Characteristics", value: product.characteristics.join(", ") });
+  if (product.color?.original_name) {
+    specs.push({ label: "Color", value: product.color.original_name });
   }
-  if (product.ingredients?.length > 0) {
-    specs.push({ label: "Ingredients", value: product.ingredients.join(", ") });
-  }
-  if (product.productType) {
-    specs.push({ label: "Type", value: product.productType });
+  if (product.available_sizes?.length > 0) {
+    specs.push({ label: "Available Sizes", value: product.available_sizes.join(", ") });
   }
 
   return specs;

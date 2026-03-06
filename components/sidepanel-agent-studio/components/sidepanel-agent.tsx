@@ -1225,15 +1225,15 @@ const ChatWidget = memo(function ChatWidget({
                                         key={product.objectID}
                                         className="flex items-center gap-2 text-sm"
                                       >
-                                        {product.imageUrl && (
+                                        {product.primary_image && (
                                           <img
-                                            src={product.imageUrl}
-                                            alt={product.title}
+                                            src={product.primary_image}
+                                            alt={product.name}
                                             className="w-8 h-8 object-cover rounded"
                                           />
                                         )}
                                         <span className="text-foreground truncate">
-                                          {product.title}
+                                          {product.name}
                                         </span>
                                       </div>
                                     ))}

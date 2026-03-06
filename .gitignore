@@ -25,6 +25,10 @@ data/*.csv
 data/*.xls
 data/*.mdb
 data/*.pdf
+data/*.json
+
+# One-time download script (not part of the template)
+scripts/download-index.ts
 
 # OS files
 .DS_Store

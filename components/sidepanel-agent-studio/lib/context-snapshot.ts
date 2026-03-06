@@ -232,7 +232,7 @@ export async function hydrateContext(
     if (product) {
       const productSnapshot: ContextSnapshot['product'] = {
         objectID: product.objectID || objectID,
-        name: product.title,
+        name: product.name,
         brand: product.brand,
         price: product.price?.toString(),
         description: product.description?.slice(0, 200), // Truncate for token efficiency

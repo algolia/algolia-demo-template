@@ -91,7 +91,7 @@ export function useAgentStudio(config: AgentStudioConfig) {
               ...ctx,
               selectedProducts: currentSelectedProducts.map((p) => ({
                 objectID: p.objectID,
-                name: p.title,
+                name: p.name,
                 brand: p.brand,
                 price: p.price?.toString(),
               })),
@@ -152,10 +152,10 @@ export function useAgentStudio(config: AgentStudioConfig) {
         // Add each product to the cart
         for (const product of products) {
           addItem({
-            id: product.objectID || product.id || '',
-            name: product.title || 'Unknown Product',
-            price: product.price,
-            image: product.imageUrl,
+            id: product.objectID || '',
+            name: product.name || 'Unknown Product',
+            price: product.price?.value || 0,
+            image: product.primary_image,
             brand: product.brand,
           });
         }

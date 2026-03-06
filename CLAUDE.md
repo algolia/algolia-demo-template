@@ -141,6 +141,13 @@ User profiles are defined in `lib/demo-config/users.ts`. Each profile has prefer
 | `scripts/index-data.ts` | Parse XML feed, index products, configure settings, create composition |
 | `scripts/setup-agent.ts` | Configure Agent Studio agents (reads `lib/demo-config/agents.ts`) |
 | `scripts/setup-query-suggestions.ts` | Set up Algolia Query Suggestions |
+| `scripts/test-relevance.ts` | Test search relevance — queries with expected objectIDs in order |
+
+## Relevance Tests
+
+`scripts/test-relevance.ts` tests search relevance via the Composition API. The `TEST_CASES` array contains queries with expected objectIDs that must appear in a specific order.
+
+**When setting up a new demo**, ask the user if they have specific search queries and expected products they'd like to validate. If so, populate the `TEST_CASES` array in `scripts/test-relevance.ts` with their test cases. Run with `pnpm tsx scripts/test-relevance.ts`.
 
 ## Important Notes
 

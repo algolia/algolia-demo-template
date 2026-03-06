@@ -101,12 +101,11 @@ import { getPriceInfo, getPreferredCategory } from "@/lib/utils/product";
 import { ALGOLIA_CONFIG } from "@/lib/algolia-config";
 
 function getHighestCategoryLevel(
-  hierarchicalCategories: Product["hierarchicalCategories"]
+  hierarchicalCategories: Product["hierarchical_categories"]
 ): string | null {
-  if (hierarchicalCategories?.lvl3?.length) return hierarchicalCategories.lvl3[0];
-  if (hierarchicalCategories?.lvl2?.length) return hierarchicalCategories.lvl2[0];
-  if (hierarchicalCategories?.lvl1?.length) return hierarchicalCategories.lvl1[0];
-  return hierarchicalCategories?.lvl0?.[0] || null;
+  if (hierarchicalCategories?.lvl2) return hierarchicalCategories.lvl2;
+  if (hierarchicalCategories?.lvl1) return hierarchicalCategories.lvl1;
+  return hierarchicalCategories?.lvl0 || null;
 }
 
 // ============================================================================
@@ -385,10 +384,10 @@ function SelectionCheckbox({ product, compact = false }: SelectionCheckboxProps)
     e.stopPropagation();
     toggleSelection({
       objectID: productId,
-      title: product.title || "Untitled Product",
+      name: product.name || "Untitled Product",
       brand: product.brand,
-      price: product.price,
-      imageUrl: product.imageUrl,
+      price: product.price?.value,
+      imageUrl: product.primary_image,
     });
   };
 
@@ -424,15 +423,15 @@ interface ProductCardProps {
 
 export function ProductCard({ product, showCartControls = true, showBadges = true, selectable = false }: ProductCardProps) {
   const { isSelected } = useSelection();
-  const imageUrl = product.imageUrl || "";
-  const productName = product.title || "Untitled Product";
+  const imageUrl = product.primary_image || "";
+  const productName = product.name || "Untitled Product";
   const productId = product.objectID;
 
   if (!productId) {
     return null;
   }
 
-  const highestCategory = getHighestCategoryLevel(product.hierarchicalCategories);
+  const highestCategory = getHighestCategoryLevel(product.hierarchical_categories);
   const { price, originalPrice, hasDiscount, discountPercentage } = getPriceInfo(product);
   const category = getPreferredCategory(product);
 
@@ -475,9 +474,9 @@ export function ProductCard({ product, showCartControls = true, showBadges = tru
       <h3 className="font-semibold text-lg mb-2">{productName}</h3>
       {product.brand && <p className="text-sm text-primary mb-2">{product.brand}</p>}
 
-      {product.shortDescription && (
+      {product.description && (
         <p className="text-sm text-gray-700 mb-3 line-clamp-2">
-          {product.shortDescription}
+          {product.description}
         </p>
       )}
 
@@ -523,8 +522,8 @@ interface ProductListItemProps {
 
 export function ProductListItem({ product, showCartControls = true, showBadges = true, selectable = false }: ProductListItemProps) {
   const { isSelected } = useSelection();
-  const imageUrl = product.imageUrl || "";
-  const productName = product.title || "Untitled Product";
+  const imageUrl = product.primary_image || "";
+  const productName = product.name || "Untitled Product";
   const productLink = `/products/${product.objectID}`;
   const productId = product.objectID;
   const { price, originalPrice, hasDiscount, discountPercentage } = getPriceInfo(product);
@@ -584,14 +583,14 @@ export function ProductListItem({ product, showCartControls = true, showBadges =
         <h3 className="font-medium text-foreground line-clamp-2 mb-2 group-hover:text-primary transition-colors">
           {productName}
         </h3>
-        {product.shortDescription && (
+        {product.description && (
           <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
-            {product.shortDescription}
+            {product.description}
           </p>
         )}
-        {product.categories?.lvl0 && product.categories.lvl0.length > 0 && (
+        {product.list_categories && product.list_categories.length > 0 && (
           <div className="flex flex-wrap gap-1">
-            {product.categories.lvl0.map((cat, idx) => (
+            {product.list_categories.map((cat: string, idx: number) => (
               <span
                 key={idx}
                 className="text-xs bg-muted px-2 py-0.5 rounded text-muted-foreground"
@@ -638,8 +637,8 @@ export const CompactProductCard = memo(function CompactProductCard({
   showCartControls = true,
   showBadges = true,
 }: CompactProductCardProps) {
-  const imageUrl = product.imageUrl || "";
-  const productName = product.title || "Product";
+  const imageUrl = product.primary_image || "";
+  const productName = product.name || "Product";
   const productId = product.objectID;
   const { price, originalPrice, hasDiscount, discountPercentage } = getPriceInfo(product);
   const category = getPreferredCategory(product);
@@ -733,8 +732,8 @@ export const CompactProductListItem = memo(function CompactProductListItem({
   showBadges = true,
   className = "",
 }: CompactProductListItemProps) {
-  const imageUrl = product.imageUrl || "";
-  const productName = product.title || "Product";
+  const imageUrl = product.primary_image || "";
+  const productName = product.name || "Product";
   const productId = product.objectID;
   const { price, originalPrice, hasDiscount, discountPercentage } = getPriceInfo(product);
   const category = getPreferredCategory(product);

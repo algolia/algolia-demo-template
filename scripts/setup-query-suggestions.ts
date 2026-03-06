@@ -35,7 +35,7 @@ async function main() {
               indexName: SOURCE_INDEX,
               minHits: 5,
               minLetters: 4,
-              generate: [["brand"], ["categories.lvl0"]],
+              generate: [["brand"], ["hierarchical_categories.lvl0"]],
             },
           ],
           languages: ["en"],
@@ -51,7 +51,7 @@ async function main() {
             indexName: SOURCE_INDEX,
             minHits: 5,
             minLetters: 4,
-            generate: [["brand"], ["categories.lvl0"]],
+            generate: [["brand"], ["hierarchical_categories.lvl0"]],
           },
         ],
         languages: ["en"],
@@ -64,7 +64,7 @@ async function main() {
     console.log(`  - Source index: ${SOURCE_INDEX}`);
     console.log("  - Min hits: 5");
     console.log("  - Min letters: 4");
-    console.log("  - Facets: brand, categories.lvl0");
+    console.log("  - Facets: brand, hierarchical_categories.lvl0");
     console.log("\nThe suggestions index will be built automatically.");
     console.log("Check the Algolia dashboard to monitor progress.");
   } catch (error) {

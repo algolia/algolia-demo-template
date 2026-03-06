@@ -1,13 +1,34 @@
 import "dotenv/config";
+import * as fs from "fs";
+import * as path from "path";
 import { AGENT_CONFIG } from "../lib/demo-config/agents";
 import { ALGOLIA_CONFIG } from "../lib/algolia-config";
 
 const ALGOLIA_APP_ID = ALGOLIA_CONFIG.APP_ID;
 const ALGOLIA_ADMIN_KEY = process.env.ALGOLIA_ADMIN_API_KEY!;
 const AGENT_API_KEY = ALGOLIA_CONFIG.AGENT_API_KEY;
-const AGENT_ID = ALGOLIA_CONFIG.AGENT_ID;
-const SUGGESTION_AGENT_ID = ALGOLIA_CONFIG.SUGGESTION_AGENT_ID;
+let AGENT_ID = ALGOLIA_CONFIG.AGENT_ID;
+let SUGGESTION_AGENT_ID = ALGOLIA_CONFIG.SUGGESTION_AGENT_ID;
 const INDEX_NAME = ALGOLIA_CONFIG.INDEX_NAME;
+
+const ALGOLIA_CONFIG_PATH = path.resolve(__dirname, "../lib/algolia-config.ts");
+
+/**
+ * Update a specific key in lib/algolia-config.ts with a new value.
+ */
+function updateAlgoliaConfig(key: string, value: string) {
+  const content = fs.readFileSync(ALGOLIA_CONFIG_PATH, "utf-8");
+  // Match the key followed by its value (quoted string, possibly multi-line)
+  const regex = new RegExp(`(${key}:\\s*)(?:"[^"]*"|'[^']*'|""|''|\`[^\`]*\`)`, "s");
+  const replacement = `$1"${value}"`;
+  const updated = content.replace(regex, replacement);
+  if (updated === content) {
+    console.warn(`Warning: Could not find ${key} in ${ALGOLIA_CONFIG_PATH} to update.`);
+    return;
+  }
+  fs.writeFileSync(ALGOLIA_CONFIG_PATH, updated, "utf-8");
+  console.log(`Updated ${key} in lib/algolia-config.ts to "${value}"`);
+}
 
 // Default model and provider - can be overridden via environment variables
 const DEFAULT_MODEL = "gpt-5";
@@ -36,13 +57,11 @@ interface AgentConfigPayload {
 async function setupAgent(): Promise<{ apiKey: string; providerId: string } | { apiKey: null; providerId: null }> {
   console.log("Setting up Algolia Agent Studio - Main Shopping Agent...");
   console.log(`App ID: ${ALGOLIA_APP_ID}`);
-  console.log(`Agent ID: ${AGENT_ID}`);
+  console.log(`Existing Agent ID: ${AGENT_ID || "(none - will create new)"}`);
   console.log(`Index: ${INDEX_NAME}`);
 
-  if (!ALGOLIA_APP_ID || !AGENT_ID) {
-    console.error("Missing required environment variables:");
-    if (!ALGOLIA_APP_ID) console.error("  - NEXT_PUBLIC_ALGOLIA_APP_ID");
-    if (!AGENT_ID) console.error("  - NEXT_PUBLIC_ALGOLIA_AGENT_ID");
+  if (!ALGOLIA_APP_ID) {
+    console.error("Missing required: APP_ID");
     return { apiKey: null, providerId: null };
   }
 
@@ -149,23 +168,43 @@ async function setupAgent(): Promise<{ apiKey: string; providerId: string } | { 
 
   console.log("\nSending request to Agent Studio API...");
 
-  // Try PATCH first (for updating existing agent), then POST (for creating)
-  let response = await fetch(
-    `https://${ALGOLIA_APP_ID}.algolia.net/agent-studio/1/agents/${AGENT_ID}`,
-    {
-      method: "PATCH",
-      headers: {
-        "x-algolia-application-id": ALGOLIA_APP_ID,
-        "x-algolia-api-key": apiKey,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(agentConfig),
-    }
-  );
+  let response: Response;
 
-  // If PATCH fails with 404, agent might not exist - try creating it
-  if (response.status === 404 || response.status === 405) {
-    console.log("Agent not found or method not allowed, trying POST to create...");
+  if (AGENT_ID) {
+    // Try to update existing agent
+    console.log(`Attempting to update existing agent ${AGENT_ID}...`);
+    response = await fetch(
+      `https://${ALGOLIA_APP_ID}.algolia.net/agent-studio/1/agents/${AGENT_ID}`,
+      {
+        method: "PATCH",
+        headers: {
+          "x-algolia-application-id": ALGOLIA_APP_ID,
+          "x-algolia-api-key": apiKey,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(agentConfig),
+      }
+    );
+
+    // If the configured agent no longer exists, fall through to create
+    if (response.status === 404 || response.status === 405) {
+      console.log(`Agent ${AGENT_ID} not found, creating a new one...`);
+      response = await fetch(
+        `https://${ALGOLIA_APP_ID}.algolia.net/agent-studio/1/agents`,
+        {
+          method: "POST",
+          headers: {
+            "x-algolia-application-id": ALGOLIA_APP_ID,
+            "x-algolia-api-key": apiKey,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(agentConfig),
+        }
+      );
+    }
+  } else {
+    // No agent ID configured — create a new agent
+    console.log("No existing agent ID configured, creating a new agent...");
     response = await fetch(
       `https://${ALGOLIA_APP_ID}.algolia.net/agent-studio/1/agents`,
       {
@@ -175,7 +214,7 @@ async function setupAgent(): Promise<{ apiKey: string; providerId: string } | { 
           "x-algolia-api-key": apiKey,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ id: AGENT_ID, ...agentConfig }),
+        body: JSON.stringify(agentConfig),
       }
     );
   }
@@ -189,7 +228,7 @@ async function setupAgent(): Promise<{ apiKey: string; providerId: string } | { 
     console.log("\n--- Manual Configuration ---");
     console.log("If the API is not available, configure the agent manually in Algolia Agent Studio:");
     console.log(`1. Go to https://dashboard.algolia.com/apps/${ALGOLIA_APP_ID}/agent-studio`);
-    console.log(`2. Select or create agent with ID: ${AGENT_ID}`);
+    console.log("2. Create or select an agent");
     console.log("3. Use the following configuration:\n");
     console.log("Instructions:");
     console.log(AGENT_CONFIG.main.instructions);
@@ -230,14 +269,11 @@ async function setupAgent(): Promise<{ apiKey: string; providerId: string } | { 
     }
   }
 
-  // Check if the agent ID is different from expected
+  // Persist the agent ID to config if it's new or changed
   if (agentId && agentId !== AGENT_ID) {
-    console.log("\n⚠️  IMPORTANT: A new agent was created with a different ID!");
-    console.log(`   New Agent ID: ${agentId}`);
-    console.log(`   Expected ID:  ${AGENT_ID}`);
-    console.log("\nTo use the new agent, update your .env file:");
-    console.log(`   NEXT_PUBLIC_ALGOLIA_AGENT_ID=${agentId}`);
-    console.log("\nOr configure the existing agent manually in the Algolia dashboard.");
+    console.log(`\nAgent ID changed: "${AGENT_ID || ""}" -> "${agentId}"`);
+    updateAlgoliaConfig("AGENT_ID", agentId);
+    AGENT_ID = agentId;
   }
 
   return { apiKey, providerId: providerId! };
@@ -246,12 +282,7 @@ async function setupAgent(): Promise<{ apiKey: string; providerId: string } | { 
 async function setupSuggestionAgent(apiKey: string, providerId: string) {
   console.log("\n" + "=".repeat(60));
   console.log("Setting up Suggestion Agent...");
-  console.log(`Agent ID: ${SUGGESTION_AGENT_ID}`);
-
-  if (!SUGGESTION_AGENT_ID) {
-    console.log("NEXT_PUBLIC_ALGOLIA_SUGGESTION_AGENT_ID not set, skipping suggestion agent setup");
-    return;
-  }
+  console.log(`Existing Agent ID: ${SUGGESTION_AGENT_ID || "(none - will create new)"}`);
 
   const agentConfig: AgentConfigPayload = {
     name: AGENT_CONFIG.suggestion.name,
@@ -285,23 +316,40 @@ async function setupSuggestionAgent(apiKey: string, providerId: string) {
 
   console.log("\nSending request to Agent Studio API...");
 
-  // Try PATCH first (for updating existing agent), then POST (for creating)
-  let response = await fetch(
-    `https://${ALGOLIA_APP_ID}.algolia.net/agent-studio/1/agents/${SUGGESTION_AGENT_ID}`,
-    {
-      method: "PATCH",
-      headers: {
-        "x-algolia-application-id": ALGOLIA_APP_ID,
-        "x-algolia-api-key": apiKey,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(agentConfig),
-    }
-  );
+  let response: Response;
 
-  // If PATCH fails with 404, agent might not exist - try creating it
-  if (response.status === 404 || response.status === 405) {
-    console.log("Suggestion agent not found or method not allowed, trying POST to create...");
+  if (SUGGESTION_AGENT_ID) {
+    console.log(`Attempting to update existing suggestion agent ${SUGGESTION_AGENT_ID}...`);
+    response = await fetch(
+      `https://${ALGOLIA_APP_ID}.algolia.net/agent-studio/1/agents/${SUGGESTION_AGENT_ID}`,
+      {
+        method: "PATCH",
+        headers: {
+          "x-algolia-application-id": ALGOLIA_APP_ID,
+          "x-algolia-api-key": apiKey,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(agentConfig),
+      }
+    );
+
+    if (response.status === 404 || response.status === 405) {
+      console.log(`Suggestion agent ${SUGGESTION_AGENT_ID} not found, creating a new one...`);
+      response = await fetch(
+        `https://${ALGOLIA_APP_ID}.algolia.net/agent-studio/1/agents`,
+        {
+          method: "POST",
+          headers: {
+            "x-algolia-application-id": ALGOLIA_APP_ID,
+            "x-algolia-api-key": apiKey,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(agentConfig),
+        }
+      );
+    }
+  } else {
+    console.log("No existing suggestion agent ID configured, creating a new agent...");
     response = await fetch(
       `https://${ALGOLIA_APP_ID}.algolia.net/agent-studio/1/agents`,
       {
@@ -311,7 +359,7 @@ async function setupSuggestionAgent(apiKey: string, providerId: string) {
           "x-algolia-api-key": apiKey,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ id: SUGGESTION_AGENT_ID, ...agentConfig }),
+        body: JSON.stringify(agentConfig),
       }
     );
   }
@@ -357,13 +405,11 @@ async function setupSuggestionAgent(apiKey: string, providerId: string) {
     }
   }
 
-  // Check if the agent ID is different from expected
+  // Persist the suggestion agent ID to config if it's new or changed
   if (agentId && agentId !== SUGGESTION_AGENT_ID) {
-    console.log("\n⚠️  IMPORTANT: A new suggestion agent was created with a different ID!");
-    console.log(`   New Agent ID: ${agentId}`);
-    console.log(`   Expected ID:  ${SUGGESTION_AGENT_ID}`);
-    console.log("\nTo use the new agent, update your .env file:");
-    console.log(`   NEXT_PUBLIC_ALGOLIA_SUGGESTION_AGENT_ID=${agentId}`);
+    console.log(`\nSuggestion Agent ID changed: "${SUGGESTION_AGENT_ID || ""}" -> "${agentId}"`);
+    updateAlgoliaConfig("SUGGESTION_AGENT_ID", agentId);
+    SUGGESTION_AGENT_ID = agentId;
   }
 }
 

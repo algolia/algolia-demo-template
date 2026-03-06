@@ -6,7 +6,7 @@ const MAX_SELECTED_PRODUCTS = 5;
 
 export interface SelectedProduct {
   objectID: string;
-  title: string;
+  name: string;
   brand?: string;
   price?: number;
   imageUrl?: string;
