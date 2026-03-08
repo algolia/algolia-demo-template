@@ -801,42 +801,58 @@ const ChatWidget = memo(function ChatWidget({
 
   // Apply search query and facet filters to InstantSearch in a single atomic update
   const applySearchWithFilters = useCallback(
-    (query: string, facetFilters?: string[][]) => {
-      setIndexUiState((prevState) => {
-        const newState: typeof prevState = {
-          ...prevState,
-          query, // Set query directly in state
+    (query: string, facetFilters?: string[][], filters?: string) => {
+      setIndexUiState(() => {
+        const newState: Record<string, unknown> = { query, page: 1 };
+        const refinementList: Record<string, string[]> = {};
+        const hierarchicalMenu: Record<string, string[]> = {};
+
+        const addFacet = (facetName: string, facetValue: string) => {
+          if (facetName.startsWith("hierarchical_categories.")) {
+            const rootAttr = "hierarchical_categories.lvl0";
+            if (!hierarchicalMenu[rootAttr]) hierarchicalMenu[rootAttr] = [];
+            if (!hierarchicalMenu[rootAttr].includes(facetValue))
+              hierarchicalMenu[rootAttr].push(facetValue);
+          } else {
+            if (!refinementList[facetName]) refinementList[facetName] = [];
+            if (!refinementList[facetName].includes(facetValue))
+              refinementList[facetName].push(facetValue);
+          }
         };
 
-        // Apply facet filters if present
         if (facetFilters && facetFilters.length > 0) {
-          const refinementList: Record<string, string[]> = {};
-
-          // Convert facet_filters to refinementList format
-          // facet_filters: [["inStock:true"], ["categories.lvl1:Vitaminas", "categories.lvl1:Minerales"]]
           for (const group of facetFilters) {
             for (const filter of group) {
-              // Parse "facetName:value" format (note: value may contain colons)
               const colonIndex = filter.indexOf(":");
-              if (colonIndex > 0) {
-                const facetName = filter.slice(0, colonIndex).trim();
-                const facetValue = filter.slice(colonIndex + 1).trim();
-                if (!refinementList[facetName]) {
-                  refinementList[facetName] = [];
-                }
-                if (!refinementList[facetName].includes(facetValue)) {
-                  refinementList[facetName].push(facetValue);
-                }
-              }
+              if (colonIndex <= 0) continue;
+              addFacet(
+                filter.slice(0, colonIndex).trim(),
+                filter.slice(colonIndex + 1).trim()
+              );
             }
           }
-
-          newState.refinementList = {
-            ...prevState.refinementList,
-            ...refinementList,
-          };
         }
 
+        if (filters) {
+          const cleaned = filters.replace(/[()]/g, "");
+          const parts = cleaned.split(/\s+(?:AND|OR)\s+/);
+          for (const part of parts) {
+            const trimmed = part.trim();
+            const colonIndex = trimmed.indexOf(":");
+            if (colonIndex <= 0) continue;
+            const facetName = trimmed.slice(0, colonIndex).trim();
+            const facetValue = trimmed.slice(colonIndex + 1).trim();
+            if (/^[<>=!]/.test(facetValue)) continue;
+            addFacet(facetName, facetValue);
+          }
+        }
+
+        if (Object.keys(refinementList).length > 0)
+          newState.refinementList = refinementList;
+        if (Object.keys(hierarchicalMenu).length > 0)
+          newState.hierarchicalMenu = hierarchicalMenu;
+
+        console.log("[applySearchWithFilters]", { query, facetFilters, filters, newState });
         return newState;
       });
     },
@@ -856,7 +872,9 @@ const ChatWidget = memo(function ChatWidget({
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Group messages into exchanges (user + assistant pairs)
+  // Hide exchanges while initial suggestions are loading (hidden greeting in progress)
   const exchanges = useMemo(() => {
+    if (isFollowUpGenerating) return [];
     const grouped: Exchange[] = [];
     for (let i = 0; i < messages.length; i++) {
       const current = messages[i];
@@ -881,7 +899,7 @@ const ChatWidget = memo(function ChatWidget({
       }
     }
     return grouped;
-  }, [messages]);
+  }, [messages, isFollowUpGenerating]);
 
   // Auto-scroll to bottom when new messages arrive
   // biome-ignore lint/correctness/useExhaustiveDependencies: scroll on message changes
@@ -1018,8 +1036,9 @@ const ChatWidget = memo(function ChatWidget({
                             } else if (part.state === "input-available") {
                               const query = part.input?.query || "";
                               const facetFilters = part.input?.facet_filters;
+                              const filtersStr = part.input?.filters;
                               const facetFiltersStr = formatFacetFilters(facetFilters);
-                              const filtersDisplay = part.input?.filters || facetFiltersStr;
+                              const filtersDisplay = filtersStr || facetFiltersStr;
                               return (
                                 <div
                                   className="text-[0.95rem] flex flex-col my-2 gap-1 text-muted-foreground"
@@ -1029,7 +1048,7 @@ const ChatWidget = memo(function ChatWidget({
                                     Looking for{" "}
                                     <button
                                       type="button"
-                                      onClick={() => applySearchWithFilters(query, facetFilters)}
+                                      onClick={() => applySearchWithFilters(query, facetFilters, filtersStr)}
                                       className="bg-transparent text-muted-foreground underline decoration-2 underline-offset-4 cursor-pointer hover:text-foreground transition-colors"
                                     >
                                       &quot;{query}&quot;
@@ -1048,8 +1067,9 @@ const ChatWidget = memo(function ChatWidget({
                             } else if (part.state === "output-available") {
                               const query = part.input?.query || "";
                               const facetFilters = part.input?.facet_filters || part.output?.facet_filters;
+                              const filtersStr = part.input?.filters || part.output?.filters;
                               const facetFiltersStr = formatFacetFilters(facetFilters);
-                              const filtersDisplay = part.input?.filters || part.output?.filters || facetFiltersStr;
+                              const filtersDisplay = filtersStr || facetFiltersStr;
                               const hits = part.output?.hits || [];
                               const queryKey = `${exchange.id}-${index}`;
                               const isHovered = hoveredQueryIndex === queryKey;
@@ -1090,7 +1110,7 @@ const ChatWidget = memo(function ChatWidget({
                                         <PopoverTrigger asChild>
                                           <button
                                             type="button"
-                                            onClick={() => applySearchWithFilters(query, facetFilters)}
+                                            onClick={() => applySearchWithFilters(query, facetFilters, filtersStr)}
                                             onMouseEnter={handleMouseEnter}
                                             onMouseLeave={handleMouseLeave}
                                             className="bg-transparent text-muted-foreground underline decoration-1 underline-offset-4 cursor-pointer hover:text-foreground transition-colors"
@@ -1107,14 +1127,14 @@ const ChatWidget = memo(function ChatWidget({
                                         >
                                           <SearchResultsPreview
                                             hits={hits}
-                                            onViewMore={() => applySearchWithFilters(query, facetFilters)}
+                                            onViewMore={() => applySearchWithFilters(query, facetFilters, filtersStr)}
                                           />
                                         </PopoverContent>
                                       </Popover>
                                     ) : (
                                       <button
                                         type="button"
-                                        onClick={() => applySearchWithFilters(query, facetFilters)}
+                                        onClick={() => applySearchWithFilters(query, facetFilters, filtersStr)}
                                         className="bg-transparent text-muted-foreground underline decoration-1 underline-offset-4 cursor-pointer hover:text-foreground transition-colors"
                                       >
                                         &quot;{query}&quot;

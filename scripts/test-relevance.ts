@@ -68,7 +68,7 @@ async function runTest(tc: TestCase): Promise<TestResult> {
     },
   });
 
-  const hits = (response.hits ?? []) as Array<{ objectID: string }>;
+  const hits = ((response as Record<string, unknown>).hits ?? []) as Array<{ objectID: string }>;
   const returnedIds = hits.map((h) => h.objectID);
 
   // Check that every expected ID appears, and in order

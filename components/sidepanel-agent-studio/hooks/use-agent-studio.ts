@@ -1,4 +1,5 @@
 import { useChat, type UIMessage } from '@ai-sdk/react';
+import { lastAssistantMessageIsCompleteWithToolCalls } from 'ai';
 import { useMemo, useRef, useEffect, useCallback, useState } from 'react';
 import { useInstantSearch } from 'react-instantsearch';
 
@@ -106,45 +107,9 @@ export function useAgentStudio(config: AgentStudioConfig) {
   // Suggestions from built-in Agent Studio suggestions feature
   const [suggestions, setSuggestions] = useState<string[]>([]);
 
-  // Client-side tools that we handle locally (not server-side like algolia_search_index)
-  const CLIENT_SIDE_TOOLS = ['addToCart', 'showItems'];
-
-  // Custom condition: only auto-send when client-side tools have outputs
-  // This prevents duplicate sends when server-side tools (algolia_search_index) are used
-  const shouldAutoSend = useCallback(({ messages }: { messages: UIMessage[] }): boolean => {
-    if (messages.length === 0) return false;
-
-    const lastMessage = messages[messages.length - 1];
-    if (!lastMessage || lastMessage.role !== 'assistant') return false;
-
-    // Check if there are any client-side tool calls that need outputs
-    let hasClientSideToolCalls = false;
-    let allClientSideToolsHaveOutputs = true;
-
-    for (const part of lastMessage.parts) {
-      if (typeof part === 'object' && 'type' in part) {
-        const partType = part.type as string;
-        // Check for tool call parts (format: tool-{toolName})
-        if (partType.startsWith('tool-')) {
-          const toolName = partType.replace('tool-', '');
-          if (CLIENT_SIDE_TOOLS.includes(toolName)) {
-            hasClientSideToolCalls = true;
-            // Check if this tool call has output
-            if ('state' in part && part.state !== 'output-available') {
-              allClientSideToolsHaveOutputs = false;
-            }
-          }
-        }
-      }
-    }
-
-    // Only auto-send if we have client-side tools and all have outputs
-    return hasClientSideToolCalls && allClientSideToolsHaveOutputs;
-  }, []);
-
   const chat = useChat({
     transport,
-    sendAutomaticallyWhen: shouldAutoSend,
+    sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
     onData(dataPart) {
       if (dataPart.type === 'data-suggestions') {
         const data = dataPart.data as { suggestions?: string[] };

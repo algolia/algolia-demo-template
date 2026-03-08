@@ -71,10 +71,7 @@ export function ProductToolbar({
   sidebar,
 }: ProductToolbarProps) {
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-      <SearchStats />
-
-      <div className="flex items-center gap-4">
+    <div className="flex items-center gap-4">
         {/* Mobile Filter Trigger */}
         {sidebar && (
           <Sheet>
@@ -120,7 +117,6 @@ export function ProductToolbar({
             <LayoutList className="w-4 h-4" />
           </button>
         </div>
-      </div>
     </div>
   );
 }

@@ -7,6 +7,26 @@ import {
   ContextSnapshot,
 } from '@/components/sidepanel-agent-studio/lib/context-snapshot';
 
+/**
+ * Strip non-standard parts (e.g. data-suggestions) from assistant messages
+ * before sending them back to the API, which would reject unknown part types.
+ */
+function filterDataParts(messages: UIMessage[]): UIMessage[] {
+  return messages.map((msg) => {
+    if (msg.role !== 'assistant') return msg;
+    const filtered = msg.parts.filter(
+      (p) =>
+        !(
+          typeof p === 'object' &&
+          'type' in p &&
+          typeof (p as { type: string }).type === 'string' &&
+          (p as { type: string }).type.startsWith('data-')
+        )
+    );
+    return filtered.length === msg.parts.length ? msg : { ...msg, parts: filtered };
+  });
+}
+
 export interface AgentTransportConfig {
   applicationId: string;
   apiKey: string;
@@ -56,7 +76,9 @@ export function createAgentTransport(
           ctx = options.enrichContext(ctx);
         }
 
-        const ctxMsg = makeContextSystemMessage(ctx);
+        // Flag first user message so the agent can respond more concisely
+        const isFirstMessage = messages.filter(m => m.role === 'user').length <= 1;
+        const ctxMsg = makeContextSystemMessage({ ...ctx, isFirstMessage });
 
         if (process.env.NODE_ENV === 'development') {
           console.debug(`${label} Injected context:`, ctx);
@@ -64,7 +86,7 @@ export function createAgentTransport(
 
         return {
           body: {
-            messages: [ctxMsg, ...messages],
+            messages: [ctxMsg, ...filterDataParts(messages)],
             trigger,
             messageId,
           },
@@ -75,7 +97,7 @@ export function createAgentTransport(
         }
         return {
           body: {
-            messages,
+            messages: filterDataParts(messages),
             trigger,
             messageId,
           },

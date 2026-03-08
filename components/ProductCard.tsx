@@ -99,6 +99,7 @@ import { cn } from "@/lib/utils";
 import { formatPrice } from "@/lib/utils/format";
 import { getPriceInfo, getPreferredCategory } from "@/lib/utils/product";
 import { ALGOLIA_CONFIG } from "@/lib/algolia-config";
+import { parseColorValue } from "@/components/filters-sidebar";
 
 function getHighestCategoryLevel(
   hierarchicalCategories: Product["hierarchical_categories"]
@@ -411,6 +412,63 @@ function SelectionCheckbox({ product, compact = false }: SelectionCheckboxProps)
 }
 
 // ============================================================================
+// Color Swatches Component
+// ============================================================================
+
+function ColorSwatches({ product, size = "w-4 h-4" }: { product: Product; size?: string }) {
+  const colors = useMemo(() => {
+    const seen = new Set<string>();
+    const result: { name: string; hex: string }[] = [];
+
+    // Current product color
+    if (product.color?.filter_group) {
+      const { name, hex } = parseColorValue(product.color.filter_group);
+      if (hex) {
+        seen.add(hex);
+        result.push({ name, hex });
+      }
+    }
+
+    // Variant colors
+    if (product.variants) {
+      for (const variant of product.variants) {
+        if (variant.color?.filter_group) {
+          const { name, hex } = parseColorValue(variant.color.filter_group);
+          if (hex && !seen.has(hex)) {
+            seen.add(hex);
+            result.push({ name, hex });
+          }
+        }
+      }
+    }
+
+    return result;
+  }, [product]);
+
+  if (colors.length === 0) return null;
+
+  return (
+    <TooltipProvider>
+      <div className="flex items-center gap-1">
+        {colors.map(({ name, hex }) => (
+          <Tooltip key={hex} delayDuration={200}>
+            <TooltipTrigger asChild>
+              <span
+                className={cn("rounded-full border border-border shrink-0", size)}
+                style={{ backgroundColor: hex }}
+              />
+            </TooltipTrigger>
+            <TooltipContent side="top" className="text-xs capitalize">
+              {name}
+            </TooltipContent>
+          </Tooltip>
+        ))}
+      </div>
+    </TooltipProvider>
+  );
+}
+
+// ============================================================================
 // Product Card Component (Full Size)
 // ============================================================================
 
@@ -442,7 +500,7 @@ export function ProductCard({ product, showCartControls = true, showBadges = tru
     <Link
       href={`/products/${productId}`}
       className={cn(
-        "border rounded-lg p-4 hover:shadow-lg transition-shadow cursor-pointer block relative",
+        "border rounded-lg overflow-hidden hover:shadow-lg transition-shadow cursor-pointer block relative",
         smartGroupKey && "border-2 border-amber-400",
         selected && "border-2 border-primary"
       )}
@@ -462,49 +520,59 @@ export function ProductCard({ product, showCartControls = true, showBadges = tru
         />
       )}
 
-      {imageUrl && (
-        <Image
-          src={imageUrl}
-          alt={productName}
-          width={100}
-          height={100}
-          className="h-40 w-auto object-cover rounded mb-3 justify-center align-middle items-center"
-        />
-      )}
-      <h3 className="font-semibold text-lg mb-2">{productName}</h3>
-      {product.brand && <p className="text-sm text-primary mb-2">{product.brand}</p>}
+      <div className="relative w-full h-56 bg-gray-50">
+        {imageUrl ? (
+          <Image
+            src={imageUrl}
+            alt={productName}
+            fill
+            className="object-contain"
+            sizes="(max-width: 768px) 50vw, 25vw"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs bg-muted">
+            No image
+          </div>
+        )}
+      </div>
+      <div className="p-4">
+        <h3 className="font-semibold text-lg mb-2">{productName}</h3>
+        {product.brand && <p className="text-sm text-primary mb-2">{product.brand}</p>}
 
-      {product.description && (
-        <p className="text-sm text-gray-700 mb-3 line-clamp-2">
-          {product.description}
-        </p>
-      )}
-
-      {highestCategory && (
-        <div className="flex flex-wrap gap-1 mb-3">
-          <span className="text-xs bg-gray-100 px-2 py-1 rounded">
-            {highestCategory}
-          </span>
-        </div>
-      )}
-
-      {price > 0 && (
-        <div className="flex items-center gap-2">
-          <p className="text-xl font-bold text-foreground">
-            {formatPrice(price)}
+        {product.description && (
+          <p className="text-sm text-gray-700 mb-3 line-clamp-2">
+            {product.description}
           </p>
-          {hasDiscount && (
-            <>
-              <p className="text-sm text-muted-foreground line-through">
-                {formatPrice(originalPrice)}
-              </p>
-              <span className="text-xs font-semibold bg-red-500 text-white px-2 py-0.5 rounded">
-                -{discountPercentage}%
-              </span>
-            </>
-          )}
-        </div>
-      )}
+        )}
+
+        {highestCategory && (
+          <div className="flex flex-wrap gap-1 mb-3">
+            <span className="text-xs bg-gray-100 px-2 py-1 rounded">
+              {highestCategory}
+            </span>
+          </div>
+        )}
+
+        <ColorSwatches product={product} />
+
+        {price > 0 && (
+          <div className="flex items-center gap-2 mt-2">
+            <p className="text-xl font-bold text-foreground">
+              {formatPrice(price)}
+            </p>
+            {hasDiscount && (
+              <>
+                <p className="text-sm text-muted-foreground line-through">
+                  {formatPrice(originalPrice)}
+                </p>
+                <span className="text-xs font-semibold bg-red-500 text-white px-2 py-0.5 rounded">
+                  -{discountPercentage}%
+                </span>
+              </>
+            )}
+          </div>
+        )}
+      </div>
     </Link>
   );
 }
@@ -600,6 +668,9 @@ export function ProductListItem({ product, showCartControls = true, showBadges =
             ))}
           </div>
         )}
+        <div className="mt-2">
+          <ColorSwatches product={product} />
+        </div>
       </div>
       <div className="shrink-0 text-right">
         {price > 0 && (
@@ -691,6 +762,9 @@ export const CompactProductCard = memo(function CompactProductCard({
         <h4 className="text-xs font-medium text-foreground line-clamp-2 group-hover:text-primary transition-colors leading-tight">
           {productName}
         </h4>
+        <div className="mt-1">
+          <ColorSwatches product={product} size="w-3 h-3" />
+        </div>
         {price > 0 && (
           <div className="mt-1">
             <div className="flex items-center gap-1">

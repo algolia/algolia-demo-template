@@ -7,7 +7,7 @@ import Image from "next/image";
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { Product } from "@/lib/types/product";
 import { ProductCard, ProductListItem } from "@/components/ProductCard";
-import { ProductToolbar } from "@/components/ProductToolbar";
+import { ProductToolbar, SearchStats } from "@/components/ProductToolbar";
 import { FiltersSidebar, ActiveFilters } from "@/components/filters-sidebar";
 import { Configure } from "react-instantsearch";
 import { ALGOLIA_CONFIG } from "@/lib/algolia-config";
@@ -312,7 +312,7 @@ export default function SearchPage() {
         <div className="flex-1 min-w-0">
           <RuleBanner />
           <ActiveFilters />
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 mb-6">
             <button
               onClick={toggleFilters}
               className="hidden lg:flex items-center gap-1.5 px-2 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-muted"
@@ -325,13 +325,13 @@ export default function SearchPage() {
               )}
               <span>{filtersOpen ? "Hide filters" : "Filters"}</span>
             </button>
-            <div className="flex-1">
-              <ProductToolbar
-                viewMode={viewMode}
-                setViewMode={setViewMode}
-                sidebar={<FiltersSidebar />}
-              />
-            </div>
+            <SearchStats />
+            <div className="flex-1" />
+            <ProductToolbar
+              viewMode={viewMode}
+              setViewMode={setViewMode}
+              sidebar={<FiltersSidebar />}
+            />
           </div>
           <Configure getRankingInfo={true} />
           <CustomHits viewMode={viewMode} compact={isSidepanelOpen} />

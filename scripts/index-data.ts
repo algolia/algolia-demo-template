@@ -23,6 +23,21 @@ async function main() {
   console.log(`Connecting to Algolia (App: ${ALGOLIA_APP_ID}, Index: ${INDEX_NAME})...`);
   const client = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_ADMIN_KEY);
 
+  // Populate categoryPageId from hierarchical_categories for category page filtering
+  for (const record of records) {
+    const hc = record.hierarchical_categories as
+      | Record<string, string>
+      | undefined;
+    if (hc && typeof hc === "object") {
+      const paths: string[] = [];
+      for (let lvl = 0; lvl <= 3; lvl++) {
+        const val = hc[`lvl${lvl}`];
+        if (typeof val === "string" && val) paths.push(val);
+      }
+      record.categoryPageId = paths;
+    }
+  }
+
   console.log("Indexing products in batches...");
   const BATCH_SIZE = 1000;
   let indexed = 0;
@@ -60,6 +75,7 @@ async function main() {
         "hierarchical_categories.lvl1",
         "hierarchical_categories.lvl2",
         "searchable(list_categories)",
+        "searchable(categoryPageId)",
         "filterOnly(price.value)",
         "filterOnly(reviews.rating)",
       ],

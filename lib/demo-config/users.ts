@@ -58,19 +58,19 @@ export const PREFERENCE_METADATA: Record<PreferenceKey, PreferenceMetadata> = {
     title: "Specific Categories",
     icon: "tag",
   },
-  "hierarchicalCategories.lvl0": {
+  "hierarchical_categories.lvl0": {
     title: "Main Categories (Lvl 0)",
     icon: "layers",
   },
-  "hierarchicalCategories.lvl1": {
+  "hierarchical_categories.lvl1": {
     title: "Sub Categories (Lvl 1)",
     icon: "layers",
   },
-  "hierarchicalCategories.lvl2": {
+  "hierarchical_categories.lvl2": {
     title: "Sub Categories (Lvl 2)",
     icon: "layers",
   },
-  "hierarchicalCategories.lvl3": {
+  "hierarchical_categories.lvl3": {
     title: "Sub Categories (Lvl 3)",
     icon: "layers",
   },

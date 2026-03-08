@@ -12,16 +12,16 @@ export interface User {
     "categories.lvl2"?: {
       [key: string]: number;
     };
-    "hierarchicalCategories.lvl0"?: {
+    "hierarchical_categories.lvl0"?: {
       [key: string]: number;
     };
-    "hierarchicalCategories.lvl1"?: {
+    "hierarchical_categories.lvl1"?: {
       [key: string]: number;
     };
-    "hierarchicalCategories.lvl2"?: {
+    "hierarchical_categories.lvl2"?: {
       [key: string]: number;
     };
-    "hierarchicalCategories.lvl3"?: {
+    "hierarchical_categories.lvl3"?: {
       [key: string]: number;
     };
     brand?: {

@@ -16,6 +16,7 @@ import { useUser } from "@/components/user/user-context";
 import { type PreferenceKey } from "@/lib/types/user";
 import { PREFERENCE_METADATA } from "@/lib/demo-config/users";
 import { CATEGORY_ICONS } from "@/lib/demo-config/categories";
+import { cn } from "@/lib/utils";
 
 // ============================================================================
 // Helper Types and Functions
@@ -448,7 +449,7 @@ export function CategoryFilter() {
 export function SubcategoryFilter() {
   return (
     <RefinementListFilter
-      attribute="hierarchicalCategories.lvl1"
+      attribute="hierarchical_categories.lvl1"
       title="Subcategory"
       searchable
       searchPlaceholder="Search subcategories..."
@@ -488,8 +489,8 @@ export function RangeFilter({
 }: RangeFilterProps) {
   const { start, range, refine } = useRange({ attribute });
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
-  const [localMin, setLocalMin] = useState(start[0]?.toString() || "");
-  const [localMax, setLocalMax] = useState(start[1]?.toString() || "");
+  const [localMin, setLocalMin] = useState(Number.isFinite(start[0]) ? start[0]!.toString() : "");
+  const [localMax, setLocalMax] = useState(Number.isFinite(start[1]) ? start[1]!.toString() : "");
 
   const handleApply = () => {
     const min = localMin ? Number(localMin) : undefined;
@@ -568,6 +569,70 @@ export function IngredientsFilter() {
       limit={10}
       showMoreLimit={50}
     />
+  );
+}
+
+/**
+ * Parses a color.filter_group value like "black;#333" into { name, hex }.
+ */
+export function parseColorValue(value: string): { name: string; hex: string | null } {
+  const semicolonIndex = value.indexOf(";");
+  if (semicolonIndex === -1) return { name: value, hex: null };
+  return {
+    name: value.slice(0, semicolonIndex),
+    hex: value.slice(semicolonIndex + 1),
+  };
+}
+
+function ColorSwatch({ hex, className = "" }: { hex: string | null; className?: string }) {
+  if (!hex) return null;
+  return (
+    <span
+      className={cn("inline-block rounded-full border border-border shrink-0", className)}
+      style={{ backgroundColor: hex }}
+    />
+  );
+}
+
+export function ColorFilter() {
+  const { items, refine } = useRefinementList({
+    attribute: "color.filter_group",
+    limit: 10,
+    showMore: true,
+    showMoreLimit: 30,
+  });
+  const [isExpanded, setIsExpanded] = useState(true);
+
+  return (
+    <FilterSection
+      title="Color"
+      isExpanded={isExpanded}
+      onToggle={() => setIsExpanded(!isExpanded)}
+    >
+      <div className="space-y-2 max-h-60 overflow-y-auto">
+        {items.map((item) => {
+          const { name, hex } = parseColorValue(item.value);
+          return (
+            <label
+              key={item.value}
+              className="flex items-center gap-2 cursor-pointer group"
+            >
+              <Checkbox
+                checked={item.isRefined}
+                onCheckedChange={() => refine(item.value)}
+              />
+              <ColorSwatch hex={hex} className="w-4 h-4" />
+              <span className="text-sm flex-1 group-hover:text-primary transition-colors capitalize">
+                {name}
+              </span>
+              <span className="text-xs text-muted-foreground">
+                ({item.count})
+              </span>
+            </label>
+          );
+        })}
+      </div>
+    </FilterSection>
   );
 }
 
@@ -650,14 +715,15 @@ export function FiltersSidebar() {
       <InStockFilter />
       <HierarchicalCategoryFilter
         attributes={[
-          "hierarchicalCategories.lvl0",
-          "hierarchicalCategories.lvl1",
-          "hierarchicalCategories.lvl2",
-          "hierarchicalCategories.lvl3",
+          "hierarchical_categories.lvl0",
+          "hierarchical_categories.lvl1",
+          "hierarchical_categories.lvl2",
+          "hierarchical_categories.lvl3",
         ]}
         title="Category"
       />
       <BrandFilter />
+      <ColorFilter />
       <FormatFilter />
       <PriceRangeFilter />
       <CharacteristicsFilter />
@@ -675,18 +741,28 @@ export function ActiveFilters() {
   return (
     <div className="flex flex-wrap items-center gap-2 mb-6">
       {items.map((item) =>
-        item.refinements.map((refinement) => (
-          <button
-            key={`${item.attribute}-${refinement.label}`}
-            onClick={() => refine(refinement)}
-            className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium bg-primary/10 text-primary rounded-full hover:bg-primary/20 transition-all hover:scale-105"
-          >
-            <span className="capitalize">
-              {item.label}: {refinement.label}
-            </span>
-            <X className="w-3.5 h-3.5" />
-          </button>
-        ))
+        item.refinements.map((refinement) => {
+          const isColor = item.attribute === "color.filter_group";
+          const colorInfo = isColor ? parseColorValue(refinement.label) : null;
+          return (
+            <button
+              key={`${item.attribute}-${refinement.label}`}
+              onClick={() => refine(refinement)}
+              className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium bg-primary/10 text-primary rounded-full hover:bg-primary/20 transition-all hover:scale-105"
+            >
+              {colorInfo?.hex && (
+                <span
+                  className="w-3.5 h-3.5 rounded-full border border-primary/30 shrink-0"
+                  style={{ backgroundColor: colorInfo.hex }}
+                />
+              )}
+              <span className="capitalize">
+                {isColor && colorInfo ? colorInfo.name : `${item.label}: ${refinement.label}`}
+              </span>
+              <X className="w-3.5 h-3.5" />
+            </button>
+          );
+        })
       )}
       <button
         onClick={() => clearAll()}

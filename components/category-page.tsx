@@ -13,7 +13,7 @@ import { ChevronRight, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Product } from "@/lib/types/product";
 import { ProductCard, ProductListItem } from "@/components/ProductCard";
-import { ProductToolbar } from "@/components/ProductToolbar";
+import { ProductToolbar, SearchStats } from "@/components/ProductToolbar";
 import { FiltersSidebar, ActiveFilters } from "@/components/filters-sidebar";
 import { useSidepanel } from "@/components/sidepanel-agent-studio/context/sidepanel-context";
 import { useCollapsibleFilters } from "@/components/hooks/use-collapsible-filters";
@@ -115,19 +115,19 @@ function CategoryContent({
   const { filtersOpen, toggleFilters } = useCollapsibleFilters();
   const categoryName = categoryPath[categoryPath.length - 1] || "All Products";
 
-  // Build the hierarchical filter based on category depth
-  // Level 0: "Salud y bienestar" -> hierarchicalCategories.lvl0:"Salud y bienestar"
-  // Level 1: ["Salud y bienestar", "Vitaminas"] -> hierarchicalCategories.lvl1:"Salud y bienestar > Vitaminas"
-  const getHierarchicalFilter = () => {
+  // Build filter using hierarchical_categories (supports filtering unlike searchable categoryPageId)
+  // e.g. ["Women"] -> hierarchical_categories.lvl0:"Women"
+  // e.g. ["Women", "Shoes"] -> hierarchical_categories.lvl1:"Women > Shoes"
+  const getCategoryFilter = () => {
     if (categoryPath.length === 0) return undefined;
     const level = categoryPath.length - 1;
     const filterValue = categoryPath.join(" > ");
-    return `hierarchicalCategories.lvl${level}:"${filterValue}"`;
+    return `hierarchical_categories.lvl${level}:"${filterValue}"`;
   };
 
   // Apply category filter using useConfigure (works with Composition API)
   useConfigure({
-    filters: getHierarchicalFilter(),
+    filters: getCategoryFilter(),
     query: "",
   });
 
@@ -191,7 +191,7 @@ function CategoryContent({
           {/* Product Listing */}
           <div className="flex-1 min-w-0">
             <ActiveFilters />
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 mb-6">
               <button
                 onClick={toggleFilters}
                 className="hidden lg:flex items-center gap-1.5 px-2 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-muted"
@@ -204,13 +204,13 @@ function CategoryContent({
                 )}
                 <span>{filtersOpen ? "Hide filters" : "Filters"}</span>
               </button>
-              <div className="flex-1">
-                <ProductToolbar
-                  viewMode={viewMode}
-                  setViewMode={setViewMode}
-                  sidebar={<FiltersSidebar />}
-                />
-              </div>
+              <SearchStats />
+              <div className="flex-1" />
+              <ProductToolbar
+                viewMode={viewMode}
+                setViewMode={setViewMode}
+                sidebar={<FiltersSidebar />}
+              />
             </div>
             <ProductGrid viewMode={viewMode} compact={isSidepanelOpen} />
             <Pagination />
