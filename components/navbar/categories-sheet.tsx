@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import {
   Menu,
@@ -40,6 +40,7 @@ function useIsMobile(breakpoint = 768) {
 }
 
 export function CategoriesSheet() {
+  const closeRef = useRef<HTMLButtonElement>(null);
   const [hoveredPath, setHoveredPath] = useState<string[]>([]);
   const [mobilePath, setMobilePath] = useState<string[]>([]);
   const isMobile = useIsMobile();
@@ -93,11 +94,15 @@ export function CategoriesSheet() {
     setMobilePath((prev) => prev.slice(0, -1));
   };
 
-  const handleSheetOpenChange = (open: boolean) => {
-    if (!open) {
+  const handleSheetOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
       setMobilePath([]);
       setHoveredPath([]);
     }
+  };
+
+  const handleLinkClick = () => {
+    closeRef.current?.click();
   };
 
   const buildPath = (level: number, slug: string): string => {
@@ -143,6 +148,7 @@ export function CategoriesSheet() {
           </Button>
         </SheetTrigger>
         <SheetContent side="left" showCloseButton={false} className="w-full p-0 sm:w-80">
+          <SheetClose ref={closeRef} className="hidden" />
           <div className="flex h-full flex-col">
             <SheetHeader className="border-b p-4">
               <div className="flex items-center justify-between">
@@ -198,6 +204,7 @@ export function CategoriesSheet() {
                         ) : (
                           <Link
                             href={`/category/${category.name}`}
+                            onClick={handleLinkClick}
                             className="flex w-full items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-muted"
                           >
                             <IconComponent className="h-5 w-5 text-primary" />
@@ -215,6 +222,7 @@ export function CategoriesSheet() {
                   <li>
                     <Link
                       href={buildPath(mobilePath.length, mobilePath[mobilePath.length - 1])}
+                      onClick={handleLinkClick}
                       className="flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-primary transition-colors hover:bg-muted"
                     >
                       <span>View all</span>
@@ -247,6 +255,7 @@ export function CategoriesSheet() {
                         ) : (
                           <Link
                             href={buildPath(mobilePath.length, category.slug)}
+                            onClick={handleLinkClick}
                             className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors hover:bg-muted"
                           >
                             <span>{category.name}</span>
@@ -271,7 +280,7 @@ export function CategoriesSheet() {
 
   // Desktop rendering (unchanged)
   return (
-    <Sheet onOpenChange={handleSheetOpenChange}>
+    <Sheet modal={false} onOpenChange={handleSheetOpenChange}>
       <SheetTrigger asChild>
         <Button
           variant="default"
@@ -285,8 +294,9 @@ export function CategoriesSheet() {
       <SheetContent
         side="left"
         showCloseButton={false}
+        style={{ transitionProperty: "opacity, transform" }}
         className={cn(
-          "p-0 transition-all duration-200",
+          "p-0",
           level3Children
             ? "w-[960px]"
             : level2Children
@@ -295,9 +305,9 @@ export function CategoriesSheet() {
                 ? "w-[480px]"
                 : "w-60"
         )}
-        onMouseLeave={handleMouseLeave}
       >
-        <div className="flex h-full">
+        <SheetClose ref={closeRef} className="hidden" />
+        <div className="flex h-full" onMouseLeave={handleMouseLeave}>
           {/* Level 0 - Root categories */}
           <div className="flex w-60 shrink-0 flex-col border-r">
             <SheetHeader className="border-b p-4">
@@ -318,7 +328,7 @@ export function CategoriesSheet() {
                   const isActive = hoveredPath[0] === category.slug;
                   const hasChildren = !!category.children;
                   return (
-                    <li key={category.slug}>
+                    <li key={category.slug} onMouseEnter={() => handleMouseEnter(category.slug, 0)}>
                       <Link
                         href={`/category/${category.name}`}
                         className={cn(
@@ -327,7 +337,7 @@ export function CategoriesSheet() {
                             ? "bg-primary/10 text-primary"
                             : "hover:bg-muted"
                         )}
-                        onMouseEnter={() => handleMouseEnter(category.slug, 0)}
+                        onClick={handleLinkClick}
                       >
                         <div className="flex items-center gap-3">
                           <IconComponent className="h-5 w-5 text-primary" />
@@ -358,7 +368,7 @@ export function CategoriesSheet() {
                     const isActive = hoveredPath[1] === category.slug;
                     const hasChildren = !!category.children;
                     return (
-                      <li key={category.slug}>
+                      <li key={category.slug} onMouseEnter={() => handleMouseEnter(category.slug, 1)}>
                         <Link
                           href={buildPath(1, category.slug)}
                           className={cn(
@@ -367,9 +377,7 @@ export function CategoriesSheet() {
                               ? "bg-primary/10 text-primary"
                               : "hover:bg-muted"
                           )}
-                          onMouseEnter={() =>
-                            handleMouseEnter(category.slug, 1)
-                          }
+                          onClick={handleLinkClick}
                         >
                           <span>{category.name}</span>
                           <div className="flex items-center gap-2">
@@ -409,7 +417,7 @@ export function CategoriesSheet() {
                     const isActive = hoveredPath[2] === category.slug;
                     const hasChildren = !!category.children;
                     return (
-                      <li key={category.slug}>
+                      <li key={category.slug} onMouseEnter={() => handleMouseEnter(category.slug, 2)}>
                         <Link
                           href={buildPath(2, category.slug)}
                           className={cn(
@@ -418,9 +426,7 @@ export function CategoriesSheet() {
                               ? "bg-primary/10 text-primary"
                               : "hover:bg-muted"
                           )}
-                          onMouseEnter={() =>
-                            handleMouseEnter(category.slug, 2)
-                          }
+                          onClick={handleLinkClick}
                         >
                           <span>{category.name}</span>
                           <div className="flex items-center gap-2">
@@ -460,6 +466,7 @@ export function CategoriesSheet() {
                     <li key={category.slug}>
                       <Link
                         href={buildPath(3, category.slug)}
+                        onClick={handleLinkClick}
                         className="flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors hover:bg-muted"
                       >
                         <span>{category.name}</span>
