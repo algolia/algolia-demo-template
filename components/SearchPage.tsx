@@ -13,6 +13,7 @@ import { Configure } from "react-instantsearch";
 import { ALGOLIA_CONFIG } from "@/lib/algolia-config";
 import { useSidepanel } from "@/components/sidepanel-agent-studio/context/sidepanel-context";
 import { useCollapsibleFilters } from "@/components/hooks/use-collapsible-filters";
+import { SparklesIcon } from "lucide-react";
 
 // Lazy-initialize search client to avoid issues during SSR/build
 let searchClient: ReturnType<typeof algoliasearch> | null = null;
@@ -60,6 +61,41 @@ function HighlightedText({ value }: { value: string }) {
         );
       })}
     </>
+  );
+}
+
+function AgentSuggestions() {
+  const { agentSuggestions, agentSuggestionsLoading, openSidepanel } = useSidepanel();
+
+  if (agentSuggestionsLoading) {
+    return (
+      <div className="mb-6">
+        <div className="flex items-center gap-2 text-muted-foreground text-sm">
+          <SparklesIcon size={14} className="animate-pulse" />
+          <span className="animate-pulse">Loading suggestions...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (agentSuggestions.length === 0) return null;
+
+  return (
+    <div className="mb-6">
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
+        <SparklesIcon size={14} className="shrink-0 text-muted-foreground" />
+        {agentSuggestions.map((suggestion, index) => (
+          <button
+            key={`agent-${index}`}
+            onClick={() => openSidepanel(suggestion)}
+            className="shrink-0 px-4 py-2 text-sm font-medium border border-border rounded-full bg-background hover:bg-muted hover:border-primary/50 transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 active:scale-95 cursor-pointer"
+            type="button"
+          >
+            {suggestion}
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -289,6 +325,9 @@ export default function SearchPage() {
           <span className="text-primary">&quot;{query}&quot;</span>
         </h1>
       </div>
+
+      {/* Agent Suggestions */}
+      <AgentSuggestions />
 
       {/* Query Suggestions */}
       <QuerySuggestions

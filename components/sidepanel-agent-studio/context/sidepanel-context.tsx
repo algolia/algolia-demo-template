@@ -25,6 +25,14 @@ interface SidepanelContextValue {
   isSidepanelOpen: boolean;
   /** Called by the sidepanel component to sync its open state */
   notifyOpenChange: (isOpen: boolean) => void;
+  /** Agent suggestions for the current page context */
+  agentSuggestions: string[];
+  /** Whether agent suggestions are currently loading */
+  agentSuggestionsLoading: boolean;
+  /** Called by the sidepanel to update suggestions */
+  setAgentSuggestions: (suggestions: string[]) => void;
+  /** Called by the sidepanel to update loading state */
+  setAgentSuggestionsLoading: (loading: boolean) => void;
 }
 
 const SidepanelContext = createContext<SidepanelContextValue | null>(null);
@@ -36,6 +44,8 @@ interface SidepanelProviderProps {
 export function SidepanelProvider({ children }: SidepanelProviderProps) {
   const controlsRef = useRef<SidepanelControls | null>(null);
   const [isSidepanelOpen, setIsSidepanelOpen] = useState(false);
+  const [agentSuggestions, setAgentSuggestions] = useState<string[]>([]);
+  const [agentSuggestionsLoading, setAgentSuggestionsLoading] = useState(false);
 
   const register = useCallback((controls: SidepanelControls) => {
     controlsRef.current = controls;
@@ -80,6 +90,10 @@ export function SidepanelProvider({ children }: SidepanelProviderProps) {
         sendMessage,
         isSidepanelOpen,
         notifyOpenChange,
+        agentSuggestions,
+        agentSuggestionsLoading,
+        setAgentSuggestions,
+        setAgentSuggestionsLoading,
       }}
     >
       {children}

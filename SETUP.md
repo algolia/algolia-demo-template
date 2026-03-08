@@ -98,18 +98,32 @@ This script will:
 2. Configure searchable attributes, facets, and ranking
 3. Create/update the Composition (uses `COMPOSITION_ID` from config, or derives one from the index name)
 
-## 9. Set Up Agents
+## 9. Set Up Recommendations
+
+```bash
+pnpm tsx scripts/setup-recommend.ts
+```
+
+This triggers training for **Related Products** and **Looking Similar** Recommend models. Training takes a few hours to complete. Once trained, recommendations appear automatically on product pages.
+
+The script uses an undocumented internal API (the same one the Dashboard calls). Configuration:
+- **Related Products** — uses content-based filtering on category, brand, and gender
+- **Looking Similar** — uses the `primary_image` attribute for visual similarity
+
+> **Note:** Models retrain automatically as new events come in. You can check training status at `https://dashboard.algolia.com/apps/<APP_ID>/recommend/models`.
+
+## 10. Set Up Agents
 
 ```bash
 pnpm tsx scripts/setup-agent.ts
 ```
 
-## 10. Add Branding Assets
+## 11. Add Branding Assets
 
 - Place your logo at the path configured in `lib/demo-config/index.ts` (default: `public/logo.svg`)
 - Add `public/icon.png` and `public/favicon.ico`
 
-## 11. Set Up Query Suggestions (optional)
+## 12. Set Up Query Suggestions (optional)
 
 ```bash
 pnpm tsx scripts/setup-query-suggestions.ts

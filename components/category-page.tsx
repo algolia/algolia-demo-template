@@ -1,16 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import {
-  useHits,
-  usePagination,
+  useInfiniteHits,
   useConfigure,
   useSearchBox,
 } from "react-instantsearch";
-import { ChevronRight, PanelLeftClose, PanelLeftOpen } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ChevronRight, PanelLeftClose, PanelLeftOpen, SparklesIcon } from "lucide-react";
 import { Product } from "@/lib/types/product";
 import { ProductCard, ProductListItem } from "@/components/ProductCard";
 import { ProductToolbar, SearchStats } from "@/components/ProductToolbar";
@@ -19,12 +17,69 @@ import { useSidepanel } from "@/components/sidepanel-agent-studio/context/sidepa
 import { useCollapsibleFilters } from "@/components/hooks/use-collapsible-filters";
 
 // ============================================================================
+// Agent Suggestions
+// ============================================================================
+
+function AgentSuggestions() {
+  const { agentSuggestions, agentSuggestionsLoading, openSidepanel } = useSidepanel();
+
+  if (agentSuggestionsLoading) {
+    return (
+      <div className="mb-6">
+        <div className="flex items-center gap-2 text-muted-foreground text-sm">
+          <SparklesIcon size={14} className="animate-pulse" />
+          <span className="animate-pulse">Loading suggestions...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (agentSuggestions.length === 0) return null;
+
+  return (
+    <div className="mb-6">
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
+        <SparklesIcon size={14} className="shrink-0 text-muted-foreground" />
+        {agentSuggestions.map((suggestion, index) => (
+          <button
+            key={`agent-${index}`}
+            onClick={() => openSidepanel(suggestion)}
+            className="shrink-0 px-4 py-2 text-sm font-medium border border-border rounded-full bg-background hover:bg-muted hover:border-primary/50 transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 active:scale-95 cursor-pointer"
+            type="button"
+          >
+            {suggestion}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
 // Product Grid
 // ============================================================================
 
 function ProductGrid({ viewMode, compact }: { viewMode: "grid" | "list"; compact?: boolean }) {
-  const { results } = useHits();
-  const hits = (results?.hits || []) as unknown as Product[];
+  const { hits, showMore, isLastPage } = useInfiniteHits<Product>();
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (sentinelRef.current !== null) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !isLastPage) {
+            showMore();
+          }
+        });
+      });
+
+      observer.observe(sentinelRef.current);
+
+      return () => {
+        observer.disconnect();
+      };
+    }
+  }, [isLastPage, showMore]);
 
   if (hits.length === 0) {
     return (
@@ -39,65 +94,26 @@ function ProductGrid({ viewMode, compact }: { viewMode: "grid" | "list"; compact
 
   if (viewMode === "list") {
     return (
-      <div className="space-y-4">
-        {hits.map((hit) => (
-          <ProductListItem key={hit.objectID} product={hit} />
-        ))}
+      <div className="ais-InfiniteHits">
+        <div className="ais-InfiniteHits-list space-y-4">
+          {hits.map((hit, index) => (
+            <ProductListItem key={`${hit.objectID}-${index}`} product={hit} />
+          ))}
+          <div ref={sentinelRef} className="ais-InfiniteHits-sentinel" aria-hidden="true" />
+        </div>
       </div>
     );
   }
 
   return (
-    <div className={`grid grid-cols-2 md:grid-cols-3 ${compact ? "" : "xl:grid-cols-4"} gap-4`}>
-      {hits.map((hit) => (
-        <ProductCard key={hit.objectID} product={hit} />
-      ))}
+    <div className="ais-InfiniteHits">
+      <div className={`ais-InfiniteHits-list grid grid-cols-2 md:grid-cols-3 ${compact ? "" : "xl:grid-cols-4"} gap-4`}>
+        {hits.map((hit, index) => (
+          <ProductCard key={`${hit.objectID}-${index}`} product={hit} />
+        ))}
+        <div ref={sentinelRef} className="ais-InfiniteHits-sentinel col-span-full" aria-hidden="true" />
+      </div>
     </div>
-  );
-}
-
-// ============================================================================
-// Pagination
-// ============================================================================
-
-function Pagination() {
-  const { currentRefinement, nbPages, pages, isFirstPage, isLastPage, refine } =
-    usePagination({ padding: 2 });
-
-  if (nbPages <= 1) return null;
-
-  return (
-    <nav className="flex items-center justify-center gap-1 mt-8">
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => refine(currentRefinement - 1)}
-        disabled={isFirstPage}
-      >
-        Previous
-      </Button>
-
-      {pages.map((page) => (
-        <Button
-          key={page}
-          variant={page === currentRefinement ? "default" : "outline"}
-          size="sm"
-          onClick={() => refine(page)}
-          className="w-10"
-        >
-          {page + 1}
-        </Button>
-      ))}
-
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => refine(currentRefinement + 1)}
-        disabled={isLastPage}
-      >
-        Next
-      </Button>
-    </nav>
   );
 }
 
@@ -174,6 +190,11 @@ function CategoryContent({
         <h1 className="text-3xl font-bold text-foreground">{categoryName}</h1>
       </header>
 
+      {/* Agent Suggestions */}
+      <div className="max-w-7xl mx-auto px-4">
+        <AgentSuggestions />
+      </div>
+
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 pb-16">
         <div className="flex gap-8">
@@ -213,7 +234,6 @@ function CategoryContent({
               />
             </div>
             <ProductGrid viewMode={viewMode} compact={isSidepanelOpen} />
-            <Pagination />
           </div>
         </div>
       </main>

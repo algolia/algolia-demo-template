@@ -136,6 +136,7 @@ User profiles are defined in `lib/demo-config/users.ts`. Each profile has prefer
 |--------|---------|
 | `scripts/index-data.ts` | Parse XML feed, index products, configure settings, create composition |
 | `scripts/setup-agent.ts` | Configure Agent Studio agent, writes AGENT_ID back to `lib/algolia-config.ts` |
+| `scripts/setup-recommend.ts` | Train Recommend models (Related Products, Looking Similar) |
 | `scripts/setup-query-suggestions.ts` | Set up Algolia Query Suggestions |
 | `scripts/test-relevance.ts` | Test search relevance — queries with expected objectIDs in order |
 

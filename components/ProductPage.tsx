@@ -20,6 +20,7 @@ import { Product } from "@/lib/types/product";
 import { formatPrice } from "@/lib/utils/format";
 import { getPriceInfo, getPreferredCategory } from "@/lib/utils/product";
 import ProductAskAI from "@/components/sidepanel-agent-studio/components/product-page-agent";
+import ProductRecommendations from "@/components/ProductRecommendations";
 import { useCart } from "@/components/cart/cart-context";
 
 interface ProductPageProps {
@@ -326,6 +327,8 @@ export default function ProductPage({ product }: ProductPageProps) {
             />
           </section>
         )}
+
+        <ProductRecommendations objectID={product.objectID} />
 
       </main>
     </div>

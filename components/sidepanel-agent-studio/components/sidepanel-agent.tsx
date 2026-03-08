@@ -36,6 +36,7 @@ import {
   useState,
 } from "react";
 import { createPortal } from "react-dom";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useSearchBox, useInstantSearch } from "react-instantsearch";
 import { Button } from "@/components/ui/button";
 import {
@@ -852,7 +853,6 @@ const ChatWidget = memo(function ChatWidget({
         if (Object.keys(hierarchicalMenu).length > 0)
           newState.hierarchicalMenu = hierarchicalMenu;
 
-        console.log("[applySearchWithFilters]", { query, facetFilters, filters, newState });
         return newState;
       });
     },
@@ -1790,7 +1790,7 @@ export default function SidepanelExperience(config: AgentStudioConfig) {
     sidepanelContext.notifyOpenChange(isOpen);
   }, [isOpen, sidepanelContext]);
 
-  const { messages, setMessages, error, isGenerating, sendMessage, suggestions } =
+  const { messages, setMessages, error, isGenerating, sendMessage, suggestions, resetConversation } =
     useAgentStudio({
       applicationId: config.applicationId,
       apiKey: config.apiKey,
@@ -1856,6 +1856,16 @@ export default function SidepanelExperience(config: AgentStudioConfig) {
   // Hidden greeting: send a greeting to get contextual suggestions, then clear the exchange
   const initialGreetingDoneRef = useRef(false);
   const [initialSuggestionsLoading, setInitialSuggestionsLoading] = useState(false);
+  const [greetingTrigger, setGreetingTrigger] = useState(0);
+
+  // Sync suggestions and loading state to sidepanel context so other pages can access them
+  useEffect(() => {
+    sidepanelContext.setAgentSuggestions(suggestions);
+  }, [suggestions, sidepanelContext]);
+
+  useEffect(() => {
+    sidepanelContext.setAgentSuggestionsLoading(initialSuggestionsLoading);
+  }, [initialSuggestionsLoading, sidepanelContext]);
 
   useEffect(() => {
     // Trigger when sidepanel is open, chat is empty, and greeting hasn't been done yet
@@ -1869,7 +1879,7 @@ export default function SidepanelExperience(config: AgentStudioConfig) {
     setTimeout(() => {
       sendMessageRef.current?.({ text: "What can you help me with?" });
     }, 100);
-  }, [isOpen, messages.length, initialSuggestionsLoading]);
+  }, [isOpen, messages.length, initialSuggestionsLoading, greetingTrigger]);
 
   // Clear chat after greeting response finishes (suggestions are captured via onData)
   useEffect(() => {
@@ -1881,6 +1891,36 @@ export default function SidepanelExperience(config: AgentStudioConfig) {
     setMessages?.([]);
     setInitialSuggestionsLoading(false);
   }, [initialSuggestionsLoading, isGenerating, messages.length, setMessages]);
+
+  // Regenerate greeting when URL changes (category/search navigation)
+  // Only if conversation is empty (no user messages beyond the initial greeting)
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const urlKey = `${pathname}?${searchParams.toString()}`;
+  const prevUrlKeyRef = useRef(urlKey);
+
+  useEffect(() => {
+    if (urlKey === prevUrlKeyRef.current) return;
+    prevUrlKeyRef.current = urlKey;
+
+    // Only regenerate if there's no real conversation (messages are empty after greeting clears)
+    // and the greeting has already been done once
+    if (!initialGreetingDoneRef.current) return;
+    if (messages.length > 0) return; // user has an active conversation
+    if (isGenerating || initialSuggestionsLoading) return;
+
+    // Debounce: wait a short period before regenerating
+    const timer = setTimeout(() => {
+      // Re-check conditions after debounce
+      if (messages.length > 0 || isGenerating || initialSuggestionsLoading) return;
+      // Clear stale suggestions and reset the greeting flow
+      resetConversation();
+      initialGreetingDoneRef.current = false;
+      setGreetingTrigger((n) => n + 1);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [urlKey, messages.length, isGenerating, initialSuggestionsLoading]);
 
   // Keyboard shortcut: Command+I (Mac) or Ctrl+I (Windows)
   useEffect(() => {
