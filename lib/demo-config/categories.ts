@@ -6,9 +6,18 @@
  * and used for icon mapping in the filters sidebar.
  */
 import {
-  ShoppingBag,
-  Shirt,
-  Gem,
+  Home,
+  Sofa,
+  Lamp,
+  BedDouble,
+  UtensilsCrossed,
+  BookOpen,
+  Clock,
+  Flame,
+  Frame,
+  FlowerIcon,
+  Briefcase,
+  Archive,
 } from "lucide-react";
 
 // ============================================================================
@@ -41,109 +50,38 @@ export type RootCategory = CategoryNode & {
  * - children: (optional) Nested subcategories
  */
 export const HIERARCHICAL_CATEGORIES: Record<string, RootCategory> = {
-  women: {
-    name: "Women",
-    slug: "women",
-    count: 1303,
-    icon: ShoppingBag,
+  "home-kitchen": {
+    name: "Home & Kitchen",
+    slug: "home-kitchen",
+    count: 10008,
+    icon: Home,
     children: {
-      bags: {
-        name: "Bags",
-        slug: "bags",
-        count: 693,
+      furniture: {
+        name: "Furniture",
+        slug: "furniture",
         children: {
-          "shoulder-bags": { name: "Shoulder bags", slug: "shoulder-bags", count: 217 },
-          handbag: { name: "Handbag", slug: "handbag", count: 209 },
-          wallets: { name: "Wallets", slug: "wallets", count: 175 },
-          shopper: { name: "Shopper", slug: "shopper", count: 56 },
-          clutches: { name: "Clutches", slug: "clutches", count: 31 },
+          "living-room-furniture": { name: "Living Room Furniture", slug: "living-room-furniture" },
+          "bedroom-furniture": { name: "Bedroom Furniture", slug: "bedroom-furniture" },
+          "dining-room-furniture": { name: "Dining Room Furniture", slug: "dining-room-furniture" },
+          "kitchen-furniture": { name: "Kitchen Furniture", slug: "kitchen-furniture" },
+          "office-furniture": { name: "Office Furniture", slug: "office-furniture" },
+          "bathroom-furniture": { name: "Bathroom Furniture", slug: "bathroom-furniture" },
+          "entryway-furniture": { name: "Entryway Furniture", slug: "entryway-furniture" },
+          "game-room-furniture": { name: "Game & Recreation Room Furniture", slug: "game-room-furniture" },
         },
       },
-      clothing: {
-        name: "Clothing",
-        slug: "clothing",
-        count: 459,
+      "home-decor": {
+        name: "Home Decor Products",
+        slug: "home-decor",
         children: {
-          "t-shirts": { name: "T-shirts", slug: "t-shirts", count: 217 },
-          jackets: { name: "Jackets", slug: "jackets", count: 60 },
-          jeans: { name: "Jeans", slug: "jeans", count: 60 },
-          tops: { name: "Tops", slug: "tops", count: 27 },
-          dresses: { name: "Dresses", slug: "dresses", count: 23 },
-          skirts: { name: "Skirts", slug: "skirts", count: 23 },
-          blazer: { name: "Blazer", slug: "blazer", count: 16 },
-          shirts: { name: "Shirts", slug: "shirts", count: 16 },
-          trouser: { name: "Trouser", slug: "trouser", count: 16 },
-        },
-      },
-      shoes: {
-        name: "Shoes",
-        slug: "shoes",
-        count: 151,
-        children: {
-          sneakers: { name: "Sneakers", slug: "sneakers", count: 66 },
-          sandals: { name: "Sandals", slug: "sandals", count: 36 },
-          loafers: { name: "Loafers", slug: "loafers", count: 17 },
-          pumps: { name: "Pumps", slug: "pumps", count: 15 },
-          ballerinas: { name: "Ballerinas", slug: "ballerinas", count: 14 },
-        },
-      },
-    },
-  },
-  men: {
-    name: "Men",
-    slug: "men",
-    count: 278,
-    icon: Shirt,
-    children: {
-      clothing: {
-        name: "Clothing",
-        slug: "clothing",
-        count: 196,
-        children: {
-          "t-shirts": { name: "T-shirts", slug: "t-shirts", count: 50 },
-          jackets: { name: "Jackets", slug: "jackets", count: 46 },
-          tops: { name: "Tops", slug: "tops", count: 36 },
-          trousers: { name: "Trousers", slug: "trousers", count: 19 },
-          shirts: { name: "Shirts", slug: "shirts", count: 14 },
-          jeans: { name: "Jeans", slug: "jeans", count: 12 },
-          blazer: { name: "Blazer", slug: "blazer", count: 11 },
-          suits: { name: "Suits", slug: "suits", count: 8 },
-        },
-      },
-      shoes: {
-        name: "Shoes",
-        slug: "shoes",
-        count: 82,
-        children: {
-          sneakers: { name: "Sneakers", slug: "sneakers", count: 55 },
-          loafers: { name: "Loafers", slug: "loafers", count: 10 },
-          "lace-up-shoes": { name: "Lace-up shoes", slug: "lace-up-shoes", count: 3 },
-        },
-      },
-    },
-  },
-  accessories: {
-    name: "Accessories",
-    slug: "accessories",
-    count: 211,
-    icon: Gem,
-    children: {
-      women: {
-        name: "Women",
-        slug: "women",
-        count: 140,
-        children: {
-          clothing: { name: "Clothing", slug: "clothing", count: 18 },
-          looks: { name: "Looks", slug: "looks", count: 14 },
-          sunglasses: { name: "Sunglasses", slug: "sunglasses", count: 5 },
-        },
-      },
-      men: {
-        name: "Men",
-        slug: "men",
-        count: 71,
-        children: {
-          clothing: { name: "Clothing", slug: "clothing", count: 17 },
+          clocks: { name: "Clocks", slug: "clocks" },
+          "candles-holders": { name: "Candles & Holders", slug: "candles-holders" },
+          mirrors: { name: "Mirrors", slug: "mirrors" },
+          vases: { name: "Vases", slug: "vases" },
+          "picture-frames": { name: "Picture Frames", slug: "picture-frames" },
+          "artificial-plants": { name: "Artificial Plants", slug: "artificial-plants" },
+          "home-fragrance": { name: "Home Fragrance", slug: "home-fragrance" },
+          sculptures: { name: "Sculptures", slug: "sculptures" },
         },
       },
     },
@@ -164,7 +102,5 @@ export const CATEGORY_ICONS: Record<
   string,
   React.ComponentType<{ className?: string }>
 > = {
-  "Women": ShoppingBag,
-  "Men": Shirt,
-  "Accessories": Gem,
+  "Home & Kitchen": Home,
 };

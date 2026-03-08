@@ -6,12 +6,12 @@
  */
 export const DEMO_CONFIG = {
   brand: {
-    name: "Acme Store",
-    tagline: "Your trusted online store",
+    name: "Sofa So Good",
+    tagline: "Furnishings you'll love to live with",
     logoUrl: "/logo.svg",
     logoWidth: 120,
     logoHeight: 40,
-    agentName: "Acme AI",
+    agentName: "Sofa So Good AI",
   },
   locale: {
     language: "en",
@@ -20,6 +20,5 @@ export const DEMO_CONFIG = {
   },
   imageDomains: [
     { protocol: "https" as const, hostname: "fxqklbpngldowtbkqezm.supabase.co" },
-    { protocol: "https" as const, hostname: "img.theproteinworks.com" },
   ],
 };

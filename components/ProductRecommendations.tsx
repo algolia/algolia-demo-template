@@ -69,35 +69,31 @@ export default function ProductRecommendations({
     let cancelled = false;
     setLoading(true);
 
-    client
-      .getRecommendations({
-        requests: [
-          {
-            indexName: ALGOLIA_CONFIG.INDEX_NAME,
-            objectID,
-            model: "related-products",
-            maxRecommendations: 4,
-            threshold: 0,
-          },
-          {
-            indexName: ALGOLIA_CONFIG.INDEX_NAME,
-            objectID,
-            model: "looking-similar",
-            maxRecommendations: 4,
-            threshold: 0,
-          },
-        ],
-      })
-      .then((response) => {
-        if (cancelled) return;
-        const results = response.results;
-        setRelatedProducts((results[0]?.hits as Product[]) || []);
-        setLookingSimilar((results[1]?.hits as Product[]) || []);
-        setLoading(false);
-      })
-      .catch(() => {
-        if (!cancelled) setLoading(false);
-      });
+    const fetchModel = (model: "related-products" | "looking-similar") =>
+      client
+        .getRecommendations({
+          requests: [
+            {
+              indexName: ALGOLIA_CONFIG.INDEX_NAME,
+              objectID,
+              model,
+              maxRecommendations: 4,
+              threshold: 0,
+            },
+          ],
+        })
+        .then((r) => (r.results[0]?.hits as Product[]) || [])
+        .catch(() => [] as Product[]);
+
+    Promise.all([
+      fetchModel("related-products"),
+      fetchModel("looking-similar"),
+    ]).then(([related, similar]) => {
+      if (cancelled) return;
+      setRelatedProducts(related);
+      setLookingSimilar(similar);
+      setLoading(false);
+    });
 
     return () => {
       cancelled = true;

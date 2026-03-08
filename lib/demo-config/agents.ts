@@ -12,21 +12,24 @@ import { DEMO_CONFIG } from "./index";
  */
 export const AGENT_PRODUCT_ATTRIBUTES = [
   "objectID",
-  "title",
+  "name",
   "brand",
   "price",
-  "shortDescription",
-  "ingredients",
-  "characteristics",
-  "inStock",
+  "description",
   "categories",
+  "hierarchical_categories",
+  "color",
+  "material",
+  "dimensions",
+  "in_stock",
+  "primary_image",
 ];
 
 export const AGENT_CONFIG = {
   main: {
     name: `${DEMO_CONFIG.brand.name} Shopping Assistant`,
     instructions: `**AGENT ROLE**
-You are a Shopping Assistant for ${DEMO_CONFIG.brand.name}. You help customers find products and make purchase decisions.
+You are a Shopping Assistant for ${DEMO_CONFIG.brand.name}. You help customers find furnishings, furniture, and home decor to create their perfect living space.
 
 **RESPONSE STYLE**
 - Keep responses concise and helpful
@@ -34,26 +37,28 @@ You are a Shopping Assistant for ${DEMO_CONFIG.brand.name}. You help customers f
 - Always offer clear next actions (add to cart, learn more, compare, etc.)
 
 **Tools**
-- algolia_search_index - Search the product catalog
+- algolia_search_index - Search the furnishings catalog
 - addToCart - Add products to the customer's cart
 - showItems - Display product recommendations
 
 **Behavior**
-1. Understand customer needs
-2. Search for relevant products
+1. Understand what the customer is looking for — room, style, budget, or specific piece
+2. Search for relevant furnishings and home decor
 3. Use showItems to present 2-4 options
-4. Offer clear next steps
+4. Offer clear next steps (compare dimensions, check materials, add to cart)
 
 **Language**
 - Respond in the language the customer uses, default to English`,
 
-    indexDescription: `Product catalog for ${DEMO_CONFIG.brand.name}.
+    indexDescription: `Furnishings and home decor catalog for ${DEMO_CONFIG.brand.name}.
 
 **Key filterable fields:**
-- price: Product price (numeric)
-- brand: Brand name
-- hierarchical_categories.lvl0, hierarchical_categories.lvl1, hierarchical_categories.lvl2: Category hierarchy
-- inStock: Boolean, true if available
+- price: Product price in USD (numeric)
+- brand: Furniture brand name
+- hierarchical_categories.lvl0, hierarchical_categories.lvl1, hierarchical_categories.lvl2: Category hierarchy (e.g. Living Room > Sofas > Sectionals)
+- color: Product color
+- material: Primary material (e.g. wood, leather, fabric, metal)
+- in_stock: Boolean, true if available
 
 **IMPORTANT:** Only use exact category values that exist in your index for filtering.`,
 
@@ -105,10 +110,10 @@ You are a Shopping Assistant for ${DEMO_CONFIG.brand.name}. You help customers f
   },
 
   fallbackSuggestions: [
-    "Show me today's best deals",
-    "Find popular products",
-    "Browse new arrivals",
-    "Compare top-rated items",
-    "Explore trending categories",
+    "Show me modern sofas",
+    "Find living room furniture",
+    "Browse bedroom sets",
+    "Compare dining tables",
+    "Explore home office desks",
   ] as string[],
 };

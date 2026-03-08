@@ -78,7 +78,7 @@ export function createAgentTransport(
 
         // Flag first user message so the agent can respond more concisely
         const isFirstMessage = messages.filter(m => m.role === 'user').length <= 1;
-        const ctxMsg = makeContextSystemMessage({ ...ctx, isFirstMessage });
+        const ctxMsg = makeContextSystemMessage({ ...ctx, isFirstMessage } as ContextSnapshot & { isFirstMessage: boolean });
 
         if (process.env.NODE_ENV === 'development') {
           console.debug(`${label} Injected context:`, ctx);

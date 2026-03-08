@@ -70,6 +70,9 @@ export interface Product {
   sales_last_30d: number;
   sales_last_90d: number;
 
+  // Product attributes (category-specific key/value pairs)
+  attrs?: Record<string, string>;
+
   // Algolia-specific fields (populated by search response)
   _highlightResult?: Record<string, unknown>;
   _snippetResult?: Record<string, unknown>;

@@ -21,16 +21,26 @@ import type { User, PreferenceKey, PreferenceMetadata } from "@/lib/types/user";
 export const users: User[] = [
   {
     id: "1",
-    description: "Returning customer",
-    slug: "returning-customer",
+    description: "Interior designer",
+    slug: "interior-designer",
     preferences: {
-      // Add preference weights matching your Algolia facets:
-      // "categories.lvl0": { "Category Name": 20 },
-      // brand: { "Brand Name": 17 },
+      "hierarchical_categories.lvl0": { "Home & Kitchen": 18 },
+      "hierarchical_categories.lvl1": { "Home & Kitchen > Furniture": 17 },
+      "hierarchical_categories.lvl2": { "Home & Kitchen > Furniture > Living Room Furniture": 18, "Home & Kitchen > Furniture > Bedroom Furniture": 15 },
     },
   },
   {
     id: "2",
+    description: "First-time homeowner",
+    slug: "first-time-homeowner",
+    preferences: {
+      "hierarchical_categories.lvl0": { "Home & Kitchen": 16 },
+      "hierarchical_categories.lvl1": { "Home & Kitchen > Furniture": 15, "Home & Kitchen > Home Decor Products": 12 },
+      "hierarchical_categories.lvl2": { "Home & Kitchen > Furniture > Kitchen Furniture": 18, "Home & Kitchen > Furniture > Dining Room Furniture": 16 },
+    },
+  },
+  {
+    id: "3",
     description: "New visitor",
     slug: "new-visitor",
     preferences: {},
