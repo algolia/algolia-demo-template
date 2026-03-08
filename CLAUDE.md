@@ -34,7 +34,7 @@ All demo-specific values are centralized here. To set up a new demo, edit these 
 | `lib/demo-config/index.ts` | Brand name, tagline, logo, locale (language, currency), image domains |
 | `lib/demo-config/categories.ts` | Category tree (`HIERARCHICAL_CATEGORIES`), sidebar icons (`CATEGORY_ICONS`) |
 | `lib/demo-config/users.ts` | Demo user profiles (`users`), preference display metadata (`PREFERENCE_METADATA`) |
-| `lib/demo-config/agents.ts` | AI agent instructions and index descriptions (`AGENT_CONFIG`) |
+| `lib/demo-config/agents.ts` | AI agent instructions, index descriptions, client-side tools, product attributes for agent API key (`AGENT_CONFIG`, `AGENT_PRODUCT_ATTRIBUTES`) |
 
 ### Price Formatting
 
@@ -46,7 +46,7 @@ All prices go through `lib/utils/format.ts` → `formatPrice()`, which reads `DE
 
 ## Algolia Configuration
 
-All non-sensitive Algolia settings live in `lib/algolia-config.ts` (committed to the repo). This includes the APP_ID, search-only API key, index names, composition ID, and agent IDs. Environment variables can override any value when set.
+All non-sensitive Algolia settings live in `lib/algolia-config.ts` (committed to the repo). This includes the APP_ID, search-only API key, index name, composition ID, and agent ID. Values are hardcoded — update the file directly when configuring a new demo.
 
 **Default app:** `3FKQCCIUWO` with search key `cf3b54fbfea633fb12808c8b2f59b990`.
 
@@ -85,19 +85,17 @@ Nested provider structure in `components/providers.tsx`:
 
 ### AI Agent System
 
-Two AI agents powered by Algolia Agent Studio. Instructions are configured in `lib/demo-config/agents.ts`.
+One AI agent powered by Algolia Agent Studio. Instructions and tools are configured in `lib/demo-config/agents.ts`, deployed via `scripts/setup-agent.ts`.
 
-**1. Sidepanel Agent** (`components/sidepanel-agent-studio/`)
-- Context-aware assistant for search and product pages
+**Sidepanel Agent** (`components/sidepanel-agent-studio/`)
+- Context-aware shopping assistant for search and product pages
 - Uses `context-snapshot.ts` to resolve page context before each message
 - Built-in suggestions enabled (`config.suggestions.enabled: true`) — every response includes contextual follow-up suggestions via `data-suggestions` SSE events
-- Tools: `addToCart`, `showItems`
-
-**2. Checkout Agent** (`components/checkout-agent/`)
-- Provides complementary product recommendations during checkout
+- Fallback suggestions defined in `AGENT_CONFIG.fallbackSuggestions` for when no SSE suggestions are available
+- Tools: `addToCart`, `showItems` (client-side), `algolia_search_index` (server-side)
 
 **Context Injection Pattern:**
-All agents use `[CONTEXT]{...}[/CONTEXT]` message format to inject structured data.
+The agent uses `[CONTEXT]{...}[/CONTEXT]` message format to inject structured data (page context, user preferences, selected products).
 
 **Single Instance Architecture:**
 Only ONE `SidepanelExperience` component is rendered in the navbar. Multiple trigger buttons communicate via `SidepanelContext`.
@@ -127,16 +125,17 @@ User profiles are defined in `lib/demo-config/users.ts`. Each profile has prefer
 - InstantSearch components use composition for search
 
 **Agent Studio:**
-- Agents configured via `scripts/setup-agent.ts` (reads from `lib/demo-config/agents.ts`)
-- Custom transport layer injects context via `prepareSendMessagesRequest`
-- Client-side tool execution for cart operations
+- Single agent configured via `scripts/setup-agent.ts` (reads from `lib/demo-config/agents.ts`)
+- Custom transport layer in `create-agent-transport.ts` injects context via `prepareSendMessagesRequest`
+- Client-side tool execution for cart and product display operations
+- Suggestions delivered via `data-suggestions` SSE events from Agent Studio
 
 ## Scripts
 
 | Script | Purpose |
 |--------|---------|
 | `scripts/index-data.ts` | Parse XML feed, index products, configure settings, create composition |
-| `scripts/setup-agent.ts` | Configure Agent Studio agents (reads `lib/demo-config/agents.ts`) |
+| `scripts/setup-agent.ts` | Configure Agent Studio agent, writes AGENT_ID back to `lib/algolia-config.ts` |
 | `scripts/setup-query-suggestions.ts` | Set up Algolia Query Suggestions |
 | `scripts/test-relevance.ts` | Test search relevance — queries with expected objectIDs in order |
 

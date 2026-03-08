@@ -1,12 +1,12 @@
 import { algoliasearch } from "algoliasearch";
-
+import { ALGOLIA_CONFIG } from "./algolia-config";
 export async function getObjectsByIds<Product>(
   objectIDs: string[],
   indexName: string
 ): Promise<Product[]> {
   const client = algoliasearch(
-    process.env.NEXT_PUBLIC_ALGOLIA_APP_ID ?? "",
-    process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY ?? ""
+    ALGOLIA_CONFIG.APP_ID,
+    ALGOLIA_CONFIG.SEARCH_API_KEY
   );
   const res = await client.getObjects({
     requests: objectIDs.map((objectID) => ({
