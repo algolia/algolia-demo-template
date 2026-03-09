@@ -1,5 +1,9 @@
 # Sofa So Good — Algolia E-Commerce Demo
 
+**Industry:** Home & Furniture, Home Decor
+**Features:** Product Comparison, Algolia Recommend
+**Recommend Models:** Related Products, Looking Similar
+
 ## What's different on this branch
 
 This branch adds **AI-powered product comparison tables** built on top of Algolia Recommend. Each product page now features two side-by-side comparison sections — one driven by **Related Products** (behavioral signals: co-views, co-purchases) and another by **Looking Similar** (visual and attribute similarity). The comparison rows are not hardcoded: they are dynamically generated from the product attributes (`attrs`) that the compared items actually share, so a bed frame comparison surfaces Material, Size, and Style while a candle comparison shows Scent, Operating Time, and Wax Type — all without any manual configuration per category.
