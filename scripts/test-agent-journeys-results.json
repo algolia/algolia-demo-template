@@ -1,0 +1,4166 @@
+[
+  {
+    "journey": "Crema de verduras",
+    "group": "Intent-Based Product Search",
+    "durationMs": 6358,
+    "turns": [
+      {
+        "userMessage": "algo para hacer crema de verduras",
+        "rubric": "Must search products. Must call showItems with ≥2 products. Products should be relevant to making vegetable soup (vegetables, cream, broth, etc.)",
+        "assistantText": "",
+        "toolCalls": [
+          {
+            "name": "algolia_search_index",
+            "input": {
+              "index": "new_consum_products",
+              "query": "verduras para crema calabacin zanahoria puerro patata caldo verduras",
+              "number_of_results": 6,
+              "facet_filters": [
+                [
+                  "categories.lvl0:Frescos",
+                  "categories.lvl0:Despensa"
+                ]
+              ]
+            },
+            "output": {
+              "hits": [
+                {
+                  "priceUnit": 8.63,
+                  "brand": "FLORETTE",
+                  "objectID": "45169",
+                  "groups": [],
+                  "enriched": {
+                    "description": "Disfruta de un delicioso mix de micro verduras con calabacín, ideal para ensaladas y guarniciones saludables.",
+                    "keywords": [
+                      "verduras frescas",
+                      "ensaladas",
+                      "saludable",
+                      "cocina rápida",
+                      "guarnición",
+                      "vegetales",
+                      "calabacín",
+                      "mix de verduras"
+                    ],
+                    "dietaryTags": [
+                      "vegano",
+                      "vegetariano",
+                      "sin gluten",
+                      "bajo en grasa"
+                    ],
+                    "useCases": [
+                      "ideal para ensaladas",
+                      "acompañamiento en platos principales",
+                      "preparaciones rápidas",
+                      "cocina saludable",
+                      "snacks nutritivos"
+                    ]
+                  },
+                  "price": 2.59,
+                  "normalPrice": 2.59,
+                  "unit": "1 Kg",
+                  "offer": false,
+                  "_snippetResult": {
+                    "description": {
+                      "value": "Mix Micro <em>Verduras</em> Con <em>Calabacín</em>",
+                      "matchLevel": "partial"
+                    },
+                    "enriched": {
+                      "description": {
+                        "value": "Disfruta de un delicioso mix de micro <em>verduras</em> con <em>calabacín</em>, ideal para ensaladas y guarniciones saludables.",
+                        "matchLevel": "partial"
+                      }
+                    }
+                  },
+                  "imageUrl": "https://cdn-consum.aktiosdigitalservices.com/tol/consum/media/product/img/135x135/7471246_001.jpg?t=20260122041501",
+                  "promotions": [],
+                  "categories": {
+                    "lvl0": [
+                      "Frescos"
+                    ],
+                    "lvl1": [
+                      "Verduras"
+                    ],
+                    "lvl2": [
+                      "Verduras microondas"
+                    ],
+                    "lvl3": []
+                  },
+                  "title": "Mix Micro Verduras Con Calabacín",
+                  "description": "Mix Micro Verduras Con Calabacín",
+                  "inStock": true
+                },
+                {
+                  "categories": {
+                    "lvl0": [
+                      "Despensa"
+                    ],
+                    "lvl1": [
+                      "Caldos, sopas y purés"
+                    ],
+                    "lvl2": [
+                      "Cremas"
+                    ],
+                    "lvl3": []
+                  },
+                  "enriched": {
+                    "description": "Deliciosa crema de calabacín lista para disfrutar, ideal como entrante o plato principal.",
+                    "keywords": [
+                      "crema",
+                      "calabacín",
+                      "sopa",
+                      "vegetal",
+                      "saludable",
+                      "rápido",
+                      "fácil",
+                      "plato ligero",
+                      "vegan"
+                    ],
+                    "dietaryTags": [
+                      "vegano",
+                      "sin gluten",
+                      "sin lactosa"
+                    ],
+                    "useCases": [
+                      "como entrante en comidas",
+                      "plato principal ligero",
+                      "ideal para cenas rápidas",
+                      "acompañamiento saludable",
+                      "perfecto para dietas"
+                    ]
+                  },
+                  "objectID": "9787",
+                  "description": "Crema de Calabacín Brik",
+                  "normalPrice": 1,
+                  "priceUnit": 2,
+                  "brand": "CONSUM",
+                  "inStock": true,
+                  "_snippetResult": {
+                    "description": {
+                      "value": "<em>Crema</em> de <em>Calabacín</em> Brik",
+                      "matchLevel": "partial"
+                    },
+                    "enriched": {
+                      "description": {
+                        "value": "Deliciosa <em>crema</em> de <em>calabacín</em> lista para disfrutar, ideal como entrante o plato principal.",
+                        "matchLevel": "partial"
+                      }
+                    }
+                  },
+                  "title": "Crema de Calabacín Brik",
+                  "price": 1,
+                  "unit": "1 L",
+                  "groups": [
+                    "Tu plato perfecto para el frío"
+                  ],
+                  "imageUrl": "https://cdn-consum.aktiosdigitalservices.com/tol/consum/media/product/img/135x135/7226780_001.jpg?t=20250520091502",
+                  "offer": false,
+                  "promotions": []
+                },
+                {
+                  "title": "Crema de Verduras Brik",
+                  "brand": "CONSUM",
+                  "description": "Crema de Verduras Brik",
+                  "normalPrice": 1,
+                  "_snippetResult": {
+                    "description": {
+                      "value": "<em>Crema</em> de <em>Verduras</em> Brik",
+                      "matchLevel": "partial"
+                    },
+                    "enriched": {
+                      "description": {
+                        "value": "Deliciosa <em>crema</em> de <em>verduras</em> lista para disfrutar, ideal como primer plato nutritivo y reconfortante.",
+                        "matchLevel": "partial"
+                      }
+                    }
+                  },
+                  "imageUrl": "https://cdn-consum.aktiosdigitalservices.com/tol/consum/media/product/img/135x135/7227796_001.jpg?t=20250520091502",
+                  "inStock": true,
+                  "priceUnit": 2,
+                  "unit": "1 L",
+                  "groups": [
+                    "Tu plato perfecto para el frío"
+                  ],
+                  "objectID": "7658",
+                  "price": 1,
+                  "promotions": [],
+                  "categories": {
+                    "lvl0": [
+                      "Despensa"
+                    ],
+                    "lvl1": [
+                      "Caldos, sopas y purés"
+                    ],
+                    "lvl2": [
+                      "Cremas"
+                    ],
+                    "lvl3": []
+                  },
+                  "offer": false,
+                  "enriched": {
+                    "description": "Deliciosa crema de verduras lista para disfrutar, ideal como primer plato nutritivo y reconfortante.",
+                    "keywords": [
+                      "crema de verduras",
+                      "sopa",
+                      "puré",
+                      "plato caliente",
+                      "vegetariano",
+                      "fácil de preparar",
+                      "comida rápida",
+                      "saludable"
+                    ],
+                    "dietaryTags": [
+                      "sin gluten",
+                      "sin lactosa",
+                      "vegano",
+                      "vegetariano"
+                    ],
+                    "useCases": [
+                      "como primer plato en comidas familiares",
+                      "para una cena ligera",
+                      "ideal para llevar al trabajo",
+                      "como base para recetas de sopas",
+                      "perfecta para días fríos"
+                    ]
+                  }
+                },
+                {
+                  "priceUnit": 4.58,
+                  "_snippetResult": {
+                    "description": {
+                      "value": "<em>Crema</em> <em>Calabacín</em> con Quesito",
+                      "matchLevel": "partial"
+                    },
+                    "enriched": {
+                      "description": {
+                        "value": "Deliciosa <em>crema</em> de <em>calabacín</em> con un toque de quesito, ideal para disfrutar en cualquier comida.",
+                        "matchLevel": "partial"
+                      }
+                    }
+                  },
+                  "description": "Crema Calabacín con Quesito",
+                  "imageUrl": "https://cdn-consum.aktiosdigitalservices.com/tol/consum/media/product/img/135x135/7140783_001.jpg?t=20220723040002",
+                  "inStock": true,
+                  "price": 2.29,
+                  "groups": [
+                    "Tu plato perfecto para el frío"
+                  ],
+                  "objectID": "6363",
+                  "title": "Crema Calabacín con Quesito",
+                  "unit": "1 L",
+                  "offer": false,
+                  "brand": "KNORR",
+                  "normalPrice": 2.29,
+                  "promotions": [],
+                  "categories": {
+                    "lvl0": [
+                      "Despensa"
+                    ],
+                    "lvl1": [
+                      "Caldos, sopas y purés"
+                    ],
+                    "lvl2": [
+                      "Cremas"
+                    ],
+                    "lvl3": []
+                  },
+                  "enriched": {
+                    "description": "Deliciosa crema de calabacín con un toque de quesito, ideal para disfrutar en cualquier comida.",
+                    "keywords": [
+                      "crema de calabacín",
+                      "sopa",
+                      "puré",
+                      "Knorr",
+                      "comida rápida",
+                      "vegetariano",
+                      "plato caliente",
+                      "fácil de preparar"
+                    ],
+                    "dietaryTags": [],
+                    "useCases": [
+                      "perfecta para cenas rápidas",
+                      "ideal como entrada",
+                      "acompañamiento en comidas",
+                      "plato reconfortante en días fríos"
+                    ]
+                  }
+                },
+                {
+                  "imageUrl": "https://cdn-consum.aktiosdigitalservices.com/tol/consum/media/product/img/135x135/7072721_001.jpg?t=20220723040002",
+                  "priceUnit": 4.58,
+                  "enriched": {
+                    "description": "Disfruta de la deliciosa Crema de Verduras de la Huerta de Knorr, ideal para una comida rápida y nutritiva.",
+                    "keywords": [
+                      "crema de verduras",
+                      "sopa",
+                      "puré",
+                      "comida rápida",
+                      "saludable",
+                      "vegetariano",
+                      "cocina casera",
+                      "fácil de preparar"
+                    ],
+                    "dietaryTags": [
+                      "sin gluten",
+                      "sin lactosa",
+                      "vegetariano"
+                    ],
+                    "useCases": [
+                      "perfecta para cenas ligeras",
+                      "ideal como entrada en comidas",
+                      "rápida solución para almuerzos",
+                      "acompañamiento en platos principales"
+                    ]
+                  },
+                  "title": "Crema de Verduras de la Huerta",
+                  "offer": false,
+                  "categories": {
+                    "lvl0": [
+                      "Despensa"
+                    ],
+                    "lvl1": [
+                      "Caldos, sopas y purés"
+                    ],
+                    "lvl2": [
+                      "Cremas"
+                    ],
+                    "lvl3": []
+                  },
+                  "brand": "KNORR",
+                  "inStock": true,
+                  "price": 2.29,
+                  "normalPrice": 2.29,
+                  "groups": [
+                    "Tu plato perfecto para el frío"
+                  ],
+                  "objectID": "5873",
+                  "_snippetResult": {
+                    "description": {
+                      "value": "<em>Crema</em> de <em>Verduras</em> de la Huerta",
+                      "matchLevel": "partial"
+                    },
+                    "enriched": {
+                      "description": {
+                        "value": "Disfruta de la deliciosa <em>Crema</em> de <em>Verduras</em> de la Huerta de Knorr, ideal para una comida rápida y nutritiva.",
+                        "matchLevel": "partial"
+                      }
+                    }
+                  },
+                  "description": "Crema de Verduras de la Huerta",
+                  "unit": "1 L",
+                  "promotions": []
+                },
+                {
+                  "promotions": [],
+                  "categories": {
+                    "lvl0": [
+                      "Despensa"
+                    ],
+                    "lvl1": [
+                      "Caldos, sopas y purés"
+                    ],
+                    "lvl2": [
+                      "Cremas"
+                    ],
+                    "lvl3": []
+                  },
+                  "enriched": {
+                    "description": "Disfruta de una deliciosa crema de verduras mediterráneas, perfecta para una comida rápida y saludable.",
+                    "keywords": [
+                      "crema de verduras",
+                      "sopa",
+                      "mediterráneo",
+                      "cocina rápida",
+                      "saludable",
+                      "vegetariano",
+                      "caldo",
+                      "puré"
+                    ],
+                    "dietaryTags": [
+                      "sin gluten",
+                      "vegetariano"
+                    ],
+                    "useCases": [
+                      "almuerzo ligero",
+                      "cena rápida",
+                      "acompañamiento",
+                      "plato principal",
+                      "receta de sopa"
+                    ]
+                  },
+                  "description": "Crema de Verduras Mediterráneas",
+                  "inStock": true,
+                  "normalPrice": 2.29,
+                  "brand": "KNORR",
+                  "offer": false,
+                  "groups": [
+                    "Tu plato perfecto para el frío"
+                  ],
+                  "title": "Crema de Verduras Mediterráneas",
+                  "imageUrl": "https://cdn-consum.aktiosdigitalservices.com/tol/consum/media/product/img/135x135/7056724_001.jpg?t=20220112040005",
+                  "price": 2.29,
+                  "priceUnit": 4.58,
+                  "unit": "1 L",
+                  "objectID": "5727",
+                  "_snippetResult": {
+                    "description": {
+                      "value": "<em>Crema</em> de <em>Verduras</em> Mediterráneas",
+                      "matchLevel": "partial"
+                    },
+                    "enriched": {
+                      "description": {
+                        "value": "Disfruta de una deliciosa <em>crema</em> de <em>verduras</em> mediterráneas, perfecta para una comida rápida y saludable.",
+                        "matchLevel": "partial"
+                      }
+                    }
+                  }
+                }
+              ],
+              "nbHits": 505,
+              "queryID": "41bc49a60e3f4076e6ee3f11162db29a"
+            }
+          },
+          {
+            "name": "showItems",
+            "input": {
+              "objectIDs": [
+                "45169",
+                "9787",
+                "7658",
+                "5873"
+              ],
+              "title": "Opciones para crema de verduras",
+              "explanation": "Tienes ingredientes frescos para hacerla casera o cremas ya listas si buscas rapidez."
+            },
+            "output": {
+              "status": "Successfully showed items",
+              "products": [
+                {
+                  "objectID": "45169",
+                  "title": "Product 45169"
+                },
+                {
+                  "objectID": "9787",
+                  "title": "Product 9787"
+                },
+                {
+                  "objectID": "7658",
+                  "title": "Product 7658"
+                },
+                {
+                  "objectID": "5873",
+                  "title": "Product 5873"
+                }
+              ],
+              "title": "Opciones para crema de verduras",
+              "explanation": "Tienes ingredientes frescos para hacerla casera o cremas ya listas si buscas rapidez."
+            }
+          }
+        ],
+        "checks": [
+          {
+            "label": "Searched products index",
+            "pass": true,
+            "detail": "1 search(es), queries: \"verduras para crema calabacin zanahoria puerro patata caldo verduras\""
+          },
+          {
+            "label": "Called showItems",
+            "pass": true,
+            "detail": "4 product(s) shown"
+          },
+          {
+            "label": "Showed ≥2 products",
+            "pass": true,
+            "detail": "4 products"
+          },
+          {
+            "label": "Filters on new_consum_products",
+            "pass": true,
+            "detail": "[[\"categories.lvl0:Frescos\",\"categories.lvl0:Despensa\"]]"
+          }
+        ],
+        "durationMs": 6358
+      }
+    ]
+  },
+  {
+    "journey": "Almuerzo saludable",
+    "group": "Intent-Based Product Search",
+    "durationMs": 11656,
+    "turns": [
+      {
+        "userMessage": "almuerzo saludable",
+        "rubric": "Must search recipes or products. Must call showRecipes or showItems. Results should be healthy/nutritious options suitable for lunch",
+        "assistantText": "",
+        "toolCalls": [
+          {
+            "name": "algolia_search_index",
+            "input": {
+              "index": "new_consum_recipes",
+              "query": "almuerzo saludable rapido",
+              "number_of_results": 5,
+              "facet_filters": [
+                [
+                  "dietaryInfo:Ligera",
+                  "dietaryInfo:Vegetariana",
+                  "dietaryInfo:Sin gluten"
+                ]
+              ]
+            },
+            "output": {
+              "hits": [],
+              "nbHits": 0,
+              "queryID": "d5a7f42ae0c195eefd9d1ac8c93bdf5c"
+            }
+          },
+          {
+            "name": "algolia_search_index",
+            "input": {
+              "index": "new_consum_recipes",
+              "query": "ensalada saludable pollo quinoa",
+              "number_of_results": 5,
+              "facet_filters": null
+            },
+            "output": {
+              "hits": [
+                {
+                  "url": "https://www.consum.es/en/recipes/aguacates-rellenos-con-huevo/",
+                  "description": "Perfecto cuando tienes aguacates pero hace frío para ensaladas. ¡Muy saludable!",
+                  "imageUrl": "https://www.consum.es/sites/default/files/20260112_144823.jpg",
+                  "servings": 4,
+                  "id": "consum-aguacates-rellenos-con-huevo",
+                  "tags": [
+                    "Huevos"
+                  ],
+                  "mealType": [
+                    "Entrante"
+                  ],
+                  "season": [],
+                  "ingredientProducts": {
+                    "Aguacates rellenos con huevo": [
+                      {
+                        "objectID": "6102",
+                        "title": "Huevos M Medianos Docena",
+                        "brand": "MONTERDE"
+                      },
+                      {
+                        "objectID": "24841",
+                        "title": "Aguacate Bandeja",
+                        "brand": ""
+                      },
+                      {
+                        "objectID": "6104",
+                        "title": "Huevos L Grandes 1/2 Docena",
+                        "brand": "MONTERDE"
+                      }
+                    ]
+                  },
+                  "hasNutrition": false,
+                  "comments": 0,
+                  "objectID": "consum-aguacates-rellenos-con-huevo",
+                  "totalTimeMinutes": 12,
+                  "categories": [
+                    "Huevos"
+                  ],
+                  "likes": 0,
+                  "_snippetResult": {
+                    "description": {
+                      "value": "Perfecto cuando tienes aguacates pero hace frío para <em>ensaladas</em>. ¡Muy <em>saludable</em>!",
+                      "matchLevel": "partial"
+                    }
+                  },
+                  "ingredientsFull": [],
+                  "instructions": [],
+                  "qualityScore": 45,
+                  "dietaryInfo": [
+                    "Sin gluten"
+                  ],
+                  "ingredients": [],
+                  "title": "Aguacates rellenos con huevo",
+                  "slug": "aguacates-rellenos-con-huevo"
+                }
+              ],
+              "nbHits": 1,
+              "queryID": "c4426c80619d005778cc4e18636f5dd8"
+            }
+          },
+          {
+            "name": "showRecipes",
+            "input": {
+              "objectIDs": [
+                "consum-aguacates-rellenos-con-huevo"
+              ],
+              "title": "Almuerzo saludable y rápido",
+              "explanation": "Receta ligera, sin gluten y lista en pocos minutos, ideal para mediodía."
+            },
+            "output": {
+              "status": "Successfully showed recipes",
+              "recipes": [
+                {
+                  "objectID": "consum-aguacates-rellenos-con-huevo",
+                  "title": "Recipe consum-aguacates-rellenos-con-huevo"
+                }
+              ],
+              "title": "Almuerzo saludable y rápido",
+              "explanation": "Receta ligera, sin gluten y lista en pocos minutos, ideal para mediodía."
+            }
+          }
+        ],
+        "checks": [
+          {
+            "label": "Searched products or recipes index",
+            "pass": true,
+            "detail": "products: 0, recipes: 2"
+          },
+          {
+            "label": "Called showItems or showRecipes",
+            "pass": true,
+            "detail": "showItems: 0 items, showRecipes: 1 recipes"
+          },
+          {
+            "label": "Filters on new_consum_recipes",
+            "pass": true,
+            "detail": "[[\"dietaryInfo:Ligera\",\"dietaryInfo:Vegetariana\",\"dietaryInfo:Sin gluten\"]]"
+          }
+        ],
+        "durationMs": 11656
+      }
+    ]
+  },
+  {
+    "journey": "Cena rápida para dos",
+    "group": "Intent-Based Product Search",
+    "durationMs": 6239,
+    "turns": [
+      {
+        "userMessage": "Cena rápida para dos",
+        "rubric": "Must search recipes or products. Must call showRecipes or showItems. Results should be quick-to-prepare dinner items. Response should acknowledge the 'for two' aspect",
+        "assistantText": "",
+        "toolCalls": [
+          {
+            "name": "algolia_search_index",
+            "input": {
+              "index": "new_consum_recipes",
+              "query": "cena rápida para dos",
+              "number_of_results": 5,
+              "facet_filters": null
+            },
+            "output": {
+              "hits": [
+                {
+                  "servings": 4,
+                  "ingredients": [],
+                  "comments": 0,
+                  "qualityScore": 40,
+                  "objectID": "consum-tofu-salteado",
+                  "url": "https://www.consum.es/en/recipes/tofu-salteado/",
+                  "description": "Para el tofu salteado: ▢400 g de tofu firme, 14 oz, en dados ▢1 taza de brócoli, 100 g, troceado ▢1 zanahoria mediana, en juliana ▢½ pimiento rojo, en juliana ▢½ cebolla morada, en juliana ▢2 dientes de ajo, troceados ▢Un trozo de raíz de jengibre de unos 2 cm, pelado y troceado Para la salsa: ▢¾ de taza de caldo de verduras o agua, 190 ml ▢¼ de taza de tamari o salsa de soja, 4 cucharadas ▢2 cucharadas de azúcar, yo usé azúcar de caña ▢2 cucharaditas de maicena ▢⅛ cucharadita de cayena en polvo, opcional",
+                  "imageUrl": "https://www.consum.es/sites/default/files/default_images/avatar-01.png",
+                  "tags": [],
+                  "instructions": [],
+                  "hasNutrition": false,
+                  "_snippetResult": {
+                    "description": {
+                      "value": "… 2 cm, pelado y troceado Para la salsa: ▢¾ de taza de caldo de verduras o agua, 190 ml ▢¼ de taza de tamari o salsa de soja, 4 cucharadas ▢2 cucharadas de azúcar, yo usé azúcar de <em>caña</em> ▢2 cucharaditas de maicena ▢⅛ cucharadita de cayena en polvo, opcional",
+                      "matchLevel": "partial"
+                    }
+                  },
+                  "title": "Tofu Salteado",
+                  "slug": "tofu-salteado",
+                  "totalTimeMinutes": 3,
+                  "season": [],
+                  "ingredientProducts": {
+                    "Tofu Salteado": [
+                      {
+                        "objectID": "17213",
+                        "title": "Tofu Bio",
+                        "brand": "VIVERA"
+                      }
+                    ]
+                  },
+                  "categories": [],
+                  "dietaryInfo": [
+                    "Sin gluten"
+                  ],
+                  "mealType": [
+                    "Postre",
+                    "Desayuno",
+                    "Merienda"
+                  ],
+                  "ingredientsFull": [],
+                  "likes": 0,
+                  "id": "consum-tofu-salteado"
+                }
+              ],
+              "nbHits": 1,
+              "queryID": "5fa1d782b49482008f08f1e0ac1f398f"
+            }
+          },
+          {
+            "name": "showRecipes",
+            "input": {
+              "objectIDs": [
+                "consum-tofu-salteado"
+              ],
+              "title": "Cena rápida y ligera",
+              "explanation": "Se prepara en minutos y es ideal para una cena para dos (ajusta cantidades)."
+            },
+            "output": {
+              "status": "Successfully showed recipes",
+              "recipes": [
+                {
+                  "objectID": "consum-tofu-salteado",
+                  "title": "Recipe consum-tofu-salteado"
+                }
+              ],
+              "title": "Cena rápida y ligera",
+              "explanation": "Se prepara en minutos y es ideal para una cena para dos (ajusta cantidades)."
+            }
+          }
+        ],
+        "checks": [
+          {
+            "label": "Searched products or recipes index",
+            "pass": true,
+            "detail": "products: 0, recipes: 1"
+          },
+          {
+            "label": "Called showItems or showRecipes",
+            "pass": true,
+            "detail": "showItems: 0 items, showRecipes: 1 recipes"
+          }
+        ],
+        "durationMs": 6239
+      }
+    ]
+  },
+  {
+    "journey": "Comida para niños",
+    "group": "Intent-Based Product Search",
+    "durationMs": 5658,
+    "turns": [
+      {
+        "userMessage": "Comida para niños pequeños",
+        "rubric": "Must search products. Must call showItems. Products should be child-appropriate food. Should use category filters or search terms relevant to children's food",
+        "assistantText": "",
+        "toolCalls": [
+          {
+            "name": "algolia_search_index",
+            "input": {
+              "index": "new_consum_products",
+              "query": "comida infantil potitos papillas niños",
+              "number_of_results": 5,
+              "facet_filters": [
+                [
+                  "categories.lvl0:Infantil"
+                ]
+              ]
+            },
+            "output": {
+              "hits": [
+                {
+                  "normalPrice": 4.15,
+                  "unit": "1 Kg",
+                  "title": "Papilla Polvo 8 Cereales con Cacao",
+                  "inStock": true,
+                  "offer": false,
+                  "categories": {
+                    "lvl0": [
+                      "Infantil"
+                    ],
+                    "lvl1": [
+                      "Alimentación infantil"
+                    ],
+                    "lvl2": [
+                      "Papillas",
+                      "Potitos y platos preparados"
+                    ],
+                    "lvl3": []
+                  },
+                  "description": "Papilla Polvo 8 Cereales con Cacao",
+                  "imageUrl": "https://cdn-consum.aktiosdigitalservices.com/tol/consum/media/product/img/135x135/7401367_001.jpg?t=20230317040001",
+                  "priceUnit": 8.74,
+                  "promotions": [],
+                  "_snippetResult": {
+                    "description": {
+                      "value": "Papilla Polvo 8 Cereales con Cacao",
+                      "matchLevel": "none"
+                    },
+                    "enriched": {
+                      "description": {
+                        "value": "Deliciosa papilla en polvo de 8 cereales con cacao, ideal para la alimentación <em>infantil</em>.",
+                        "matchLevel": "partial"
+                      }
+                    }
+                  },
+                  "brand": "NESTLE",
+                  "price": 4.15,
+                  "groups": [],
+                  "enriched": {
+                    "description": "Deliciosa papilla en polvo de 8 cereales con cacao, ideal para la alimentación infantil.",
+                    "keywords": [
+                      "papilla",
+                      "cereales",
+                      "cacao",
+                      "alimentación infantil",
+                      "desayuno",
+                      "merienda",
+                      "nutritivo",
+                      "Nestlé"
+                    ],
+                    "dietaryTags": [],
+                    "useCases": [
+                      "desayuno",
+                      "merienda",
+                      "como complemento nutricional",
+                      "fácil de preparar"
+                    ]
+                  },
+                  "objectID": "29483"
+                },
+                {
+                  "inStock": true,
+                  "normalPrice": 4.15,
+                  "priceUnit": 8.74,
+                  "offer": false,
+                  "imageUrl": "https://cdn-consum.aktiosdigitalservices.com/tol/consum/media/product/img/135x135/7107746_001.jpg?t=20240906091501",
+                  "unit": "1 Kg",
+                  "categories": {
+                    "lvl0": [
+                      "Infantil"
+                    ],
+                    "lvl1": [
+                      "Alimentación infantil"
+                    ],
+                    "lvl2": [
+                      "Papillas",
+                      "Potitos y platos preparados"
+                    ],
+                    "lvl3": []
+                  },
+                  "_snippetResult": {
+                    "description": {
+                      "value": "Papilla 8 Cereales Galleta",
+                      "matchLevel": "none"
+                    },
+                    "enriched": {
+                      "description": {
+                        "value": "Deliciosa papilla de 8 cereales con galleta, ideal para la alimentación <em>infantil</em>.",
+                        "matchLevel": "partial"
+                      }
+                    }
+                  },
+                  "title": "Papilla 8 Cereales Galleta",
+                  "brand": "NESTLE",
+                  "description": "Papilla 8 Cereales Galleta",
+                  "price": 4.15,
+                  "objectID": "11536",
+                  "groups": [],
+                  "promotions": [],
+                  "enriched": {
+                    "description": "Deliciosa papilla de 8 cereales con galleta, ideal para la alimentación infantil.",
+                    "keywords": [
+                      "papilla",
+                      "cereales",
+                      "infantil",
+                      "merienda",
+                      "desayuno",
+                      "galleta",
+                      "nutritivo",
+                      "fácil de preparar"
+                    ],
+                    "dietaryTags": [],
+                    "useCases": [
+                      "desayuno",
+                      "merienda",
+                      "alimento para bebés",
+                      "snack saludable"
+                    ]
+                  }
+                },
+                {
+                  "enriched": {
+                    "description": "Delicioso tarrito de frutas para bebés, ideal para introducir sabores naturales desde los 4 meses.",
+                    "keywords": [
+                      "puré de frutas",
+                      "alimentación infantil",
+                      "snack saludable",
+                      "comida para bebés",
+                      "merienda"
+                    ],
+                    "dietaryTags": [],
+                    "useCases": [
+                      "introducción a la alimentación sólida",
+                      "merienda saludable",
+                      "snack para viajes",
+                      "comida rápida para bebés"
+                    ]
+                  },
+                  "title": "Tarrito 3 Frutas",
+                  "imageUrl": "https://cdn-consum.aktiosdigitalservices.com/tol/consum/media/product/img/135x135/384693_001.jpg?t=20251115130001",
+                  "_snippetResult": {
+                    "description": {
+                      "value": "Tarrito 3 Frutas",
+                      "matchLevel": "none"
+                    },
+                    "enriched": {
+                      "description": {
+                        "value": "Delicioso tarrito de frutas para bebés, ideal para introducir sabores naturales desde los 4 meses.",
+                        "matchLevel": "none"
+                      }
+                    }
+                  },
+                  "description": "Tarrito 3 Frutas",
+                  "price": 1.39,
+                  "brand": "HERO",
+                  "inStock": true,
+                  "normalPrice": 1.39,
+                  "offer": true,
+                  "promotions": [
+                    "Acumulas en tu cheque regalo"
+                  ],
+                  "categories": {
+                    "lvl0": [
+                      "Infantil",
+                      "Ahora más barato"
+                    ],
+                    "lvl1": [
+                      "Alimentación infantil",
+                      "Ahora más barato - Ofertas en productos infantiles"
+                    ],
+                    "lvl2": [
+                      "Potitos y platos preparados",
+                      "Pouches"
+                    ],
+                    "lvl3": [
+                      "Potitos de fruta y postres"
+                    ]
+                  },
+                  "priceUnit": 7.32,
+                  "unit": "1 Kg",
+                  "groups": [],
+                  "objectID": "4964"
+                },
+                {
+                  "enriched": {
+                    "description": "Delicioso tarrito de fruta variada, ideal para la alimentación infantil a partir de 4 meses.",
+                    "keywords": [
+                      "fruta",
+                      "alimentación infantil",
+                      "merienda",
+                      "snack saludable",
+                      "puré de frutas",
+                      "comida para bebés",
+                      "natural",
+                      "sin aditivos"
+                    ],
+                    "dietaryTags": [],
+                    "useCases": [
+                      "merienda para bebés",
+                      "comida rápida y saludable",
+                      "snack para viajes",
+                      "introducción a nuevas frutas"
+                    ]
+                  },
+                  "title": "Tarrito Fruta Variada",
+                  "brand": "HERO",
+                  "price": 1.39,
+                  "offer": true,
+                  "groups": [],
+                  "categories": {
+                    "lvl0": [
+                      "Infantil",
+                      "Ahora más barato"
+                    ],
+                    "lvl1": [
+                      "Alimentación infantil",
+                      "Ahora más barato - Ofertas en productos infantiles"
+                    ],
+                    "lvl2": [
+                      "Potitos y platos preparados",
+                      "Pouches"
+                    ],
+                    "lvl3": [
+                      "Potitos de fruta y postres"
+                    ]
+                  },
+                  "description": "Tarrito Fruta Variada",
+                  "normalPrice": 1.39,
+                  "unit": "1 Kg",
+                  "objectID": "32334",
+                  "priceUnit": 7.32,
+                  "promotions": [
+                    "Acumulas en tu cheque regalo"
+                  ],
+                  "_snippetResult": {
+                    "description": {
+                      "value": "Tarrito Fruta Variada",
+                      "matchLevel": "none"
+                    },
+                    "enriched": {
+                      "description": {
+                        "value": "Delicioso tarrito de fruta variada, ideal para la alimentación <em>infantil</em> a partir de 4 meses.",
+                        "matchLevel": "partial"
+                      }
+                    }
+                  },
+                  "imageUrl": "https://cdn-consum.aktiosdigitalservices.com/tol/consum/media/product/img/135x135/7423937_001.jpg?t=20251115130002",
+                  "inStock": true
+                },
+                {
+                  "_snippetResult": {
+                    "description": {
+                      "value": "Crema de Arroz sin Gluten",
+                      "matchLevel": "none"
+                    },
+                    "enriched": {
+                      "description": {
+                        "value": "Deliciosa crema de arroz sin gluten, ideal para la alimentación <em>infantil</em> y fácil de preparar.",
+                        "matchLevel": "partial"
+                      }
+                    }
+                  },
+                  "description": "Crema de Arroz sin Gluten",
+                  "promotions": [
+                    "Acumulas en tu cheque regalo"
+                  ],
+                  "imageUrl": "https://cdn-consum.aktiosdigitalservices.com/tol/consum/media/product/img/135x135/7377224_001.jpg?t=20251204091503",
+                  "inStock": true,
+                  "price": 2.5,
+                  "title": "Crema de Arroz sin Gluten",
+                  "priceUnit": 13.89,
+                  "unit": "1 Kg",
+                  "offer": true,
+                  "enriched": {
+                    "description": "Deliciosa crema de arroz sin gluten, ideal para la alimentación infantil y fácil de preparar.",
+                    "keywords": [
+                      "crema de arroz",
+                      "sin gluten",
+                      "alimentación infantil",
+                      "desayuno",
+                      "merienda",
+                      "fácil de preparar",
+                      "nutritivo",
+                      "oferta"
+                    ],
+                    "dietaryTags": [
+                      "sin gluten"
+                    ],
+                    "useCases": [
+                      "desayuno",
+                      "merienda",
+                      "snacks saludables",
+                      "comidas rápidas"
+                    ]
+                  },
+                  "objectID": "26739",
+                  "brand": "NESTLE",
+                  "normalPrice": 2.5,
+                  "groups": [],
+                  "categories": {
+                    "lvl0": [
+                      "Infantil",
+                      "Ahora más barato"
+                    ],
+                    "lvl1": [
+                      "Alimentación infantil",
+                      "Ahora más barato - Ofertas en productos infantiles"
+                    ],
+                    "lvl2": [
+                      "Papillas"
+                    ],
+                    "lvl3": []
+                  }
+                }
+              ],
+              "nbHits": 218,
+              "queryID": "1dafc2cb093b9b1488d8a7df0595fa8e"
+            }
+          },
+          {
+            "name": "showItems",
+            "input": {
+              "objectIDs": [
+                "29483",
+                "11536",
+                "4964",
+                "26739"
+              ],
+              "title": "Comida para niños pequeños",
+              "explanation": "Opciones nutritivas y fáciles: papillas, tarritos y alternativas sin gluten, algunas en oferta."
+            },
+            "output": {
+              "status": "Successfully showed items",
+              "products": [
+                {
+                  "objectID": "29483",
+                  "title": "Product 29483"
+                },
+                {
+                  "objectID": "11536",
+                  "title": "Product 11536"
+                },
+                {
+                  "objectID": "4964",
+                  "title": "Product 4964"
+                },
+                {
+                  "objectID": "26739",
+                  "title": "Product 26739"
+                }
+              ],
+              "title": "Comida para niños pequeños",
+              "explanation": "Opciones nutritivas y fáciles: papillas, tarritos y alternativas sin gluten, algunas en oferta."
+            }
+          }
+        ],
+        "checks": [
+          {
+            "label": "Searched products index",
+            "pass": true,
+            "detail": "1 search(es), queries: \"comida infantil potitos papillas niños\""
+          },
+          {
+            "label": "Called showItems",
+            "pass": true,
+            "detail": "4 product(s) shown"
+          },
+          {
+            "label": "Filters on new_consum_products",
+            "pass": true,
+            "detail": "[[\"categories.lvl0:Infantil\"]]"
+          }
+        ],
+        "durationMs": 5658
+      }
+    ]
+  },
+  {
+    "journey": "Paella (recipe→cart)",
+    "group": "Recipe Workflows",
+    "durationMs": 11267,
+    "turns": [
+      {
+        "userMessage": "quiero hacer paella",
+        "rubric": "Must search recipes index (not products). Must call showRecipes. Should mention recipe details (time, servings). Should offer to add ingredients to cart.",
+        "assistantText": "",
+        "toolCalls": [
+          {
+            "name": "algolia_search_index",
+            "input": {
+              "index": "new_consum_recipes",
+              "query": "paella",
+              "number_of_results": 3,
+              "facet_filters": null
+            },
+            "output": {
+              "hits": [
+                {
+                  "qualityScore": 40,
+                  "objectID": "consum-paella-de-carrilleras-setas-y-foie",
+                  "description": "Un arroz con un sabor sorprendente, ideal para dejar a tus invitados con ganas de más!",
+                  "ingredientProducts": {
+                    "PAELLA DE CARRILLERAS, SETAS Y FOIE": [
+                      {
+                        "objectID": "31720",
+                        "title": "Carrillera en Salsa con Patatas y Setas",
+                        "brand": "CARRETILLA"
+                      },
+                      {
+                        "objectID": "7419182",
+                        "title": "",
+                        "brand": "CARRETILLA"
+                      },
+                      {
+                        "objectID": "12058",
+                        "title": "Paella Marinera",
+                        "brand": "CARRETILLA"
+                      }
+                    ]
+                  },
+                  "_snippetResult": {
+                    "description": {
+                      "value": "Un arroz con un sabor sorprendente, ideal para dejar a tus invitados con ganas de más!",
+                      "matchLevel": "none"
+                    }
+                  },
+                  "title": "PAELLA DE CARRILLERAS, SETAS Y FOIE",
+                  "slug": "paella-de-carrilleras-setas-y-foie",
+                  "imageUrl": "https://www.consum.es/sites/default/files/default_images/avatar-01.png",
+                  "categories": [],
+                  "tags": [],
+                  "dietaryInfo": [
+                    "Sin gluten"
+                  ],
+                  "ingredients": [],
+                  "instructions": [],
+                  "id": "consum-paella-de-carrilleras-setas-y-foie",
+                  "servings": 4,
+                  "totalTimeMinutes": 90,
+                  "mealType": [],
+                  "season": [],
+                  "ingredientsFull": [],
+                  "hasNutrition": false,
+                  "likes": 0,
+                  "url": "https://www.consum.es/en/recipes/paella-de-carrilleras-setas-y-foie/",
+                  "comments": 0
+                },
+                {
+                  "id": "consum-arroz-con-caldo-de-pollo-consum-en-sarten-llamalo-paella-de-gambon-si-quieres",
+                  "totalTimeMinutes": 14,
+                  "categories": [
+                    "Arroces",
+                    "Carnes"
+                  ],
+                  "ingredients": [],
+                  "hasNutrition": false,
+                  "slug": "arroz-con-caldo-de-pollo-consum-en-sarten-llamalo-paella-de-gambon-si-quieres",
+                  "url": "https://www.consum.es/en/recipes/arroz-con-caldo-de-pollo-consum-en-sarten-llamalo-paella-de-gambon-si-quieres/",
+                  "description": "Como cocinero aficionado —de esos que disfrutan más del resultado que de seguir recetas al pie de la letra— debo admitir que no suelo usar caldos preparados. Sin embargo, en esta ocasión decidí salir de mi zona de confort. No tenía muy claro qué hacer, así que opté por una prueba sencilla pero honesta: un arroz que algunos llamarían paella, utilizando únicamente el caldo como base, unas pocas especias y cuatro gambones. El resultado fue sorprendentemente exquisito.",
+                  "tags": [
+                    "Arroces",
+                    "Carnes"
+                  ],
+                  "mealType": [],
+                  "ingredientsFull": [],
+                  "dietaryInfo": [
+                    "Sin gluten",
+                    "Ligera"
+                  ],
+                  "season": [],
+                  "ingredientProducts": {
+                    "Arroz con caldo de pollo Consum, en sarten. Llamalo paella de Gambon si quieres.": [
+                      {
+                        "objectID": "5412",
+                        "title": "Caldo Líquido de Pollo Brik",
+                        "brand": "ANETO"
+                      },
+                      {
+                        "objectID": "7652",
+                        "title": "Caldo de Pollo Bajo en Sal Brik",
+                        "brand": "CONSUM"
+                      },
+                      {
+                        "objectID": "6812",
+                        "title": "Caldo de Pollo 12 Pastillas",
+                        "brand": "CONSUM"
+                      }
+                    ]
+                  },
+                  "comments": 0,
+                  "_snippetResult": {
+                    "description": {
+                      "value": "… Sin embargo, en esta ocasión decidí salir de mi zona de confort. No tenía muy claro qué hacer, así que opté por una prueba sencilla pero honesta: un arroz que algunos llamarían <em>paella</em>, utilizando únicamente el caldo como base, unas pocas especias y cuatro gambones. El resultado fue sorprendentemente exquisito.",
+                      "matchLevel": "full"
+                    }
+                  },
+                  "title": "Arroz con caldo de pollo Consum, en sarten. Llamalo paella de Gambon si quieres.",
+                  "imageUrl": "https://www.consum.es/sites/default/files/gambones.jpg",
+                  "servings": 2,
+                  "instructions": [],
+                  "likes": 0,
+                  "qualityScore": 45,
+                  "objectID": "consum-arroz-con-caldo-de-pollo-consum-en-sarten-llamalo-paella-de-gambon-si-quieres"
+                }
+              ],
+              "nbHits": 2,
+              "queryID": "13522621326f03a384bc4e6609c3a4af"
+            }
+          },
+          {
+            "name": "showRecipes",
+            "input": {
+              "objectIDs": [
+                "consum-arroz-con-caldo-de-pollo-consum-en-sarten-llamalo-paella-de-gambon-si-quieres",
+                "consum-paella-de-carrilleras-setas-y-foie"
+              ],
+              "title": "Ideas de paella para preparar en casa",
+              "explanation": "Opciones desde una versión rápida con gambones hasta una más gourmet para sorprender."
+            },
+            "output": {
+              "status": "Successfully showed recipes",
+              "recipes": [
+                {
+                  "objectID": "consum-arroz-con-caldo-de-pollo-consum-en-sarten-llamalo-paella-de-gambon-si-quieres",
+                  "title": "Recipe consum-arroz-con-caldo-de-pollo-consum-en-sarten-llamalo-paella-de-gambon-si-quieres"
+                },
+                {
+                  "objectID": "consum-paella-de-carrilleras-setas-y-foie",
+                  "title": "Recipe consum-paella-de-carrilleras-setas-y-foie"
+                }
+              ],
+              "title": "Ideas de paella para preparar en casa",
+              "explanation": "Opciones desde una versión rápida con gambones hasta una más gourmet para sorprender."
+            }
+          }
+        ],
+        "checks": [
+          {
+            "label": "Searched recipes index",
+            "pass": true,
+            "detail": "1 search(es), queries: \"paella\""
+          },
+          {
+            "label": "Called showRecipes",
+            "pass": true,
+            "detail": "2 recipe(s)"
+          }
+        ],
+        "durationMs": 6599
+      },
+      {
+        "userMessage": "añade los ingredientes al carrito",
+        "rubric": "Must call addToCart. Should use ingredientProducts from the recipe — must NOT re-search products index for ingredients. Should add multiple items.",
+        "assistantText": "",
+        "toolCalls": [
+          {
+            "name": "addToCart",
+            "input": {
+              "objectIDs": [
+                "5412",
+                "7652",
+                "6812"
+              ]
+            },
+            "output": {
+              "status": "Successfully added to cart",
+              "products": [
+                {
+                  "objectID": "5412",
+                  "title": "Product 5412"
+                },
+                {
+                  "objectID": "7652",
+                  "title": "Product 7652"
+                },
+                {
+                  "objectID": "6812",
+                  "title": "Product 6812"
+                }
+              ]
+            }
+          }
+        ],
+        "checks": [
+          {
+            "label": "Called addToCart",
+            "pass": true,
+            "detail": "3 item(s)"
+          },
+          {
+            "label": "Did not re-search products",
+            "pass": true,
+            "detail": "Correctly used ingredientProducts"
+          }
+        ],
+        "durationMs": 4668
+      }
+    ]
+  },
+  {
+    "journey": "Fajitas",
+    "group": "Recipe Workflows",
+    "durationMs": 9330,
+    "turns": [
+      {
+        "userMessage": "Quiero preparar fajitas",
+        "rubric": "Must search recipes index. Should call showRecipes if results found, or offer product alternatives via showItems. Must call showRecipes or showItems.",
+        "assistantText": "",
+        "toolCalls": [
+          {
+            "name": "algolia_search_index",
+            "input": {
+              "index": "new_consum_recipes",
+              "query": "fajitas",
+              "number_of_results": 5,
+              "facet_filters": null
+            },
+            "output": {
+              "hits": [],
+              "nbHits": 0,
+              "queryID": "88190dc66dfb2f6b2413520d72030772"
+            }
+          },
+          {
+            "name": "algolia_search_index",
+            "input": {
+              "index": "new_consum_recipes",
+              "query": "tacos pollo verduras tortillas mexicanas",
+              "number_of_results": 5,
+              "facet_filters": null
+            },
+            "output": {
+              "hits": [],
+              "nbHits": 0,
+              "queryID": "69e41e7e5d7b654df3ff0926ff5c9471"
+            }
+          },
+          {
+            "name": "algolia_search_index",
+            "input": {
+              "index": "new_consum_products",
+              "query": "fajitas kit tortillas fajitas pollo sazonador",
+              "number_of_results": 5,
+              "facet_filters": null
+            },
+            "output": {
+              "hits": [
+                {
+                  "inStock": true,
+                  "offer": false,
+                  "groups": [],
+                  "objectID": "24958",
+                  "_snippetResult": {
+                    "description": {
+                      "value": "Croquetas de <em>Pollo</em>",
+                      "matchLevel": "partial"
+                    },
+                    "enriched": {
+                      "description": {
+                        "value": "Deliciosas croquetas de <em>pollo</em>, perfectas como aperitivo o plato principal. Listas para calentar y disfrutar.",
+                        "matchLevel": "partial"
+                      }
+                    }
+                  },
+                  "price": 4.35,
+                  "unit": "1 Kg",
+                  "title": "Croquetas de Pollo",
+                  "description": "Croquetas de Pollo",
+                  "imageUrl": "https://cdn-consum.aktiosdigitalservices.com/tol/consum/media/product/img/135x135/7362390_001.jpg?t=20200903083010",
+                  "normalPrice": 4.35,
+                  "priceUnit": 15.54,
+                  "promotions": [],
+                  "enriched": {
+                    "description": "Deliciosas croquetas de pollo, perfectas como aperitivo o plato principal. Listas para calentar y disfrutar.",
+                    "keywords": [
+                      "aperitivo",
+                      "plato principal",
+                      "pollo",
+                      "fácil de preparar",
+                      "snack",
+                      "cocina española",
+                      "refrigerado",
+                      "casero"
+                    ],
+                    "dietaryTags": [],
+                    "useCases": [
+                      "ideal para cenas rápidas",
+                      "perfectas para fiestas",
+                      "acompañamiento en comidas",
+                      "snack para niños",
+                      "comida reconfortante"
+                    ]
+                  },
+                  "brand": "CASA MAS",
+                  "categories": {
+                    "lvl0": [
+                      "Platos preparados"
+                    ],
+                    "lvl1": [
+                      "Preparados refrigerados"
+                    ],
+                    "lvl2": [
+                      "Tortillas, croquetas y patatas"
+                    ],
+                    "lvl3": []
+                  }
+                },
+                {
+                  "objectID": "5875",
+                  "price": 1,
+                  "unit": "100 Gr",
+                  "_snippetResult": {
+                    "description": {
+                      "value": "<em>Sazonador</em> para <em>Fajita</em>",
+                      "matchLevel": "partial"
+                    },
+                    "enriched": {
+                      "description": {
+                        "value": "<em>Sazonador</em> ideal para preparar deliciosas <em>fajitas</em> con un toque auténtico.",
+                        "matchLevel": "partial"
+                      }
+                    }
+                  },
+                  "brand": "OLD EL PASO",
+                  "imageUrl": "https://cdn-consum.aktiosdigitalservices.com/tol/consum/media/product/img/135x135/7072754_001.jpg?t=20240528170001",
+                  "inStock": true,
+                  "priceUnit": 3.33,
+                  "offer": true,
+                  "groups": [
+                    "Ensalada Mexicana",
+                    "¡Así se ahorra en Consum!",
+                    "Ofertas a 1€, 2€ y 3€",
+                    "Ofertas a 1 euro"
+                  ],
+                  "promotions": [
+                    "Ahora más barato"
+                  ],
+                  "title": "Sazonador para Fajita",
+                  "description": "Sazonador para Fajita",
+                  "normalPrice": 1.39,
+                  "categories": {
+                    "lvl0": [
+                      "Despensa",
+                      "Ahora más barato"
+                    ],
+                    "lvl1": [
+                      "Cocina internacional",
+                      "Ahora más barato - Ofertas en despensa"
+                    ],
+                    "lvl2": [
+                      "Mexicano"
+                    ],
+                    "lvl3": []
+                  },
+                  "enriched": {
+                    "description": "Sazonador ideal para preparar deliciosas fajitas con un toque auténtico.",
+                    "keywords": [
+                      "sazonador",
+                      "fajitas",
+                      "cocina mexicana",
+                      "especias",
+                      "cena",
+                      "rápido",
+                      "sabroso",
+                      "fácil de usar"
+                    ],
+                    "dietaryTags": [],
+                    "useCases": [
+                      "preparar fajitas en cenas familiares",
+                      "dar sabor a carnes y verduras",
+                      "cocinar comidas rápidas",
+                      "ideal para reuniones con amigos"
+                    ]
+                  }
+                },
+                {
+                  "groups": [],
+                  "categories": {
+                    "lvl0": [
+                      "Despensa",
+                      "Ahora más barato"
+                    ],
+                    "lvl1": [
+                      "Conservas, aceites y condimentos",
+                      "Ahora más barato - Ofertas en despensa"
+                    ],
+                    "lvl2": [
+                      "Sal, bicarbonato y especias"
+                    ],
+                    "lvl3": [
+                      "Sazonadores"
+                    ]
+                  },
+                  "enriched": {
+                    "description": "Realza el sabor de tus platos de pollo con este sazonador práctico y delicioso.",
+                    "keywords": [
+                      "sazonador",
+                      "pollo",
+                      "condimento",
+                      "cocina",
+                      "recetas",
+                      "sabores",
+                      "especias",
+                      "gourmet",
+                      "fácil de usar"
+                    ],
+                    "dietaryTags": [],
+                    "useCases": [
+                      "ideal para adobar pollo a la parrilla",
+                      "perfecto para guisos y sopas",
+                      "uso diario en la cocina",
+                      "sazonar carnes antes de hornear",
+                      "agregar sabor a platos rápidos"
+                    ]
+                  },
+                  "brand": "DUCROS",
+                  "imageUrl": "https://cdn-consum.aktiosdigitalservices.com/tol/consum/media/product/img/135x135/7199297_001.jpg?t=20211103040003",
+                  "unit": "1 Kg",
+                  "title": "Sazonador Pollo Tarro",
+                  "normalPrice": 2.85,
+                  "_snippetResult": {
+                    "description": {
+                      "value": "<em>Sazonador</em> <em>Pollo</em> Tarro",
+                      "matchLevel": "partial"
+                    },
+                    "enriched": {
+                      "description": {
+                        "value": "Realza el sabor de tus platos de <em>pollo</em> con este <em>sazonador</em> práctico y delicioso.",
+                        "matchLevel": "partial"
+                      }
+                    }
+                  },
+                  "description": "Sazonador Pollo Tarro",
+                  "inStock": true,
+                  "price": 2.85,
+                  "priceUnit": 38,
+                  "offer": true,
+                  "objectID": "10764",
+                  "promotions": [
+                    "Acumulas en tu cheque regalo"
+                  ]
+                },
+                {
+                  "priceUnit": 63.16,
+                  "offer": false,
+                  "enriched": {
+                    "description": "Realza el sabor de tus platos de pollo con este sazonador único y delicioso.",
+                    "keywords": [
+                      "sazonador",
+                      "pollo",
+                      "especias",
+                      "cocina",
+                      "condimento",
+                      "asados",
+                      "guisos",
+                      "barbacoa",
+                      "sabores"
+                    ],
+                    "dietaryTags": [],
+                    "useCases": [
+                      "ideal para asar pollo",
+                      "perfecto para guisos",
+                      "añadir a marinadas",
+                      "uso en barbacoas",
+                      "realzar sabores en sopas"
+                    ]
+                  },
+                  "imageUrl": "https://cdn-consum.aktiosdigitalservices.com/tol/consum/media/product/img/135x135/7430010_001.jpg?t=20240426040002",
+                  "normalPrice": 4.99,
+                  "groups": [],
+                  "brand": "JUST SPICES",
+                  "inStock": true,
+                  "price": 4.99,
+                  "unit": "1 Kg",
+                  "objectID": "34020",
+                  "_snippetResult": {
+                    "description": {
+                      "value": "<em>Sazonador</em> de <em>Pollo</em>",
+                      "matchLevel": "partial"
+                    },
+                    "enriched": {
+                      "description": {
+                        "value": "Realza el sabor de tus platos de <em>pollo</em> con este <em>sazonador</em> único y delicioso.",
+                        "matchLevel": "partial"
+                      }
+                    }
+                  },
+                  "title": "Sazonador de Pollo",
+                  "description": "Sazonador de Pollo",
+                  "promotions": [],
+                  "categories": {
+                    "lvl0": [
+                      "Despensa"
+                    ],
+                    "lvl1": [
+                      "Conservas, aceites y condimentos"
+                    ],
+                    "lvl2": [
+                      "Sal, bicarbonato y especias"
+                    ],
+                    "lvl3": [
+                      "Sazonadores"
+                    ]
+                  }
+                },
+                {
+                  "priceUnit": 3.97,
+                  "objectID": "31195",
+                  "brand": "CONSUM",
+                  "unit": "100 Gr",
+                  "categories": {
+                    "lvl0": [
+                      "Despensa"
+                    ],
+                    "lvl1": [
+                      "Cocina internacional"
+                    ],
+                    "lvl2": [
+                      "Mexicano"
+                    ],
+                    "lvl3": []
+                  },
+                  "inStock": true,
+                  "normalPrice": 1.19,
+                  "promotions": [],
+                  "enriched": {
+                    "description": "Sazonador ideal para preparar deliciosas fajitas al estilo mexicano, realzando el sabor de tus platillos.",
+                    "keywords": [
+                      "fajitas",
+                      "sazonador",
+                      "cocina mexicana",
+                      "especias",
+                      "comida rápida",
+                      "cena",
+                      "asados",
+                      "tortillas"
+                    ],
+                    "dietaryTags": [],
+                    "useCases": [
+                      "preparar fajitas en cenas familiares",
+                      "dar sabor a carnes y verduras",
+                      "cocinar platos rápidos",
+                      "acompañar tortillas",
+                      "ideal para reuniones con amigos"
+                    ]
+                  },
+                  "title": "Sazonador para Fajitas",
+                  "description": "Sazonador para Fajitas",
+                  "price": 1.19,
+                  "offer": false,
+                  "groups": [
+                    "Tacos crujientes de carne picada"
+                  ],
+                  "_snippetResult": {
+                    "description": {
+                      "value": "<em>Sazonador</em> para <em>Fajitas</em>",
+                      "matchLevel": "partial"
+                    },
+                    "enriched": {
+                      "description": {
+                        "value": "<em>Sazonador</em> ideal para preparar deliciosas <em>fajitas</em> al estilo mexicano, realzando el sabor de tus platillos.",
+                        "matchLevel": "partial"
+                      }
+                    }
+                  },
+                  "imageUrl": "https://cdn-consum.aktiosdigitalservices.com/tol/consum/media/product/img/135x135/7392244_001.jpg?t=20230224040001"
+                }
+              ],
+              "nbHits": 436,
+              "queryID": "318ddc2872a599617544c0fa9bdef793"
+            }
+          },
+          {
+            "name": "showItems",
+            "input": {
+              "objectIDs": [
+                "5875",
+                "31195",
+                "10764"
+              ],
+              "title": "Base para preparar fajitas",
+              "explanation": "Estos sazonadores te ayudan a dar el sabor auténtico a tus fajitas fácilmente."
+            },
+            "output": {
+              "status": "Successfully showed items",
+              "products": [
+                {
+                  "objectID": "5875",
+                  "title": "Product 5875"
+                },
+                {
+                  "objectID": "31195",
+                  "title": "Product 31195"
+                },
+                {
+                  "objectID": "10764",
+                  "title": "Product 10764"
+                }
+              ],
+              "title": "Base para preparar fajitas",
+              "explanation": "Estos sazonadores te ayudan a dar el sabor auténtico a tus fajitas fácilmente."
+            }
+          }
+        ],
+        "checks": [
+          {
+            "label": "Searched recipes index",
+            "pass": true,
+            "detail": "2 search(es), queries: \"fajitas\", \"tacos pollo verduras tortillas mexicanas\""
+          },
+          {
+            "label": "Called showItems or showRecipes",
+            "pass": true,
+            "detail": "showItems: 3 items, showRecipes: 0 recipes"
+          }
+        ],
+        "durationMs": 9330
+      }
+    ]
+  },
+  {
+    "journey": "Pollo y arroz (→recipe→missing)",
+    "group": "Recipe Workflows",
+    "durationMs": 7870,
+    "turns": [
+      {
+        "userMessage": "tengo pollo y arroz, ¿qué puedo cocinar?",
+        "rubric": "Must search recipes index with pollo/arroz. Must call showRecipes.",
+        "assistantText": "",
+        "toolCalls": [
+          {
+            "name": "algolia_search_index",
+            "input": {
+              "index": "new_consum_recipes",
+              "query": "pollo arroz",
+              "number_of_results": 3,
+              "facet_filters": null
+            },
+            "output": {
+              "hits": [
+                {
+                  "qualityScore": 45,
+                  "_snippetResult": {
+                    "description": {
+                      "value": "… Sin embargo, en esta ocasión decidí salir de mi zona de confort. No tenía muy claro qué hacer, así que opté por una prueba sencilla pero honesta: un <em>arroz</em> que algunos llamarían paella, utilizando únicamente el caldo como base, unas pocas especias y cuatro gambones. El resultado fue sorprendentemente exquisito.",
+                      "matchLevel": "partial"
+                    }
+                  },
+                  "title": "Arroz con caldo de pollo Consum, en sarten. Llamalo paella de Gambon si quieres.",
+                  "imageUrl": "https://www.consum.es/sites/default/files/gambones.jpg",
+                  "servings": 2,
+                  "totalTimeMinutes": 14,
+                  "categories": [
+                    "Arroces",
+                    "Carnes"
+                  ],
+                  "season": [],
+                  "ingredientsFull": [],
+                  "comments": 0,
+                  "description": "Como cocinero aficionado —de esos que disfrutan más del resultado que de seguir recetas al pie de la letra— debo admitir que no suelo usar caldos preparados. Sin embargo, en esta ocasión decidí salir de mi zona de confort. No tenía muy claro qué hacer, así que opté por una prueba sencilla pero honesta: un arroz que algunos llamarían paella, utilizando únicamente el caldo como base, unas pocas especias y cuatro gambones. El resultado fue sorprendentemente exquisito.",
+                  "tags": [
+                    "Arroces",
+                    "Carnes"
+                  ],
+                  "dietaryInfo": [
+                    "Sin gluten",
+                    "Ligera"
+                  ],
+                  "ingredients": [],
+                  "hasNutrition": false,
+                  "id": "consum-arroz-con-caldo-de-pollo-consum-en-sarten-llamalo-paella-de-gambon-si-quieres",
+                  "mealType": [],
+                  "instructions": [],
+                  "objectID": "consum-arroz-con-caldo-de-pollo-consum-en-sarten-llamalo-paella-de-gambon-si-quieres",
+                  "slug": "arroz-con-caldo-de-pollo-consum-en-sarten-llamalo-paella-de-gambon-si-quieres",
+                  "url": "https://www.consum.es/en/recipes/arroz-con-caldo-de-pollo-consum-en-sarten-llamalo-paella-de-gambon-si-quieres/",
+                  "ingredientProducts": {
+                    "Arroz con caldo de pollo Consum, en sarten. Llamalo paella de Gambon si quieres.": [
+                      {
+                        "objectID": "5412",
+                        "title": "Caldo Líquido de Pollo Brik",
+                        "brand": "ANETO"
+                      },
+                      {
+                        "objectID": "7652",
+                        "title": "Caldo de Pollo Bajo en Sal Brik",
+                        "brand": "CONSUM"
+                      },
+                      {
+                        "objectID": "6812",
+                        "title": "Caldo de Pollo 12 Pastillas",
+                        "brand": "CONSUM"
+                      }
+                    ]
+                  },
+                  "likes": 0
+                },
+                {
+                  "imageUrl": "https://www.consum.es/sites/default/files/styles/ancho_contenido_1140_/public/webform/nueva_receta/_sid_/arroz-caldoso.jpg?itok=RqI5kxla",
+                  "ingredientsFull": [
+                    {
+                      "name": "arroz",
+                      "raw": "arroz"
+                    },
+                    {
+                      "name": "pollo",
+                      "raw": "pollo"
+                    },
+                    {
+                      "name": "cebolla",
+                      "raw": "cebolla"
+                    },
+                    {
+                      "name": "tomate",
+                      "raw": "tomate"
+                    },
+                    {
+                      "name": "ajo",
+                      "raw": "ajo"
+                    },
+                    {
+                      "name": "verdura",
+                      "raw": "verdura"
+                    }
+                  ],
+                  "likes": 0,
+                  "comments": 0,
+                  "qualityScore": 65,
+                  "id": "arroz-caldoso",
+                  "slug": "arroz-caldoso",
+                  "description": "",
+                  "servings": 4,
+                  "categories": [
+                    "Arroces"
+                  ],
+                  "tags": [],
+                  "mealType": [],
+                  "season": [],
+                  "totalTimeMinutes": 50,
+                  "ingredients": [
+                    "arroz",
+                    "pollo",
+                    "cebolla",
+                    "tomate",
+                    "ajo",
+                    "verdura"
+                  ],
+                  "instructions": [
+                    "sofreir el pollo",
+                    "ajo y echar en una olla con agua",
+                    "sal y azafran",
+                    "30 minutos cocer y echar arroz y servir"
+                  ],
+                  "hasNutrition": false,
+                  "ingredientProducts": {
+                    "arroz": [
+                      {
+                        "objectID": "9870",
+                        "title": "Arroz Especial Paella D.O. Valencia Paquete",
+                        "brand": "LA FALLERA"
+                      },
+                      {
+                        "objectID": "26256",
+                        "title": "Arroz Integral Paquete",
+                        "brand": "SOS"
+                      },
+                      {
+                        "objectID": "15122",
+                        "title": "Arroz Caldoso y Meloso Paquete",
+                        "brand": "LA FALLERA"
+                      }
+                    ],
+                    "pollo": [
+                      {
+                        "objectID": "43263",
+                        "title": "Pollo al Ajillo con Patatas Asadas",
+                        "brand": "CARRETILLA"
+                      },
+                      {
+                        "objectID": "8551",
+                        "title": "Pollo Limpio",
+                        "brand": "CONSUM"
+                      },
+                      {
+                        "objectID": "5347",
+                        "title": "Pollo Troceado",
+                        "brand": "CONSUM"
+                      }
+                    ],
+                    "cebolla": [
+                      {
+                        "objectID": "8885",
+                        "title": "Cebolla Dulce Malla",
+                        "brand": ""
+                      },
+                      {
+                        "objectID": "8739",
+                        "title": "Cebolla Tierna Pequeña Bandeja",
+                        "brand": ""
+                      },
+                      {
+                        "objectID": "7639",
+                        "title": "Cebolla Roja",
+                        "brand": "CORBI"
+                      }
+                    ],
+                    "tomate": [
+                      {
+                        "objectID": "7537",
+                        "title": "Tomate Frito Artesanal Frasco",
+                        "brand": "LAS CORONAS"
+                      },
+                      {
+                        "objectID": "6823",
+                        "title": "Tomate Tipo Valenciano",
+                        "brand": ""
+                      },
+                      {
+                        "objectID": "6439",
+                        "title": "Tomate Frito Brik",
+                        "brand": "ORLANDO"
+                      }
+                    ],
+                    "ajo": [
+                      {
+                        "objectID": "8986",
+                        "title": "Ajonesa Bote",
+                        "brand": "CHOVI"
+                      },
+                      {
+                        "objectID": "7236",
+                        "title": "Ajos Tiernos",
+                        "brand": "COCINARTE"
+                      },
+                      {
+                        "objectID": "5894",
+                        "title": "Ajoaceite Artesano",
+                        "brand": "GIL"
+                      }
+                    ],
+                    "verdura": [
+                      {
+                        "objectID": "6177",
+                        "title": "Verduras para Cocido Bolsa",
+                        "brand": ""
+                      },
+                      {
+                        "objectID": "25883",
+                        "title": "Verduras con Merluza Tarrito",
+                        "brand": "SMILEAT"
+                      },
+                      {
+                        "objectID": "9014",
+                        "title": "Verduras Gourmet Vapor Listos en Tres Minutos",
+                        "brand": "FINDUS"
+                      }
+                    ]
+                  },
+                  "_snippetResult": {
+                    "description": {
+                      "value": "",
+                      "matchLevel": "none"
+                    }
+                  },
+                  "title": "Arroz caldoso",
+                  "url": "https://www.consum.es/recetas/arroz-caldoso/",
+                  "dietaryInfo": [],
+                  "objectID": "arroz-caldoso"
+                }
+              ],
+              "nbHits": 2,
+              "queryID": "fddfdbd81f88040239ee5dcac74b58b4"
+            }
+          },
+          {
+            "name": "showRecipes",
+            "input": {
+              "objectIDs": [
+                "arroz-caldoso",
+                "consum-arroz-con-caldo-de-pollo-consum-en-sarten-llamalo-paella-de-gambon-si-quieres"
+              ],
+              "title": "Ideas con pollo y arroz",
+              "explanation": "Recetas fáciles y sabrosas que puedes hacer con lo que ya tienes"
+            },
+            "output": {
+              "status": "Successfully showed recipes",
+              "recipes": [
+                {
+                  "objectID": "arroz-caldoso",
+                  "title": "Recipe arroz-caldoso"
+                },
+                {
+                  "objectID": "consum-arroz-con-caldo-de-pollo-consum-en-sarten-llamalo-paella-de-gambon-si-quieres",
+                  "title": "Recipe consum-arroz-con-caldo-de-pollo-consum-en-sarten-llamalo-paella-de-gambon-si-quieres"
+                }
+              ],
+              "title": "Ideas con pollo y arroz",
+              "explanation": "Recetas fáciles y sabrosas que puedes hacer con lo que ya tienes"
+            }
+          }
+        ],
+        "checks": [
+          {
+            "label": "Searched recipes index",
+            "pass": true,
+            "detail": "1 search(es), queries: \"pollo arroz\""
+          },
+          {
+            "label": "Called showRecipes",
+            "pass": true,
+            "detail": "2 recipe(s)"
+          }
+        ],
+        "durationMs": 5259
+      },
+      {
+        "userMessage": "¿me falta algo más?",
+        "rubric": "Should identify missing ingredients from the recipe and show them via showItems. Should distinguish between what the user already has (pollo, arroz) and what they need.",
+        "assistantText": "",
+        "toolCalls": [],
+        "checks": [],
+        "durationMs": 2611
+      }
+    ]
+  },
+  {
+    "journey": "Cena para 10",
+    "group": "Recipe Workflows",
+    "durationMs": 10325,
+    "turns": [
+      {
+        "userMessage": "Cena para 10 personas",
+        "rubric": "Must search recipes or products. Response MUST mention quantity/serving adjustment for 10 people (multiplier, scaling, etc.)",
+        "assistantText": "",
+        "toolCalls": [
+          {
+            "name": "algolia_search_index",
+            "input": {
+              "index": "new_consum_recipes",
+              "query": "cena fácil para grupo",
+              "number_of_results": 5,
+              "facet_filters": null
+            },
+            "output": {
+              "hits": [
+                {
+                  "objectID": "consum-tofu-salteado",
+                  "id": "consum-tofu-salteado",
+                  "tags": [],
+                  "season": [],
+                  "ingredients": [],
+                  "ingredientsFull": [],
+                  "comments": 0,
+                  "title": "Tofu Salteado",
+                  "imageUrl": "https://www.consum.es/sites/default/files/default_images/avatar-01.png",
+                  "servings": 4,
+                  "categories": [],
+                  "instructions": [],
+                  "hasNutrition": false,
+                  "likes": 0,
+                  "_snippetResult": {
+                    "description": {
+                      "value": "… 2 cm, pelado y troceado Para la salsa: ▢¾ de taza de caldo de verduras o agua, 190 ml ▢¼ de taza de tamari o salsa de soja, 4 cucharadas ▢2 cucharadas de azúcar, yo usé azúcar de <em>caña</em> ▢2 cucharaditas de maicena ▢⅛ cucharadita de cayena en polvo, opcional",
+                      "matchLevel": "partial"
+                    }
+                  },
+                  "description": "Para el tofu salteado: ▢400 g de tofu firme, 14 oz, en dados ▢1 taza de brócoli, 100 g, troceado ▢1 zanahoria mediana, en juliana ▢½ pimiento rojo, en juliana ▢½ cebolla morada, en juliana ▢2 dientes de ajo, troceados ▢Un trozo de raíz de jengibre de unos 2 cm, pelado y troceado Para la salsa: ▢¾ de taza de caldo de verduras o agua, 190 ml ▢¼ de taza de tamari o salsa de soja, 4 cucharadas ▢2 cucharadas de azúcar, yo usé azúcar de caña ▢2 cucharaditas de maicena ▢⅛ cucharadita de cayena en polvo, opcional",
+                  "mealType": [
+                    "Postre",
+                    "Desayuno",
+                    "Merienda"
+                  ],
+                  "qualityScore": 40,
+                  "slug": "tofu-salteado",
+                  "url": "https://www.consum.es/en/recipes/tofu-salteado/",
+                  "totalTimeMinutes": 3,
+                  "dietaryInfo": [
+                    "Sin gluten"
+                  ],
+                  "ingredientProducts": {
+                    "Tofu Salteado": [
+                      {
+                        "objectID": "17213",
+                        "title": "Tofu Bio",
+                        "brand": "VIVERA"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "nbHits": 1,
+              "queryID": "9641797972015c87257af11b6dfc699f"
+            }
+          },
+          {
+            "name": "showRecipes",
+            "input": {
+              "objectIDs": [
+                "consum-tofu-salteado"
+              ],
+              "title": "Idea rápida para cena en grupo",
+              "explanation": "Receta sencilla que puedes escalar fácilmente para 10 personas."
+            },
+            "output": {
+              "status": "Successfully showed recipes",
+              "recipes": [
+                {
+                  "objectID": "consum-tofu-salteado",
+                  "title": "Recipe consum-tofu-salteado"
+                }
+              ],
+              "title": "Idea rápida para cena en grupo",
+              "explanation": "Receta sencilla que puedes escalar fácilmente para 10 personas."
+            }
+          }
+        ],
+        "checks": [
+          {
+            "label": "Searched products or recipes index",
+            "pass": true,
+            "detail": "products: 0, recipes: 1"
+          }
+        ],
+        "durationMs": 10325
+      }
+    ]
+  },
+  {
+    "journey": "Sin gluten",
+    "group": "Dietary Filtering",
+    "durationMs": 5106,
+    "turns": [
+      {
+        "userMessage": "Productos sin gluten",
+        "rubric": "Must search products with gluten-free filtering (facet_filters on categories containing 'sin gluten' or dietary tags). Must call showItems with ≥2 products.",
+        "assistantText": "",
+        "toolCalls": [
+          {
+            "name": "algolia_search_index",
+            "input": {
+              "index": "new_consum_products",
+              "query": "sin gluten",
+              "number_of_results": 5,
+              "facet_filters": [
+                [
+                  "enriched.dietaryTags:sin gluten"
+                ]
+              ]
+            },
+            "output": {
+              "hits": [
+                {
+                  "title": "Bollo Rústico Sin Gluten",
+                  "imageUrl": "https://cdn-consum.aktiosdigitalservices.com/tol/consum/media/product/img/135x135/7447175_001.jpg?t=20250319091501",
+                  "unit": "1 Kg",
+                  "promotions": [],
+                  "enriched": {
+                    "description": "Delicioso bollo rústico sin gluten, ideal para disfrutar en cualquier momento del día.",
+                    "keywords": [
+                      "pan sin gluten",
+                      "snack",
+                      "desayuno",
+                      "merienda",
+                      "opción saludable",
+                      "panadería"
+                    ],
+                    "dietaryTags": [
+                      "sin gluten"
+                    ],
+                    "useCases": [
+                      "desayuno",
+                      "merienda",
+                      "acompañamiento para comidas",
+                      "snack saludable"
+                    ]
+                  },
+                  "brand": "",
+                  "offer": false,
+                  "categories": {
+                    "lvl0": [
+                      "Horno"
+                    ],
+                    "lvl1": [
+                      "Pan de horno"
+                    ],
+                    "lvl2": [
+                      "Pan sin gluten"
+                    ],
+                    "lvl3": []
+                  },
+                  "normalPrice": 1,
+                  "groups": [],
+                  "objectID": "35320",
+                  "_snippetResult": {
+                    "description": {
+                      "value": "Bollo Rústico Sin <em>Gluten</em>",
+                      "matchLevel": "full"
+                    },
+                    "enriched": {
+                      "description": {
+                        "value": "Delicioso bollo rústico sin <em>gluten</em>, ideal para disfrutar en cualquier momento del día.",
+                        "matchLevel": "full"
+                      }
+                    }
+                  },
+                  "description": "Bollo Rústico Sin Gluten",
+                  "inStock": true,
+                  "price": 1,
+                  "priceUnit": 9.09
+                },
+                {
+                  "description": "Pan Payés sin Gluten",
+                  "imageUrl": "https://cdn-consum.aktiosdigitalservices.com/tol/consum/media/product/img/135x135/7420628_001.jpg?t=20250127170002",
+                  "priceUnit": 9.96,
+                  "unit": "1 Kg",
+                  "groups": [],
+                  "promotions": [],
+                  "inStock": true,
+                  "normalPrice": 2.49,
+                  "offer": false,
+                  "categories": {
+                    "lvl0": [
+                      "Horno"
+                    ],
+                    "lvl1": [
+                      "Pan de horno"
+                    ],
+                    "lvl2": [
+                      "Pan sin gluten"
+                    ],
+                    "lvl3": []
+                  },
+                  "enriched": {
+                    "description": "Delicioso Pan Payés sin Gluten, ideal para disfrutar en cualquier comida sin preocupaciones.",
+                    "keywords": [
+                      "pan sin gluten",
+                      "pan artesanal",
+                      "sin gluten",
+                      "pan para celiacos",
+                      "pan saludable",
+                      "cocina sin gluten",
+                      "pan de pueblo"
+                    ],
+                    "dietaryTags": [
+                      "sin gluten"
+                    ],
+                    "useCases": [
+                      "desayuno",
+                      "almuerzo",
+                      "merienda",
+                      "acompañamiento de comidas",
+                      "snacks"
+                    ]
+                  },
+                  "objectID": "31785",
+                  "_snippetResult": {
+                    "description": {
+                      "value": "Pan Payés sin <em>Gluten</em>",
+                      "matchLevel": "full"
+                    },
+                    "enriched": {
+                      "description": {
+                        "value": "Delicioso Pan Payés sin <em>Gluten</em>, ideal para disfrutar en cualquier comida sin preocupaciones.",
+                        "matchLevel": "full"
+                      }
+                    }
+                  },
+                  "title": "Pan Payés sin Gluten",
+                  "brand": "",
+                  "price": 2.49
+                },
+                {
+                  "categories": {
+                    "lvl0": [
+                      "Horno"
+                    ],
+                    "lvl1": [
+                      "Pan de horno"
+                    ],
+                    "lvl2": [
+                      "Pan sin gluten"
+                    ],
+                    "lvl3": []
+                  },
+                  "enriched": {
+                    "description": "Deliciosa baguettina sin gluten, perfecta para disfrutar en cualquier comida sin preocupaciones.",
+                    "keywords": [
+                      "pan sin gluten",
+                      "snack",
+                      "acompañamiento",
+                      "merienda",
+                      "desayuno",
+                      "cocina sin gluten"
+                    ],
+                    "dietaryTags": [
+                      "sin gluten"
+                    ],
+                    "useCases": [
+                      "ideal para sándwiches",
+                      "perfecta para acompañar sopas",
+                      "snack para media tarde",
+                      "opción para picnics"
+                    ]
+                  },
+                  "brand": "",
+                  "imageUrl": "https://cdn-consum.aktiosdigitalservices.com/tol/consum/media/product/img/135x135/7283633_001.jpg?t=20220326040006",
+                  "normalPrice": 1.19,
+                  "priceUnit": 11.9,
+                  "groups": [],
+                  "objectID": "15466",
+                  "_snippetResult": {
+                    "description": {
+                      "value": "Baguettina sin <em>Gluten</em>",
+                      "matchLevel": "full"
+                    },
+                    "enriched": {
+                      "description": {
+                        "value": "Deliciosa baguettina sin <em>gluten</em>, perfecta para disfrutar en cualquier comida sin preocupaciones.",
+                        "matchLevel": "full"
+                      }
+                    }
+                  },
+                  "description": "Baguettina sin Gluten",
+                  "price": 1.19,
+                  "unit": "1 Kg",
+                  "offer": false,
+                  "title": "Baguettina sin Gluten",
+                  "inStock": true,
+                  "promotions": []
+                },
+                {
+                  "_snippetResult": {
+                    "description": {
+                      "value": "Tostadas Sin <em>Gluten</em> Integrales",
+                      "matchLevel": "full"
+                    },
+                    "enriched": {
+                      "description": {
+                        "value": "Deliciosas tostadas integrales sin <em>gluten</em>, perfectas para un desayuno saludable.",
+                        "matchLevel": "full"
+                      }
+                    }
+                  },
+                  "description": "Tostadas Sin Gluten Integrales",
+                  "title": "Tostadas Sin Gluten Integrales",
+                  "brand": "AIROS",
+                  "inStock": true,
+                  "price": 3.69,
+                  "unit": "1 Kg",
+                  "groups": [],
+                  "promotions": [
+                    "Ahora más barato"
+                  ],
+                  "categories": {
+                    "lvl0": [
+                      "Despensa",
+                      "Ahora más barato"
+                    ],
+                    "lvl1": [
+                      "Panes y tostadas",
+                      "Ahora más barato - Ofertas en despensa"
+                    ],
+                    "lvl2": [
+                      "Panes especiales"
+                    ],
+                    "lvl3": []
+                  },
+                  "enriched": {
+                    "description": "Deliciosas tostadas integrales sin gluten, perfectas para un desayuno saludable.",
+                    "keywords": [
+                      "tostadas",
+                      "sin gluten",
+                      "integrales",
+                      "desayuno",
+                      "snack",
+                      "merienda",
+                      "saludable",
+                      "veganas"
+                    ],
+                    "dietaryTags": [
+                      "sin gluten",
+                      "integral"
+                    ],
+                    "useCases": [
+                      "desayuno",
+                      "merienda",
+                      "acompañamiento para untar",
+                      "snack saludable"
+                    ]
+                  },
+                  "imageUrl": "https://cdn-consum.aktiosdigitalservices.com/tol/consum/media/product/img/135x135/7445752_001.jpg?t=20241002091501",
+                  "normalPrice": 4.39,
+                  "priceUnit": 16.4,
+                  "offer": true,
+                  "objectID": "35267"
+                },
+                {
+                  "enriched": {
+                    "description": "Cerveza sin gluten de la marca DAURA, ideal para disfrutar sin preocupaciones. Sabor refrescante y ligero.",
+                    "keywords": [
+                      "cerveza",
+                      "sin gluten",
+                      "refrescante",
+                      "DAURA",
+                      "bebida",
+                      "cerveza sin gluten",
+                      "ocio",
+                      "ofertas",
+                      "cerveza artesanal"
+                    ],
+                    "dietaryTags": [
+                      "sin gluten"
+                    ],
+                    "useCases": [
+                      "ideal para reuniones",
+                      "acompaña platos de carne",
+                      "perfecta para días calurosos",
+                      "opción para celíacos",
+                      "disfrutar en casa"
+                    ]
+                  },
+                  "_snippetResult": {
+                    "description": {
+                      "value": "Cerveza sin <em>Gluten</em> Lata",
+                      "matchLevel": "full"
+                    },
+                    "enriched": {
+                      "description": {
+                        "value": "Cerveza sin <em>gluten</em> de la marca DAURA, ideal para disfrutar sin preocupaciones. Sabor refrescante y ligero.",
+                        "matchLevel": "full"
+                      }
+                    }
+                  },
+                  "normalPrice": 0.91,
+                  "unit": "1 L",
+                  "promotions": [
+                    "Ahora más barato"
+                  ],
+                  "title": "Cerveza sin Gluten Lata",
+                  "description": "Cerveza sin Gluten Lata",
+                  "imageUrl": "https://cdn-consum.aktiosdigitalservices.com/tol/consum/media/product/img/135x135/7291995_001.jpg?t=20200926083006",
+                  "price": 0.75,
+                  "groups": [],
+                  "objectID": "15850",
+                  "inStock": true,
+                  "priceUnit": 2.27,
+                  "offer": true,
+                  "categories": {
+                    "lvl0": [
+                      "Bebidas",
+                      "Ahora más barato"
+                    ],
+                    "lvl1": [
+                      "Cervezas",
+                      "Ahora más barato - Ofertas en bebidas"
+                    ],
+                    "lvl2": [
+                      "Cervezas con alcohol"
+                    ],
+                    "lvl3": [
+                      "Sin gluten"
+                    ]
+                  },
+                  "brand": "DAURA"
+                }
+              ],
+              "nbHits": 72,
+              "queryID": "fcb7a996b59e5d3fbce180a25497e40c"
+            }
+          },
+          {
+            "name": "showItems",
+            "input": {
+              "objectIDs": [
+                "35320",
+                "31785",
+                "15466",
+                "35267",
+                "15850"
+              ],
+              "title": "Productos sin gluten",
+              "explanation": "Opciones seguras y variadas: pan, tostadas y hasta cerveza sin gluten."
+            },
+            "output": {
+              "status": "Successfully showed items",
+              "products": [
+                {
+                  "objectID": "35320",
+                  "title": "Product 35320"
+                },
+                {
+                  "objectID": "31785",
+                  "title": "Product 31785"
+                },
+                {
+                  "objectID": "15466",
+                  "title": "Product 15466"
+                },
+                {
+                  "objectID": "35267",
+                  "title": "Product 35267"
+                },
+                {
+                  "objectID": "15850",
+                  "title": "Product 15850"
+                }
+              ],
+              "title": "Productos sin gluten",
+              "explanation": "Opciones seguras y variadas: pan, tostadas y hasta cerveza sin gluten."
+            }
+          }
+        ],
+        "checks": [
+          {
+            "label": "Searched products index",
+            "pass": true,
+            "detail": "1 search(es), queries: \"sin gluten\""
+          },
+          {
+            "label": "Called showItems",
+            "pass": true,
+            "detail": "5 product(s) shown"
+          },
+          {
+            "label": "Showed ≥2 products",
+            "pass": true,
+            "detail": "5 products"
+          },
+          {
+            "label": "Filters on new_consum_products",
+            "pass": true,
+            "detail": "[[\"enriched.dietaryTags:sin gluten\"]]"
+          }
+        ],
+        "durationMs": 5106
+      }
+    ]
+  },
+  {
+    "journey": "Receta baja en grasas sin lactosa",
+    "group": "Dietary Filtering",
+    "durationMs": 4889,
+    "turns": [
+      {
+        "userMessage": "receta baja en grasas, soy intolerante a la lactosa",
+        "rubric": "Must search recipes index. Should apply filters for low-fat AND lactose-free. Must call showRecipes. Response should acknowledge the lactose intolerance.",
+        "assistantText": "",
+        "toolCalls": [
+          {
+            "name": "algolia_search_index",
+            "input": {
+              "index": "new_consum_recipes",
+              "query": "receta baja en grasas sin lactosa",
+              "number_of_results": 5,
+              "facet_filters": [
+                [
+                  "dietaryInfo:Sin lactosa"
+                ]
+              ]
+            },
+            "output": {
+              "hits": [
+                {
+                  "slug": "rollitos-con-hojas-de-repollo",
+                  "servings": 4,
+                  "season": [],
+                  "totalTimeMinutes": 10,
+                  "tags": [
+                    "Carnes"
+                  ],
+                  "mealType": [
+                    "Primer plato",
+                    "Merienda"
+                  ],
+                  "ingredients": [],
+                  "ingredientProducts": {
+                    "Rollitos con hojas de repollo": [
+                      {
+                        "objectID": "6933",
+                        "title": "Rollitos de Primavera",
+                        "brand": "MAHESO"
+                      },
+                      {
+                        "objectID": "8301",
+                        "title": "Rollitos de Primavera",
+                        "brand": "TA-TUNG"
+                      },
+                      {
+                        "objectID": "5151",
+                        "title": "Hojas de Boldo 20 Bolsitas",
+                        "brand": "POMPADOUR"
+                      }
+                    ]
+                  },
+                  "hasNutrition": false,
+                  "comments": 0,
+                  "title": "Rollitos con hojas de repollo",
+                  "imageUrl": "https://www.consum.es/sites/default/files/paso1.png",
+                  "categories": [
+                    "Carnes"
+                  ],
+                  "dietaryInfo": [
+                    "Sin lactosa"
+                  ],
+                  "instructions": [],
+                  "likes": 0,
+                  "qualityScore": 45,
+                  "objectID": "consum-rollitos-con-hojas-de-repollo",
+                  "id": "consum-rollitos-con-hojas-de-repollo",
+                  "url": "https://www.consum.es/en/recipes/rollitos-con-hojas-de-repollo/",
+                  "description": "Una receta que admite muchísimas variantes de relleno. La única dificultad está en separar las hojas del repollo sin que se rompan, pero por aquí explico mi truco 😉",
+                  "ingredientsFull": [],
+                  "_snippetResult": {
+                    "description": {
+                      "value": "Una <em>receta</em> que admite muchísimas variantes de relleno. La única dificultad está en separar las hojas del repollo sin que se rompan, pero por aquí explico mi truco 😉",
+                      "matchLevel": "partial"
+                    }
+                  }
+                },
+                {
+                  "imageUrl": "https://www.consum.es/sites/default/files/2021-10/avatar-05.png",
+                  "categories": [
+                    "Carnes"
+                  ],
+                  "season": [],
+                  "ingredientsFull": [],
+                  "instructions": [],
+                  "comments": 0,
+                  "tags": [
+                    "Carnes"
+                  ],
+                  "dietaryInfo": [
+                    "Sin lactosa",
+                    "Vegana"
+                  ],
+                  "mealType": [
+                    "Merienda"
+                  ],
+                  "objectID": "consum-canelones-de-pollo-vegetal",
+                  "_snippetResult": {
+                    "description": {
+                      "value": "Canelones riquisimos vegetales de Heura, <em>receta</em> original de lagloriavegana",
+                      "matchLevel": "partial"
+                    }
+                  },
+                  "slug": "canelones-de-pollo-vegetal",
+                  "ingredients": [],
+                  "hasNutrition": false,
+                  "qualityScore": 45,
+                  "id": "consum-canelones-de-pollo-vegetal",
+                  "description": "Canelones riquisimos vegetales de Heura, receta original de lagloriavegana",
+                  "servings": 4,
+                  "totalTimeMinutes": 40,
+                  "ingredientProducts": {
+                    "Canelones de pollo vegetal": [
+                      {
+                        "objectID": "35245",
+                        "title": "Canelones de Pollo",
+                        "brand": "LASSAL"
+                      },
+                      {
+                        "objectID": "28773",
+                        "title": "Comida Seca Perro Buey, Pollo y Vegetales",
+                        "brand": "VITALITY"
+                      },
+                      {
+                        "objectID": "7105",
+                        "title": "Cebolla Crujiente Bote",
+                        "brand": "ARGENTE"
+                      }
+                    ]
+                  },
+                  "likes": 0,
+                  "title": "Canelones de pollo vegetal",
+                  "url": "https://www.consum.es/en/recipes/canelones-de-pollo-vegetal/"
+                },
+                {
+                  "id": "consum-tortilla-de-zanahoria-con-queso",
+                  "slug": "tortilla-de-zanahoria-con-queso",
+                  "imageUrl": "https://www.consum.es/sites/default/files/webform/profile/_sid_/ratatuille_cuinera.png",
+                  "ingredients": [],
+                  "objectID": "consum-tortilla-de-zanahoria-con-queso",
+                  "description": "Esta receta es muy fácil y rica.",
+                  "servings": 4,
+                  "categories": [
+                    "Huevos"
+                  ],
+                  "comments": 0,
+                  "qualityScore": 40,
+                  "totalTimeMinutes": 10,
+                  "tags": [
+                    "Huevos"
+                  ],
+                  "dietaryInfo": [
+                    "Sin lactosa"
+                  ],
+                  "mealType": [
+                    "Postre",
+                    "Desayuno",
+                    "Merienda"
+                  ],
+                  "ingredientsFull": [],
+                  "instructions": [],
+                  "hasNutrition": false,
+                  "likes": 0,
+                  "title": "Tortilla de zanahoria con queso",
+                  "url": "https://www.consum.es/en/recipes/tortilla-de-zanahoria-con-queso/",
+                  "season": [],
+                  "ingredientProducts": {
+                    "Tortilla de zanahoria con queso": [
+                      {
+                        "objectID": "5320",
+                        "title": "Zanahoria Tierna Bolsa",
+                        "brand": ""
+                      },
+                      {
+                        "objectID": "11262",
+                        "title": "Zanahoria Rallada Frasco",
+                        "brand": "BONDUELLE"
+                      },
+                      {
+                        "objectID": "27980",
+                        "title": "Porción Carrot Cake con Queso",
+                        "brand": ""
+                      }
+                    ]
+                  },
+                  "_snippetResult": {
+                    "description": {
+                      "value": "Esta <em>receta</em> es muy fácil y rica.",
+                      "matchLevel": "partial"
+                    }
+                  }
+                }
+              ],
+              "nbHits": 3,
+              "queryID": "ec0bee26e2f20918fbcf54e854647c8a"
+            }
+          },
+          {
+            "name": "showRecipes",
+            "input": {
+              "objectIDs": [
+                "consum-rollitos-con-hojas-de-repollo",
+                "consum-canelones-de-pollo-vegetal",
+                "consum-tortilla-de-zanahoria-con-queso"
+              ],
+              "title": "Recetas bajas en grasa y sin lactosa",
+              "explanation": "Opciones ligeras, rápidas y adaptadas a intolerancia a la lactosa."
+            },
+            "output": {
+              "status": "Successfully showed recipes",
+              "recipes": [
+                {
+                  "objectID": "consum-rollitos-con-hojas-de-repollo",
+                  "title": "Recipe consum-rollitos-con-hojas-de-repollo"
+                },
+                {
+                  "objectID": "consum-canelones-de-pollo-vegetal",
+                  "title": "Recipe consum-canelones-de-pollo-vegetal"
+                },
+                {
+                  "objectID": "consum-tortilla-de-zanahoria-con-queso",
+                  "title": "Recipe consum-tortilla-de-zanahoria-con-queso"
+                }
+              ],
+              "title": "Recetas bajas en grasa y sin lactosa",
+              "explanation": "Opciones ligeras, rápidas y adaptadas a intolerancia a la lactosa."
+            }
+          }
+        ],
+        "checks": [
+          {
+            "label": "Searched recipes index",
+            "pass": true,
+            "detail": "1 search(es), queries: \"receta baja en grasas sin lactosa\""
+          },
+          {
+            "label": "Called showRecipes",
+            "pass": true,
+            "detail": "3 recipe(s)"
+          },
+          {
+            "label": "Filters on new_consum_recipes",
+            "pass": true,
+            "detail": "[[\"dietaryInfo:Sin lactosa\"]]"
+          }
+        ],
+        "durationMs": 4889
+      }
+    ]
+  },
+  {
+    "journey": "Cena < 5 euros",
+    "group": "Budget-Conscious",
+    "durationMs": 5289,
+    "turns": [
+      {
+        "userMessage": "Cena rica por menos de 5 euros",
+        "rubric": "Must search products or recipes. Must call showItems or showRecipes. Response should acknowledge the budget constraint (≤5 euros). If searching products, should use numeric_filters on price or offer filters.",
+        "assistantText": "",
+        "toolCalls": [
+          {
+            "name": "algolia_search_index",
+            "input": {
+              "index": "new_consum_recipes",
+              "query": "cena barata rápida",
+              "number_of_results": 3,
+              "facet_filters": null
+            },
+            "output": {
+              "hits": [
+                {
+                  "ingredientsFull": [],
+                  "comments": 0,
+                  "qualityScore": 40,
+                  "url": "https://www.consum.es/en/recipes/tofu-salteado/",
+                  "servings": 4,
+                  "categories": [],
+                  "dietaryInfo": [
+                    "Sin gluten"
+                  ],
+                  "ingredientProducts": {
+                    "Tofu Salteado": [
+                      {
+                        "objectID": "17213",
+                        "title": "Tofu Bio",
+                        "brand": "VIVERA"
+                      }
+                    ]
+                  },
+                  "hasNutrition": false,
+                  "likes": 0,
+                  "id": "consum-tofu-salteado",
+                  "title": "Tofu Salteado",
+                  "totalTimeMinutes": 3,
+                  "season": [],
+                  "objectID": "consum-tofu-salteado",
+                  "_snippetResult": {
+                    "description": {
+                      "value": "… 2 cm, pelado y troceado Para la salsa: ▢¾ de taza de caldo de verduras o agua, 190 ml ▢¼ de taza de tamari o salsa de soja, 4 cucharadas ▢2 cucharadas de azúcar, yo usé azúcar de <em>caña</em> ▢2 cucharaditas de maicena ▢⅛ cucharadita de cayena en polvo, opcional",
+                      "matchLevel": "partial"
+                    }
+                  },
+                  "slug": "tofu-salteado",
+                  "description": "Para el tofu salteado: ▢400 g de tofu firme, 14 oz, en dados ▢1 taza de brócoli, 100 g, troceado ▢1 zanahoria mediana, en juliana ▢½ pimiento rojo, en juliana ▢½ cebolla morada, en juliana ▢2 dientes de ajo, troceados ▢Un trozo de raíz de jengibre de unos 2 cm, pelado y troceado Para la salsa: ▢¾ de taza de caldo de verduras o agua, 190 ml ▢¼ de taza de tamari o salsa de soja, 4 cucharadas ▢2 cucharadas de azúcar, yo usé azúcar de caña ▢2 cucharaditas de maicena ▢⅛ cucharadita de cayena en polvo, opcional",
+                  "instructions": [],
+                  "imageUrl": "https://www.consum.es/sites/default/files/default_images/avatar-01.png",
+                  "tags": [],
+                  "mealType": [
+                    "Postre",
+                    "Desayuno",
+                    "Merienda"
+                  ],
+                  "ingredients": []
+                }
+              ],
+              "nbHits": 1,
+              "queryID": "49c996998c82c97c52fd544bc9b65df1"
+            }
+          },
+          {
+            "name": "showRecipes",
+            "input": {
+              "objectIDs": [
+                "consum-tofu-salteado"
+              ],
+              "title": "Cena rica y barata (<5€)",
+              "explanation": "Rápida, saludable y con ingredientes económicos para varios platos."
+            },
+            "output": {
+              "status": "Successfully showed recipes",
+              "recipes": [
+                {
+                  "objectID": "consum-tofu-salteado",
+                  "title": "Recipe consum-tofu-salteado"
+                }
+              ],
+              "title": "Cena rica y barata (<5€)",
+              "explanation": "Rápida, saludable y con ingredientes económicos para varios platos."
+            }
+          }
+        ],
+        "checks": [
+          {
+            "label": "Searched products or recipes index",
+            "pass": true,
+            "detail": "products: 0, recipes: 1"
+          },
+          {
+            "label": "Called showItems or showRecipes",
+            "pass": true,
+            "detail": "showItems: 0 items, showRecipes: 1 recipes"
+          }
+        ],
+        "durationMs": 5289
+      }
+    ]
+  },
+  {
+    "journey": "Gastar menos",
+    "group": "Budget-Conscious",
+    "durationMs": 7039,
+    "turns": [
+      {
+        "userMessage": "Quiero gastar menos este mes",
+        "rubric": "Must search products. Should use offer/promotion filters (offer:true, budget groups, or 'Ahora más barato' category). Must call showItems. Response should emphasize savings/deals.",
+        "assistantText": "",
+        "toolCalls": [
+          {
+            "name": "algolia_search_index",
+            "input": {
+              "index": "new_consum_products",
+              "query": "ofertas ahorro productos básicos",
+              "number_of_results": 4,
+              "facet_filters": [
+                [
+                  "offer:true"
+                ]
+              ]
+            },
+            "output": {
+              "hits": [
+                {
+                  "description": "Gel Exfoliante Pure Active Carbón 3 en 1",
+                  "imageUrl": "https://cdn-consum.aktiosdigitalservices.com/tol/consum/media/product/img/135x135/7261659_001.jpg?t=20230926040014",
+                  "priceUnit": 3.19,
+                  "unit": "100 ml",
+                  "promotions": [
+                    "Ahora más barato"
+                  ],
+                  "enriched": {
+                    "description": "Gel exfoliante 3 en 1 con carbón, limpia, exfolia y purifica la piel para un rostro radiante.",
+                    "keywords": [
+                      "exfoliante",
+                      "carbón",
+                      "cuidado facial",
+                      "limpieza profunda",
+                      "piel radiante",
+                      "Garnier",
+                      "pureza",
+                      "cuidado personal"
+                    ],
+                    "dietaryTags": [],
+                    "useCases": [
+                      "uso diario para limpiar el rostro",
+                      "exfoliación semanal",
+                      "preparar la piel antes del maquillaje",
+                      "eliminar impurezas",
+                      "refrescar la piel"
+                    ]
+                  },
+                  "offer": true,
+                  "objectID": "9988",
+                  "inStock": true,
+                  "price": 4.79,
+                  "normalPrice": 5.99,
+                  "_snippetResult": {
+                    "description": {
+                      "value": "Gel Exfoliante Pure Active Carbón 3 en 1",
+                      "matchLevel": "none"
+                    },
+                    "enriched": {
+                      "description": {
+                        "value": "Gel exfoliante 3 en 1 con carbón, limpia, exfolia y purifica la piel para un rostro radiante.",
+                        "matchLevel": "none"
+                      }
+                    }
+                  },
+                  "title": "Gel Exfoliante Pure Active Carbón 3 en 1",
+                  "brand": "GARNIER",
+                  "groups": [],
+                  "categories": {
+                    "lvl0": [
+                      "Cuidado personal",
+                      "Ahora más barato"
+                    ],
+                    "lvl1": [
+                      "Cuidado facial",
+                      "Ahora más barato - Ofertas en productos de cuidado personal"
+                    ],
+                    "lvl2": [
+                      "Limpieza y desmaquilladores"
+                    ],
+                    "lvl3": []
+                  }
+                },
+                {
+                  "brand": "GARNIER",
+                  "unit": "100 ml",
+                  "enriched": {
+                    "description": "El Agua Micelar en Aceite de Garnier limpia y desmaquilla eficazmente, dejando la piel suave y fresca.",
+                    "keywords": [
+                      "agua micelar",
+                      "desmaquillante",
+                      "cuidado facial",
+                      "limpieza profunda",
+                      "piel suave",
+                      "Garnier",
+                      "cuidado personal",
+                      "oferta"
+                    ],
+                    "dietaryTags": [],
+                    "useCases": [
+                      "desmaquillar rostro",
+                      "limpiar piel",
+                      "preparar la piel para el maquillaje",
+                      "uso diario",
+                      "cuidado de la piel"
+                    ]
+                  },
+                  "promotions": [
+                    "Acumulas en tu cheque regalo"
+                  ],
+                  "title": "Agua Micelar en Aceite",
+                  "inStock": true,
+                  "normalPrice": 4.99,
+                  "priceUnit": 1.25,
+                  "offer": true,
+                  "objectID": "9466",
+                  "imageUrl": "https://cdn-consum.aktiosdigitalservices.com/tol/consum/media/product/img/135x135/7267750_001.jpg?t=20250606091503",
+                  "categories": {
+                    "lvl0": [
+                      "Cuidado personal",
+                      "Ahora más barato"
+                    ],
+                    "lvl1": [
+                      "Cuidado facial",
+                      "Ahora más barato - Ofertas en productos de cuidado personal"
+                    ],
+                    "lvl2": [
+                      "Limpieza y desmaquilladores"
+                    ],
+                    "lvl3": []
+                  },
+                  "_snippetResult": {
+                    "description": {
+                      "value": "Agua Micelar en Aceite",
+                      "matchLevel": "none"
+                    },
+                    "enriched": {
+                      "description": {
+                        "value": "El Agua Micelar en Aceite de Garnier limpia y desmaquilla eficazmente, dejando la piel suave y fresca.",
+                        "matchLevel": "none"
+                      }
+                    }
+                  },
+                  "description": "Agua Micelar en Aceite",
+                  "price": 4.99,
+                  "groups": []
+                },
+                {
+                  "enriched": {
+                    "description": "Comida seca especialmente formulada para perros Yorkshire, rica en nutrientes y sabor.",
+                    "keywords": [
+                      "comida para perros",
+                      "perros Yorkshire",
+                      "nutrición canina",
+                      "alimentación saludable",
+                      "perros pequeños",
+                      "croquetas",
+                      "alta calidad",
+                      "oferta mascotas"
+                    ],
+                    "dietaryTags": [],
+                    "useCases": [
+                      "alimentación diaria",
+                      "mantenimiento de peso",
+                      "nutrición específica para razas",
+                      "mejora de la salud dental"
+                    ]
+                  },
+                  "objectID": "8930",
+                  "inStock": true,
+                  "unit": "1 Kg",
+                  "offer": true,
+                  "_snippetResult": {
+                    "description": {
+                      "value": "Comida Seca Perros Yorkshire",
+                      "matchLevel": "none"
+                    },
+                    "enriched": {
+                      "description": {
+                        "value": "Comida seca especialmente formulada para perros Yorkshire, rica en nutrientes y sabor.",
+                        "matchLevel": "none"
+                      }
+                    }
+                  },
+                  "brand": "ULTIMA",
+                  "description": "Comida Seca Perros Yorkshire",
+                  "priceUnit": 5.26,
+                  "groups": [],
+                  "imageUrl": "https://cdn-consum.aktiosdigitalservices.com/tol/consum/media/product/img/135x135/7195498_001.jpg?t=20231024040002",
+                  "normalPrice": 8.99,
+                  "promotions": [
+                    "Ahora más barato"
+                  ],
+                  "categories": {
+                    "lvl0": [
+                      "Mascotas",
+                      "Ahora más barato"
+                    ],
+                    "lvl1": [
+                      "Perros",
+                      "Ahora más barato - Ofertas en productos para mascotas"
+                    ],
+                    "lvl2": [
+                      "Pienso"
+                    ],
+                    "lvl3": []
+                  },
+                  "title": "Comida Seca Perros Yorkshire",
+                  "price": 7.9
+                },
+                {
+                  "brand": "GOURMET",
+                  "categories": {
+                    "lvl0": [
+                      "Mascotas",
+                      "Ahora más barato"
+                    ],
+                    "lvl1": [
+                      "Gatos",
+                      "Ahora más barato - Ofertas en productos para mascotas"
+                    ],
+                    "lvl2": [
+                      "Comida Húmeda"
+                    ],
+                    "lvl3": []
+                  },
+                  "enriched": {
+                    "description": "Deliciosa comida húmeda para gatos con sabor a buey, ideal para consentir a tu mascota.",
+                    "keywords": [
+                      "comida para gatos",
+                      "comida húmeda",
+                      "gourmet",
+                      "buey",
+                      "mascotas",
+                      "alimentación felina",
+                      "snack",
+                      "oferta"
+                    ],
+                    "dietaryTags": [],
+                    "useCases": [
+                      "alimentación diaria",
+                      "premio especial",
+                      "comida para gatos exigentes",
+                      "mezcla con comida seca"
+                    ]
+                  },
+                  "title": "Comida Húmeda Gatos Gourmet Perle Buey",
+                  "price": 2.7,
+                  "_snippetResult": {
+                    "description": {
+                      "value": "Comida Húmeda Gatos Gourmet Perle Buey",
+                      "matchLevel": "none"
+                    },
+                    "enriched": {
+                      "description": {
+                        "value": "Deliciosa comida húmeda para gatos con sabor a buey, ideal para consentir a tu mascota.",
+                        "matchLevel": "none"
+                      }
+                    }
+                  },
+                  "imageUrl": "https://cdn-consum.aktiosdigitalservices.com/tol/consum/media/product/img/135x135/7167000_001.jpg?t=20240221040002",
+                  "inStock": true,
+                  "offer": true,
+                  "groups": [],
+                  "objectID": "8882",
+                  "description": "Comida Húmeda Gatos Gourmet Perle Buey",
+                  "normalPrice": 3.34,
+                  "priceUnit": 7.94,
+                  "unit": "1 Kg",
+                  "promotions": [
+                    "Ahora más barato"
+                  ]
+                }
+              ],
+              "nbHits": 1039,
+              "queryID": "e311f6267dde4ed2e9e171e27d5fde6a"
+            }
+          },
+          {
+            "name": "showItems",
+            "input": {
+              "objectIDs": [
+                "9988",
+                "9466",
+                "8930",
+                "8882"
+              ],
+              "title": "Ofertas para ahorrar este mes",
+              "explanation": "Estos productos están rebajados ahora mismo para ayudarte a gastar menos."
+            },
+            "output": {
+              "status": "Successfully showed items",
+              "products": [
+                {
+                  "objectID": "9988",
+                  "title": "Product 9988"
+                },
+                {
+                  "objectID": "9466",
+                  "title": "Product 9466"
+                },
+                {
+                  "objectID": "8930",
+                  "title": "Product 8930"
+                },
+                {
+                  "objectID": "8882",
+                  "title": "Product 8882"
+                }
+              ],
+              "title": "Ofertas para ahorrar este mes",
+              "explanation": "Estos productos están rebajados ahora mismo para ayudarte a gastar menos."
+            }
+          }
+        ],
+        "checks": [
+          {
+            "label": "Searched products index",
+            "pass": true,
+            "detail": "1 search(es), queries: \"ofertas ahorro productos básicos\""
+          },
+          {
+            "label": "Called showItems",
+            "pass": true,
+            "detail": "4 product(s) shown"
+          },
+          {
+            "label": "Filters on new_consum_products",
+            "pass": true,
+            "detail": "[[\"offer:true\"]]"
+          }
+        ],
+        "durationMs": 7039
+      }
+    ]
+  },
+  {
+    "journey": "Limpiar vitrocerámica",
+    "group": "Non-Food & Goals",
+    "durationMs": 6057,
+    "turns": [
+      {
+        "userMessage": "Algo para limpiar la vitrocerámica",
+        "rubric": "Must search products. Must call showItems. Products should be cleaning products relevant to ceramic cooktops (not food). Should use appropriate category filters.",
+        "assistantText": "",
+        "toolCalls": [
+          {
+            "name": "algolia_search_index",
+            "input": {
+              "index": "new_consum_products",
+              "query": "limpiador vitroceramica",
+              "number_of_results": 4,
+              "facet_filters": [
+                [
+                  "categories.lvl0:Droguería y limpieza"
+                ]
+              ]
+            },
+            "output": {
+              "hits": [
+                {
+                  "brand": "FROSCH",
+                  "price": 4.99,
+                  "normalPrice": 4.99,
+                  "groups": [],
+                  "promotions": [],
+                  "enriched": {
+                    "description": "Limpiador en crema para vitrocerámicas, eficaz y fácil de usar, con aroma a naranja.",
+                    "keywords": [
+                      "limpieza",
+                      "vitrocerámica",
+                      "crema",
+                      "Frosch",
+                      "aroma",
+                      "cocina",
+                      "desengrasante",
+                      "ecológico",
+                      "hogar"
+                    ],
+                    "dietaryTags": [],
+                    "useCases": [
+                      "limpiar vitrocerámica",
+                      "eliminar manchas difíciles",
+                      "desengrasar superficies",
+                      "uso diario en la cocina",
+                      "mantener brillo en vitrocerámicas"
+                    ]
+                  },
+                  "_snippetResult": {
+                    "description": {
+                      "value": "<em>Limpiador</em> <em>Vitrocerámica</em> Crema Naranja",
+                      "matchLevel": "full"
+                    },
+                    "enriched": {
+                      "description": {
+                        "value": "<em>Limpiador</em> en crema para vitrocerámicas, eficaz y fácil de usar, con aroma a naranja.",
+                        "matchLevel": "partial"
+                      }
+                    }
+                  },
+                  "title": "Limpiador Vitrocerámica Crema Naranja",
+                  "description": "Limpiador Vitrocerámica Crema Naranja",
+                  "priceUnit": 9.98,
+                  "unit": "1 L",
+                  "offer": false,
+                  "objectID": "29840",
+                  "imageUrl": "https://cdn-consum.aktiosdigitalservices.com/tol/consum/media/product/img/135x135/7403280_001.jpg?t=20220802040001",
+                  "inStock": true,
+                  "categories": {
+                    "lvl0": [
+                      "Droguería y limpieza"
+                    ],
+                    "lvl1": [
+                      "Limpieza hogar",
+                      "Limpieza cocina"
+                    ],
+                    "lvl2": [
+                      "Otros limpiadores específicos",
+                      "Limpia vitrocerámica"
+                    ],
+                    "lvl3": []
+                  }
+                },
+                {
+                  "brand": "CONSUM",
+                  "unit": "1 L",
+                  "groups": [],
+                  "categories": {
+                    "lvl0": [
+                      "Droguería y limpieza"
+                    ],
+                    "lvl1": [
+                      "Limpieza hogar",
+                      "Limpieza cocina"
+                    ],
+                    "lvl2": [
+                      "Otros limpiadores específicos",
+                      "Limpia vitrocerámica"
+                    ],
+                    "lvl3": []
+                  },
+                  "enriched": {
+                    "description": "Limpiador específico para vitrocerámicas, elimina manchas y restos de grasa con facilidad.",
+                    "keywords": [
+                      "limpieza",
+                      "vitrocerámica",
+                      "desengrasante",
+                      "cocina",
+                      "hogar",
+                      "brillo",
+                      "fácil aplicación",
+                      "sin rayas"
+                    ],
+                    "dietaryTags": [],
+                    "useCases": [
+                      "limpiar vitrocerámica",
+                      "eliminar manchas difíciles",
+                      "desengrasar superficies",
+                      "mantener brillo",
+                      "uso diario en cocina"
+                    ]
+                  },
+                  "title": "Limpiador Vitrocerámica",
+                  "description": "Limpiador Vitrocerámica",
+                  "price": 2,
+                  "offer": false,
+                  "promotions": [],
+                  "objectID": "15996",
+                  "_snippetResult": {
+                    "description": {
+                      "value": "<em>Limpiador</em> <em>Vitrocerámica</em>",
+                      "matchLevel": "full"
+                    },
+                    "enriched": {
+                      "description": {
+                        "value": "<em>Limpiador</em> específico para vitrocerámicas, elimina manchas y restos de grasa con facilidad.",
+                        "matchLevel": "partial"
+                      }
+                    }
+                  },
+                  "imageUrl": "https://cdn-consum.aktiosdigitalservices.com/tol/consum/media/product/img/135x135/7291941_001.jpg?t=20230726040001",
+                  "inStock": true,
+                  "normalPrice": 2,
+                  "priceUnit": 4
+                },
+                {
+                  "promotions": [],
+                  "objectID": "25225",
+                  "title": "Limpia Vitrocerámicas Inducción Pistola",
+                  "groups": [],
+                  "inStock": true,
+                  "offer": false,
+                  "categories": {
+                    "lvl0": [
+                      "Droguería y limpieza"
+                    ],
+                    "lvl1": [
+                      "Limpieza hogar",
+                      "Limpieza cocina"
+                    ],
+                    "lvl2": [
+                      "Otros limpiadores específicos",
+                      "Limpia vitrocerámica"
+                    ],
+                    "lvl3": []
+                  },
+                  "price": 6.99,
+                  "normalPrice": 6.99,
+                  "priceUnit": 15.53,
+                  "unit": "1 L",
+                  "enriched": {
+                    "description": "Limpia eficazmente las vitrocerámicas de inducción, dejando un acabado brillante y sin residuos.",
+                    "keywords": [
+                      "limpieza",
+                      "vitrocerámica",
+                      "inducción",
+                      "desengrasante",
+                      "cocina",
+                      "brillo",
+                      "hogar",
+                      "producto de limpieza"
+                    ],
+                    "dietaryTags": [],
+                    "useCases": [
+                      "limpiar vitrocerámica",
+                      "eliminar manchas difíciles",
+                      "mantener la cocina limpia",
+                      "preparar para cocinar",
+                      "desengrasar superficies"
+                    ]
+                  },
+                  "_snippetResult": {
+                    "description": {
+                      "value": "Limpia Vitrocerámicas Inducción Pistola",
+                      "matchLevel": "none"
+                    },
+                    "enriched": {
+                      "description": {
+                        "value": "Limpia eficazmente las vitrocerámicas de inducción, dejando un acabado brillante y sin residuos.",
+                        "matchLevel": "none"
+                      }
+                    }
+                  },
+                  "brand": "VITROCLEN",
+                  "description": "Limpia Vitrocerámicas Inducción Pistola",
+                  "imageUrl": "https://cdn-consum.aktiosdigitalservices.com/tol/consum/media/product/img/135x135/7364763_001.jpg?t=20250402091502"
+                },
+                {
+                  "title": "Limpia Vitrocerámica",
+                  "description": "Limpia Vitrocerámica",
+                  "price": 5.29,
+                  "normalPrice": 5.29,
+                  "offer": false,
+                  "promotions": [],
+                  "enriched": {
+                    "description": "Limpia y abrillanta tu vitrocerámica, eliminando manchas y residuos de forma eficaz.",
+                    "keywords": [
+                      "limpieza",
+                      "vitrocerámica",
+                      "abrillantador",
+                      "cocina",
+                      "desengrasante",
+                      "hogar",
+                      "superficies",
+                      "fácil uso",
+                      "brillo"
+                    ],
+                    "dietaryTags": [],
+                    "useCases": [
+                      "limpiar vitrocerámica",
+                      "eliminar manchas",
+                      "abrillantar superficies",
+                      "uso diario en la cocina",
+                      "desengrasar"
+                    ]
+                  },
+                  "_snippetResult": {
+                    "description": {
+                      "value": "Limpia <em>Vitrocerámica</em>",
+                      "matchLevel": "partial"
+                    },
+                    "enriched": {
+                      "description": {
+                        "value": "Limpia y abrillanta tu <em>vitrocerámica</em>, eliminando manchas y residuos de forma eficaz.",
+                        "matchLevel": "partial"
+                      }
+                    }
+                  },
+                  "imageUrl": "https://cdn-consum.aktiosdigitalservices.com/tol/consum/media/product/img/135x135/7361954_001.jpg?t=20250924091502",
+                  "inStock": true,
+                  "groups": [],
+                  "priceUnit": 11.76,
+                  "categories": {
+                    "lvl0": [
+                      "Droguería y limpieza"
+                    ],
+                    "lvl1": [
+                      "Limpieza hogar",
+                      "Limpieza cocina"
+                    ],
+                    "lvl2": [
+                      "Otros limpiadores específicos",
+                      "Limpia vitrocerámica"
+                    ],
+                    "lvl3": []
+                  },
+                  "brand": "VITROCLEN",
+                  "unit": "1 L",
+                  "objectID": "24937"
+                }
+              ],
+              "nbHits": 5,
+              "queryID": "cfef6043e9b44ef19850b4d1179a8048"
+            }
+          },
+          {
+            "name": "showItems",
+            "input": {
+              "objectIDs": [
+                "15996",
+                "29840",
+                "24937",
+                "25225"
+              ],
+              "title": "Limpia tu vitrocerámica fácilmente",
+              "explanation": "Opciones eficaces para eliminar grasa y dejarla brillante sin rayarla."
+            },
+            "output": {
+              "status": "Successfully showed items",
+              "products": [
+                {
+                  "objectID": "15996",
+                  "title": "Product 15996"
+                },
+                {
+                  "objectID": "29840",
+                  "title": "Product 29840"
+                },
+                {
+                  "objectID": "24937",
+                  "title": "Product 24937"
+                },
+                {
+                  "objectID": "25225",
+                  "title": "Product 25225"
+                }
+              ],
+              "title": "Limpia tu vitrocerámica fácilmente",
+              "explanation": "Opciones eficaces para eliminar grasa y dejarla brillante sin rayarla."
+            }
+          }
+        ],
+        "checks": [
+          {
+            "label": "Searched products index",
+            "pass": true,
+            "detail": "1 search(es), queries: \"limpiador vitroceramica\""
+          },
+          {
+            "label": "Called showItems",
+            "pass": true,
+            "detail": "4 product(s) shown"
+          },
+          {
+            "label": "Filters on new_consum_products",
+            "pass": true,
+            "detail": "[[\"categories.lvl0:Droguería y limpieza\"]]"
+          }
+        ],
+        "durationMs": 6057
+      }
+    ]
+  },
+  {
+    "journey": "Ropa limpia",
+    "group": "Non-Food & Goals",
+    "durationMs": 3428,
+    "turns": [
+      {
+        "userMessage": "Para que la ropa salga más limpia",
+        "rubric": "Must search products. Must call showItems. Products should be laundry detergents/additives (not food). Should map the need to cleaning products.",
+        "assistantText": "",
+        "toolCalls": [
+          {
+            "name": "algolia_search_index",
+            "input": {
+              "index": "new_consum_products",
+              "query": "detergente ropa quitamanchas suavizante limpieza ropa",
+              "number_of_results": 5,
+              "facet_filters": [
+                [
+                  "categories.lvl0:Droguería y limpieza"
+                ]
+              ]
+            },
+            "output": {
+              "hits": [
+                {
+                  "description": "Detergente Ropa Blanca y Color",
+                  "priceUnit": 0.11,
+                  "imageUrl": "https://cdn-consum.aktiosdigitalservices.com/tol/consum/media/product/img/135x135/7459493_001.jpg?t=20251111130002",
+                  "inStock": true,
+                  "unit": "1 Lv",
+                  "promotions": [],
+                  "categories": {
+                    "lvl0": [
+                      "Droguería y limpieza"
+                    ],
+                    "lvl1": [
+                      "Cuidado ropa"
+                    ],
+                    "lvl2": [
+                      "Detergente"
+                    ],
+                    "lvl3": [
+                      "A máquina líquido"
+                    ]
+                  },
+                  "_snippetResult": {
+                    "description": {
+                      "value": "<em>Detergente</em> <em>Ropa</em> Blanca y Color",
+                      "matchLevel": "partial"
+                    },
+                    "enriched": {
+                      "description": {
+                        "value": "<em>Detergente</em> eficaz para <em>ropa</em> blanca y de color, que protege los tejidos y mantiene los colores vivos.",
+                        "matchLevel": "partial"
+                      }
+                    }
+                  },
+                  "brand": "CONSUM",
+                  "offer": false,
+                  "groups": [],
+                  "enriched": {
+                    "description": "Detergente eficaz para ropa blanca y de color, que protege los tejidos y mantiene los colores vivos.",
+                    "keywords": [
+                      "detergente",
+                      "ropa blanca",
+                      "ropa de color",
+                      "limpieza",
+                      "cuidado textil",
+                      "lavado a máquina",
+                      "frescor",
+                      "antimanchas"
+                    ],
+                    "dietaryTags": [],
+                    "useCases": [
+                      "lavar ropa blanca",
+                      "lavar ropa de color",
+                      "eliminar manchas difíciles",
+                      "mantener colores vivos",
+                      "uso en lavadora"
+                    ]
+                  },
+                  "title": "Detergente Ropa Blanca y Color",
+                  "price": 5.65,
+                  "normalPrice": 5.65,
+                  "objectID": "44261"
+                },
+                {
+                  "inStock": true,
+                  "normalPrice": 3.1,
+                  "priceUnit": 3.1,
+                  "price": 3.1,
+                  "offer": false,
+                  "objectID": "35718",
+                  "enriched": {
+                    "description": "El quitamanchas Ropa Color de CONSUM elimina manchas difíciles sin dañar los colores de la ropa.",
+                    "keywords": [
+                      "quitamanchas",
+                      "ropa color",
+                      "limpieza",
+                      "droguería",
+                      "cuidado textil",
+                      "manchas difíciles",
+                      "lavado",
+                      "detergente"
+                    ],
+                    "dietaryTags": [],
+                    "useCases": [
+                      "eliminar manchas de comida",
+                      "tratar manchas de vino",
+                      "usar en ropa de color",
+                      "preparar prendas para el lavado",
+                      "mantener colores vivos"
+                    ]
+                  },
+                  "groups": [],
+                  "_snippetResult": {
+                    "description": {
+                      "value": "<em>Quitamanchas</em> <em>Ropa</em> Color",
+                      "matchLevel": "partial"
+                    },
+                    "enriched": {
+                      "description": {
+                        "value": "El <em>quitamanchas</em> <em>Ropa</em> Color de CONSUM elimina manchas difíciles sin dañar los colores de la <em>ropa</em>.",
+                        "matchLevel": "partial"
+                      }
+                    }
+                  },
+                  "unit": "1 Kg",
+                  "promotions": [],
+                  "categories": {
+                    "lvl0": [
+                      "Droguería y limpieza"
+                    ],
+                    "lvl1": [
+                      "Cuidado ropa"
+                    ],
+                    "lvl2": [
+                      "Aditivos y complementos"
+                    ],
+                    "lvl3": [
+                      "Quitamanchas"
+                    ]
+                  },
+                  "title": "Quitamanchas Ropa Color",
+                  "brand": "CONSUM",
+                  "description": "Quitamanchas Ropa Color",
+                  "imageUrl": "https://cdn-consum.aktiosdigitalservices.com/tol/consum/media/product/img/135x135/7442424_001.jpg?t=20241025130002"
+                },
+                {
+                  "title": "Quitamanchas Ropa Blanca",
+                  "inStock": true,
+                  "price": 3.1,
+                  "offer": false,
+                  "categories": {
+                    "lvl0": [
+                      "Droguería y limpieza"
+                    ],
+                    "lvl1": [
+                      "Cuidado ropa"
+                    ],
+                    "lvl2": [
+                      "Aditivos y complementos"
+                    ],
+                    "lvl3": [
+                      "Quitamanchas"
+                    ]
+                  },
+                  "_snippetResult": {
+                    "description": {
+                      "value": "<em>Quitamanchas</em> <em>Ropa</em> Blanca",
+                      "matchLevel": "partial"
+                    },
+                    "enriched": {
+                      "description": {
+                        "value": "El <em>quitamanchas</em> ideal para mantener la <em>ropa</em> blanca impecable y libre de manchas difíciles.",
+                        "matchLevel": "partial"
+                      }
+                    }
+                  },
+                  "description": "Quitamanchas Ropa Blanca",
+                  "groups": [],
+                  "enriched": {
+                    "description": "El quitamanchas ideal para mantener la ropa blanca impecable y libre de manchas difíciles.",
+                    "keywords": [
+                      "quitamanchas",
+                      "ropa blanca",
+                      "limpieza",
+                      "droguería",
+                      "cuidado textil",
+                      "manchas difíciles",
+                      "detergente",
+                      "blanqueador"
+                    ],
+                    "dietaryTags": [],
+                    "useCases": [
+                      "eliminar manchas de ropa blanca",
+                      "pretratamiento de manchas",
+                      "uso en lavadoras",
+                      "aplicación en prendas delicadas"
+                    ]
+                  },
+                  "objectID": "35681",
+                  "imageUrl": "https://cdn-consum.aktiosdigitalservices.com/tol/consum/media/product/img/135x135/7442416_001.jpg?t=20241017091048",
+                  "normalPrice": 3.1,
+                  "unit": "1 Kg",
+                  "promotions": [],
+                  "brand": "CONSUM",
+                  "priceUnit": 3.1
+                },
+                {
+                  "objectID": "35528",
+                  "inStock": true,
+                  "promotions": [],
+                  "title": "Quitamanchas Ropa Color",
+                  "description": "Quitamanchas Ropa Color",
+                  "enriched": {
+                    "description": "El quitamanchas Ropa Color de CONSUM elimina manchas difíciles sin dañar los colores de la ropa.",
+                    "keywords": [
+                      "quitamanchas",
+                      "ropa",
+                      "color",
+                      "limpieza",
+                      "droguería",
+                      "textiles",
+                      "cuidado de la ropa",
+                      "manchas",
+                      "lavado"
+                    ],
+                    "dietaryTags": [],
+                    "useCases": [
+                      "eliminar manchas de alimentos",
+                      "tratar manchas de grasa",
+                      "uso en ropa de color",
+                      "preparar ropa para el lavado",
+                      "cuidado textil diario"
+                    ]
+                  },
+                  "normalPrice": 1.75,
+                  "priceUnit": 0.88,
+                  "unit": "1 L",
+                  "offer": false,
+                  "categories": {
+                    "lvl0": [
+                      "Droguería y limpieza"
+                    ],
+                    "lvl1": [
+                      "Cuidado ropa"
+                    ],
+                    "lvl2": [
+                      "Aditivos y complementos"
+                    ],
+                    "lvl3": [
+                      "Quitamanchas"
+                    ]
+                  },
+                  "_snippetResult": {
+                    "description": {
+                      "value": "<em>Quitamanchas</em> <em>Ropa</em> Color",
+                      "matchLevel": "partial"
+                    },
+                    "enriched": {
+                      "description": {
+                        "value": "El <em>quitamanchas</em> <em>Ropa</em> Color de CONSUM elimina manchas difíciles sin dañar los colores de la <em>ropa</em>.",
+                        "matchLevel": "partial"
+                      }
+                    }
+                  },
+                  "brand": "CONSUM",
+                  "imageUrl": "https://cdn-consum.aktiosdigitalservices.com/tol/consum/media/product/img/135x135/7432834_001.jpg?t=20241005091501",
+                  "price": 1.75,
+                  "groups": []
+                },
+                {
+                  "title": "Quitamanchas Ropa Blanca",
+                  "normalPrice": 1.75,
+                  "unit": "1 L",
+                  "categories": {
+                    "lvl0": [
+                      "Droguería y limpieza"
+                    ],
+                    "lvl1": [
+                      "Cuidado ropa"
+                    ],
+                    "lvl2": [
+                      "Aditivos y complementos"
+                    ],
+                    "lvl3": [
+                      "Quitamanchas"
+                    ]
+                  },
+                  "brand": "CONSUM",
+                  "price": 1.75,
+                  "groups": [],
+                  "enriched": {
+                    "description": "El quitamanchas ideal para mantener tu ropa blanca impecable y libre de manchas difíciles.",
+                    "keywords": [
+                      "quitamanchas",
+                      "ropa blanca",
+                      "limpieza",
+                      "detergente",
+                      "droguería",
+                      "cuidado textil",
+                      "manchas",
+                      "blanqueador",
+                      "productos de limpieza"
+                    ],
+                    "dietaryTags": [],
+                    "useCases": [
+                      "eliminar manchas de ropa blanca",
+                      "uso en lavadora",
+                      "aplicación en manchas difíciles",
+                      "cuidado de prendas delicadas",
+                      "mantener la blancura de la ropa"
+                    ]
+                  },
+                  "inStock": true,
+                  "priceUnit": 0.88,
+                  "objectID": "35527",
+                  "_snippetResult": {
+                    "description": {
+                      "value": "<em>Quitamanchas</em> <em>Ropa</em> Blanca",
+                      "matchLevel": "partial"
+                    },
+                    "enriched": {
+                      "description": {
+                        "value": "El <em>quitamanchas</em> ideal para mantener tu <em>ropa</em> blanca impecable y libre de manchas difíciles.",
+                        "matchLevel": "partial"
+                      }
+                    }
+                  },
+                  "description": "Quitamanchas Ropa Blanca",
+                  "imageUrl": "https://cdn-consum.aktiosdigitalservices.com/tol/consum/media/product/img/135x135/7432826_001.jpg?t=20241009130002",
+                  "offer": false,
+                  "promotions": []
+                }
+              ],
+              "nbHits": 779,
+              "queryID": "45a5587293609928eee2ee9829d49d0e"
+            }
+          },
+          {
+            "name": "showItems",
+            "input": {
+              "objectIDs": [
+                "44261",
+                "35718",
+                "35681",
+                "35528"
+              ],
+              "title": "Para que la ropa salga más limpia",
+              "explanation": "Combina detergente eficaz con quitamanchas para eliminar suciedad y manchas difíciles."
+            },
+            "output": {
+              "status": "Successfully showed items",
+              "products": [
+                {
+                  "objectID": "44261",
+                  "title": "Product 44261"
+                },
+                {
+                  "objectID": "35718",
+                  "title": "Product 35718"
+                },
+                {
+                  "objectID": "35681",
+                  "title": "Product 35681"
+                },
+                {
+                  "objectID": "35528",
+                  "title": "Product 35528"
+                }
+              ],
+              "title": "Para que la ropa salga más limpia",
+              "explanation": "Combina detergente eficaz con quitamanchas para eliminar suciedad y manchas difíciles."
+            }
+          }
+        ],
+        "checks": [
+          {
+            "label": "Searched products index",
+            "pass": true,
+            "detail": "1 search(es), queries: \"detergente ropa quitamanchas suavizante limpieza ropa\""
+          },
+          {
+            "label": "Called showItems",
+            "pass": true,
+            "detail": "4 product(s) shown"
+          },
+          {
+            "label": "Filters on new_consum_products",
+            "pass": true,
+            "detail": "[[\"categories.lvl0:Droguería y limpieza\"]]"
+          }
+        ],
+        "durationMs": 3428
+      }
+    ]
+  },
+  {
+    "journey": "Más proteína",
+    "group": "Non-Food & Goals",
+    "durationMs": 5099,
+    "turns": [
+      {
+        "userMessage": "Quiero comer más proteína",
+        "rubric": "Must search products. Must call showItems. Products should be high-protein items (meat, eggs, legumes, protein supplements, etc.)",
+        "assistantText": "",
+        "toolCalls": [
+          {
+            "name": "algolia_search_index",
+            "input": {
+              "index": "new_consum_products",
+              "query": "alto en proteínas",
+              "number_of_results": 4,
+              "facet_filters": [
+                [
+                  "enriched.dietaryTags:alto en proteínas"
+                ]
+              ]
+            },
+            "output": {
+              "hits": [
+                {
+                  "categories": {
+                    "lvl0": [
+                      "Horno"
+                    ],
+                    "lvl1": [
+                      "Pan de molde y rebanado"
+                    ],
+                    "lvl2": [],
+                    "lvl3": []
+                  },
+                  "enriched": {
+                    "description": "Delicioso pan rebanado con alto contenido en proteínas, ideal para un desayuno nutritivo.",
+                    "keywords": [
+                      "pan rebanado",
+                      "alto en proteínas",
+                      "desayuno",
+                      "merienda",
+                      "saludable",
+                      "pan integral",
+                      "fuente de energía",
+                      "snack"
+                    ],
+                    "dietaryTags": [
+                      "alto en proteínas"
+                    ],
+                    "useCases": [
+                      "desayuno",
+                      "merienda",
+                      "sándwiches",
+                      "acompañamiento de comidas"
+                    ]
+                  },
+                  "inStock": true,
+                  "promotions": [],
+                  "description": "Pan Rebanado con Alto Contenido en Proteínas",
+                  "title": "Pan Rebanado con Alto Contenido en Proteínas",
+                  "imageUrl": "https://cdn-consum.aktiosdigitalservices.com/tol/consum/media/product/img/135x135/7304629_001.jpg?t=20220331040005",
+                  "offer": false,
+                  "objectID": "17655",
+                  "_snippetResult": {
+                    "description": {
+                      "value": "Pan Rebanado con <em>Alto</em> Contenido en <em>Proteínas</em>",
+                      "matchLevel": "full"
+                    },
+                    "enriched": {
+                      "description": {
+                        "value": "Delicioso pan rebanado con <em>alto</em> contenido en <em>proteínas</em>, ideal para un desayuno nutritivo.",
+                        "matchLevel": "full"
+                      }
+                    }
+                  },
+                  "brand": "",
+                  "price": 1.89,
+                  "normalPrice": 1.89,
+                  "priceUnit": 6.3,
+                  "unit": "1 Kg",
+                  "groups": []
+                }
+              ],
+              "nbHits": 1,
+              "queryID": "5026e75515ed516d3604ef16c6c264e6"
+            }
+          },
+          {
+            "name": "showItems",
+            "input": {
+              "objectIDs": [
+                "17655"
+              ],
+              "title": "Opciones altas en proteína",
+              "explanation": "Perfectas para aumentar tu ingesta diaria de proteína de forma fácil."
+            },
+            "output": {
+              "status": "Successfully showed items",
+              "products": [
+                {
+                  "objectID": "17655",
+                  "title": "Product 17655"
+                }
+              ],
+              "title": "Opciones altas en proteína",
+              "explanation": "Perfectas para aumentar tu ingesta diaria de proteína de forma fácil."
+            }
+          }
+        ],
+        "checks": [
+          {
+            "label": "Searched products index",
+            "pass": true,
+            "detail": "1 search(es), queries: \"alto en proteínas\""
+          },
+          {
+            "label": "Called showItems",
+            "pass": true,
+            "detail": "1 product(s) shown"
+          },
+          {
+            "label": "Filters on new_consum_products",
+            "pass": true,
+            "detail": "[[\"enriched.dietaryTags:alto en proteínas\"]]"
+          }
+        ],
+        "durationMs": 5099
+      }
+    ]
+  }
+]
