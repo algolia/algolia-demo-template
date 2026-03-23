@@ -206,34 +206,34 @@ Open the **AI Assistant** (brain icon in navbar) for all the following. Each dem
 
 ## Use Case Coverage Map
 
-| # | Use Case | Demo Section |
-|---|----------|-------------|
-| 1 | "algo para hacer crema de verduras" | 4.1 |
-| 2 | "almuerzo saludable" | 4.1 (mention) |
-| 3 | "quiero hacer paella" → ingredients to cart | 4.2 |
-| 4 | "cena rápida para dos" | 4.2 (mention) |
-| 5 | "quiero preparar fajitas" | 4.2 |
-| 6 | "cena ligera esta noche" | 4.2 (similar to cena rápida) |
-| 7 | "cena para 10 personas" → adjust quantities | 4.2 |
-| 8 | "comida para niños pequeños" | 4.1 |
-| 9 | "tengo pollo y arroz, ¿qué puedo cocinar?" → missing ingredients | 4.2 |
-| 10 | "receta baja en grasas" + lactose restriction | 4.3 |
-| 11 | "productos sin gluten" | 4.3 |
-| 12 | "¿existe este producto pero sin gluten?" | 3.3 |
-| 13 | Query suggestions ("choc..." → "chocolate con leche") | 1.1 |
-| 14 | Search trends / seasonal inspiration | 1.2 (federated) |
-| 15 | Personalization by purchase history | 2.1 |
-| 16 | "quiero comer más proteína" | 4.1 |
-| 17 | "productos locales / proximidad" | (mention in 4.1) |
-| 18 | "cena rica por menos de 5 euros" | 4.4 |
-| 19 | "cesta barata para la semana" | 4.4 (similar to gastar menos) |
-| 20 | "opciones económicas de pescado" | 4.4 (mention) |
-| 21 | "quiero gastar menos este mes" | 4.4 |
-| 22 | "algo para limpiar la vitrocerámica" | 4.5 |
-| 23 | "bolsas para congelar" | 4.5 (mention) |
-| 24 | "cosas para organizar la nevera" | 4.5 (mention) |
-| 25 | "para que la ropa salga más limpia" | 4.5 |
-| 26 | "regalos para San Valentín" | (seasonal campaign, mention) |
+| # | Use Case | Translation | Demo Section |
+|---|----------|-------------|-------------|
+| 1 | "algo para hacer crema de verduras" | "something to make vegetable soup" | 4.1 |
+| 2 | "almuerzo saludable" | "healthy lunch" | 4.1 (mention) |
+| 3 | "quiero hacer paella" → ingredients to cart | "I want to make paella" | 4.2 |
+| 4 | "cena rápida para dos" | "quick dinner for two" | 4.2 (mention) |
+| 5 | "quiero preparar fajitas" | "I want to make fajitas" | 4.2 |
+| 6 | "cena ligera esta noche" | "light dinner tonight" | 4.2 (similar to cena rápida) |
+| 7 | "cena para 10 personas" → adjust quantities | "dinner for 10 people" | 4.2 |
+| 8 | "comida para niños pequeños" | "food for small children" | 4.1 |
+| 9 | "tengo pollo y arroz, ¿qué puedo cocinar?" → missing ingredients | "I have chicken and rice, what can I cook?" | 4.2 |
+| 10 | "receta baja en grasas" + lactose restriction | "low-fat recipe" | 4.3 |
+| 11 | "productos sin gluten" | "gluten-free products" | 4.3 |
+| 12 | "¿existe este producto pero sin gluten?" | "does this product exist but gluten-free?" | 3.3 |
+| 13 | Query suggestions ("choc..." → "chocolate con leche") | "milk chocolate" | 1.1 |
+| 14 | Search trends / seasonal inspiration | — | 1.2 (federated) |
+| 15 | Personalization by purchase history | — | 2.1 |
+| 16 | "quiero comer más proteína" | "I want to eat more protein" | 4.1 |
+| 17 | "productos locales / proximidad" | "local / nearby products" | (mention in 4.1) |
+| 18 | "cena rica por menos de 5 euros" | "tasty dinner for under 5 euros" | 4.4 |
+| 19 | "cesta barata para la semana" | "cheap basket for the week" | 4.4 (similar to gastar menos) |
+| 20 | "opciones económicas de pescado" | "budget fish options" | 4.4 (mention) |
+| 21 | "quiero gastar menos este mes" | "I want to spend less this month" | 4.4 |
+| 22 | "algo para limpiar la vitrocerámica" | "something to clean the glass cooktop" | 4.5 |
+| 23 | "bolsas para congelar" | "freezer bags" | 4.5 (mention) |
+| 24 | "cosas para organizar la nevera" | "things to organize the fridge" | 4.5 (mention) |
+| 25 | "para que la ropa salga más limpia" | "to get clothes cleaner" | 4.5 |
+| 26 | "regalos para San Valentín" | "Valentine's Day gifts" | (seasonal campaign, mention) |
 
 ---
 
