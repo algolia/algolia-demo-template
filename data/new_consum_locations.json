@@ -1,0 +1,200 @@
+[
+  {
+    "objectID": "consum-vlc-centro",
+    "name": "Consum Valencia Centro",
+    "city": "Valencia",
+    "address": "Calle Colón 48",
+    "region": "Valencia",
+    "postalCode": "46004",
+    "phone": "963 52 14 00",
+    "hours": "Lun-Sáb 9:00-21:30",
+    "_geoloc": { "lat": 39.4699, "lng": -0.3763 }
+  },
+  {
+    "objectID": "consum-vlc-benimaclet",
+    "name": "Consum Valencia Benimaclet",
+    "city": "Valencia",
+    "address": "Calle Dolores Marqués 12",
+    "region": "Valencia",
+    "postalCode": "46020",
+    "phone": "963 61 28 50",
+    "hours": "Lun-Sáb 9:00-21:30",
+    "_geoloc": { "lat": 39.4878, "lng": -0.3558 }
+  },
+  {
+    "objectID": "consum-vlc-ruzafa",
+    "name": "Consum Valencia Ruzafa",
+    "city": "Valencia",
+    "address": "Calle Sueca 27",
+    "region": "Valencia",
+    "postalCode": "46006",
+    "phone": "963 74 05 20",
+    "hours": "Lun-Sáb 9:00-21:30",
+    "_geoloc": { "lat": 39.4610, "lng": -0.3725 }
+  },
+  {
+    "objectID": "consum-paterna",
+    "name": "Consum Paterna",
+    "city": "Paterna",
+    "address": "Avda. Feria de Muestras 3",
+    "region": "Valencia",
+    "postalCode": "46980",
+    "phone": "961 37 42 10",
+    "hours": "Lun-Sáb 9:00-21:30",
+    "_geoloc": { "lat": 39.5028, "lng": -0.4406 }
+  },
+  {
+    "objectID": "consum-torrent",
+    "name": "Consum Torrent",
+    "city": "Torrent",
+    "address": "Avda. al Vedat 15",
+    "region": "Valencia",
+    "postalCode": "46900",
+    "phone": "961 55 83 40",
+    "hours": "Lun-Sáb 9:00-21:30",
+    "_geoloc": { "lat": 39.4365, "lng": -0.4654 }
+  },
+  {
+    "objectID": "consum-gandia",
+    "name": "Consum Gandía",
+    "city": "Gandía",
+    "address": "Calle Mayor 56",
+    "region": "Valencia",
+    "postalCode": "46700",
+    "phone": "962 87 14 60",
+    "hours": "Lun-Sáb 9:00-21:30",
+    "_geoloc": { "lat": 38.9680, "lng": -0.1812 }
+  },
+  {
+    "objectID": "consum-alc-centro",
+    "name": "Consum Alicante Centro",
+    "city": "Alicante",
+    "address": "Avda. Maisonnave 22",
+    "region": "Alicante",
+    "postalCode": "03003",
+    "phone": "965 14 32 70",
+    "hours": "Lun-Sáb 9:00-21:30",
+    "_geoloc": { "lat": 38.3452, "lng": -0.4910 }
+  },
+  {
+    "objectID": "consum-elche",
+    "name": "Consum Elche",
+    "city": "Elche",
+    "address": "Calle Corredora 18",
+    "region": "Alicante",
+    "postalCode": "03201",
+    "phone": "966 61 25 80",
+    "hours": "Lun-Sáb 9:00-21:30",
+    "_geoloc": { "lat": 38.2669, "lng": -0.6983 }
+  },
+  {
+    "objectID": "consum-benidorm",
+    "name": "Consum Benidorm",
+    "city": "Benidorm",
+    "address": "Avda. del Mediterráneo 10",
+    "region": "Alicante",
+    "postalCode": "03501",
+    "phone": "965 85 47 30",
+    "hours": "Lun-Sáb 9:00-21:30",
+    "_geoloc": { "lat": 38.5410, "lng": -0.1225 }
+  },
+  {
+    "objectID": "consum-alcoy",
+    "name": "Consum Alcoy",
+    "city": "Alcoy",
+    "address": "Calle San Nicolás 35",
+    "region": "Alicante",
+    "postalCode": "03801",
+    "phone": "965 54 18 90",
+    "hours": "Lun-Sáb 9:00-21:30",
+    "_geoloc": { "lat": 38.6985, "lng": -0.4737 }
+  },
+  {
+    "objectID": "consum-cs-centro",
+    "name": "Consum Castellón Centro",
+    "city": "Castellón de la Plana",
+    "address": "Calle Enmedio 42",
+    "region": "Castellón",
+    "postalCode": "12001",
+    "phone": "964 23 56 10",
+    "hours": "Lun-Sáb 9:00-21:30",
+    "_geoloc": { "lat": 39.9864, "lng": -0.0513 }
+  },
+  {
+    "objectID": "consum-burriana",
+    "name": "Consum Burriana",
+    "city": "Burriana",
+    "address": "Calle San Blas 8",
+    "region": "Castellón",
+    "postalCode": "12530",
+    "phone": "964 51 07 40",
+    "hours": "Lun-Sáb 9:00-21:00",
+    "_geoloc": { "lat": 39.8893, "lng": -0.0849 }
+  },
+  {
+    "objectID": "consum-vinaros",
+    "name": "Consum Vinaròs",
+    "city": "Vinaròs",
+    "address": "Avda. de Barcelona 20",
+    "region": "Castellón",
+    "postalCode": "12500",
+    "phone": "964 45 32 80",
+    "hours": "Lun-Sáb 9:00-21:00",
+    "_geoloc": { "lat": 40.4706, "lng": 0.4753 }
+  },
+  {
+    "objectID": "consum-mur-centro",
+    "name": "Consum Murcia Centro",
+    "city": "Murcia",
+    "address": "Gran Vía Salzillo 14",
+    "region": "Murcia",
+    "postalCode": "30004",
+    "phone": "968 21 73 50",
+    "hours": "Lun-Sáb 9:00-21:30",
+    "_geoloc": { "lat": 37.9922, "lng": -1.1307 }
+  },
+  {
+    "objectID": "consum-cartagena",
+    "name": "Consum Cartagena",
+    "city": "Cartagena",
+    "address": "Calle Mayor 30",
+    "region": "Murcia",
+    "postalCode": "30201",
+    "phone": "968 50 64 20",
+    "hours": "Lun-Sáb 9:00-21:30",
+    "_geoloc": { "lat": 37.6000, "lng": -0.9863 }
+  },
+  {
+    "objectID": "consum-lorca",
+    "name": "Consum Lorca",
+    "city": "Lorca",
+    "address": "Avda. Juan Carlos I 5",
+    "region": "Murcia",
+    "postalCode": "30800",
+    "phone": "968 46 91 30",
+    "hours": "Lun-Sáb 9:00-21:00",
+    "_geoloc": { "lat": 37.6714, "lng": -1.7012 }
+  },
+  {
+    "objectID": "consum-albacete",
+    "name": "Consum Albacete",
+    "city": "Albacete",
+    "address": "Calle Marqués de Molins 6",
+    "region": "Castilla-La Mancha",
+    "postalCode": "02001",
+    "phone": "967 21 48 60",
+    "hours": "Lun-Sáb 9:00-21:00",
+    "_geoloc": { "lat": 38.9942, "lng": -1.8564 }
+  },
+  {
+    "objectID": "consum-cuenca",
+    "name": "Consum Cuenca",
+    "city": "Cuenca",
+    "address": "Calle Carretería 15",
+    "region": "Castilla-La Mancha",
+    "postalCode": "16001",
+    "phone": "969 23 17 40",
+    "hours": "Lun-Sáb 9:00-21:00",
+    "_geoloc": { "lat": 40.0704, "lng": -2.1374 }
+  }
+]

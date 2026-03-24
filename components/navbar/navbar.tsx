@@ -12,6 +12,7 @@ import { LiveSearchBar } from "./live-search-bar";
 import { UserSelector } from "./user-selector";
 import { useSidepanel } from "@/components/sidepanel-agent-studio/context/sidepanel-context";
 import { useSelection } from "@/components/selection/selection-context";
+import { ShopIndicator } from "@/components/click-collect/shop-indicator";
 import { ALGOLIA_CONFIG } from "@/lib/algolia-config";
 
 export function NavBar() {
@@ -24,9 +25,10 @@ export function NavBar() {
       <div className="flex flex-col md:flex-row md:h-16 md:items-center gap-3 px-4 py-3 md:py-0">
         {/* Desktop layout */}
         <div className="hidden md:flex items-center w-full gap-4">
-          {/* Left section: Category button */}
-          <div className="shrink-0">
+          {/* Left section: Category button + Shop */}
+          <div className="shrink-0 flex items-center gap-2">
             <CategoriesSheet />
+            <ShopIndicator />
           </div>
 
           {/* Center section: Logo and Search */}
@@ -69,7 +71,10 @@ export function NavBar() {
         {/* Mobile layout */}
         <div className="md:hidden flex flex-col gap-2 w-full">
           <div className="flex items-center justify-between w-full">
-            <CategoriesSheet />
+            <div className="flex items-center gap-1">
+              <CategoriesSheet />
+              <ShopIndicator />
+            </div>
             <Link href="/" className="font-bold text-xl text-primary shrink-0">
               <Logo />
             </Link>

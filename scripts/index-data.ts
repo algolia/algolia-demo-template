@@ -159,13 +159,17 @@ async function main() {
   }
   const productRules = readJsonFile(`data/${INDEX_NAME}.rules.json`);
   if (productRules && productRules.length > 0) {
-    await client.saveRules({
-      indexName: INDEX_NAME,
-      rules: productRules as Parameters<typeof client.saveRules>[0]["rules"],
-      forwardToReplicas: false,
-      clearExistingRules: true,
-    });
-    console.log(`Restored ${productRules.length} rules for ${INDEX_NAME}`);
+    try {
+      await client.saveRules({
+        indexName: INDEX_NAME,
+        rules: productRules as Parameters<typeof client.saveRules>[0]["rules"],
+        forwardToReplicas: false,
+        clearExistingRules: true,
+      });
+      console.log(`Restored ${productRules.length} rules for ${INDEX_NAME}`);
+    } catch (e) {
+      console.warn(`  Warning: could not restore rules for ${INDEX_NAME}:`, (e as Error).message);
+    }
   }
 
   console.log("Done! Indexed", records.length, "products to", INDEX_NAME);
@@ -175,6 +179,7 @@ async function main() {
     ALGOLIA_CONFIG.RECIPES_INDEX,
     ALGOLIA_CONFIG.GUIDES_INDEX,
     ALGOLIA_CONFIG.SUGGESTIONS_INDEX,
+    ALGOLIA_CONFIG.LOCATIONS_INDEX,
   ];
   for (const idx of secondaryIndices) {
     await restoreIndex(client, idx);

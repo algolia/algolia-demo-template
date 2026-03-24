@@ -49,6 +49,13 @@ export interface Product {
   promotions: string[];
   highlighted: boolean;
 
+  // Shop availability (click & collect)
+  shopAvailability?: Array<{
+    shopId: string;
+    inStock: boolean;
+    qty: number;
+  }>;
+
   // AI-enriched data
   enriched?: {
     description: string;

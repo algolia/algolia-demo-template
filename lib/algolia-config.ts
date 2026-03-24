@@ -7,4 +7,5 @@ export const ALGOLIA_CONFIG = {
   RECIPES_INDEX: "new_consum_recipes",
   GUIDES_INDEX: "new_consum_guides",
   SUGGESTIONS_INDEX: "new_consum_products_query_suggestions",
+  LOCATIONS_INDEX: "new_consum_locations",
 };

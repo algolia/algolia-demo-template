@@ -99,6 +99,7 @@ import { cn } from "@/lib/utils";
 import { formatPrice } from "@/lib/utils/format";
 import { getPriceInfo, getPreferredCategory } from "@/lib/utils/product";
 import { ALGOLIA_CONFIG } from "@/lib/algolia-config";
+import { AvailabilityBadge } from "@/components/click-collect/availability-badge";
 
 function getHighestCategoryLevel(
   hierarchicalCategories: Product["hierarchicalCategories"]
@@ -372,9 +373,10 @@ function QuantityControls({
 interface SelectionCheckboxProps {
   product: Product;
   compact?: boolean;
+  hasSmartGroupBadge?: boolean;
 }
 
-function SelectionCheckbox({ product, compact = false }: SelectionCheckboxProps) {
+function SelectionCheckbox({ product, compact = false, hasSmartGroupBadge = false }: SelectionCheckboxProps) {
   const { isSelected, toggleSelection } = useSelection();
   const productId = product.objectID;
   const selected = isSelected(productId);
@@ -395,7 +397,7 @@ function SelectionCheckbox({ product, compact = false }: SelectionCheckboxProps)
 
   return (
     <div
-      className="absolute top-2 left-2 z-10"
+      className={cn("absolute left-2 z-10", hasSmartGroupBadge ? "top-8" : "top-2")}
       onClick={handleToggle}
     >
       <Checkbox
@@ -448,7 +450,7 @@ export function ProductCard({ product, showCartControls = true, showBadges = tru
       )}
     >
       <SmartGroupBadge product={product} />
-      {selectable && <SelectionCheckbox product={product} />}
+      {selectable && <SelectionCheckbox product={product} hasSmartGroupBadge={!!smartGroupKey} />}
       {showBadges && <ProductBadges product={product} />}
       {showCartControls && (
         <QuantityControls
@@ -483,6 +485,7 @@ export function ProductCard({ product, showCartControls = true, showBadges = tru
             </span>
           </div>
         )}
+        <AvailabilityBadge product={product} className="absolute bottom-2 right-2 z-10" />
       </div>
       <div className="p-4">
         <h3 className="font-semibold text-lg mb-2">{productName}</h3>
@@ -561,7 +564,7 @@ export function ProductListItem({ product, showCartControls = true, showBadges =
       )}
     >
       <SmartGroupBadge product={product} />
-      {selectable && <SelectionCheckbox product={product} />}
+      {selectable && <SelectionCheckbox product={product} hasSmartGroupBadge={!!smartGroupKey} />}
       {showBadges && <ProductBadges product={product} />}
       {showCartControls && (
         <QuantityControls
@@ -595,6 +598,7 @@ export function ProductListItem({ product, showCartControls = true, showBadges =
             </span>
           </div>
         )}
+        <AvailabilityBadge product={product} className="absolute bottom-0 right-0 z-10 text-[10px] px-1 py-0.5 rounded-tl-md rounded-br-md" />
       </div>
       <div className="flex-1 min-w-0">
         {product.brand && (

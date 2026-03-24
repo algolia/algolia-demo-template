@@ -29,7 +29,8 @@
     "offer",
     "filterOnly(price)",
     "promotions",
-    "unit"
+    "unit",
+    "filterOnly(shopAvailability.shopId)"
   ],
   "attributesToHighlight": [
     "title",
@@ -63,7 +64,8 @@
     "enriched.description",
     "enriched.keywords",
     "enriched.dietaryTags",
-    "enriched.useCases"
+    "enriched.useCases",
+    "shopAvailability"
   ],
   "attributesToSnippet": [
     "description:50",

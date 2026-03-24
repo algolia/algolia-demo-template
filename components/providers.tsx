@@ -7,6 +7,8 @@ import { NavBar } from "@/components/navbar/navbar";
 import { SidepanelProvider } from "@/components/sidepanel-agent-studio/context/sidepanel-context";
 import { SelectionProvider } from "@/components/selection/selection-context";
 import { UserProvider, useUser } from "@/components/user/user-context";
+import { ClickCollectProvider, useClickCollect } from "@/components/click-collect/click-collect-context";
+import { ShopSelectorSheet } from "@/components/click-collect/shop-selector-sheet";
 import { compositionClient } from "@algolia/composition";
 import { ALGOLIA_CONFIG } from "@/lib/algolia-config";
 
@@ -23,16 +25,19 @@ const searchClient = compositionClient(
  */
 function PersonalizedConfigure() {
   const { personalizationFilters, currentUser } = useUser();
+  const { shopBoostFilters, currentShop } = useClickCollect();
   const { refresh } = useInstantSearch();
   const prevUserIdRef = useRef<string | null>(null);
+  const prevShopIdRef = useRef<string | null>(null);
 
-  // Use user preferences as optionalFilters
+  // Merge user preferences + shop boost into optionalFilters
   const optionalFilters = useMemo(() => {
-    if (personalizationFilters && personalizationFilters.length > 0) {
-      return personalizationFilters;
-    }
-    return undefined;
-  }, [personalizationFilters]);
+    const filters: string[] = [
+      ...(personalizationFilters || []),
+      ...shopBoostFilters,
+    ];
+    return filters.length > 0 ? filters : undefined;
+  }, [personalizationFilters, shopBoostFilters]);
 
   // Configure personalization
   useConfigure({
@@ -40,20 +45,23 @@ function PersonalizedConfigure() {
     optionalFilters,
   });
 
-  // Refresh search when user changes
+  // Refresh search when user or shop changes
   useEffect(() => {
     const currentUserId = currentUser?.id ?? null;
+    const currentShopId = currentShop?.objectID ?? null;
 
     const userChanged =
       prevUserIdRef.current !== null && prevUserIdRef.current !== currentUserId;
+    const shopChanged =
+      prevShopIdRef.current !== null && prevShopIdRef.current !== currentShopId;
 
-    // Only refresh if user actually changed (not on initial mount)
-    if (userChanged) {
+    if (userChanged || shopChanged) {
       refresh();
     }
 
     prevUserIdRef.current = currentUserId;
-  }, [currentUser?.id, refresh]);
+    prevShopIdRef.current = currentShopId;
+  }, [currentUser?.id, currentShop?.objectID, refresh]);
 
   return null;
 }
@@ -62,24 +70,27 @@ export function Providers({ children }: { children: ReactNode }) {
   return (
     <CartProvider>
       <UserProvider>
-        <SelectionProvider>
-          <SidepanelProvider>
-          <InstantSearch
-            compositionID={ALGOLIA_CONFIG.COMPOSITION_ID}
-            searchClient={searchClient}
-            future={{
-              preserveSharedStateOnUnmount: true,
-            }}
-            routing={true}
-          >
-            <PersonalizedConfigure />
-            <Suspense fallback={<NavBarSkeleton />}>
-              <NavBar />
-            </Suspense>
-            {children}
-          </InstantSearch>
-          </SidepanelProvider>
-        </SelectionProvider>
+        <ClickCollectProvider>
+          <SelectionProvider>
+            <SidepanelProvider>
+            <InstantSearch
+              compositionID={ALGOLIA_CONFIG.COMPOSITION_ID}
+              searchClient={searchClient}
+              future={{
+                preserveSharedStateOnUnmount: true,
+              }}
+              routing={true}
+            >
+              <PersonalizedConfigure />
+              <Suspense fallback={<NavBarSkeleton />}>
+                <NavBar />
+              </Suspense>
+              {children}
+            </InstantSearch>
+            </SidepanelProvider>
+          </SelectionProvider>
+          <ShopSelectorSheet />
+        </ClickCollectProvider>
       </UserProvider>
     </CartProvider>
   );

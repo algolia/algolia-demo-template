@@ -14,6 +14,7 @@ import {
   Truck,
   RotateCcw,
   Shield,
+  MapPin,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Product } from "@/lib/types/product";
@@ -23,6 +24,7 @@ import ProductAskAI from "@/components/sidepanel-agent-studio/components/product
 import ProductRecommendations from "@/components/ProductRecommendations";
 import { useCart } from "@/components/cart/cart-context";
 import { CATEGORY_NAME_TO_SLUG } from "@/lib/demo-config/categories";
+import { useClickCollect } from "@/components/click-collect/click-collect-context";
 
 interface ProductPageProps {
   product: Product;
@@ -33,6 +35,7 @@ export default function ProductPage({ product }: ProductPageProps) {
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const { addItem } = useCart();
+  const { currentShop, getProductAvailability, openShopSelector } = useClickCollect();
 
   const images = product.imageUrl ? [product.imageUrl] : [];
   const productName = product.title || "Untitled Product";
@@ -289,6 +292,60 @@ export default function ProductPage({ product }: ProductPageProps) {
                 <Share2 className="w-5 h-5" />
               </Button>
             </div>
+
+            {/* Shop Availability */}
+            {currentShop ? (
+              <div className="flex items-center gap-3 pt-4 border-t border-border">
+                <MapPin className="w-5 h-5 text-primary shrink-0" />
+                <div className="flex-1">
+                  {(() => {
+                    const availability = getProductAvailability(product);
+                    if (!availability || !availability.inStock) {
+                      return (
+                        <div>
+                          <span className="inline-flex items-center gap-1.5 text-sm font-medium text-red-600">
+                            <span className="size-2 rounded-full bg-red-500" />
+                            No disponible en {currentShop.name}
+                          </span>
+                        </div>
+                      );
+                    }
+                    if (availability.qty < 5) {
+                      return (
+                        <div>
+                          <span className="inline-flex items-center gap-1.5 text-sm font-medium text-orange-600">
+                            <span className="size-2 rounded-full bg-orange-500" />
+                            Stock limitado en {currentShop.name}
+                          </span>
+                        </div>
+                      );
+                    }
+                    return (
+                      <div>
+                        <span className="inline-flex items-center gap-1.5 text-sm font-medium text-green-600">
+                          <span className="size-2 rounded-full bg-green-500" />
+                          Disponible en {currentShop.name}
+                        </span>
+                        <p className="text-xs text-muted-foreground mt-0.5">Recogida en tienda disponible</p>
+                      </div>
+                    );
+                  })()}
+                </div>
+                <Button variant="link" size="sm" onClick={openShopSelector} className="text-xs shrink-0">
+                  Cambiar tienda
+                </Button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-3 pt-4 border-t border-border">
+                <MapPin className="w-5 h-5 text-muted-foreground shrink-0" />
+                <span className="text-sm text-muted-foreground">
+                  Selecciona una tienda para ver disponibilidad
+                </span>
+                <Button variant="link" size="sm" onClick={openShopSelector} className="text-xs shrink-0">
+                  Seleccionar tienda
+                </Button>
+              </div>
+            )}
 
             {/* Trust Badges */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-border">

@@ -1,0 +1,22 @@
+{
+  "searchableAttributes": [
+    "name",
+    "city",
+    "address",
+    "region"
+  ],
+  "attributesForFaceting": [
+    "searchable(city)",
+    "searchable(region)"
+  ],
+  "ranking": [
+    "typo",
+    "geo",
+    "words",
+    "filters",
+    "proximity",
+    "attribute",
+    "exact",
+    "custom"
+  ]
+}
