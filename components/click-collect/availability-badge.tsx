@@ -42,7 +42,7 @@ export function AvailabilityBadge({
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2 py-1 rounded-full bg-green-600 text-white border-2 border-green-700 shadow-md ${className}`}
+      className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2 py-1 rounded-full bg-emerald-700 text-white border-2 border-emerald-800 shadow-md ${className}`}
     >
       <span className="size-1.5 rounded-full bg-white" />
       Disponible en tienda
