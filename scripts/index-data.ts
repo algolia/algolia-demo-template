@@ -8,12 +8,69 @@ const ALGOLIA_ADMIN_KEY = process.env.ALGOLIA_ADMIN_API_KEY!;
 const INDEX_NAME = ALGOLIA_CONFIG.INDEX_NAME;
 const COMPOSITION_ID = ALGOLIA_CONFIG.COMPOSITION_ID || `${INDEX_NAME}_composition`;
 
+/**
+ * Transform: reshape raw source data to match the Product interface.
+ * Field mappings, restructuring, and synthetic data generation go here.
+ * Populated by /data-structure skill per demo.
+ */
+function transformRecords(
+  records: Record<string, unknown>[]
+): Record<string, unknown>[] {
+  // Identity transform — replace with field mappings per demo
+  // Example:
+  //   return records.map((r) => ({
+  //     ...r,
+  //     name: r.title,
+  //     primary_image: r.image,
+  //     price: { value: Number(r.price) },
+  //   }));
+  return records;
+}
+
+/**
+ * Enrich: add computed or AI-generated fields.
+ * Enriched fields use the _enriched namespace, then get promoted
+ * to top-level record fields for indexing.
+ * Can use OpenAI structured outputs, other APIs, scraping, etc.
+ * Populated by /data-structure skill per demo.
+ *
+ * @see https://developers.openai.com/api/docs/guides/structured-outputs
+ */
+async function enrichRecords(
+  records: Record<string, unknown>[]
+): Promise<Record<string, unknown>[]> {
+  // No-op — replace with enrichment logic per demo
+  // Example with OpenAI structured outputs:
+  //   import OpenAI from "openai";
+  //   import { zodResponseFormat } from "openai/helpers/zod";
+  //   const EnrichedFields = z.object({
+  //     keywords: z.array(z.string()),
+  //     semantic_attributes: z.string(),
+  //   });
+  //   for (const record of records) {
+  //     const result = await openai.beta.chat.completions.parse({ ... });
+  //     record._enriched = result.choices[0].message.parsed;
+  //     Object.assign(record, record._enriched);
+  //   }
+  return records;
+}
+
 async function main() {
   const feedPath = process.argv[2] || "data/products.json";
   console.log(`Reading JSON feed from ${feedPath}...`);
   const raw = readFileSync(feedPath, "utf-8");
   const records: Record<string, unknown>[] = JSON.parse(raw);
   console.log(`Loaded ${records.length} products`);
+
+  // Transform raw records to match Product interface
+  console.log("Transforming records...");
+  const transformed = transformRecords(records);
+  console.log(`Transformed ${transformed.length} records`);
+
+  // Enrich records with computed/AI-generated fields
+  console.log("Enriching records...");
+  const enriched = await enrichRecords(transformed);
+  console.log(`Enriched ${enriched.length} records`);
 
   if (!ALGOLIA_APP_ID || !ALGOLIA_ADMIN_KEY) {
     console.error("Missing ALGOLIA_APP_ID or ALGOLIA_ADMIN_API_KEY");
@@ -24,7 +81,7 @@ async function main() {
   const client = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_ADMIN_KEY);
 
   // Populate categoryPageId from hierarchical_categories for category page filtering
-  for (const record of records) {
+  for (const record of enriched) {
     const hc = record.hierarchical_categories as
       | Record<string, string>
       | undefined;
@@ -42,14 +99,14 @@ async function main() {
   const BATCH_SIZE = 1000;
   let indexed = 0;
 
-  for (let i = 0; i < records.length; i += BATCH_SIZE) {
-    const batch = records.slice(i, i + BATCH_SIZE);
+  for (let i = 0; i < enriched.length; i += BATCH_SIZE) {
+    const batch = enriched.slice(i, i + BATCH_SIZE);
     await client.saveObjects({
       indexName: INDEX_NAME,
       objects: batch,
     });
     indexed += batch.length;
-    console.log(`Indexed ${indexed}/${records.length} products`);
+    console.log(`Indexed ${indexed}/${enriched.length} products`);
   }
 
   console.log("Configuring index settings...");
@@ -135,7 +192,7 @@ async function main() {
     },
   });
 
-  console.log("Done! Indexed", records.length, "products to", INDEX_NAME);
+  console.log("Done! Indexed", enriched.length, "products to", INDEX_NAME);
 
   // Create or update the composition
   console.log(`Creating/updating composition (${COMPOSITION_ID})...`);

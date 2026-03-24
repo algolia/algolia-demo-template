@@ -42,6 +42,15 @@ Invoke the `/demo-scrape` skill, which handles the full scraping workflow and sa
 ### No data
 Skip — inform the user they can add data later and re-run this skill.
 
+## Step 1.5: Analyze & Prepare Data Structure (recommended)
+
+Invoke `/data-structure` to analyze the data against the Product interface and generate transform/enrich functions in `scripts/index-data.ts`.
+
+Skip if:
+- Data is already in the expected Product format (e.g., downloaded from this template's own index)
+- The user explicitly says the data is ready as-is
+- `transformRecords()` and `enrichRecords()` in `scripts/index-data.ts` are already populated
+
 ## Step 2: Index Data
 
 ```bash
