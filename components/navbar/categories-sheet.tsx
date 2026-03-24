@@ -107,22 +107,7 @@ export function CategoriesSheet() {
 
   const buildPath = (level: number, slug: string): string => {
     const pathSlugs = [...activePath.slice(0, level), slug];
-    const pathNames: string[] = [];
-
-    const rootCategory = HIERARCHICAL_CATEGORIES[pathSlugs[0]];
-    if (rootCategory) {
-      pathNames.push(rootCategory.name);
-
-      let current: CategoryNode | undefined = rootCategory;
-      for (let i = 1; i < pathSlugs.length && current?.children; i++) {
-        current = current.children[pathSlugs[i]];
-        if (current) {
-          pathNames.push(current.name);
-        }
-      }
-    }
-
-    return `/category/${pathNames.join("/")}`;
+    return `/category/${pathSlugs.join("/")}`;
   };
 
   const level1Children = getChildrenAtLevel(1);
@@ -203,7 +188,7 @@ export function CategoriesSheet() {
                           </button>
                         ) : (
                           <Link
-                            href={`/category/${category.name}`}
+                            href={`/category/${category.slug}`}
                             onClick={handleLinkClick}
                             className="flex w-full items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-muted"
                           >
@@ -330,7 +315,7 @@ export function CategoriesSheet() {
                   return (
                     <li key={category.slug} onMouseEnter={() => handleMouseEnter(category.slug, 0)}>
                       <Link
-                        href={`/category/${category.name}`}
+                        href={`/category/${category.slug}`}
                         className={cn(
                           "flex items-center justify-between gap-3 rounded-lg px-3 py-3 transition-colors",
                           isActive

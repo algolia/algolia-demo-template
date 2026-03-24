@@ -1,0 +1,1450 @@
+[
+  {
+    "id": "watermelon",
+    "title": "Watermelon",
+    "slug": "watermelon",
+    "url": "https://www.consum.es/en/guides/watermelon/",
+    "category": "Fruits",
+    "description": "Properties and benefits:  \nwatermelon Watermelon is the fruit of the watermelon, a herbaceous plant with creeping, hairy stems belonging to the Cucurbitaceae family. This very large, spherical fruit is made up of a hard green rind, which surrounds a sweet and juicy pulp that is more or less reddish in color and can vary depending on the type of fruit. Inside you can find various small seeds that can vary depending on the type of fruit. Varieties grown in recent years have evolved into seedless w",
+    "properties": "Some benefits you didn't know about taking \nwatermelon",
+    "nutritionalInfo": {
+      "calories": 21,
+      "fats": 0,
+      "proteins": 0,
+      "carbohydrates": 4.5
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/sandias.jpg?itok=gHkLnZxQ",
+    "tags": [
+      "Fruits",
+      "watermelon"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "0-50",
+    "proteinLevel": "Low (<2g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "watermelon"
+  },
+  {
+    "id": "strawberry",
+    "title": "Strawberry",
+    "slug": "strawberry",
+    "url": "https://www.consum.es/en/guides/strawberry/",
+    "category": "Fruits",
+    "description": "Properties and benefits:  \nstrawberry Strawberries and strawberries (its largest variety) are several species of creeping plants of the Fragaria genus, belonging to the Rosaceae family. Strawberries are characterized by being intensely red and conical in shape, with a crown of small green leaves on top. Rough to the touch, this fruit is a floral receptacle that contains a multitude of seeds called achenes.",
+    "properties": "Some benefits you didn't know about taking \nstrawberry",
+    "nutritionalInfo": {
+      "calories": 40,
+      "fats": 0.5,
+      "proteins": 0.7,
+      "carbohydrates": 7
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/fresas.jpg?itok=5IrvD99q",
+    "tags": [
+      "Fruits",
+      "strawberry"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "0-50",
+    "proteinLevel": "Low (<2g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "strawberry"
+  },
+  {
+    "id": "redcurrant",
+    "title": "Redcurrant",
+    "slug": "redcurrant",
+    "url": "https://www.consum.es/en/guides/redcurrant/",
+    "category": "Fruits",
+    "description": "Properties and benefits:  \nredcurrant The currant is the fruit that comes from a wild bush called currant bush, belonging to the saxifragaceae family. They are small round red fruits that grow in clusters and look similar to grapes, but much smaller in size. Currently we can find 3 different kinds of currants on the market, differentiated by their colour: red currants (the most common), black currants (more acidic than red) and white or pink currants (the less cultivated variety).",
+    "properties": "Some benefits you didn't know about taking \nredcurrant",
+    "nutritionalInfo": {
+      "calories": 32,
+      "fats": 0.2,
+      "proteins": 1.1,
+      "carbohydrates": 4.8
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/Grosella.jpg?itok=ZtNZiJm4",
+    "tags": [
+      "Fruits",
+      "redcurrant"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "0-50",
+    "proteinLevel": "Low (<2g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "redcurrant"
+  },
+  {
+    "id": "raspberry",
+    "title": "Raspberry",
+    "slug": "raspberry",
+    "url": "https://www.consum.es/en/guides/raspberry/",
+    "category": "Fruits",
+    "description": "Properties and benefits:  \nraspberry The raspberry is the fruit of a bush belonging to the Rosacea family and which grows in the wild in forests and fields. The raspberry is a polydrupe: in other words, it is a fruit made of up lots of small fruits or small velvety drupes that are inserted into the same receptacle. The texture of raspberries is fleshy and fine, they almost melt on your palate, they are a highly perfumed fruit with an acid taste. Together with strawberries, cherries, blackberries",
+    "properties": "Some benefits you didn't know about taking \nraspberry",
+    "nutritionalInfo": {
+      "calories": 40,
+      "fats": 0.3,
+      "proteins": 1.4,
+      "carbohydrates": 4.6
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/Frambuesa_0.jpg?itok=4khQf1_2",
+    "tags": [
+      "Fruits",
+      "raspberry"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "0-50",
+    "proteinLevel": "Low (<2g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "raspberry"
+  },
+  {
+    "id": "quince",
+    "title": "Quince",
+    "slug": "quince",
+    "url": "https://www.consum.es/en/guides/quince/",
+    "category": "Fruits",
+    "description": "Properties and benefits:  \nquince Quince is the fruit of the quince tree, belonging to the Rosaceae family. While the fruit is immature, its skin is green and has a dense light gray hair, which is lost once it has matured. When this fruit is ready to be harvested, it has a yellow skin and a very aromatic hard pulp. This fruit is native to Southwest Asia, but today we can find quince crops in different parts of the world. The quince season in our country is very short, since it takes place betwee",
+    "properties": "Some benefits you didn't know about taking \nquince",
+    "nutritionalInfo": {
+      "calories": 42,
+      "fats": 0,
+      "proteins": 0.4,
+      "carbohydrates": 6.8
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/Membrillo_0.jpg?itok=3HiscWta",
+    "tags": [
+      "Fruits",
+      "quince"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "0-50",
+    "proteinLevel": "Low (<2g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "quince"
+  },
+  {
+    "id": "pomegranate",
+    "title": "Pomegranate",
+    "slug": "pomegranate",
+    "url": "https://www.consum.es/en/guides/pomegranate/",
+    "category": "Fruits",
+    "description": "Properties and benefits:  \npomegranate The pomegranate is the fruit of the pomegranate shrub, a deciduous fruit shrub from the Punicoideae family. It is a globular berry with a hard peel and its inside is subdivided into several lobes. Its pulp is red, sweet, fleshy and juicy. It contains numerous seeds inside which are coated in sarcotesta and separated by membrane walls. Some benefits you didn't know about taking \npomegranate",
+    "properties": "Some benefits you didn't know about taking \npomegranate",
+    "nutritionalInfo": {
+      "calories": 34,
+      "fats": 0.1,
+      "proteins": 0.7,
+      "carbohydrates": 7.5
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/Granada_0.jpg?itok=8u6f6teT",
+    "tags": [
+      "Fruits",
+      "pomegranate"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "0-50",
+    "proteinLevel": "Low (<2g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "pomegranate"
+  },
+  {
+    "id": "plum",
+    "title": "Plum",
+    "slug": "plum",
+    "url": "https://www.consum.es/en/guides/plum/",
+    "category": "Fruits",
+    "description": "Properties and benefits:  \nplum <!--td {border: 1px solid #ccc;}br {mso-data-placement:same-cell;}-->\n\nPlum is the fruit obtained from the plum tree, belonging to the Rosaceae family. It is the common name given to the different species of the genus Prunus. It is a round drupe, with a stone inside and a fleshy and sweet interior. Some benefits you didn't know about taking \nplum",
+    "properties": "Some benefits you didn't know about taking \nplum",
+    "nutritionalInfo": {
+      "calories": 51,
+      "fats": 0,
+      "proteins": 0.6,
+      "carbohydrates": 11
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/ciruela.jpeg?itok=1u_oFKMG",
+    "tags": [
+      "Fruits",
+      "plum"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "50-100",
+    "proteinLevel": "Low (<2g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "plum"
+  },
+  {
+    "id": "pineapple",
+    "title": "Pineapple",
+    "slug": "pineapple",
+    "url": "https://www.consum.es/en/guides/pineapple/",
+    "category": "Fruits",
+    "description": "Properties and benefits:  \npineapple <!--td {border: 1px solid #ccc;}br {mso-data-placement:same-cell;}--> Pineapple is the composite fruit obtained from a perennial plant that belongs to the Bromeliaceae family.",
+    "properties": "Some benefits you didn't know about taking \npineapple",
+    "nutritionalInfo": {
+      "calories": 50,
+      "fats": 0,
+      "proteins": 0,
+      "carbohydrates": 11.5
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/Pi%C3%B1a_0.jpg?itok=5UxHC5Lj",
+    "tags": [
+      "Fruits",
+      "pineapple"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "50-100",
+    "proteinLevel": "Low (<2g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "pineapple"
+  },
+  {
+    "id": "persimmon",
+    "title": "Persimmon",
+    "slug": "persimmon",
+    "url": "https://www.consum.es/en/guides/persimmon/",
+    "category": "Fruits",
+    "description": "Properties and benefits:  \npersimmon Persimmon is the berry from a tropical tree from the Ebenaceae family of the same name. This fruit has a smooth, shiny and orange skin, although with some varieties the colour ranges from red to yellow. The flavour of the persimmon varies depending on its ripeness: while the pulp of the unripened fruit has a pungent taste, when the fruit is ripe it takes on a very sweet and smooth flavour.",
+    "properties": "Some benefits you didn't know about taking \npersimmon",
+    "nutritionalInfo": {
+      "calories": 73,
+      "fats": 0.3,
+      "proteins": 0.7,
+      "carbohydrates": 16
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/caquis.jpeg?itok=L1zQN15y",
+    "tags": [
+      "Fruits",
+      "persimmon"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "50-100",
+    "proteinLevel": "Low (<2g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "persimmon"
+  },
+  {
+    "id": "pear",
+    "title": "Pear",
+    "slug": "pear",
+    "url": "https://www.consum.es/en/guides/pear/",
+    "category": "Fruits",
+    "description": "Properties and benefits:  \npear The pear is the fruit of the pear tree, a tree of the Rosaceae family. This oval fruit is fleshy, with a thin green skin and a sweet, juicy pulp with a mealy texture. Today there are many natural and hybrid varieties of pear, some of which are sweeter than others. Depending on their color, they can be white, yellow, green, red or brown. In Spain, the best known and most cultivated species are: Aranjuez white or blanquilla, castell or San Juan pear, comice, confere",
+    "properties": "Some benefits you didn't know about taking \npear",
+    "nutritionalInfo": {
+      "calories": 49,
+      "fats": 0,
+      "proteins": 35.9,
+      "carbohydrates": 10.6
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/Pera_0.jpg?itok=AIv9rLZP",
+    "tags": [
+      "Fruits",
+      "pear"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "0-50",
+    "proteinLevel": "High (>5g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "pear"
+  },
+  {
+    "id": "peach",
+    "title": "Peach",
+    "slug": "peach",
+    "url": "https://www.consum.es/en/guides/peach/",
+    "category": "Fruits",
+    "description": "Properties and benefits:  \npeach The peach is the fruit of the peach tree, a tree belonging to the Rosaceae family. This fruit is a round drupe with a cleft in the center. Its skin is smooth, orange with reddish tones and velvety to the touch. Its pulp is fleshy and sweet and its interior contains a hard bone. Some benefits you didn't know about taking \npeach",
+    "properties": "Some benefits you didn't know about taking \npeach",
+    "nutritionalInfo": {
+      "calories": 41,
+      "fats": 0,
+      "proteins": 0.6,
+      "carbohydrates": 9
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/melocoton.jpg?itok=_sMNnK0n",
+    "tags": [
+      "Fruits",
+      "peach"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "0-50",
+    "proteinLevel": "Low (<2g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "peach"
+  },
+  {
+    "id": "orange",
+    "title": "Orange",
+    "slug": "orange",
+    "url": "https://www.consum.es/en/guides/orange/",
+    "category": "Fruits",
+    "description": "Properties and benefits:  \norange The orange is the fruit of the sweet orange tree, a citrus tree of the Rutaceae family. This fruit has a round appearance with a firm and shiny orange skin. Its pulp is made up of numerous vesicles filled with juice. The flavor of this fruit varies from acid to sweet. The orange has its origin in the southwest of China, and currently its cultivation is concentrated in the areas bathed by the Mediterranean Sea, such as Spain. This fruit is considered winter, sinc",
+    "properties": "Some benefits you didn't know about taking \norange",
+    "nutritionalInfo": {
+      "calories": 42,
+      "fats": 0,
+      "proteins": 0.8,
+      "carbohydrates": 8.6
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/naranjas.jpeg?itok=6lpgqrDA",
+    "tags": [
+      "Fruits",
+      "orange"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "0-50",
+    "proteinLevel": "Low (<2g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "orange"
+  },
+  {
+    "id": "mulberry",
+    "title": "Mulberry",
+    "slug": "mulberry",
+    "url": "https://www.consum.es/en/guides/mulberry/",
+    "category": "Fruits",
+    "description": "Properties and benefits:  \nmulberry <!--td {border: 1px solid #ccc;}br {mso-data-placement:same-cell;}--> The blackberry is the berry fruit of the mulberry tree, a tree that belongs to the Rosaceae family. This fruit, which is made up of glomeruli, has a globular appearance and its color varies as it matures, thus indicating the optimal time for harvesting.",
+    "properties": "Some benefits you didn't know about taking \nmulberry",
+    "nutritionalInfo": {
+      "calories": 39,
+      "fats": 0,
+      "proteins": 0.9,
+      "carbohydrates": 5.1
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/Mora_0.jpg?itok=2heZwlHn",
+    "tags": [
+      "Fruits",
+      "mulberry"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "0-50",
+    "proteinLevel": "Low (<2g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "mulberry"
+  },
+  {
+    "id": "melon",
+    "title": "Melon",
+    "slug": "melon",
+    "url": "https://www.consum.es/en/guides/melon/",
+    "category": "Fruits",
+    "description": "Properties and benefits:  \nmelon The melon is the fruit of the melonera, a herbaceous plant with a creeping stem of the Cucurbitaceae family. It is a globose, round or elongated fruit with a reticulated rind whose color varies in different shades of green. Its pulp is aromatic, juicy, sweet and white or yellow, depending on the variety. Some benefits you didn't know about taking \nmelon",
+    "properties": "Some benefits you didn't know about taking \nmelon",
+    "nutritionalInfo": {
+      "calories": 28,
+      "fats": 0,
+      "proteins": 0.6,
+      "carbohydrates": 6
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/melon.jpg?itok=MujPr3pR",
+    "tags": [
+      "Fruits",
+      "melon"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "0-50",
+    "proteinLevel": "Low (<2g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "melon"
+  },
+  {
+    "id": "mandarin",
+    "title": "Mandarin",
+    "slug": "mandarin",
+    "url": "https://www.consum.es/en/guides/mandarin/",
+    "category": "Fruits",
+    "description": "Properties and benefits:  \nmandarin The tangerine is the fruit of the mandarin, belonging to the Rutaceae family. This is a fruit similar to orange, but smaller, with a thinner skin and flattened at its base. Its bark is smooth, shiny, red-orange in color and very easy to peel. Its pulp is made up of numerous vesicles filled with very sweet juice. In the market we can find different varieties: clementines, clementillas (larger than the previous ones), satsumas (yellower in color) and various hyb",
+    "properties": "Some benefits you didn't know about taking \nmandarin",
+    "nutritionalInfo": {
+      "calories": 43,
+      "fats": 0,
+      "proteins": 0.8,
+      "carbohydrates": 9
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/Mandarina_0.jpg?itok=YvVbu8Qu",
+    "tags": [
+      "Fruits",
+      "mandarin"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "0-50",
+    "proteinLevel": "Low (<2g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "mandarin"
+  },
+  {
+    "id": "loquat",
+    "title": "Loquat",
+    "slug": "loquat",
+    "url": "https://www.consum.es/en/guides/loquat/",
+    "category": "Fruits",
+    "description": "Properties and benefits:  \nloquat Loquat is the fruit obtained from the tree of the same name, belonging to the Rosaceae family. This fruit is oval shaped and has a thin, hard skin which is orange in colour. Its pulp is fleshy, sweet and somewhat acidic, although it tastes different depending on the variety. Inside, it contains several large brown seeds.",
+    "properties": "Some benefits you didn't know about taking \nloquat",
+    "nutritionalInfo": {
+      "calories": 69,
+      "fats": 10.6,
+      "proteins": 0,
+      "carbohydrates": 0
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/N%C3%ADspero_0.jpg?itok=LV0JvvhW",
+    "tags": [
+      "Fruits",
+      "loquat"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "50-100",
+    "proteinLevel": "Low (<2g)",
+    "fatLevel": "High (>10g)",
+    "objectID": "loquat"
+  },
+  {
+    "id": "lemon",
+    "title": "Lemon",
+    "slug": "lemon",
+    "url": "https://www.consum.es/en/guides/lemon/",
+    "category": "Fruits",
+    "description": "Properties and benefits:  \nlemon The lemon is the berry fruit of the lemon tree, an evergreen tree of the Rutaceae family. The lemon is oblong in shape and covered by a yellow, thick and aromatic skin. Inside we find a very juicy pulp in the form of segments and with a very acid taste. According to their size, lemons can be classified as small, medium and large and, according to their color, green and yellow. Although, in Spain, the most consumed is the large yellow lemon.",
+    "properties": "Some benefits you didn't know about taking \nlemon",
+    "nutritionalInfo": {
+      "calories": 44,
+      "fats": 0.4,
+      "proteins": 0.7,
+      "carbohydrates": 9
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/limon_0.jpg?itok=6At3Bl9A",
+    "tags": [
+      "Fruits",
+      "lemon"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "0-50",
+    "proteinLevel": "Low (<2g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "lemon"
+  },
+  {
+    "id": "kiwi",
+    "title": "Kiwi",
+    "slug": "kiwi",
+    "url": "https://www.consum.es/en/guides/kiwi/",
+    "category": "Fruits",
+    "description": "Properties and benefits:  \nkiwi The kiwi is the fruit that is obtained from the actinidia plant, of the family of the actinidiáceas. It is an ovoid-shaped berry fruit covered with a thin brown skin, slightly hairy, which includes a very juicy and acid green pulp (although in some varieties it can be yellow). Today we find different varieties on the market: the kaquiara II, the Actinidia and the hayward. In Spain, the most commercialized variety is the Hayward.",
+    "properties": "Some benefits you didn't know about taking \nkiwi",
+    "nutritionalInfo": {
+      "calories": 55,
+      "fats": 0.5,
+      "proteins": 1.1,
+      "carbohydrates": 10.6
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/Kiwi.jpg?itok=QMS1vbWV",
+    "tags": [
+      "Fruits",
+      "kiwi"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "50-100",
+    "proteinLevel": "Low (<2g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "kiwi"
+  },
+  {
+    "id": "grapefruit",
+    "title": "Grapefruit",
+    "slug": "grapefruit",
+    "url": "https://www.consum.es/en/guides/grapefruit/",
+    "category": "Fruits",
+    "description": "Properties and benefits:  \ngrapefruit The grapefruit is the fruit of the tree that receives the same name and that belongs to the Rutaceae family. This tree forms hermaphroditic flowers that later become small endings that bear the fruit of the grapefruit. This fruit has a spherical shape and a thick yellow rind with pinkish tints. Its pulp is similar to that of an orange and contains numerous vesicles filled with juice, very juicy and with an acid or sweet taste, depending on the variety.",
+    "properties": "Some benefits you didn't know about taking \ngrapefruit",
+    "nutritionalInfo": {
+      "calories": 35,
+      "fats": 0,
+      "proteins": 0,
+      "carbohydrates": 6.8
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/Pomelo_0.jpg?itok=K7671WME",
+    "tags": [
+      "Fruits",
+      "grapefruit"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "0-50",
+    "proteinLevel": "Low (<2g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "grapefruit"
+  },
+  {
+    "id": "grape",
+    "title": "Grape",
+    "slug": "grape",
+    "url": "https://www.consum.es/en/guides/grape/",
+    "category": "Fruits",
+    "description": "Properties and benefits:  \ngrape The grape is the fruit of life, a climbing shrub of the Vitaceae family. This berry fruit grows together with others forming grouped clusters; its appearance is small, round and covered by a very thin skin whose color can vary depending on the type of grape. This skin surrounds a pulp with a very sweet and juicy flavor that contains a small seed inside. The grape is a fruit native to the Caucasus. Currently its use and cultivation is widespread throughout the wor",
+    "properties": "Some benefits you didn't know about taking \ngrape",
+    "nutritionalInfo": {
+      "calories": 69,
+      "fats": 0,
+      "proteins": 0.6,
+      "carbohydrates": 16.1
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/Uva_0.jpg?itok=SdnTLwLc",
+    "tags": [
+      "Fruits",
+      "grape"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "50-100",
+    "proteinLevel": "Low (<2g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "grape"
+  },
+  {
+    "id": "fig",
+    "title": "Fig",
+    "slug": "fig",
+    "url": "https://www.consum.es/en/guides/fig/",
+    "category": "Fruits",
+    "description": "The fig is considered a false fruit, since it is a receptacle that contains hundreds of small fruits, which we call pips or seeds. Figs grow on large trees called fig trees, belonging to the Moraceae family. It is a soft fruit with a very thin skin, whose color varies from green to purple. Its pulp is very sweet, it can be reddish or white and it is full of seeds inside, although these are very small and edible. Depending on the species of fig, its shape is round or flattened, and it is generall",
+    "properties": "Some benefits you didn't know about taking \nfig",
+    "nutritionalInfo": {
+      "calories": 85,
+      "fats": 0,
+      "proteins": 1.2,
+      "carbohydrates": 16
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/higos.jpg?itok=U21HJ71r",
+    "tags": [
+      "Fruits"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "50-100",
+    "proteinLevel": "Low (<2g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "fig"
+  },
+  {
+    "id": "date",
+    "title": "Date",
+    "slug": "date",
+    "url": "https://www.consum.es/en/guides/date/",
+    "category": "Fruits",
+    "description": "Properties and benefits:  \ndate The date comes from the date palm tree, belonging to the Araceae family. It is a palm tree with a single trunk and covered in leaves (the palms), which sprout cream coloured branched leaflets, on which oval fruits grow (the dates). They are dark orange in colour, with a smooth shell and a fleshy and sweet pulp, similar to honey. Inside they contain a long stone with a lengthways slit.",
+    "properties": "Some benefits you didn't know about taking \ndate",
+    "nutritionalInfo": {
+      "calories": 314,
+      "fats": 0.4,
+      "proteins": 2.2,
+      "carbohydrates": 71
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/D%C3%A1til.jpg?itok=q1Zj4s24",
+    "tags": [
+      "Fruits",
+      "date"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "200+",
+    "proteinLevel": "Medium (2-5g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "date"
+  },
+  {
+    "id": "custard-apple",
+    "title": "Custard apple",
+    "slug": "custard-apple",
+    "url": "https://www.consum.es/en/guides/custard-apple/",
+    "category": "Fruits",
+    "description": "Properties and benefits:  \ncustard apple <!--td {border: 1px solid #ccc;}br {mso-data-placement:same-cell;}-->\n\nCustard apples are the fruit obtained from the custard apple tree, belonging to the Annonaceae family. This fruit is heart-shaped and is covered in a fine green shell with indents in the shape of scales. Its pulp is very sweet, white in colour and has a soft texture with numerous and moderately large black seeds. Some benefits you didn't know about taking \ncustard apple",
+    "properties": "Some benefits you didn't know about taking \ncustard apple",
+    "nutritionalInfo": {
+      "calories": 90,
+      "fats": 0.2,
+      "proteins": 1,
+      "carbohydrates": 20
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/chirimoya.jpg?itok=MPSc5exd",
+    "tags": [
+      "Fruits",
+      "custard",
+      "apple"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "50-100",
+    "proteinLevel": "Low (<2g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "custard-apple"
+  },
+  {
+    "id": "cucumber",
+    "title": "Cucumber",
+    "slug": "cucumber",
+    "url": "https://www.consum.es/en/guides/cucumber/",
+    "category": "Vegetables",
+    "description": "Properties and benefits:  \ncucumber Cucumbers are a berry fruit (with pulp and seeds inside), coming from a herbaceous plant belonging to the Cucurbitaceae family with the same name as its fruit. The size and colour of cucumber varies although, usually, it has a cylindrical and elongated shape, it is green in colour and its skin has a coarse texture. Among the varieties of cucumber, we can find short cucumber or gherkins (Spanish type), medium cucumber or long cucumber (French type) and long cuc",
+    "properties": "Some benefits you didn't know about taking \ncucumber",
+    "nutritionalInfo": {
+      "calories": 13,
+      "fats": 0.2,
+      "proteins": 0.7,
+      "carbohydrates": 1.9
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/Pepino.jpg?itok=1SwlnlXN",
+    "tags": [
+      "Vegetables",
+      "cucumber"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "0-50",
+    "proteinLevel": "Low (<2g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "cucumber"
+  },
+  {
+    "id": "courgette",
+    "title": "Courgette",
+    "slug": "courgette",
+    "url": "https://www.consum.es/en/guides/courgette/",
+    "category": "Vegetables",
+    "description": "Properties and benefits:  \ncourgette Courgette is the vegetable from a herbaceous plant from the Cucurbitaceae family of the same name. This plant has a coarse appearance and its stems sprout large green serrated leaves, as well as yellow flowers that produce this vegetable. From the courgette plant, not only the vegetable itself is consumed, but its flowers can also be eaten fried and they are an exquisite snack.",
+    "properties": "Some benefits you didn't know about taking \ncourgette",
+    "nutritionalInfo": {
+      "calories": 14,
+      "fats": 0.2,
+      "proteins": 0.6,
+      "carbohydrates": 0
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/Calabac%C3%ADn_0.jpg?itok=f3ApuyhC",
+    "tags": [
+      "Vegetables",
+      "courgette"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "0-50",
+    "proteinLevel": "Low (<2g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "courgette"
+  },
+  {
+    "id": "coconut",
+    "title": "Coconut",
+    "slug": "coconut",
+    "url": "https://www.consum.es/en/guides/coconut/",
+    "category": "Fruits",
+    "description": "Properties and benefits:  \ncoconut <!--td {border: 1px solid #ccc;}br {mso-data-placement:same-cell;}-->\n\nCoconut is the fruit obtained from the coconut tree, belonging to the Arecaceae family. This fruit is round and covered in a hard brown shell. Inside is a white, hard, fibrous and oily flesh, although it also contains a milky liquid called coconut water, with a very light and sweet flavour. Some benefits you didn't know about taking \ncoconut",
+    "properties": "Some benefits you didn't know about taking \ncoconut",
+    "nutritionalInfo": {
+      "calories": 373,
+      "fats": 36,
+      "proteins": 3.2,
+      "carbohydrates": 3.7
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/Coco.jpg?itok=dppFXn7C",
+    "tags": [
+      "Fruits",
+      "coconut"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "200+",
+    "proteinLevel": "Medium (2-5g)",
+    "fatLevel": "High (>10g)",
+    "objectID": "coconut"
+  },
+  {
+    "id": "chicory",
+    "title": "Chicory",
+    "slug": "chicory",
+    "url": "https://www.consum.es/en/guides/chicory/",
+    "category": "Vegetables",
+    "description": "Properties and benefits:  \nchicory Chicory is a vegetable belonging to the Asteraceae or Compositae family, which include more than 20,000 species, of which very few are cultivated. Asteraceae are characterised for the fact that their flowers are made up of the fusion of thousands of tiny flowers. This family includes vegetables from different species which are grouped as follows: flowering Asteraceae, stem Asteraceae and leaf Asteraceae.",
+    "properties": "Some benefits you didn't know about taking \nchicory",
+    "nutritionalInfo": {
+      "calories": 25,
+      "fats": 0.2,
+      "proteins": 1.5,
+      "carbohydrates": 0
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/Endibia_0.jpg?itok=2byGoEjt",
+    "tags": [
+      "Vegetables",
+      "chicory"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "0-50",
+    "proteinLevel": "Low (<2g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "chicory"
+  },
+  {
+    "id": "cherry",
+    "title": "Cherry",
+    "slug": "cherry",
+    "url": "https://www.consum.es/en/guides/cherry/",
+    "category": "Fruits",
+    "description": "Properties and benefits:  \ncherry Cherries are the fruit obtained from the cherry tree, belonging to the Rosacea family. Cherries are a drupe with almost round stones, with a smooth skin and a colour that encompasses all types of red, from the darkest to the lightest. Their pulp is juicy and, in the ripest fruits, their flavour is very sweet. There are many cherry varieties, depending on the type of maturation, pollination and flowering. They can be: sweet cherries, acidic cherries or sour cherr",
+    "properties": "Some benefits you didn't know about taking \ncherry",
+    "nutritionalInfo": {
+      "calories": 65,
+      "fats": 0.3,
+      "proteins": 0.7,
+      "carbohydrates": 16
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/cerezas.jpg?itok=pwANhODB",
+    "tags": [
+      "Fruits",
+      "cherry"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "50-100",
+    "proteinLevel": "Low (<2g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "cherry"
+  },
+  {
+    "id": "chard",
+    "title": "Chard",
+    "slug": "chard",
+    "url": "https://www.consum.es/en/guides/chard/",
+    "category": "Vegetables",
+    "description": "Properties and benefits:  \nchard Chard is a herbaceous plant belonging to the Chenopodioideae family. It has large green leaves and white petioles called stalks. Both the leaves and stalks are edible parts of this vegetable. Nowadays we can find different varieties of chard on the market, which are classified according to their colour and the size of their leaves.",
+    "properties": "Some benefits you didn't know about taking \nchard",
+    "nutritionalInfo": {
+      "calories": 41,
+      "fats": 0.4,
+      "proteins": 2,
+      "carbohydrates": 0
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/Acelga_0.jpg?itok=xJVFTQl_",
+    "tags": [
+      "Vegetables",
+      "chard"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "0-50",
+    "proteinLevel": "Medium (2-5g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "chard"
+  },
+  {
+    "id": "celery",
+    "title": "Celery",
+    "slug": "celery",
+    "url": "https://www.consum.es/en/guides/celery/",
+    "category": "Vegetables",
+    "description": "Properties and benefits:  \ncelery Celery is a vegetable belonging to the Umbelliferae family. This plant has thick green grooved stems that form a stalk with a cluster of ribbed leaves at the end. The name, celery, refers to the species which is eaten for its leaves; therefore, it does not include celeriac or celery root, although they both belong to the same species.",
+    "properties": "Some benefits you didn't know about taking \ncelery",
+    "nutritionalInfo": {
+      "calories": 16,
+      "fats": 0.2,
+      "proteins": 1.3,
+      "carbohydrates": 0
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/Apio.jpeg?itok=bxaQVa8m",
+    "tags": [
+      "Vegetables",
+      "celery"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "0-50",
+    "proteinLevel": "Low (<2g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "celery"
+  },
+  {
+    "id": "cauliflower",
+    "title": "Cauliflower",
+    "slug": "cauliflower",
+    "url": "https://www.consum.es/en/guides/cauliflower/",
+    "category": "Vegetables",
+    "description": "Properties and benefits:  \ncauliflower Cauliflower is the common name of a variety of cabbage belonging to the Cruciferae family. This vegetable (similar to Brussels sprouts) is formed by a cluster of swollen white buds and green leaves that wrap around them, protecting the mass of buds from the sun and characterising the vegetable with this colour due to the absence of chlorophyll. This vegetable is usually ivory in colour, although some varieties can also be yellow or red. This vegetable has a",
+    "properties": "Some benefits you didn't know about taking \ncauliflower",
+    "nutritionalInfo": {
+      "calories": 27,
+      "fats": 0.2,
+      "proteins": 2.2,
+      "carbohydrates": 0
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/Verduras_1.jpg?itok=ZHMZfnaP",
+    "tags": [
+      "Vegetables",
+      "cauliflower"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "0-50",
+    "proteinLevel": "Medium (2-5g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "cauliflower"
+  },
+  {
+    "id": "carrot",
+    "title": "Carrot",
+    "slug": "carrot",
+    "url": "https://www.consum.es/en/guides/carrot/",
+    "category": "Vegetables",
+    "description": "Properties and benefits:  \ncarrot Carrots are the root belonging to the plant of the same name and belong to the Apiaceae family. Carrots are a biennial plant that form few leaves and roots during the first year while, after a period of rest, the stems form and they bloom. The edible part of the carrot is its edible root, which is thick and elongated, with a length that can vary depending on the variety. Although carrots are usually orange, their most representative varieties range between orang",
+    "properties": "Some benefits you didn't know about taking \ncarrot",
+    "nutritionalInfo": {
+      "calories": 40,
+      "fats": 0,
+      "proteins": 0.9,
+      "carbohydrates": 7.3
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/Zanahoria_0.jpg?itok=P_uw7enJ",
+    "tags": [
+      "Vegetables",
+      "carrot"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "0-50",
+    "proteinLevel": "Low (<2g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "carrot"
+  },
+  {
+    "id": "cardoon",
+    "title": "Cardoon",
+    "slug": "cardoon",
+    "url": "https://www.consum.es/en/guides/cardoon/",
+    "category": "Vegetables",
+    "description": "Properties and benefits:  \ncardoon Cardoon is the common name of various plants from the Asteraceae or Compositae family. This family takes its name from its flowers that are formed by the fusion of a wide variety of smaller flowers, they have prickly leaves and branches and their tissues contain latex. The flowers have a cocoon shape (similar to artichoke) but smaller and sharp. The edible part are the petioles, a portion of the central nervation of the leaves and the tender stems. The stalks a",
+    "properties": "Some benefits you didn't know about taking \ncardoon",
+    "nutritionalInfo": {
+      "calories": 23,
+      "fats": 0.2,
+      "proteins": 1.4,
+      "carbohydrates": 0
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/Cardo_0.jpg?itok=5vELDFeI",
+    "tags": [
+      "Vegetables",
+      "cardoon"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "0-50",
+    "proteinLevel": "Low (<2g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "cardoon"
+  },
+  {
+    "id": "cabbage",
+    "title": "Cabbage",
+    "slug": "cabbage",
+    "url": "https://www.consum.es/en/guides/cabbage/",
+    "category": "Vegetables",
+    "description": "Properties and benefits:  \ncabbage Cabbage is a herbaceous plant of the cruciferous family. This vegetable has firm leaves and is characterized by the fact that they are stacked one on top of the other, forming a round and compact head. This head is a very pale green, almost yellow, although we can also find it in the market with different shades of darker green and even red or purple, typical of red cabbage. In the market we find the following varieties of cabbage: green cabbage, curly cabbage,",
+    "properties": "Some benefits you didn't know about taking \ncabbage",
+    "nutritionalInfo": {
+      "calories": 36,
+      "fats": 0,
+      "proteins": 3.3,
+      "carbohydrates": 3.4
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/Repollo.jpg?itok=Rll_1AW0",
+    "tags": [
+      "Vegetables",
+      "cabbage"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "0-50",
+    "proteinLevel": "Medium (2-5g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "cabbage"
+  },
+  {
+    "id": "brussels-sprouts",
+    "title": "Brussels sprouts",
+    "slug": "brussels-sprouts",
+    "url": "https://www.consum.es/en/guides/brussels-sprouts/",
+    "category": "Vegetables",
+    "description": "Properties and benefits:  \nbrussels sprouts Brussels sprouts is the name of a variety of cabbage belonging to the Cruciferae family. This vegetable is formed by a stalk from which large green leaves emerge that surround a cluster of white and swollen buds. This vegetable is usually green in colour, although some varieties can also be red or purple. The taste of this vegetable is slightly bitter with a sweet touch.",
+    "properties": "Some benefits you didn't know about taking \nbrussels sprouts",
+    "nutritionalInfo": {
+      "calories": 51,
+      "fats": 1.4,
+      "proteins": 3.5,
+      "carbohydrates": 0
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/Coles%20de%20Bruselas.jpg?itok=E3_Sm1LE",
+    "tags": [
+      "Vegetables",
+      "brussels",
+      "sprouts"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "50-100",
+    "proteinLevel": "Medium (2-5g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "brussels-sprouts"
+  },
+  {
+    "id": "broccoli",
+    "title": "Broccoli",
+    "slug": "broccoli",
+    "url": "https://www.consum.es/en/guides/broccoli/",
+    "category": "Vegetables",
+    "description": "Properties and benefits:  \nbroccoli Broccoli is a plant from the Brassicaceae family, better known as Cruciferae plants. This plant, green in colour, has an abundance of flowering heads arranged in the shape of a tree which grow from a thick and edible stalk. Broccoli is similar to cauliflower, both in shape and flavour, although the latter is white. In both cases, the edible part are the flowers before they open, which group into inflorescences forming more irregular and open pellets in the cas",
+    "properties": "Some benefits you didn't know about taking \nbroccoli",
+    "nutritionalInfo": {
+      "calories": 38,
+      "fats": 0.9,
+      "proteins": 4.4,
+      "carbohydrates": 0
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/Br%C3%B3coli.jpg?itok=zTPjg3Fl",
+    "tags": [
+      "Vegetables",
+      "broccoli"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "0-50",
+    "proteinLevel": "Medium (2-5g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "broccoli"
+  },
+  {
+    "id": "bell-pepper",
+    "title": "Bell pepper",
+    "slug": "bell-pepper",
+    "url": "https://www.consum.es/en/guides/bell-pepper/",
+    "category": "Vegetables",
+    "description": "Properties and benefits:  \nbell pepper Peppers are the hollow fruit of the herbaceous plant of the same name, belonging to the Solanaceae family. In modern horticulture, there are 3 large groups of peppers: sweet, chilli and different varieties to make paprika. Bell peppers are characterised for being a thick, fleshy and large variety. The skin of this vegetable is red, fine and shiny, while its flesh is soft and sweet. On the top, they contain a green and rigid stem.",
+    "properties": "Some benefits you didn't know about taking \nbell pepper",
+    "nutritionalInfo": {
+      "calories": 40,
+      "fats": 0.4,
+      "proteins": 1.1,
+      "carbohydrates": 7
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/Pimiento-morr%C3%B3n.jpg?itok=_dIwDvwf",
+    "tags": [
+      "Vegetables",
+      "bell",
+      "pepper"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "0-50",
+    "proteinLevel": "Low (<2g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "bell-pepper"
+  },
+  {
+    "id": "beetroot",
+    "title": "Beetroot",
+    "slug": "beetroot",
+    "url": "https://www.consum.es/en/guides/beetroot/",
+    "category": "Vegetables",
+    "description": "Properties and benefits:  \nbeetroot Beetroot is the deep, large and fleshy root that grows on the plant of the same name and which forms part of the Chenopodioideae family. It is a round and spherical root, the skin on top is fine and soft and can be different colours, from pinkish violet and reddish orange to brown. Its pulp tastes sweet and is usually a dark crimson red colour with purple hues and, sometimes, it can have concentric circles inside.",
+    "properties": "Some benefits you didn't know about taking \nbeetroot",
+    "nutritionalInfo": {
+      "calories": 37,
+      "fats": 0,
+      "proteins": 1.3,
+      "carbohydrates": 6.4
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/Remolacha.jpg?itok=RIyGx7rY",
+    "tags": [
+      "Vegetables",
+      "beetroot"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "0-50",
+    "proteinLevel": "Low (<2g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "beetroot"
+  },
+  {
+    "id": "banana",
+    "title": "Banana",
+    "slug": "banana",
+    "url": "https://www.consum.es/en/guides/banana/",
+    "category": "Fruits",
+    "description": "Properties and benefits:  \nbanana <!--td {border: 1px solid #ccc;}br {mso-data-placement:same-cell;}--> The banana is the fruit of the banana tree or banana, belonging to the Musaceae family. This thick-skinned fruit, characterized by its yellow color and its elongated curved shape, is one of the best-known fruits in the world.",
+    "properties": "Some benefits you didn't know about taking \nbanana",
+    "nutritionalInfo": {
+      "calories": 94,
+      "fats": 0,
+      "proteins": 1.2,
+      "carbohydrates": 20
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/Pl%C3%A1tano_0.jpg?itok=1JyHc_Sk",
+    "tags": [
+      "Fruits",
+      "banana"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "50-100",
+    "proteinLevel": "Low (<2g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "banana"
+  },
+  {
+    "id": "avocado",
+    "title": "Avocado",
+    "slug": "avocado",
+    "url": "https://www.consum.es/en/guides/avocado/",
+    "category": "Fruits",
+    "description": "Properties and benefits:  \navocado Avocado is the fruit obtained from the avocado tree, belonging to the Lauraceae family. This fruit has a thick and hard green skin, although the shade can change depending on the variety. The pulp of the avocado is oily and a cream or yellowish-green colour, with a very mild flavour. Inside, it contains one large, round seed which is light brown in colour and can make up half of the size of the fruit.",
+    "properties": "Some benefits you didn't know about taking \navocado",
+    "nutritionalInfo": {
+      "calories": 141,
+      "fats": 12,
+      "proteins": 1.5,
+      "carbohydrates": 5.9
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-07/aguacate_1.jpg?itok=n10z9xyy",
+    "tags": [
+      "Fruits",
+      "avocado"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "100-150",
+    "proteinLevel": "Low (<2g)",
+    "fatLevel": "High (>10g)",
+    "objectID": "avocado"
+  },
+  {
+    "id": "aubergine",
+    "title": "Aubergine",
+    "slug": "aubergine",
+    "url": "https://www.consum.es/en/guides/aubergine/",
+    "category": "Vegetables",
+    "description": "Properties and benefits:  \naubergine Aubergine is the vegetable obtained from the aubergine plant, from the Solanaceae family. This plant has a hairy stem with branches leading to hairy leaves that are coarse to touch. Aubergines are variable in shape and can range from being spherical to egg-shaped and oblong. Aubergines are purple in colour, although their intensity will depend on the variety we buy. The flesh is firm and white, and they contain numerous edible seeds of the same colour.",
+    "properties": "Some benefits you didn't know about taking \naubergine",
+    "nutritionalInfo": {
+      "calories": 27
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/Berenjena_0.jpg?itok=glpwQiTI",
+    "tags": [
+      "Vegetables",
+      "aubergine"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "0-50",
+    "objectID": "aubergine"
+  },
+  {
+    "id": "asparagus",
+    "title": "Asparagus",
+    "slug": "asparagus",
+    "url": "https://www.consum.es/en/guides/asparagus/",
+    "category": "Vegetables",
+    "description": "Properties and benefits:  \nasparagus <!--td {border: 1px solid #ccc;}br {mso-data-placement:same-cell;}--> Whether green or white, asparagus are young and tender stalks that grow on the asparagus plant from the Liliaceae family. It is a small and elongated vegetable, characterised by its intense flavour, especially in the case of ‘triguero’ asparagus, in other words, those that grow in the wild.",
+    "properties": "Some benefits you didn't know about taking \nasparagus",
+    "nutritionalInfo": {
+      "calories": 18,
+      "fats": 0,
+      "proteins": 2.7,
+      "carbohydrates": 0
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/Esp%C3%A1rragos_0.jpg?itok=OQwHmpTs",
+    "tags": [
+      "Vegetables",
+      "asparagus"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "0-50",
+    "proteinLevel": "Medium (2-5g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "asparagus"
+  },
+  {
+    "id": "artichoke",
+    "title": "Artichoke",
+    "slug": "artichoke",
+    "url": "https://www.consum.es/en/guides/artichoke/",
+    "category": "Vegetables",
+    "description": "Properties and benefits:  \nartichoke Artichokes come from the artichoke plant, a perennial plant from the Asteraceae family. Both the plant itself and its edible green cocoon-shaped produce are called artichoke. Artichokes are perennial plants that grow back every year if they haven’t suffered any type of damage from extreme cold or heat.",
+    "properties": "Some benefits you didn't know about taking \nartichoke",
+    "nutritionalInfo": {
+      "calories": 44,
+      "fats": 0.1,
+      "proteins": 2.3,
+      "carbohydrates": 0
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2021-08/Alcachofa.jpeg?itok=PwG64BXa",
+    "tags": [
+      "Vegetables",
+      "artichoke"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "0-50",
+    "proteinLevel": "Medium (2-5g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "artichoke"
+  },
+  {
+    "id": "apple",
+    "title": "Apple",
+    "slug": "apple",
+    "url": "https://www.consum.es/en/guides/apple/",
+    "category": "Fruits",
+    "description": "Properties and benefits:  \napple The apple is the fruit of the apple tree, belonging to the Rosaceae family. Its skin is fine and its color can vary between yellow, green and red, while its interior is always creamy, with a crunchy and floury texture. The flavor of the apple varies depending on its variety and degree of maturity: for example, red and green apples have a slightly more acidic flavor, while yellow apples are much sweeter.",
+    "properties": "Some benefits you didn't know about taking \napple",
+    "nutritionalInfo": {
+      "calories": 43,
+      "fats": 0,
+      "proteins": 0.8,
+      "carbohydrates": 9
+    },
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/crop_card/public/2020-07/manzanas.JPG?itok=BZVX1FFM",
+    "tags": [
+      "Fruits",
+      "apple"
+    ],
+    "type": "product",
+    "hasNutrition": true,
+    "hasImage": true,
+    "caloriesRange": "0-50",
+    "proteinLevel": "Low (<2g)",
+    "fatLevel": "Low (<3g)",
+    "objectID": "apple"
+  },
+  {
+    "id": "wine-bar",
+    "title": "Wine bar: our wine catalog",
+    "slug": "wine-bar",
+    "url": "https://www.consum.es/en/guides/wine-bar/",
+    "category": "Wine",
+    "description": "La Bodega de Consum is your wine corner where you can discover the world of pairing, wine tasting and designation of origin. Knowing how to choose a good wine may seem difficult, but with some tips it's easy. When making wine, the grape variety is one of the determining factors.",
+    "seasonality": [
+      "Year-round"
+    ],
+    "imageUrl": "https://www.consum.es/sites/default/files/styles/estilo_normalizado/public/images/sabercomprar/201611Como-elegir-un-vino---Saber-Comprar.jpg?itok=9bDi9NEQ",
+    "tags": [
+      "Wine",
+      "wine",
+      "bar:",
+      "wine",
+      "catalog"
+    ],
+    "type": "wine",
+    "hasNutrition": false,
+    "hasImage": true,
+    "objectID": "wine-bar"
+  },
+  {
+    "id": "vegetables",
+    "title": "Vegetable guides: nutritional analysis",
+    "slug": "vegetables",
+    "url": "https://www.consum.es/en/guides/vegetables/",
+    "category": "Vegetables",
+    "description": "Wide variety of greens and vegetables harvested at their optimum point. There is no excuse for not eating vegetables anymore! We bring you the freshest ones home. And if you are looking for organic products from the garden, we also have them. Discover the best selection of recipes from the community and from professionals for every moment. Share comments, opinions, and interact with the contents of the Community.",
+    "seasonality": [
+      "Year-round"
+    ],
+    "tags": [
+      "Vegetables",
+      "vegetable",
+      "guides:",
+      "nutritional",
+      "analysis"
+    ],
+    "type": "category",
+    "hasNutrition": false,
+    "hasImage": false,
+    "objectID": "vegetables"
+  },
+  {
+    "id": "meats",
+    "title": "Meat guides: nutritional analysis",
+    "slug": "meats",
+    "url": "https://www.consum.es/en/guides/meats/",
+    "category": "Meats",
+    "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. Discover the best selection of recipes from the community and from professionals for every moment. Share comments, opinions, and interact with the contents of the Community.",
+    "seasonality": [
+      "Year-round"
+    ],
+    "tags": [
+      "Meats",
+      "meat",
+      "guides:",
+      "nutritional",
+      "analysis"
+    ],
+    "type": "category",
+    "hasNutrition": false,
+    "hasImage": false,
+    "objectID": "meats"
+  },
+  {
+    "id": "legumes",
+    "title": "Legume guides: nutritional analysis",
+    "slug": "legumes",
+    "url": "https://www.consum.es/en/guides/legumes/",
+    "category": "Legumes",
+    "description": "Pulses have never been so accessible! We offer you the freshest pulses, straight to your door. Choose from a wide variety and enjoy their nutrients and incomparable taste. Discover the best selection of recipes from the community and from professionals for every moment. Share comments, opinions, and interact with the contents of the Community.",
+    "seasonality": [
+      "Year-round"
+    ],
+    "tags": [
+      "Legumes",
+      "legume",
+      "guides:",
+      "nutritional",
+      "analysis"
+    ],
+    "type": "category",
+    "hasNutrition": false,
+    "hasImage": false,
+    "objectID": "legumes"
+  },
+  {
+    "id": "fruits",
+    "title": "Fruit guides: nutritional analysis",
+    "slug": "fruits",
+    "url": "https://www.consum.es/en/guides/fruits/",
+    "category": "Fruits",
+    "description": "There is no excuse for not eating fruit! We bring you the freshest home. Choose the variety that you like the most and enjoy its flavor and freshness. Discover the best selection of recipes from the community and from professionals for every moment. Share comments, opinions, and interact with the contents of the Community.",
+    "seasonality": [
+      "Year-round"
+    ],
+    "tags": [
+      "Fruits",
+      "fruit",
+      "guides:",
+      "nutritional",
+      "analysis"
+    ],
+    "type": "category",
+    "hasNutrition": false,
+    "hasImage": false,
+    "objectID": "fruits"
+  },
+  {
+    "id": "fish-and-seafood",
+    "title": "Fish and seafood",
+    "slug": "fish-and-seafood",
+    "url": "https://www.consum.es/en/guides/fish-and-seafood/",
+    "category": "Fish & Seafood",
+    "description": "Enjoy the finest taste of the sea without leaving home! We bring you the freshest fish and seafood. Choose your favourites and enjoy their freshness and quality. Explore cooking ideas. Learn the best tips, tools and recipes to become a great chef. Share comments, opinions, and interact with the contents of the Community.",
+    "seasonality": [
+      "Year-round"
+    ],
+    "tags": [
+      "Fish & Seafood",
+      "fish",
+      "seafood"
+    ],
+    "type": "category",
+    "hasNutrition": false,
+    "hasImage": false,
+    "objectID": "fish-and-seafood"
+  }
+]

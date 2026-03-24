@@ -15,6 +15,30 @@ import { ProductToolbar, SearchStats } from "@/components/ProductToolbar";
 import { FiltersSidebar, ActiveFilters } from "@/components/filters-sidebar";
 import { useSidepanel } from "@/components/sidepanel-agent-studio/context/sidepanel-context";
 import { useCollapsibleFilters } from "@/components/hooks/use-collapsible-filters";
+import { HIERARCHICAL_CATEGORIES, type CategoryNode } from "@/lib/demo-config/categories";
+
+/**
+ * Resolve an array of URL slugs to their category names using the config tree.
+ * e.g. ["bebidas", "zumos-y-nectares"] → ["Bebidas", "Zumos y néctares"]
+ */
+function resolveSlugsToNames(slugs: string[]): string[] {
+  if (slugs.length === 0) return [];
+  const names: string[] = [];
+
+  const root = HIERARCHICAL_CATEGORIES[slugs[0]];
+  if (!root) return slugs; // fallback to raw slugs
+  names.push(root.name);
+
+  let current: CategoryNode | undefined = root;
+  for (let i = 1; i < slugs.length && current?.children; i++) {
+    const child: CategoryNode | undefined = current.children[slugs[i]];
+    if (!child) return slugs; // fallback if slug not found
+    names.push(child.name);
+    current = child;
+  }
+
+  return names;
+}
 
 // ============================================================================
 // Agent Suggestions
@@ -122,23 +146,21 @@ function ProductGrid({ viewMode, compact }: { viewMode: "grid" | "list"; compact
 // ============================================================================
 
 function CategoryContent({
-  categoryPath,
+  slugs,
+  names,
 }: {
-  categoryPath: string[];
+  slugs: string[];
+  names: string[];
 }) {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const { isSidepanelOpen } = useSidepanel();
   const { filtersOpen, toggleFilters } = useCollapsibleFilters();
-  const categoryName = categoryPath[categoryPath.length - 1] || "All Products";
+  const categoryName = names[names.length - 1] || "All Products";
 
-  // Build filter using hierarchical_categories (supports filtering unlike searchable categoryPageId)
-  // e.g. ["Women"] -> hierarchical_categories.lvl0:"Women"
-  // e.g. ["Women", "Shoes"] -> hierarchical_categories.lvl1:"Women > Shoes"
   const getCategoryFilter = () => {
-    if (categoryPath.length === 0) return undefined;
-    const level = categoryPath.length - 1;
-    const filterValue = categoryPath.join(" > ");
-    return `hierarchical_categories.lvl${level}:"${filterValue}"`;
+    if (names.length === 0) return undefined;
+    const filterValue = names.join(" > ");
+    return `categoryPageId:"${filterValue}"`;
   };
 
   // Apply category filter using useConfigure (works with Composition API)
@@ -157,26 +179,25 @@ function CategoryContent({
               Home
             </Link>
           </li>
-          {categoryPath.map((segment, index) => {
+          {names.map((name, index) => {
             const href =
               "/category/" +
-              categoryPath
+              slugs
                 .slice(0, index + 1)
-                .map((s) => encodeURIComponent(s))
                 .join("/");
-            const isLast = index === categoryPath.length - 1;
+            const isLast = index === names.length - 1;
 
             return (
               <li key={index} className="flex items-center gap-2">
                 <ChevronRight className="w-4 h-4 shrink-0" />
                 {isLast ? (
-                  <span className="text-foreground">{segment}</span>
+                  <span className="text-foreground">{name}</span>
                 ) : (
                   <Link
                     href={href}
                     className="hover:text-foreground transition-colors"
                   >
-                    {segment}
+                    {name}
                   </Link>
                 )}
               </li>
@@ -255,11 +276,10 @@ export default function CategoryPage() {
     ? [slugParam]
     : [];
 
-  const categoryPath = slugArray.map((s) => decodeURIComponent(s));
+  const slugs = slugArray.map((s) => decodeURIComponent(s));
+  const names = resolveSlugsToNames(slugs);
 
-  // Use the InstantSearch provider from components/providers.tsx
-  // Apply category filter via useConfigure hook in CategoryContent
   return (
-    <CategoryContent categoryPath={categoryPath} />
+    <CategoryContent slugs={slugs} names={names} />
   );
 }

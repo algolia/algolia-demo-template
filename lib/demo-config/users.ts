@@ -1,89 +1,102 @@
-/**
- * Demo user profiles and preference metadata
- *
- * Edit this file to define personas for demonstrating personalization.
- * Each user has preference weights (0-20) for various product attributes.
- */
 import type { User, PreferenceKey, PreferenceMetadata } from "@/lib/types/user";
 
-// ============================================================================
-// Demo User Profiles
-// ============================================================================
-
-/**
- * Demo users for showcasing personalization features.
- *
- * Each user's preferences map to Algolia facet attributes.
- * Higher scores (0-20) indicate stronger preference.
- *
- * Replace these with profiles relevant to your demo.
- */
 export const users: User[] = [
   {
     id: "1",
-    description: "Returning customer",
-    slug: "returning-customer",
+    description: "Familia con ni\u00f1os",
+    slug: "familia-con-ninos",
     preferences: {
-      // Add preference weights matching your Algolia facets:
-      // "categories.lvl0": { "Category Name": 20 },
-      // brand: { "Brand Name": 17 },
+      "categories.lvl0": {
+        Despensa: 10,
+        Infantil: 8,
+      },
+      "categories.lvl1": {
+        "L\u00e1cteos y huevos": 8,
+        "Desayuno, dulces y caf\u00e9": 6,
+        "Alimentaci\u00f3n infantil": 7,
+      },
+      brand: {
+        PASCUAL: 5,
+        NESQUIK: 4,
+      },
     },
   },
   {
     id: "2",
-    description: "New visitor",
-    slug: "new-visitor",
-    preferences: {},
+    description: "Vegano",
+    slug: "vegano",
+    preferences: {
+      // "categories.lvl0": {
+      //   Frescos: 10,
+      //   "Ecol\u00f3gico y saludable": 8,
+      // },
+      // "categories.lvl1": {
+      //   Verduras: 10,
+      //   Frutas: 8,
+      // },
+      "categories.lvl2": {
+        "Bebidas vegetales": 10,
+      },
+    },
+  },
+  {
+    id: "3",
+    description: "Ahorro m\u00e1ximo",
+    slug: "ahorro-maximo",
+    preferences: {
+      "categories.lvl0": {
+        "Ahora m\u00e1s barato": 10,
+      },
+      groups: {
+        "\u00a1As\u00ed se ahorra en Consum!": 10,
+        "Ofertas a 1\u20ac, 2\u20ac y 3\u20ac": 8,
+      },
+      promotions: {
+        "Ahora m\u00e1s barato": 10,
+      },
+    },
   },
 ];
 
-// ============================================================================
-// Preference Metadata
-// ============================================================================
-
-/**
- * Maps preference keys to human-readable titles and icons.
- * Used in the "For You" filter section and personalization badges.
- */
 export const PREFERENCE_METADATA: Record<PreferenceKey, PreferenceMetadata> = {
   "categories.lvl0": {
-    title: "Main Categories",
+    title: "Categor\u00edas principales",
     icon: "layers",
   },
   "categories.lvl1": {
-    title: "Subcategories",
+    title: "Subcategor\u00edas",
     icon: "tag",
   },
   "categories.lvl2": {
-    title: "Specific Categories",
+    title: "Categor\u00edas espec\u00edficas",
     icon: "tag",
   },
-  "hierarchical_categories.lvl0": {
-    title: "Main Categories (Lvl 0)",
+  "hierarchicalCategories.lvl0": {
+    title: "Categor\u00edas principales",
     icon: "layers",
   },
-  "hierarchical_categories.lvl1": {
-    title: "Sub Categories (Lvl 1)",
+  "hierarchicalCategories.lvl1": {
+    title: "Subcategor\u00edas (Lvl 1)",
     icon: "layers",
   },
-  "hierarchical_categories.lvl2": {
-    title: "Sub Categories (Lvl 2)",
+  "hierarchicalCategories.lvl2": {
+    title: "Subcategor\u00edas (Lvl 2)",
     icon: "layers",
   },
-  "hierarchical_categories.lvl3": {
-    title: "Sub Categories (Lvl 3)",
+  "hierarchicalCategories.lvl3": {
+    title: "Subcategor\u00edas (Lvl 3)",
     icon: "layers",
   },
   brand: {
-    title: "Brands",
+    title: "Marcas",
     icon: "tag",
   },
-  characteristics: {
-    title: "Characteristics",
+  groups: {
+    title: "Grupos",
     icon: "target",
   },
-  format: {
-    title: "Format",
+  promotions: {
+    title: "Promociones",
     icon: "package",
   },
 };

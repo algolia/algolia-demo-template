@@ -1,74 +1,61 @@
 export interface Product {
   // Identifiers
   objectID: string;
-  name: string;
-  slug: string;
-  sku: string;
-  parentID: string;
-  description: string;
+  id: string;
+  clientId: string;
+  ean: string;
+
+  // Basic product information
+  title: string;
   brand: string;
-  gender: string;
-
-  // Status
-  isNew: boolean;
+  description: string;
   url: string;
-  stock: number;
+  imageUrl: string;
 
-  // Pricing
-  price: { value: number };
-  color: { filter_group: string; original_name: string };
+  // Stock and availability
+  inStock: boolean;
 
-  // Images
-  primary_image: string;
-  image_urls: string[];
-  image_blurred: string;
-  image_description: string;
-
-  // Sizes
-  available_sizes: string[];
-
-  // Categories
-  hierarchical_categories: {
-    lvl0: string;
-    lvl1: string;
-    lvl2: string;
+  // Categories (flat structure)
+  categories: {
+    lvl0: string[];
+    lvl1: string[];
+    lvl2: string[];
+    lvl3: string[];
   };
-  list_categories: string[];
+
+  // Hierarchical categories (for Algolia hierarchical faceting)
+  hierarchicalCategories: {
+    lvl0: string[];
+    lvl1: string[];
+    lvl2: string[];
+    lvl3: string[];
+  };
+
+  // Category page filtering
   categoryPageId: string[];
 
-  // Variants
-  variants: Array<{
-    color: { filter_group: string; original_name: string };
-    image_urls: string[];
-    objectID: string;
-    price: { value: number };
-  }>;
+  // Pricing
+  price: number;
+  normalPrice: number;
+  discount: number;
+  discountPercentage: number;
+  priceUnit: number;
+  priceOfferUnit: number;
+  unit: string;
 
-  // Search & Discovery
-  keywords: string[];
-  semantic_attributes: string;
+  // Offers and promotions
+  offer: boolean;
+  groups: string[];
+  promotions: string[];
+  highlighted: boolean;
 
-  // Reviews
-  reviews: {
-    bayesian_avg: number;
-    count: number;
-    rating: number;
+  // AI-enriched data
+  enriched?: {
+    description: string;
+    keywords: string[];
+    dietaryTags: string[];
+    useCases: string[];
   };
-
-  // Store availability
-  availableInStores: Array<{
-    inStock: boolean;
-    objectID: string;
-  }>;
-
-  // Business metrics
-  margin: number;
-  discount_rate: number;
-  product_aov: number;
-  sales_last_24h: number;
-  sales_last_7d: number;
-  sales_last_30d: number;
-  sales_last_90d: number;
 
   // Algolia-specific fields (populated by search response)
   _highlightResult?: Record<string, unknown>;

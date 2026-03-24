@@ -48,7 +48,7 @@ export default function ProductAskAI({ product }: ProductAskAIProps) {
           <p className="text-sm text-muted-foreground">
             Ask any question about{" "}
             <span className="font-medium text-foreground">
-              {product.name || "this product"}
+              {product.title || "this product"}
             </span>
           </p>
           <div className="flex flex-wrap gap-2">
@@ -56,7 +56,7 @@ export default function ProductAskAI({ product }: ProductAskAIProps) {
               <button
                 key={idx}
                 type="button"
-                onClick={() => handleSubmit(`${question}: ${product.name || "this product"}`)}
+                onClick={() => handleSubmit(`${question}: ${product.title || "this product"}`)}
                 className="text-xs px-3 py-1.5 rounded-full border border-border bg-background text-foreground hover:bg-blue-50 dark:hover:bg-slate-800 hover:border-blue-600 transition-colors"
               >
                 {question}

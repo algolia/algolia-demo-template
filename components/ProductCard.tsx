@@ -99,14 +99,13 @@ import { cn } from "@/lib/utils";
 import { formatPrice } from "@/lib/utils/format";
 import { getPriceInfo, getPreferredCategory } from "@/lib/utils/product";
 import { ALGOLIA_CONFIG } from "@/lib/algolia-config";
-import { parseColorValue } from "@/components/filters-sidebar";
 
 function getHighestCategoryLevel(
-  hierarchicalCategories: Product["hierarchical_categories"]
+  hierarchicalCategories: Product["hierarchicalCategories"]
 ): string | null {
-  if (hierarchicalCategories?.lvl2) return hierarchicalCategories.lvl2;
-  if (hierarchicalCategories?.lvl1) return hierarchicalCategories.lvl1;
-  return hierarchicalCategories?.lvl0 || null;
+  if (hierarchicalCategories?.lvl2?.length > 0) return hierarchicalCategories.lvl2[0];
+  if (hierarchicalCategories?.lvl1?.length > 0) return hierarchicalCategories.lvl1[0];
+  return hierarchicalCategories?.lvl0?.[0] || null;
 }
 
 // ============================================================================
@@ -385,10 +384,10 @@ function SelectionCheckbox({ product, compact = false }: SelectionCheckboxProps)
     e.stopPropagation();
     toggleSelection({
       objectID: productId,
-      name: product.name || "Untitled Product",
+      name: product.title || "Untitled Product",
       brand: product.brand,
-      price: product.price?.value,
-      imageUrl: product.primary_image,
+      price: product.price,
+      imageUrl: product.imageUrl,
     });
   };
 
@@ -412,63 +411,6 @@ function SelectionCheckbox({ product, compact = false }: SelectionCheckboxProps)
 }
 
 // ============================================================================
-// Color Swatches Component
-// ============================================================================
-
-function ColorSwatches({ product, size = "w-4 h-4" }: { product: Product; size?: string }) {
-  const colors = useMemo(() => {
-    const seen = new Set<string>();
-    const result: { name: string; hex: string }[] = [];
-
-    // Current product color
-    if (product.color?.filter_group) {
-      const { name, hex } = parseColorValue(product.color.filter_group);
-      if (hex) {
-        seen.add(hex);
-        result.push({ name, hex });
-      }
-    }
-
-    // Variant colors
-    if (product.variants) {
-      for (const variant of product.variants) {
-        if (variant.color?.filter_group) {
-          const { name, hex } = parseColorValue(variant.color.filter_group);
-          if (hex && !seen.has(hex)) {
-            seen.add(hex);
-            result.push({ name, hex });
-          }
-        }
-      }
-    }
-
-    return result;
-  }, [product]);
-
-  if (colors.length === 0) return null;
-
-  return (
-    <TooltipProvider>
-      <div className="flex items-center gap-1">
-        {colors.map(({ name, hex }) => (
-          <Tooltip key={hex} delayDuration={200}>
-            <TooltipTrigger asChild>
-              <span
-                className={cn("rounded-full border border-border shrink-0", size)}
-                style={{ backgroundColor: hex }}
-              />
-            </TooltipTrigger>
-            <TooltipContent side="top" className="text-xs capitalize">
-              {name}
-            </TooltipContent>
-          </Tooltip>
-        ))}
-      </div>
-    </TooltipProvider>
-  );
-}
-
-// ============================================================================
 // Product Card Component (Full Size)
 // ============================================================================
 
@@ -481,15 +423,15 @@ interface ProductCardProps {
 
 export function ProductCard({ product, showCartControls = true, showBadges = true, selectable = false }: ProductCardProps) {
   const { isSelected } = useSelection();
-  const imageUrl = product.primary_image || "";
-  const productName = product.name || "Untitled Product";
+  const imageUrl = product.imageUrl || "";
+  const productName = product.title || "Untitled Product";
   const productId = product.objectID;
 
   if (!productId) {
     return null;
   }
 
-  const highestCategory = getHighestCategoryLevel(product.hierarchical_categories);
+  const highestCategory = getHighestCategoryLevel(product.hierarchicalCategories);
   const { price, originalPrice, hasDiscount, discountPercentage } = getPriceInfo(product);
   const category = getPreferredCategory(product);
 
@@ -520,7 +462,7 @@ export function ProductCard({ product, showCartControls = true, showBadges = tru
         />
       )}
 
-      <div className="relative w-full h-56 bg-gray-50">
+      <div className={cn("relative w-full h-56 bg-gray-50", product.inStock === false && "opacity-50")}>
         {imageUrl ? (
           <Image
             src={imageUrl}
@@ -532,6 +474,13 @@ export function ProductCard({ product, showCartControls = true, showBadges = tru
         ) : (
           <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs bg-muted">
             No image
+          </div>
+        )}
+        {product.inStock === false && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="bg-foreground/80 text-background text-xs font-semibold px-3 py-1 rounded-full">
+              Agotado
+            </span>
           </div>
         )}
       </div>
@@ -552,8 +501,6 @@ export function ProductCard({ product, showCartControls = true, showBadges = tru
             </span>
           </div>
         )}
-
-        <ColorSwatches product={product} />
 
         {price > 0 && (
           <div className="flex items-center gap-2 mt-2">
@@ -590,8 +537,8 @@ interface ProductListItemProps {
 
 export function ProductListItem({ product, showCartControls = true, showBadges = true, selectable = false }: ProductListItemProps) {
   const { isSelected } = useSelection();
-  const imageUrl = product.primary_image || "";
-  const productName = product.name || "Untitled Product";
+  const imageUrl = product.imageUrl || "";
+  const productName = product.title || "Untitled Product";
   const productLink = `/products/${product.objectID}`;
   const productId = product.objectID;
   const { price, originalPrice, hasDiscount, discountPercentage } = getPriceInfo(product);
@@ -628,7 +575,7 @@ export function ProductListItem({ product, showCartControls = true, showBadges =
         />
       )}
 
-      <div className="relative w-32 h-32 shrink-0 bg-muted rounded-md overflow-hidden">
+      <div className={cn("relative w-32 h-32 shrink-0 bg-muted rounded-md overflow-hidden", product.inStock === false && "opacity-50")}>
         {imageUrl ? (
           <Image
             src={imageUrl}
@@ -639,6 +586,13 @@ export function ProductListItem({ product, showCartControls = true, showBadges =
         ) : (
           <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">
             No image
+          </div>
+        )}
+        {product.inStock === false && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="bg-foreground/80 text-background text-[10px] font-semibold px-2 py-0.5 rounded-full">
+              Agotado
+            </span>
           </div>
         )}
       </div>
@@ -656,9 +610,9 @@ export function ProductListItem({ product, showCartControls = true, showBadges =
             {product.description}
           </p>
         )}
-        {product.list_categories && product.list_categories.length > 0 && (
+        {product.categories?.lvl0 && product.categories.lvl0.length > 0 && (
           <div className="flex flex-wrap gap-1">
-            {product.list_categories.map((cat: string, idx: number) => (
+            {product.categories.lvl0.map((cat: string, idx: number) => (
               <span
                 key={idx}
                 className="text-xs bg-muted px-2 py-0.5 rounded text-muted-foreground"
@@ -668,9 +622,6 @@ export function ProductListItem({ product, showCartControls = true, showBadges =
             ))}
           </div>
         )}
-        <div className="mt-2">
-          <ColorSwatches product={product} />
-        </div>
       </div>
       <div className="shrink-0 text-right">
         {price > 0 && (
@@ -708,8 +659,8 @@ export const CompactProductCard = memo(function CompactProductCard({
   showCartControls = true,
   showBadges = true,
 }: CompactProductCardProps) {
-  const imageUrl = product.primary_image || "";
-  const productName = product.name || "Product";
+  const imageUrl = product.imageUrl || "";
+  const productName = product.title || "Product";
   const productId = product.objectID;
   const { price, originalPrice, hasDiscount, discountPercentage } = getPriceInfo(product);
   const category = getPreferredCategory(product);
@@ -737,7 +688,7 @@ export const CompactProductCard = memo(function CompactProductCard({
         />
       )}
 
-      <div className="relative w-full h-28 bg-muted">
+      <div className={cn("relative w-full h-28 bg-muted", product.inStock === false && "opacity-50")}>
         {imageUrl ? (
           <Image
             src={imageUrl}
@@ -751,6 +702,13 @@ export const CompactProductCard = memo(function CompactProductCard({
             No img
           </div>
         )}
+        {product.inStock === false && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="bg-foreground/80 text-background text-[10px] font-semibold px-2 py-0.5 rounded-full">
+              Agotado
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="p-2">
@@ -762,9 +720,6 @@ export const CompactProductCard = memo(function CompactProductCard({
         <h4 className="text-xs font-medium text-foreground line-clamp-2 group-hover:text-primary transition-colors leading-tight">
           {productName}
         </h4>
-        <div className="mt-1">
-          <ColorSwatches product={product} size="w-3 h-3" />
-        </div>
         {price > 0 && (
           <div className="mt-1">
             <div className="flex items-center gap-1">
@@ -806,8 +761,8 @@ export const CompactProductListItem = memo(function CompactProductListItem({
   showBadges = true,
   className = "",
 }: CompactProductListItemProps) {
-  const imageUrl = product.primary_image || "";
-  const productName = product.name || "Product";
+  const imageUrl = product.imageUrl || "";
+  const productName = product.title || "Product";
   const productId = product.objectID;
   const { price, originalPrice, hasDiscount, discountPercentage } = getPriceInfo(product);
   const category = getPreferredCategory(product);
@@ -839,7 +794,7 @@ export const CompactProductListItem = memo(function CompactProductListItem({
       )}
 
       {imageUrl ? (
-        <div className="w-16 h-16 shrink-0 rounded-md overflow-hidden bg-muted relative">
+        <div className={cn("w-16 h-16 shrink-0 rounded-md overflow-hidden bg-muted relative", product.inStock === false && "opacity-50")}>
           <Image
             src={imageUrl}
             alt={productName}
@@ -847,6 +802,13 @@ export const CompactProductListItem = memo(function CompactProductListItem({
             className="object-contain p-0.5"
             sizes="64px"
           />
+          {product.inStock === false && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="bg-foreground/80 text-background text-[8px] font-semibold px-1.5 py-0.5 rounded-full">
+                Agotado
+              </span>
+            </div>
+          )}
         </div>
       ) : (
         <div className="w-16 h-16 shrink-0 rounded-md bg-muted flex items-center justify-center text-muted-foreground text-xs">

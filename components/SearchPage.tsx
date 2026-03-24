@@ -6,7 +6,9 @@ import { algoliasearch } from "algoliasearch";
 import Image from "next/image";
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { Product } from "@/lib/types/product";
+import type { Guide } from "@/lib/types/guide";
 import { ProductCard, ProductListItem } from "@/components/ProductCard";
+import { useFederatedSearch, FederatedRecipes, GuidesSection } from "@/components/FederatedResults";
 import { ProductToolbar, SearchStats } from "@/components/ProductToolbar";
 import { FiltersSidebar, ActiveFilters } from "@/components/filters-sidebar";
 import { Configure } from "react-instantsearch";
@@ -232,7 +234,7 @@ function RuleBanner() {
   );
 }
 
-function CustomHits({ viewMode, compact }: { viewMode: "grid" | "list"; compact?: boolean }) {
+function CustomHits({ viewMode, compact, guides }: { viewMode: "grid" | "list"; compact?: boolean; guides?: Guide[] }) {
   const { hits, showMore, isLastPage } = useInfiniteHits<Product>();
   const sentinelRef = useRef<HTMLDivElement>(null);
 
@@ -258,9 +260,9 @@ function CustomHits({ viewMode, compact }: { viewMode: "grid" | "list"; compact?
   if (hits.length === 0) {
     return (
       <div className="text-center py-16">
-        <p className="text-lg text-muted-foreground">No products found</p>
+        <p className="text-lg text-muted-foreground">No se encontraron productos</p>
         <p className="text-sm text-muted-foreground mt-2">
-          Try adjusting your search terms
+          Intenta ajustar los t&eacute;rminos de b&uacute;squeda
         </p>
       </div>
     );
@@ -279,11 +281,18 @@ function CustomHits({ viewMode, compact }: { viewMode: "grid" | "list"; compact?
     );
   }
 
+  const firstProducts = hits.slice(0, 8);
+  const remainingProducts = hits.slice(8);
+
   return (
     <div className="ais-InfiniteHits">
       <div className={`ais-InfiniteHits-list grid grid-cols-2 ${compact ? "lg:grid-cols-3" : "lg:grid-cols-4"} gap-4`}>
-        {hits.map((hit, index) => (
+        {firstProducts.map((hit, index) => (
           <ProductCard key={`${hit.objectID}-${index}`} product={hit} selectable />
+        ))}
+        {guides && guides.length > 0 && <GuidesSection guides={guides} />}
+        {remainingProducts.map((hit, index) => (
+          <ProductCard key={`${hit.objectID}-${index + 8}`} product={hit} selectable />
         ))}
         <div ref={sentinelRef} className="ais-InfiniteHits-sentinel col-span-full" aria-hidden="true" />
       </div>
@@ -296,6 +305,7 @@ export default function SearchPage() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const { isSidepanelOpen } = useSidepanel();
   const { filtersOpen, toggleFilters } = useCollapsibleFilters();
+  const { recipes, guides } = useFederatedSearch(query);
 
   const handleSuggestionClick = (suggestionQuery: string) => {
     refine(suggestionQuery);
@@ -321,7 +331,7 @@ export default function SearchPage() {
       {/* Display current search query */}
       <div className="mb-6">
         <h1 className="text-2xl font-semibold text-foreground">
-          Results for:{" "}
+          Resultados para:{" "}
           <span className="text-primary">&quot;{query}&quot;</span>
         </h1>
       </div>
@@ -334,6 +344,9 @@ export default function SearchPage() {
         query={query}
         onSuggestionClick={handleSuggestionClick}
       />
+
+      {/* Federated Recipes */}
+      <FederatedRecipes recipes={recipes} />
 
       <div className="flex gap-8">
         {/* Desktop Sidebar - collapsible */}
@@ -355,14 +368,14 @@ export default function SearchPage() {
             <button
               onClick={toggleFilters}
               className="hidden lg:flex items-center gap-1.5 px-2 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-muted"
-              aria-label={filtersOpen ? "Hide filters" : "Show filters"}
+              aria-label={filtersOpen ? "Ocultar filtros" : "Mostrar filtros"}
             >
               {filtersOpen ? (
                 <PanelLeftClose className="w-4 h-4" />
               ) : (
                 <PanelLeftOpen className="w-4 h-4" />
               )}
-              <span>{filtersOpen ? "Hide filters" : "Filters"}</span>
+              <span>{filtersOpen ? "Ocultar filtros" : "Filtros"}</span>
             </button>
             <SearchStats />
             <div className="flex-1" />
@@ -373,7 +386,7 @@ export default function SearchPage() {
             />
           </div>
           <Configure getRankingInfo={true} />
-          <CustomHits viewMode={viewMode} compact={isSidepanelOpen} />
+          <CustomHits viewMode={viewMode} compact={isSidepanelOpen} guides={guides} />
         </div>
       </div>
     </div>

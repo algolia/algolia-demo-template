@@ -449,7 +449,7 @@ export function CategoryFilter() {
 export function SubcategoryFilter() {
   return (
     <RefinementListFilter
-      attribute="hierarchical_categories.lvl1"
+      attribute="hierarchicalCategories.lvl1"
       title="Subcategory"
       searchable
       searchPlaceholder="Search subcategories..."
@@ -715,10 +715,10 @@ export function FiltersSidebar() {
       <InStockFilter />
       <HierarchicalCategoryFilter
         attributes={[
-          "hierarchical_categories.lvl0",
-          "hierarchical_categories.lvl1",
-          "hierarchical_categories.lvl2",
-          "hierarchical_categories.lvl3",
+          "hierarchicalCategories.lvl0",
+          "hierarchicalCategories.lvl1",
+          "hierarchicalCategories.lvl2",
+          "hierarchicalCategories.lvl3",
         ]}
         title="Category"
       />

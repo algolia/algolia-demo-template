@@ -1,0 +1,49 @@
+[
+  {
+    "_metadata": {
+      "lastUpdate": 1773658828
+    },
+    "conditions": [
+      {
+        "alternatives": true,
+        "anchoring": "is",
+        "pattern": "limon"
+      }
+    ],
+    "consequence": {
+      "filterPromotes": true,
+      "params": {
+        "optionalFilters": [
+          "categories.lvl2:Cítricos<score=1>"
+        ]
+      }
+    },
+    "enabled": true,
+    "tags": [
+      "visual-editor"
+    ],
+    "objectID": "qr-1771279046512",
+    "_highlightResult": {
+      "conditions": [
+        {
+          "pattern": {
+            "value": "limon",
+            "matchLevel": "none",
+            "matchedWords": []
+          }
+        }
+      ],
+      "consequence": {
+        "params": {
+          "optionalFilters": [
+            {
+              "value": "categories.lvl2:Cítricos<score=1>",
+              "matchLevel": "none",
+              "matchedWords": []
+            }
+          ]
+        }
+      }
+    }
+  }
+]

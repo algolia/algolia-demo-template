@@ -58,6 +58,7 @@ export type ContextSnapshot = {
     brand?: string;
     price?: string;
   }>;
+  isFirstMessage?: boolean;
 };
 
 // Simple in-memory cache for product data
@@ -232,7 +233,7 @@ export async function hydrateContext(
     if (product) {
       const productSnapshot: ContextSnapshot['product'] = {
         objectID: product.objectID || objectID,
-        name: product.name,
+        name: product.title,
         brand: product.brand,
         price: product.price?.toString(),
         description: product.description?.slice(0, 200), // Truncate for token efficiency

@@ -1,25 +1,19 @@
-/**
- * Core demo configuration
- *
- * Edit this file to customize the store for a new demo/customer.
- * See SETUP.md for the full setup checklist.
- */
 export const DEMO_CONFIG = {
   brand: {
-    name: "Acme Store",
-    tagline: "Your trusted online store",
-    logoUrl: "/logo.svg",
+    name: "Consum",
+    tagline: "Tu cooperativa de confianza",
+    logoUrl: "https://www.consum.es/themes/custom/consum_es/assets/img/logo_en.png",
     logoWidth: 120,
     logoHeight: 40,
-    agentName: "Acme AI",
+    agentName: "Consum AI",
   },
   locale: {
-    language: "en",
-    currency: "USD",
-    currencySymbol: "$",
+    language: "es",
+    currency: "EUR",
+    currencySymbol: "\u20ac",
   },
   imageDomains: [
-    { protocol: "https" as const, hostname: "fxqklbpngldowtbkqezm.supabase.co" },
-    { protocol: "https" as const, hostname: "img.theproteinworks.com" },
+    { protocol: "https" as const, hostname: "cdn-consum.aktiosdigitalservices.com" },
+    { protocol: "https" as const, hostname: "www.consum.es" },
   ],
 };

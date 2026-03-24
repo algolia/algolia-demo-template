@@ -1,24 +1,10 @@
-/**
- * Centralized Algolia configuration
- *
- * Non-sensitive values (APP_ID, SEARCH_API_KEY, index names, agent IDs) live
- * here so that Claude Code and other tooling can read them directly.
- * Only truly secret keys (ADMIN_API_KEY) stay in `.env`.
- *
- * Environment variables, when set, override the defaults below.
- */
 export const ALGOLIA_CONFIG = {
-  // Core — safe to expose (search-only key, no write access)
   APP_ID: "3FKQCCIUWO",
-  SEARCH_API_KEY:
-    "cf3b54fbfea633fb12808c8b2f59b990",
-
-  // Indices
-  INDEX_NAME: "fashion_ns",
-
-  // Composition
-  COMPOSITION_ID: "fashion_ns_composition",
-
-  // Agent Studio configuration
-  AGENT_ID:  "3db1f581-4e8d-4570-a856-dd46204d360a",
+  SEARCH_API_KEY: "cf3b54fbfea633fb12808c8b2f59b990",
+  INDEX_NAME: "new_consum_products",
+  COMPOSITION_ID: "new_consum_products_composition",
+  AGENT_ID: "dfc1d999-3705-475d-8f89-7d82c22900f8",
+  RECIPES_INDEX: "new_consum_recipes",
+  GUIDES_INDEX: "new_consum_guides",
+  SUGGESTIONS_INDEX: "new_consum_products_query_suggestions",
 };

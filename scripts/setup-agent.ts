@@ -1,7 +1,7 @@
 import "dotenv/config";
 import * as fs from "fs";
 import * as path from "path";
-import { AGENT_CONFIG, AGENT_PRODUCT_ATTRIBUTES } from "../lib/demo-config/agents";
+import { AGENT_CONFIG, AGENT_PRODUCT_ATTRIBUTES, RECIPES_INDEX_ENHANCED_DESCRIPTION, GUIDES_INDEX_ENHANCED_DESCRIPTION } from "../lib/demo-config/agents";
 import { ALGOLIA_CONFIG } from "../lib/algolia-config";
 
 const ALGOLIA_APP_ID = ALGOLIA_CONFIG.APP_ID;
@@ -191,6 +191,16 @@ async function main() {
           searchParameters: {
             attributesToRetrieve: AGENT_PRODUCT_ATTRIBUTES,
           },
+        },
+        {
+          index: ALGOLIA_CONFIG.RECIPES_INDEX,
+          description: "Consum recipes",
+          enhancedDescription: RECIPES_INDEX_ENHANCED_DESCRIPTION,
+        },
+        {
+          index: ALGOLIA_CONFIG.GUIDES_INDEX,
+          description: "Consum food guides",
+          enhancedDescription: GUIDES_INDEX_ENHANCED_DESCRIPTION,
         },
       ],
     },

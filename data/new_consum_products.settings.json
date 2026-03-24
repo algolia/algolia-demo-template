@@ -1,0 +1,124 @@
+{
+  "altCorrections": [
+    {
+      "correction": "Cítricos",
+      "nbTypos": 1,
+      "word": "limon"
+    }
+  ],
+  "alternativesAsExact": [
+    "ignorePlurals",
+    "singleWordSynonym"
+  ],
+  "attributeForDistinct": null,
+  "attributesForFaceting": [
+    "searchable(brand)",
+    "searchable(categories.lvl0)",
+    "searchable(categories.lvl1)",
+    "searchable(categories.lvl2)",
+    "searchable(categoryPageId)",
+    "searchable(enriched.dietaryTags)",
+    "searchable(enriched.keywords)",
+    "searchable(enriched.useCases)",
+    "groups",
+    "hierarchicalCategories.lvl0",
+    "hierarchicalCategories.lvl1",
+    "searchable(hierarchicalCategories.lvl2)",
+    "hierarchicalCategories.lvl3",
+    "filterOnly(inStock)",
+    "offer",
+    "filterOnly(price)",
+    "promotions",
+    "unit"
+  ],
+  "attributesToHighlight": [
+    "title",
+    "brand",
+    "description"
+  ],
+  "attributesToRetrieve": [
+    "objectID",
+    "id",
+    "clientId",
+    "ean",
+    "title",
+    "brand",
+    "description",
+    "url",
+    "imageUrl",
+    "inStock",
+    "price",
+    "normalPrice",
+    "discount",
+    "discountPercentage",
+    "priceUnit",
+    "priceOfferUnit",
+    "unit",
+    "offer",
+    "groups",
+    "promotions",
+    "highlighted",
+    "categories",
+    "hierarchicalCategories",
+    "enriched.description",
+    "enriched.keywords",
+    "enriched.dietaryTags",
+    "enriched.useCases"
+  ],
+  "attributesToSnippet": [
+    "description:50",
+    "enriched.description:80"
+  ],
+  "customRanking": [
+    "desc(offer)",
+    "desc(highlighted)"
+  ],
+  "decompoundQuery": false,
+  "exactOnSingleWordQuery": "attribute",
+  "highlightPostTag": "</em>",
+  "highlightPreTag": "<em>",
+  "hitsPerPage": 20,
+  "ignorePlurals": [
+    "es"
+  ],
+  "indexLanguages": [
+    "es"
+  ],
+  "maxValuesPerFacet": 100,
+  "minProximity": 3,
+  "minWordSizefor1Typo": 4,
+  "minWordSizefor2Typos": 8,
+  "numericAttributesToIndex": null,
+  "optionalWords": null,
+  "paginationLimitedTo": 1000,
+  "queryLanguages": [
+    "es"
+  ],
+  "queryType": "prefixLast",
+  "ranking": [
+    "typo",
+    "geo",
+    "words",
+    "filters",
+    "proximity",
+    "attribute",
+    "exact",
+    "custom"
+  ],
+  "removeStopWords": [
+    "es"
+  ],
+  "removeWordsIfNoResults": "allOptional",
+  "searchableAttributes": [
+    "unordered(categories.lvl0)",
+    "unordered(categories.lvl1)",
+    "unordered(categories.lvl2)",
+    "unordered(brand)",
+    "title",
+    "unordered(categories.lvl3)",
+    "unordered(description)"
+  ],
+  "separatorsToIndex": "",
+  "unretrievableAttributes": null,
+  "version": 1
+}

@@ -7,6 +7,7 @@ import { useCart } from '@/components/cart/cart-context';
 import { useSelection, SelectedProduct } from '@/components/selection/selection-context';
 import { getObjectsByIds } from '@/lib/getObjectByIDs';
 import { Product } from '@/lib/types/product';
+import { Recipe } from '@/lib/types/recipe';
 import { ALGOLIA_CONFIG } from '@/lib/algolia-config';
 import { ContextSnapshot } from '@/components/sidepanel-agent-studio/lib/context-snapshot';
 import { buildAgentApiUrl, createAgentTransport } from '@/components/sidepanel-agent-studio/lib/create-agent-transport';
@@ -57,7 +58,18 @@ export type ShowItemsToolCallOutput = {
   explanation?: string;
 };
 
+export type ShowRecipesToolCallInput = {
+  objectIDs: string[];
+  title?: string;
+  explanation?: string;
+};
 
+export type ShowRecipesToolCallOutput = {
+  status: 'Successfully showed recipes';
+  recipes: Recipe[];
+  title?: string;
+  explanation?: string;
+};
 
 export function useAgentStudio(config: AgentStudioConfig) {
   if (!config) {
@@ -129,9 +141,9 @@ export function useAgentStudio(config: AgentStudioConfig) {
         for (const product of products) {
           addItem({
             id: product.objectID || '',
-            name: product.name || 'Unknown Product',
-            price: product.price?.value || 0,
-            image: product.primary_image,
+            name: product.title || 'Unknown Product',
+            price: product.price || 0,
+            image: product.imageUrl,
             brand: product.brand,
           });
         }
@@ -156,6 +168,22 @@ export function useAgentStudio(config: AgentStudioConfig) {
           output: {
             status: 'Successfully showed items',
             products: products,
+            title: input.title,
+            explanation: input.explanation,
+          },
+        });
+      }
+      if (toolCall.toolName === 'showRecipes') {
+        const input = toolCall.input as ShowRecipesToolCallInput;
+        const recipes = await getObjectsByIds<Recipe>(input.objectIDs, ALGOLIA_CONFIG.RECIPES_INDEX);
+
+        chat.addToolOutput({
+          tool: 'showRecipes',
+          toolCallId: toolCall.toolCallId,
+          state: 'output-available',
+          output: {
+            status: 'Successfully showed recipes',
+            recipes: recipes,
             title: input.title,
             explanation: input.explanation,
           },

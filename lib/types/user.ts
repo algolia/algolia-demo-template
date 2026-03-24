@@ -3,36 +3,16 @@ export interface User {
   description: string;
   slug: string;
   preferences: {
-    "categories.lvl0"?: {
-      [key: string]: number;
-    };
-    "categories.lvl1"?: {
-      [key: string]: number;
-    };
-    "categories.lvl2"?: {
-      [key: string]: number;
-    };
-    "hierarchical_categories.lvl0"?: {
-      [key: string]: number;
-    };
-    "hierarchical_categories.lvl1"?: {
-      [key: string]: number;
-    };
-    "hierarchical_categories.lvl2"?: {
-      [key: string]: number;
-    };
-    "hierarchical_categories.lvl3"?: {
-      [key: string]: number;
-    };
-    brand?: {
-      [key: string]: number;
-    };
-    characteristics?: {
-      [key: string]: number;
-    };
-    format?: {
-      [key: string]: number;
-    };
+    "categories.lvl0"?: { [key: string]: number };
+    "categories.lvl1"?: { [key: string]: number };
+    "categories.lvl2"?: { [key: string]: number };
+    "hierarchicalCategories.lvl0"?: { [key: string]: number };
+    "hierarchicalCategories.lvl1"?: { [key: string]: number };
+    "hierarchicalCategories.lvl2"?: { [key: string]: number };
+    "hierarchicalCategories.lvl3"?: { [key: string]: number };
+    brand?: { [key: string]: number };
+    groups?: { [key: string]: number };
+    promotions?: { [key: string]: number };
   };
 }
 

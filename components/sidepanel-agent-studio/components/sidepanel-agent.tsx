@@ -19,6 +19,9 @@ import {
   SquarePen,
   ThumbsDown,
   ThumbsUp,
+  UtensilsCrossedIcon,
+  ClockIcon,
+  UsersIcon,
   XIcon,
 } from "lucide-react";
 import { marked, type Tokens } from "marked";
@@ -36,7 +39,7 @@ import {
   useState,
 } from "react";
 import { createPortal } from "react-dom";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useSearchBox, useInstantSearch } from "react-instantsearch";
 import { Button } from "@/components/ui/button";
 import {
@@ -52,11 +55,13 @@ import {
 import { useSidepanel } from "@/components/sidepanel-agent-studio/context/sidepanel-context";
 import { AGENT_CONFIG } from "@/lib/demo-config/agents";
 import { Product } from "@/lib/types/product";
+import { Recipe } from "@/lib/types/recipe";
 import { useSpeechRecognition } from "@/hooks/use-speech-recognition";
 import { CompactProductListItem } from "@/components/ProductCard";
 import { getObjectsByIds } from "@/lib/getObjectByIDs";
 import { ALGOLIA_CONFIG } from "@/lib/algolia-config";
 import { DEMO_CONFIG } from "@/lib/demo-config";
+import { proxyImageUrl } from "@/lib/utils/proxy-image";
 
 // ============================================================================
 // Types
@@ -125,6 +130,20 @@ export interface AddToCartTool {
   };
 }
 
+export interface ShowRecipesTool {
+  input: {
+    objectIDs: string[];
+    title?: string;
+    explanation?: string;
+  };
+  output: {
+    status: string;
+    recipes: Recipe[];
+    title?: string;
+    explanation?: string;
+  };
+}
+
 export type Message = UIMessage<
   unknown,
   UIDataTypes,
@@ -132,6 +151,7 @@ export type Message = UIMessage<
     algolia_search_index: AlgoliaSearchIndexTool;
     showItems: ShowItemsTool;
     addToCart: AddToCartTool;
+    showRecipes: ShowRecipesTool;
   }
 >;
 
@@ -141,6 +161,7 @@ export type AIMessagePart = UIMessagePart<
     algolia_search_index: AlgoliaSearchIndexTool;
     showItems: ShowItemsTool;
     addToCart: AddToCartTool;
+    showRecipes: ShowRecipesTool;
   }
 >;
 
@@ -522,6 +543,131 @@ const ShowItemsDisplay = memo(function ShowItemsDisplay({
 });
 
 // ============================================================================
+// Show Recipes Component (displays recipes from showRecipes tool)
+// ============================================================================
+
+interface ShowRecipesDisplayProps {
+  recipes: Recipe[];
+  title?: string;
+  explanation?: string;
+  isLoading?: boolean;
+}
+
+const ShowRecipesDisplay = memo(function ShowRecipesDisplay({
+  recipes,
+  title,
+  explanation,
+  isLoading,
+}: ShowRecipesDisplayProps) {
+  const router = useRouter();
+
+  if (isLoading) {
+    return (
+      <div className="my-3 p-4 rounded-lg border border-border bg-muted/30">
+        <div className="flex items-center gap-2 text-muted-foreground text-sm">
+          <UtensilsCrossedIcon size={14} className="animate-pulse" />
+          <AnimatedShinyText>Cargando recetas...</AnimatedShinyText>
+        </div>
+      </div>
+    );
+  }
+
+  if (!recipes || recipes.length === 0) {
+    return null;
+  }
+
+  const handleViewRecipe = (recipe: Recipe) => {
+    if (!recipe.objectID) return;
+    router.push(`/recipes/${recipe.objectID}`);
+  };
+
+  return (
+    <div className="my-3">
+      {(title || explanation) && (
+        <div className="mb-3">
+          {title && (
+            <h4 className="font-semibold text-foreground text-sm mb-1">{title}</h4>
+          )}
+          {explanation && (
+            <p className="text-muted-foreground text-sm">{explanation}</p>
+          )}
+        </div>
+      )}
+      <div className="grid gap-3">
+        {recipes.map((recipe, index) => (
+          <div
+            key={recipe.objectID || index}
+            className="rounded-lg border border-border bg-background overflow-hidden"
+          >
+            <a
+              href={recipe.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex gap-3 p-3 hover:bg-muted/50 transition-colors no-underline"
+            >
+              {recipe.imageUrl && (
+                <img
+                  src={proxyImageUrl(recipe.imageUrl)}
+                  alt={recipe.title}
+                  className="w-20 h-20 object-cover rounded-md shrink-0"
+                />
+              )}
+              <div className="flex-1 min-w-0">
+                <h5 className="font-medium text-foreground text-sm leading-tight mb-1 truncate">
+                  {recipe.title}
+                </h5>
+                <div className="flex items-center gap-3 text-xs text-muted-foreground mb-1.5">
+                  {recipe.totalTimeMinutes && (
+                    <span className="flex items-center gap-1">
+                      <ClockIcon size={12} />
+                      {recipe.totalTimeMinutes} min
+                    </span>
+                  )}
+                  {recipe.servings && (
+                    <span className="flex items-center gap-1">
+                      <UsersIcon size={12} />
+                      {recipe.servings} pers.
+                    </span>
+                  )}
+                </div>
+                {recipe.categories && recipe.categories.length > 0 && (
+                  <div className="flex flex-wrap gap-1">
+                    {recipe.categories.slice(0, 2).map((cat) => (
+                      <span
+                        key={cat}
+                        className="text-[10px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary font-medium"
+                      >
+                        {cat}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                {recipe.ingredients && recipe.ingredients.length > 0 && (
+                  <p className="text-xs text-muted-foreground mt-1 truncate">
+                    {recipe.ingredients.slice(0, 4).join(", ")}
+                    {recipe.ingredients.length > 4 && "..."}
+                  </p>
+                )}
+              </div>
+            </a>
+            {(recipe.ingredientsFull?.length || recipe.ingredients?.length) ? (
+              <button
+                type="button"
+                onClick={() => handleViewRecipe(recipe)}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-primary bg-primary/5 hover:bg-primary/15 transition-colors cursor-pointer border-t border-border"
+              >
+                <SearchIcon size={14} />
+                Buscar ingredientes en la tienda
+              </button>
+            ) : null}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+});
+
+// ============================================================================
 // Search Results Preview Component (fetches full product data with images)
 // ============================================================================
 
@@ -809,8 +955,8 @@ const ChatWidget = memo(function ChatWidget({
         const hierarchicalMenu: Record<string, string[]> = {};
 
         const addFacet = (facetName: string, facetValue: string) => {
-          if (facetName.startsWith("hierarchical_categories.")) {
-            const rootAttr = "hierarchical_categories.lvl0";
+          if (facetName.startsWith("hierarchicalCategories.")) {
+            const rootAttr = "hierarchicalCategories.lvl0";
             if (!hierarchicalMenu[rootAttr]) hierarchicalMenu[rootAttr] = [];
             if (!hierarchicalMenu[rootAttr].includes(facetValue))
               hierarchicalMenu[rootAttr].push(facetValue);
@@ -1200,6 +1346,42 @@ const ChatWidget = memo(function ChatWidget({
                             } else {
                               return null;
                             }
+                          } else if (part.type === "tool-showRecipes") {
+                            if (
+                              part.state === "input-streaming" ||
+                              part.state === "input-available"
+                            ) {
+                              return (
+                                <ShowRecipesDisplay
+                                  key={`${index}`}
+                                  recipes={[]}
+                                  isLoading={true}
+                                />
+                              );
+                            } else if (part.state === "output-available") {
+                              const recipes = part.output?.recipes || [];
+                              const title = part.output?.title;
+                              const explanation = part.output?.explanation;
+                              return (
+                                <ShowRecipesDisplay
+                                  key={`${index}`}
+                                  recipes={recipes}
+                                  title={title}
+                                  explanation={explanation}
+                                />
+                              );
+                            } else if (part.state === "output-error") {
+                              return (
+                                <p
+                                  className="text-[0.95rem] flex my-2 gap-2 items-center text-red-500"
+                                  key={`${index}`}
+                                >
+                                  Error al cargar las recetas
+                                </p>
+                              );
+                            } else {
+                              return null;
+                            }
                           } else if (part.type === "tool-addToCart") {
                             if (
                               part.state === "input-streaming" ||
@@ -1241,15 +1423,15 @@ const ChatWidget = memo(function ChatWidget({
                                         key={product.objectID}
                                         className="flex items-center gap-2 text-sm"
                                       >
-                                        {product.primary_image && (
+                                        {product.imageUrl && (
                                           <img
-                                            src={product.primary_image}
-                                            alt={product.name}
+                                            src={product.imageUrl}
+                                            alt={product.title}
                                             className="w-8 h-8 object-cover rounded"
                                           />
                                         )}
                                         <span className="text-foreground truncate">
-                                          {product.name}
+                                          {product.title}
                                         </span>
                                       </div>
                                     ))}

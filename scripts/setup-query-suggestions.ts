@@ -35,13 +35,11 @@ const SUGGESTIONS_INDEX = `${ALGOLIA_CONFIG.INDEX_NAME}_query_suggestions`;
 
 const FACETS: string[][] = [
   ["brand"],
-  ["hierarchical_categories.lvl0"],
-  ["hierarchical_categories.lvl1"],
-  ["gender"],
-  ["color.filter_group"],
-  ["brand", "hierarchical_categories.lvl0"],
-  ["brand", "gender"],
-  ["gender", "hierarchical_categories.lvl0"],
+  ["hierarchicalCategories.lvl0"],
+  ["hierarchicalCategories.lvl1"],
+  ["categories.lvl0"],
+  ["categories.lvl1"],
+  ["brand", "categories.lvl0"],
 ];
 
 const CONFIGURATION = {
@@ -53,7 +51,7 @@ const CONFIGURATION = {
       generate: FACETS,
     },
   ],
-  languages: ["en"],
+  languages: ["es"],
 };
 
 async function main() {

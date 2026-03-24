@@ -27,7 +27,7 @@ const BASE_URL = `https://recommend.${REGION}.algolia.com/1`;
 
 // Content-based filtering attributes used for fallback recommendations
 // when not enough events are available
-const CBF_ATTRIBUTES = ["hierarchical_categories.lvl0", "brand", "gender"];
+const CBF_ATTRIBUTES = ["hierarchicalCategories.lvl0", "brand", "enriched.dietaryTags"];
 
 interface ModelConfig {
   name: string;
@@ -49,7 +49,7 @@ const MODELS: ModelConfig[] = [
     name: "Looking Similar",
     path: "looking-similar",
     body: {
-      imageAttributes: [{ attribute: "primary_image" }],
+      imageAttributes: [{ attribute: "imageUrl" }],
       deduplication: false,
       personalization: false,
     },

@@ -1,0 +1,18 @@
+[
+  {
+    "corrections": [
+      "Cítricos"
+    ],
+    "type": "altcorrection1",
+    "word": "limon",
+    "objectID": "syn-1770807410290-82"
+  },
+  {
+    "input": "leche",
+    "synonyms": [
+      "bebida"
+    ],
+    "type": "onewaysynonym",
+    "objectID": "syn-1770774555448-50"
+  }
+]

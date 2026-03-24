@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { readFileSync } from "fs";
+import { existsSync, readFileSync } from "fs";
 import { algoliasearch } from "algoliasearch";
 import { ALGOLIA_CONFIG } from "../lib/algolia-config";
 
@@ -7,6 +7,79 @@ const ALGOLIA_APP_ID = ALGOLIA_CONFIG.APP_ID;
 const ALGOLIA_ADMIN_KEY = process.env.ALGOLIA_ADMIN_API_KEY!;
 const INDEX_NAME = ALGOLIA_CONFIG.INDEX_NAME;
 const COMPOSITION_ID = ALGOLIA_CONFIG.COMPOSITION_ID || `${INDEX_NAME}_composition`;
+
+function readJsonFile(path: string): unknown[] | null {
+  if (!existsSync(path)) return null;
+  return JSON.parse(readFileSync(path, "utf-8"));
+}
+
+function readJsonObject(path: string): Record<string, unknown> | null {
+  if (!existsSync(path)) return null;
+  return JSON.parse(readFileSync(path, "utf-8"));
+}
+
+async function restoreIndex(
+  client: ReturnType<typeof algoliasearch>,
+  indexName: string
+) {
+  const recordsPath = `data/${indexName}.json`;
+  const records = readJsonFile(recordsPath);
+  if (!records) {
+    console.log(`  Skipping ${indexName} — no data file found`);
+    return;
+  }
+
+  console.log(`\n--- Restoring ${indexName} (${records.length} records) ---`);
+
+  // Index records in batches
+  const BATCH_SIZE = 1000;
+  for (let i = 0; i < records.length; i += BATCH_SIZE) {
+    const batch = records.slice(i, i + BATCH_SIZE);
+    await client.saveObjects({
+      indexName,
+      objects: batch as Record<string, unknown>[],
+    });
+    console.log(
+      `  Indexed ${Math.min(i + BATCH_SIZE, records.length)}/${records.length}`
+    );
+  }
+
+  // Restore settings
+  const settings = readJsonObject(`data/${indexName}.settings.json`);
+  if (settings) {
+    await client.setSettings({
+      indexName,
+      indexSettings: settings,
+    });
+    console.log(`  Settings restored`);
+  }
+
+  // Restore synonyms
+  const synonyms = readJsonFile(`data/${indexName}.synonyms.json`);
+  if (synonyms && synonyms.length > 0) {
+    await client.saveSynonyms({
+      indexName,
+      synonymHit: synonyms as Parameters<
+        typeof client.saveSynonyms
+      >[0]["synonymHit"],
+      forwardToReplicas: false,
+      replaceExistingSynonyms: true,
+    });
+    console.log(`  Synonyms restored (${synonyms.length})`);
+  }
+
+  // Restore rules
+  const rules = readJsonFile(`data/${indexName}.rules.json`);
+  if (rules && rules.length > 0) {
+    await client.saveRules({
+      indexName,
+      rules: rules as Parameters<typeof client.saveRules>[0]["rules"],
+      forwardToReplicas: false,
+      clearExistingRules: true,
+    });
+    console.log(`  Rules restored (${rules.length})`);
+  }
+}
 
 async function main() {
   const feedPath = process.argv[2] || "data/products.json";
@@ -23,16 +96,18 @@ async function main() {
   console.log(`Connecting to Algolia (App: ${ALGOLIA_APP_ID}, Index: ${INDEX_NAME})...`);
   const client = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_ADMIN_KEY);
 
-  // Populate categoryPageId from hierarchical_categories for category page filtering
+  // Populate categoryPageId from hierarchicalCategories for category page filtering
   for (const record of records) {
-    const hc = record.hierarchical_categories as
-      | Record<string, string>
+    const hc = record.hierarchicalCategories as
+      | Record<string, string[]>
       | undefined;
     if (hc && typeof hc === "object") {
       const paths: string[] = [];
       for (let lvl = 0; lvl <= 3; lvl++) {
         const val = hc[`lvl${lvl}`];
-        if (typeof val === "string" && val) paths.push(val);
+        if (Array.isArray(val)) {
+          paths.push(...val.filter((v) => typeof v === "string" && v));
+        }
       }
       record.categoryPageId = paths;
     }
@@ -52,90 +127,58 @@ async function main() {
     console.log(`Indexed ${indexed}/${records.length} products`);
   }
 
-  console.log("Configuring index settings...");
-  await client.setSettings({
-    indexName: INDEX_NAME,
-    indexSettings: {
-      searchableAttributes: [
-        "name",
-        "brand",
-        "description",
-        "keywords",
-        "list_categories",
-        "sku",
-        "color.original_name",
-        "semantic_attributes",
-      ],
-      attributesForFaceting: [
-        "searchable(brand)",
-        "searchable(gender)",
-        "searchable(color.filter_group)",
-        "searchable(available_sizes)",
-        "hierarchical_categories.lvl0",
-        "hierarchical_categories.lvl1",
-        "hierarchical_categories.lvl2",
-        "searchable(list_categories)",
-        "searchable(categoryPageId)",
-        "filterOnly(price.value)",
-        "filterOnly(reviews.rating)",
-      ],
-      customRanking: ["desc(reviews.bayesian_avg)", "desc(sales_last_24h)"],
-      ranking: [
-        "typo",
-        "geo",
-        "words",
-        "filters",
-        "attribute",
-        "proximity",
-        "exact",
-        "custom",
-      ],
-      ignorePlurals: ["en"],
-      indexLanguages: ["en"],
-      queryLanguages: ["en"],
-      removeStopWords: ["en"],
-      removeWordsIfNoResults: "allOptional",
-      attributesToRetrieve: [
-        "objectID",
-        "name",
-        "slug",
-        "sku",
-        "parentID",
-        "description",
-        "brand",
-        "gender",
-        "isNew",
-        "url",
-        "stock",
-        "price",
-        "color",
-        "primary_image",
-        "image_urls",
-        "image_blurred",
-        "image_description",
-        "available_sizes",
-        "hierarchical_categories",
-        "list_categories",
-        "categoryPageId",
-        "variants",
-        "keywords",
-        "semantic_attributes",
-        "reviews",
-        "availableInStores",
-        "margin",
-        "discount_rate",
-        "product_aov",
-        "sales_last_24h",
-        "sales_last_7d",
-        "sales_last_30d",
-        "sales_last_90d",
-      ],
-      attributesToHighlight: ["name", "brand", "description"],
-      attributesToSnippet: ["description:50"],
-    },
-  });
+  // Restore settings from exported settings file (matches actual product schema)
+  const productSettings = readJsonObject(`data/${INDEX_NAME}.settings.json`);
+  if (productSettings) {
+    console.log("Configuring index settings from exported file...");
+    await client.setSettings({
+      indexName: INDEX_NAME,
+      indexSettings: productSettings,
+    });
+    console.log("  Settings restored");
+  } else {
+    console.warn("  No settings file found for", INDEX_NAME);
+  }
+
+  // Restore synonyms and rules for products index from exported files
+  const productSynonyms = readJsonFile(`data/${INDEX_NAME}.synonyms.json`);
+  if (productSynonyms && productSynonyms.length > 0) {
+    try {
+      await client.saveSynonyms({
+        indexName: INDEX_NAME,
+        synonymHit: productSynonyms as Parameters<
+          typeof client.saveSynonyms
+        >[0]["synonymHit"],
+        forwardToReplicas: false,
+        replaceExistingSynonyms: true,
+      });
+      console.log(`Restored ${productSynonyms.length} synonyms for ${INDEX_NAME}`);
+    } catch (e) {
+      console.warn(`  Warning: could not restore synonyms for ${INDEX_NAME}:`, (e as Error).message);
+    }
+  }
+  const productRules = readJsonFile(`data/${INDEX_NAME}.rules.json`);
+  if (productRules && productRules.length > 0) {
+    await client.saveRules({
+      indexName: INDEX_NAME,
+      rules: productRules as Parameters<typeof client.saveRules>[0]["rules"],
+      forwardToReplicas: false,
+      clearExistingRules: true,
+    });
+    console.log(`Restored ${productRules.length} rules for ${INDEX_NAME}`);
+  }
 
   console.log("Done! Indexed", records.length, "products to", INDEX_NAME);
+
+  // Restore secondary indices from exported data
+  const secondaryIndices = [
+    ALGOLIA_CONFIG.RECIPES_INDEX,
+    ALGOLIA_CONFIG.GUIDES_INDEX,
+    ALGOLIA_CONFIG.SUGGESTIONS_INDEX,
+  ];
+  for (const idx of secondaryIndices) {
+    await restoreIndex(client, idx);
+  }
 
   // Create or update the composition
   console.log(`Creating/updating composition (${COMPOSITION_ID})...`);

@@ -1,0 +1,28 @@
+export type Recipe = {
+  objectID: string;
+  id: string;
+  title: string;
+  slug: string;
+  url: string;
+  description: string;
+  imageUrl: string;
+  servings: number;
+  totalTimeMinutes?: number;
+  categories: string[];
+  tags: string[];
+  dietaryInfo: string[];
+  mealType: string[];
+  season: string[];
+  ingredients: string[];
+  ingredientsFull: { name: string; raw: string }[];
+  ingredientProducts: Record<string, { objectID: string; title: string; brand: string }[]>;
+  instructions: string[];
+  hasNutrition: boolean;
+  calories?: number;
+  carbohydrates?: number;
+  protein?: number;
+  fat?: number;
+  likes?: number;
+  comments?: number;
+  qualityScore?: number;
+};

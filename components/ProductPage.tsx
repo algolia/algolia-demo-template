@@ -22,6 +22,7 @@ import { getPriceInfo, getPreferredCategory } from "@/lib/utils/product";
 import ProductAskAI from "@/components/sidepanel-agent-studio/components/product-page-agent";
 import ProductRecommendations from "@/components/ProductRecommendations";
 import { useCart } from "@/components/cart/cart-context";
+import { CATEGORY_NAME_TO_SLUG } from "@/lib/demo-config/categories";
 
 interface ProductPageProps {
   product: Product;
@@ -33,9 +34,9 @@ export default function ProductPage({ product }: ProductPageProps) {
   const [isWishlisted, setIsWishlisted] = useState(false);
   const { addItem } = useCart();
 
-  const images = product.image_urls?.length ? product.image_urls : product.primary_image ? [product.primary_image] : [];
-  const productName = product.name || "Untitled Product";
-  const categoryList = product.list_categories || [];
+  const images = product.imageUrl ? [product.imageUrl] : [];
+  const productName = product.title || "Untitled Product";
+  const categoryList = product.categories?.lvl0 || [];
 
   // Price and discount calculations
   const { price, originalPrice, hasDiscount, discountPercentage } = getPriceInfo(product);
@@ -52,7 +53,7 @@ export default function ProductPage({ product }: ProductPageProps) {
   const decrementQuantity = () => setQuantity((q) => Math.max(1, q - 1));
 
   const handleAddToCart = () => {
-    const productId = product.objectID || product.sku || "";
+    const productId = product.objectID || product.ean || "";
     if (!productId) return;
 
     const category = getPreferredCategory(product);
@@ -77,14 +78,14 @@ export default function ProductPage({ product }: ProductPageProps) {
         <ol className="flex items-center gap-2 text-sm text-muted-foreground">
           <li>
             <Link href="/" className="hover:text-foreground transition-colors">
-              Home
+              Inicio
             </Link>
           </li>
           {categoryList.map((category: string, idx: number) => (
             <li key={idx} className="flex items-center gap-2">
               <span>/</span>
               <Link
-                href={`/category/${encodeURIComponent(category)}`}
+                href={`/category/${CATEGORY_NAME_TO_SLUG[category] || encodeURIComponent(category)}`}
                 className="hover:text-foreground transition-colors"
               >
                 {category}
@@ -106,13 +107,20 @@ export default function ProductPage({ product }: ProductPageProps) {
           <div className="space-y-6">
             {/* Main Image */}
             <div className="relative aspect-square bg-muted rounded-lg overflow-hidden">
+              {product.inStock === false && (
+                <div className="absolute top-4 left-4 z-10">
+                  <span className="bg-foreground/80 text-background text-sm font-semibold px-4 py-1.5 rounded-full">
+                    Agotado
+                  </span>
+                </div>
+              )}
               {images.length > 0 ? (
                 <>
                   <Image
                     src={images[selectedImageIndex]}
                     alt={`${productName} - Image ${selectedImageIndex + 1}`}
                     fill
-                    className="object-contain p-4"
+                    className={`object-contain p-4${product.inStock === false ? " opacity-50" : ""}`}
                     priority
                   />
 
@@ -153,7 +161,7 @@ export default function ProductPage({ product }: ProductPageProps) {
             {/* Thumbnail Grid */}
             {images.length > 1 && (
               <div className="flex gap-2 overflow-x-auto pb-2">
-                {images.map((img, idx) => (
+                {images.map((img: string, idx: number) => (
                   <button
                     key={idx}
                     onClick={() => setSelectedImageIndex(idx)}
@@ -198,9 +206,9 @@ export default function ProductPage({ product }: ProductPageProps) {
             </h1>
 
             {/* Product ID */}
-            {product.sku && (
+            {product.ean && (
               <p className="text-sm text-muted-foreground">
-                SKU: {product.sku}
+                EAN: {product.ean}
               </p>
             )}
 
@@ -220,7 +228,7 @@ export default function ProductPage({ product }: ProductPageProps) {
                 {hasDiscount && (
                   <div className="flex items-center gap-2">
                     <span className="inline-flex items-center px-3 py-1 rounded-full bg-red-500 text-white font-semibold text-sm">
-                      Save {discountPercentage}%
+                      Ahorra {discountPercentage}%
                     </span>
                     <span className="text-sm text-muted-foreground">
                       You save {formatPrice(Math.round(originalPrice - price))}
@@ -259,9 +267,9 @@ export default function ProductPage({ product }: ProductPageProps) {
               </div>
 
               {/* Add to Cart Button */}
-              <Button size="lg" className="flex-1 gap-2" onClick={handleAddToCart}>
+              <Button size="lg" className="flex-1 gap-2" onClick={handleAddToCart} disabled={product.inStock === false}>
                 <ShoppingCart className="w-5 h-5" />
-                Add to cart
+                {product.inStock === false ? "No disponible" : "Añadir al carrito"}
               </Button>
 
               {/* Wishlist Button */}
@@ -286,22 +294,22 @@ export default function ProductPage({ product }: ProductPageProps) {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-border">
               <div className="flex items-center gap-3 text-sm">
                 <Truck className="w-5 h-5 text-primary" />
-                <span>Free shipping over {formatPrice(49)}</span>
+                <span>Envío gratis a partir de {formatPrice(49)}</span>
               </div>
               <div className="flex items-center gap-3 text-sm">
                 <RotateCcw className="w-5 h-5 text-primary" />
-                <span>30-day returns</span>
+                <span>Devoluciones en 30 días</span>
               </div>
               <div className="flex items-center gap-3 text-sm">
                 <Shield className="w-5 h-5 text-primary" />
-                <span>Secure checkout</span>
+                <span>Pago seguro</span>
               </div>
             </div>
 
             {/* Specifications */}
             {specifications.length > 0 && (
               <div className="pt-4 border-t border-border">
-                <h2 className="text-lg font-semibold mb-4">Specifications</h2>
+                <h2 className="text-lg font-semibold mb-4">Detalles</h2>
                 <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
                   {specifications.map((spec, idx) => (
                     <div key={idx} className="flex justify-between sm:block">
@@ -320,7 +328,7 @@ export default function ProductPage({ product }: ProductPageProps) {
         {/* Full Description - Full width below both columns */}
         {product.description && (
           <section className="mt-12 pt-8 border-t border-border">
-            <h2 className="text-xl font-semibold mb-4">Product Description</h2>
+            <h2 className="text-xl font-semibold mb-4">Descripción del producto</h2>
             <div
               className="prose prose-sm max-w-none text-muted-foreground [&_p]:mb-4 [&_ul]:list-disc [&_ul]:pl-5 [&_li]:mb-1"
               dangerouslySetInnerHTML={{ __html: product.description }}
@@ -342,16 +350,16 @@ function extractSpecifications(
   const specs: { label: string; value: string }[] = [];
 
   if (product.brand) {
-    specs.push({ label: "Brand", value: product.brand });
+    specs.push({ label: "Marca", value: product.brand });
   }
-  if (product.gender) {
-    specs.push({ label: "Gender", value: product.gender });
+  if (product.unit) {
+    specs.push({ label: "Unidad", value: product.unit });
   }
-  if (product.color?.original_name) {
-    specs.push({ label: "Color", value: product.color.original_name });
+  if (product.offer !== undefined) {
+    specs.push({ label: "En oferta", value: product.offer ? "Sí" : "No" });
   }
-  if (product.available_sizes?.length > 0) {
-    specs.push({ label: "Available Sizes", value: product.available_sizes.join(", ") });
+  if (product.groups?.length) {
+    specs.push({ label: "Grupo", value: product.groups.join(", ") });
   }
 
   return specs;

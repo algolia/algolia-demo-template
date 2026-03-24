@@ -62,7 +62,6 @@ export default function ProductRecommendations({
   objectID,
 }: ProductRecommendationsProps) {
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
-  const [lookingSimilar, setLookingSimilar] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -79,20 +78,12 @@ export default function ProductRecommendations({
             maxRecommendations: 4,
             threshold: 0,
           },
-          {
-            indexName: ALGOLIA_CONFIG.INDEX_NAME,
-            objectID,
-            model: "looking-similar",
-            maxRecommendations: 4,
-            threshold: 0,
-          },
         ],
       })
       .then((response) => {
         if (cancelled) return;
         const results = response.results;
         setRelatedProducts((results[0]?.hits as Product[]) || []);
-        setLookingSimilar((results[1]?.hits as Product[]) || []);
         setLoading(false);
       })
       .catch(() => {
@@ -104,8 +95,7 @@ export default function ProductRecommendations({
     };
   }, [objectID]);
 
-  const hasAny =
-    loading || relatedProducts.length > 0 || lookingSimilar.length > 0;
+  const hasAny = loading || relatedProducts.length > 0;
 
   if (!hasAny) return null;
 
@@ -114,11 +104,6 @@ export default function ProductRecommendations({
       <RecommendationCarousel
         title="Related Products"
         recommendations={relatedProducts}
-        loading={loading}
-      />
-      <RecommendationCarousel
-        title="Looking Similar"
-        recommendations={lookingSimilar}
         loading={loading}
       />
     </section>

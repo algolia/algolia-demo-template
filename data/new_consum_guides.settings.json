@@ -1,0 +1,104 @@
+{
+  "alternativesAsExact": [
+    "ignorePlurals",
+    "singleWordSynonym"
+  ],
+  "attributeForDistinct": null,
+  "attributesForFaceting": [
+    "searchable(category)",
+    "searchable(type)",
+    "searchable(tags)",
+    "searchable(seasonality)",
+    "hasNutrition",
+    "hasImage",
+    "isProduct",
+    "isCategory",
+    "caloriesRange",
+    "proteinLevel",
+    "fatLevel",
+    "filterOnly(nutritionalInfo.calories)",
+    "filterOnly(nutritionalInfo.proteins)",
+    "filterOnly(nutritionalInfo.fats)",
+    "filterOnly(nutritionalInfo.carbohydrates)"
+  ],
+  "attributesToHighlight": [
+    "title",
+    "description",
+    "tags",
+    "category"
+  ],
+  "attributesToRetrieve": [
+    "objectID",
+    "id",
+    "title",
+    "slug",
+    "url",
+    "category",
+    "subcategory",
+    "description",
+    "properties",
+    "nutritionalInfo",
+    "seasonality",
+    "imageUrl",
+    "tags",
+    "type",
+    "hasNutrition",
+    "hasImage",
+    "caloriesRange",
+    "proteinLevel",
+    "fatLevel"
+  ],
+  "attributesToSnippet": [
+    "description:50",
+    "properties:30"
+  ],
+  "customRanking": [
+    "desc(isProduct)",
+    "desc(hasNutrition)",
+    "desc(hasImage)"
+  ],
+  "exactOnSingleWordQuery": "attribute",
+  "highlightPostTag": "</em>",
+  "highlightPreTag": "<em>",
+  "hitsPerPage": 20,
+  "ignorePlurals": [
+    "en"
+  ],
+  "indexLanguages": [
+    "en"
+  ],
+  "maxValuesPerFacet": 100,
+  "minWordSizefor1Typo": 4,
+  "minWordSizefor2Typos": 8,
+  "numericAttributesToIndex": null,
+  "optionalWords": null,
+  "paginationLimitedTo": 50,
+  "queryLanguages": [
+    "en"
+  ],
+  "queryType": "prefixLast",
+  "ranking": [
+    "typo",
+    "geo",
+    "words",
+    "filters",
+    "attribute",
+    "proximity",
+    "exact",
+    "custom"
+  ],
+  "removeStopWords": [
+    "en"
+  ],
+  "removeWordsIfNoResults": "allOptional",
+  "searchableAttributes": [
+    "title",
+    "unordered(tags)",
+    "unordered(category)",
+    "unordered(description)",
+    "unordered(properties)"
+  ],
+  "separatorsToIndex": "",
+  "unretrievableAttributes": null,
+  "version": 1
+}

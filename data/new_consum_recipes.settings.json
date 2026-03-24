@@ -1,0 +1,124 @@
+{
+  "alternativesAsExact": [
+    "ignorePlurals",
+    "singleWordSynonym"
+  ],
+  "attributeForDistinct": null,
+  "attributesForFaceting": [
+    "searchable(categories)",
+    "searchable(mealType)",
+    "searchable(dietaryInfo)",
+    "searchable(ingredients)",
+    "season",
+    "author",
+    "filterOnly(servings)",
+    "filterOnly(totalTimeMinutes)",
+    "filterOnly(calories)",
+    "filterOnly(protein)",
+    "filterOnly(carbohydrates)",
+    "filterOnly(hasNutrition)"
+  ],
+  "attributesToHighlight": [
+    "title",
+    "description",
+    "ingredients",
+    "categories"
+  ],
+  "attributesToRetrieve": [
+    "objectID",
+    "id",
+    "title",
+    "slug",
+    "url",
+    "description",
+    "imageUrl",
+    "servings",
+    "totalTimeMinutes",
+    "prepTimeMinutes",
+    "cookingTimeMinutes",
+    "categories",
+    "tags",
+    "dietaryInfo",
+    "mealType",
+    "season",
+    "ingredients",
+    "ingredientsFull",
+    "ingredientProducts",
+    "instructions",
+    "hasNutrition",
+    "calories",
+    "carbohydrates",
+    "protein",
+    "fat",
+    "saturatedFat",
+    "author",
+    "likes",
+    "comments",
+    "qualityScore"
+  ],
+  "attributesToSnippet": [
+    "description:50",
+    "instructionsText:100"
+  ],
+  "customRanking": [
+    "desc(qualityScore)",
+    "desc(likes)",
+    "desc(comments)"
+  ],
+  "distinct": false,
+  "exactOnSingleWordQuery": "attribute",
+  "highlightPostTag": "</em>",
+  "highlightPreTag": "<em>",
+  "hitsPerPage": 20,
+  "ignorePlurals": [
+    "es"
+  ],
+  "indexLanguages": [
+    "es"
+  ],
+  "maxValuesPerFacet": 100,
+  "minProximity": 1,
+  "minWordSizefor1Typo": 4,
+  "minWordSizefor2Typos": 8,
+  "numericAttributesForFiltering": [
+    "totalTimeMinutes",
+    "calories",
+    "protein",
+    "carbohydrates",
+    "fat",
+    "servings"
+  ],
+  "numericAttributesToIndex": null,
+  "optionalWords": null,
+  "paginationLimitedTo": 1000,
+  "queryLanguages": [
+    "es"
+  ],
+  "queryType": "prefixLast",
+  "ranking": [
+    "typo",
+    "geo",
+    "words",
+    "filters",
+    "proximity",
+    "attribute",
+    "exact",
+    "custom"
+  ],
+  "removeStopWords": [
+    "es"
+  ],
+  "removeWordsIfNoResults": "lastWords",
+  "searchableAttributes": [
+    "unordered(ingredients)",
+    "unordered(categories)",
+    "title",
+    "unordered(description)",
+    "unordered(mealType)",
+    "unordered(dietaryInfo)",
+    "unordered(instructionsText)"
+  ],
+  "separatorsToIndex": "",
+  "unretrievableAttributes": null,
+  "version": 1
+}

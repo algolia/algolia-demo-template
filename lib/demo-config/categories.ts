@@ -1,19 +1,18 @@
-/**
- * Category tree and icon mapping
- *
- * Edit this file to define the store's category hierarchy.
- * Categories are displayed in the navigation sidebar (CategoriesSheet)
- * and used for icon mapping in the filters sidebar.
- */
 import {
+  Leaf,
+  Package,
+  GlassWater,
+  Snowflake,
+  SprayCan,
+  Heart,
+  Sprout,
+  CakeSlice,
+  Baby,
+  PawPrint,
   ShoppingBag,
-  Shirt,
-  Gem,
+  UtensilsCrossed,
+  Percent,
 } from "lucide-react";
-
-// ============================================================================
-// Types
-// ============================================================================
 
 export type CategoryNode = {
   name: string;
@@ -26,145 +25,212 @@ export type RootCategory = CategoryNode & {
   icon: React.ComponentType<{ className?: string }>;
 };
 
-// ============================================================================
-// Category Tree
-// ============================================================================
-
-/**
- * Hierarchical category tree for the navigation sidebar.
- *
- * Each root category requires:
- * - name: Display name
- * - slug: URL-safe identifier
- * - icon: Lucide icon component
- * - count: (optional) Number of products
- * - children: (optional) Nested subcategories
- */
 export const HIERARCHICAL_CATEGORIES: Record<string, RootCategory> = {
-  women: {
-    name: "Women",
-    slug: "women",
-    count: 1303,
+  frescos: {
+    name: "Frescos",
+    slug: "frescos",
+    icon: Leaf,
+    children: {
+      verduras: { name: "Verduras", slug: "verduras" },
+      frutas: { name: "Frutas", slug: "frutas" },
+      carniceria: { name: "Carnicería", slug: "carniceria" },
+      "carniceria-corte": { name: "Carnicería corte", slug: "carniceria-corte" },
+      charcuteria: { name: "Charcutería", slug: "charcuteria" },
+      "charcuteria-corte": { name: "Charcutería corte", slug: "charcuteria-corte" },
+      pescaderia: { name: "Pescadería", slug: "pescaderia" },
+      quesos: { name: "Quesos", slug: "quesos" },
+      "quesos-corte": { name: "Quesos corte", slug: "quesos-corte" },
+    },
+  },
+  despensa: {
+    name: "Despensa",
+    slug: "despensa",
+    icon: Package,
+    children: {
+      "desayuno-dulces-y-cafe": {
+        name: "Desayuno, dulces y café",
+        slug: "desayuno-dulces-y-cafe",
+        children: {
+          "chocolates-y-bombones": { name: "Chocolates y bombones", slug: "chocolates-y-bombones" },
+        },
+      },
+      "conservas-aceites-y-condimentos": { name: "Conservas, aceites y condimentos", slug: "conservas-aceites-y-condimentos" },
+      "lacteos-y-huevos": { name: "Lácteos y huevos", slug: "lacteos-y-huevos" },
+      "aperitivos-y-frutos-secos": { name: "Aperitivos y frutos secos", slug: "aperitivos-y-frutos-secos" },
+      "arroz-pastas-legumbres": { name: "Arroz, pastas, legumbres", slug: "arroz-pastas-legumbres" },
+      "panes-y-tostadas": { name: "Panes y tostadas", slug: "panes-y-tostadas" },
+      "caldos-sopas-y-pures": { name: "Caldos, sopas y purés", slug: "caldos-sopas-y-pures" },
+      "nutricion-y-dietetica": { name: "Nutrición y dietética", slug: "nutricion-y-dietetica" },
+      "cocina-internacional": { name: "Cocina internacional", slug: "cocina-internacional" },
+      "harina-levadura-y-pan-rallado": { name: "Harina, levadura y pan rallado", slug: "harina-levadura-y-pan-rallado" },
+    },
+  },
+  bebidas: {
+    name: "Bebidas",
+    slug: "bebidas",
+    icon: GlassWater,
+    children: {
+      vinos: { name: "Vinos", slug: "vinos" },
+      licores: { name: "Licores", slug: "licores" },
+      cervezas: { name: "Cervezas", slug: "cervezas" },
+      refrescos: { name: "Refrescos", slug: "refrescos" },
+      "zumos-y-nectares": { name: "Zumos y néctares", slug: "zumos-y-nectares" },
+      "cavas-y-sidras": { name: "Cavas y sidras", slug: "cavas-y-sidras" },
+      aguas: { name: "Aguas", slug: "aguas" },
+      "isotonicas-y-energeticas": { name: "Isotónicas y energéticas", slug: "isotonicas-y-energeticas" },
+      "sangrias-y-combinados": { name: "Sangrías y combinados base vino", slug: "sangrias-y-combinados" },
+      "gaseosas-y-sodas": { name: "Gaseosas y sodas", slug: "gaseosas-y-sodas" },
+    },
+  },
+  "congelados-y-helados": {
+    name: "Congelados y helados",
+    slug: "congelados-y-helados",
+    icon: Snowflake,
+    children: {
+      helados: { name: "Helados", slug: "helados" },
+      "pescados-y-mariscos": { name: "Pescados y mariscos", slug: "pescados-y-mariscos" },
+      "frutas-y-verduras": { name: "Frutas y Verduras", slug: "frutas-y-verduras" },
+      "platos-preparados": { name: "Platos preparados", slug: "platos-preparados" },
+      rebozados: { name: "Rebozados", slug: "rebozados" },
+      "pizza-y-bases": { name: "Pizza y bases congeladas", slug: "pizza-y-bases" },
+      carnes: { name: "Carnes", slug: "carnes" },
+    },
+  },
+  "drogueria-y-limpieza": {
+    name: "Droguería y limpieza",
+    slug: "drogueria-y-limpieza",
+    icon: SprayCan,
+    children: {
+      "limpieza-hogar": { name: "Limpieza hogar", slug: "limpieza-hogar" },
+      "cuidado-ropa": { name: "Cuidado ropa", slug: "cuidado-ropa" },
+      "accesorios-limpieza": { name: "Accesorios y utensilios limpieza", slug: "accesorios-limpieza" },
+      ambientadores: { name: "Ambientadores", slug: "ambientadores" },
+      celulosa: { name: "Celulosa", slug: "celulosa" },
+      "limpieza-banos": { name: "Limpieza baños", slug: "limpieza-banos" },
+      "limpieza-cocina": { name: "Limpieza cocina", slug: "limpieza-cocina" },
+      "limpieza-calzado": { name: "Limpieza calzado y accesorios", slug: "limpieza-calzado" },
+      insecticidas: { name: "Insecticidas", slug: "insecticidas" },
+    },
+  },
+  "cuidado-personal": {
+    name: "Cuidado personal",
+    slug: "cuidado-personal",
+    icon: Heart,
+    children: {
+      maquillaje: { name: "Maquillaje", slug: "maquillaje" },
+      "cuidado-del-cabello": { name: "Cuidado del cabello", slug: "cuidado-del-cabello" },
+      parafarmacia: { name: "Parafarmacia", slug: "parafarmacia" },
+      "colonias-y-perfumes": { name: "Colonias y perfumes", slug: "colonias-y-perfumes" },
+      "cuidado-facial": { name: "Cuidado facial", slug: "cuidado-facial" },
+      "higiene-bucal": { name: "Higiene bucal", slug: "higiene-bucal" },
+      "higiene-intima": { name: "Higiene íntima", slug: "higiene-intima" },
+      desodorante: { name: "Desodorante", slug: "desodorante" },
+      "higiene-corporal": { name: "Higiene corporal", slug: "higiene-corporal" },
+      "cuidado-corporal": { name: "Cuidado corporal", slug: "cuidado-corporal" },
+    },
+  },
+  "ecologico-y-saludable": {
+    name: "Ecológico y saludable",
+    slug: "ecologico-y-saludable",
+    icon: Sprout,
+    children: {
+      despensa: { name: "Despensa", slug: "despensa" },
+      "cuidado-personal": { name: "Cuidado personal", slug: "cuidado-personal" },
+      bazar: { name: "Bazar", slug: "bazar" },
+      "frescos-y-refrigerados": { name: "Frescos y refrigerados", slug: "frescos-y-refrigerados" },
+      "drogueria-y-limpieza": { name: "Droguería y limpieza", slug: "drogueria-y-limpieza" },
+    },
+  },
+  horno: {
+    name: "Horno",
+    slug: "horno",
+    icon: CakeSlice,
+    children: {
+      "bolleria-dulce": { name: "Bollería dulce", slug: "bolleria-dulce" },
+      "bolleria-salada": { name: "Bollería salada", slug: "bolleria-salada" },
+      "pan-de-horno": { name: "Pan de horno", slug: "pan-de-horno" },
+      "tartas-y-reposteria": { name: "Tartas y repostería", slug: "tartas-y-reposteria" },
+      "pan-de-molde": { name: "Pan de molde y rebanado", slug: "pan-de-molde" },
+      "pan-hamburguesas": { name: "Pan hamburguesas y perritos", slug: "pan-hamburguesas" },
+      "rosquilletas": { name: "Rosquilletas, picos y snacks", slug: "rosquilletas" },
+    },
+  },
+  infantil: {
+    name: "Infantil",
+    slug: "infantil",
+    icon: Baby,
+    children: {
+      "alimentacion-infantil": { name: "Alimentación infantil", slug: "alimentacion-infantil" },
+      higiene: { name: "Higiene", slug: "higiene" },
+      panales: { name: "Pañales", slug: "panales" },
+      puericultura: { name: "Puericultura", slug: "puericultura" },
+      "leches-infantiles": { name: "Leches infantiles", slug: "leches-infantiles" },
+    },
+  },
+  mascotas: {
+    name: "Mascotas",
+    slug: "mascotas",
+    icon: PawPrint,
+    children: {
+      perros: { name: "Perros", slug: "perros" },
+      gatos: { name: "Gatos", slug: "gatos" },
+      "otras-mascotas": { name: "Otras mascotas", slug: "otras-mascotas" },
+      accesorios: { name: "Accesorios", slug: "accesorios" },
+    },
+  },
+  "platos-preparados": {
+    name: "Platos preparados",
+    slug: "platos-preparados",
+    icon: UtensilsCrossed,
+    children: {
+      "preparados-refrigerados": { name: "Preparados refrigerados", slug: "preparados-refrigerados" },
+      "preparados-en-conserva": { name: "Preparados en conserva", slug: "preparados-en-conserva" },
+    },
+  },
+  bazar: {
+    name: "Bazar",
+    slug: "bazar",
     icon: ShoppingBag,
     children: {
-      bags: {
-        name: "Bags",
-        slug: "bags",
-        count: 693,
-        children: {
-          "shoulder-bags": { name: "Shoulder bags", slug: "shoulder-bags", count: 217 },
-          handbag: { name: "Handbag", slug: "handbag", count: 209 },
-          wallets: { name: "Wallets", slug: "wallets", count: 175 },
-          shopper: { name: "Shopper", slug: "shopper", count: 56 },
-          clutches: { name: "Clutches", slug: "clutches", count: 31 },
-        },
-      },
-      clothing: {
-        name: "Clothing",
-        slug: "clothing",
-        count: 459,
-        children: {
-          "t-shirts": { name: "T-shirts", slug: "t-shirts", count: 217 },
-          jackets: { name: "Jackets", slug: "jackets", count: 60 },
-          jeans: { name: "Jeans", slug: "jeans", count: 60 },
-          tops: { name: "Tops", slug: "tops", count: 27 },
-          dresses: { name: "Dresses", slug: "dresses", count: 23 },
-          skirts: { name: "Skirts", slug: "skirts", count: 23 },
-          blazer: { name: "Blazer", slug: "blazer", count: 16 },
-          shirts: { name: "Shirts", slug: "shirts", count: 16 },
-          trouser: { name: "Trouser", slug: "trouser", count: 16 },
-        },
-      },
-      shoes: {
-        name: "Shoes",
-        slug: "shoes",
-        count: 151,
-        children: {
-          sneakers: { name: "Sneakers", slug: "sneakers", count: 66 },
-          sandals: { name: "Sandals", slug: "sandals", count: 36 },
-          loafers: { name: "Loafers", slug: "loafers", count: 17 },
-          pumps: { name: "Pumps", slug: "pumps", count: 15 },
-          ballerinas: { name: "Ballerinas", slug: "ballerinas", count: 14 },
-        },
-      },
+      "conservacion-alimentos": { name: "Conservación alimentos y moldes", slug: "conservacion-alimentos" },
+      promocionales: { name: "Promocionales", slug: "promocionales" },
+      desechables: { name: "Desechables", slug: "desechables" },
+      velas: { name: "Velas", slug: "velas" },
+      libros: { name: "Libros", slug: "libros" },
+      pilas: { name: "Pilas", slug: "pilas" },
+      "jardin-y-exterior": { name: "Jardin y exterior", slug: "jardin-y-exterior" },
+      menaje: { name: "Menaje", slug: "menaje" },
     },
   },
-  men: {
-    name: "Men",
-    slug: "men",
-    count: 278,
-    icon: Shirt,
-    children: {
-      clothing: {
-        name: "Clothing",
-        slug: "clothing",
-        count: 196,
-        children: {
-          "t-shirts": { name: "T-shirts", slug: "t-shirts", count: 50 },
-          jackets: { name: "Jackets", slug: "jackets", count: 46 },
-          tops: { name: "Tops", slug: "tops", count: 36 },
-          trousers: { name: "Trousers", slug: "trousers", count: 19 },
-          shirts: { name: "Shirts", slug: "shirts", count: 14 },
-          jeans: { name: "Jeans", slug: "jeans", count: 12 },
-          blazer: { name: "Blazer", slug: "blazer", count: 11 },
-          suits: { name: "Suits", slug: "suits", count: 8 },
-        },
-      },
-      shoes: {
-        name: "Shoes",
-        slug: "shoes",
-        count: 82,
-        children: {
-          sneakers: { name: "Sneakers", slug: "sneakers", count: 55 },
-          loafers: { name: "Loafers", slug: "loafers", count: 10 },
-          "lace-up-shoes": { name: "Lace-up shoes", slug: "lace-up-shoes", count: 3 },
-        },
-      },
-    },
-  },
-  accessories: {
-    name: "Accessories",
-    slug: "accessories",
-    count: 211,
-    icon: Gem,
-    children: {
-      women: {
-        name: "Women",
-        slug: "women",
-        count: 140,
-        children: {
-          clothing: { name: "Clothing", slug: "clothing", count: 18 },
-          looks: { name: "Looks", slug: "looks", count: 14 },
-          sunglasses: { name: "Sunglasses", slug: "sunglasses", count: 5 },
-        },
-      },
-      men: {
-        name: "Men",
-        slug: "men",
-        count: 71,
-        children: {
-          clothing: { name: "Clothing", slug: "clothing", count: 17 },
-        },
-      },
-    },
+  "ahora-mas-barato": {
+    name: "Ahora más barato",
+    slug: "ahora-mas-barato",
+    icon: Percent,
   },
 };
 
-// ============================================================================
-// Category Icons (for filters sidebar)
-// ============================================================================
-
 /**
- * Maps category names (as they appear in Algolia's hierarchicalCategories.lvl0)
- * to Lucide icon components. Used in the HierarchicalCategoryFilter.
- *
- * Keys must match EXACTLY the category names in your Algolia index.
+ * Build a name→slug lookup for lvl0 categories.
+ * Used by product pages to link back to the correct category URL.
  */
-export const CATEGORY_ICONS: Record<
-  string,
-  React.ComponentType<{ className?: string }>
-> = {
-  "Women": ShoppingBag,
-  "Men": Shirt,
-  "Accessories": Gem,
+const _nameToSlug: Record<string, string> = {};
+for (const [key, cat] of Object.entries(HIERARCHICAL_CATEGORIES)) {
+  _nameToSlug[cat.name] = cat.slug;
+}
+export const CATEGORY_NAME_TO_SLUG = _nameToSlug;
+
+export const CATEGORY_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  "Frescos": Leaf,
+  "Despensa": Package,
+  "Bebidas": GlassWater,
+  "Congelados y helados": Snowflake,
+  "Droguería y limpieza": SprayCan,
+  "Cuidado personal": Heart,
+  "Ecológico y saludable": Sprout,
+  "Horno": CakeSlice,
+  "Infantil": Baby,
+  "Mascotas": PawPrint,
+  "Platos preparados": UtensilsCrossed,
+  "Bazar": ShoppingBag,
+  "Ahora más barato": Percent,
 };

@@ -25,7 +25,6 @@ data/*.csv
 data/*.xls
 data/*.mdb
 data/*.pdf
-data/*.json
 
 # One-time download script (not part of the template)
 scripts/download-index.ts
@@ -49,3 +48,6 @@ coverage/
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local Netlify folder
+.netlify
