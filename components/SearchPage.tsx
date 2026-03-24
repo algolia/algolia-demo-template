@@ -202,14 +202,12 @@ function RuleBanner() {
         if (!imageUrl) return null;
 
         const content = (
-          <div className="relative w-full overflow-hidden rounded-lg">
-            <Image
+          <div className="relative w-full h-40 overflow-hidden rounded-lg">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
               src={imageUrl}
               alt={banner.image?.title || "Promotional banner"}
-              width={1200}
-              height={300}
-              className="w-full h-auto object-cover"
-              priority={index === 0}
+              className="w-full h-full object-cover"
             />
           </div>
         );

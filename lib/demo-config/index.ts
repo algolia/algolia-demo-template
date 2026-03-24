@@ -15,5 +15,6 @@ export const DEMO_CONFIG = {
   imageDomains: [
     { protocol: "https" as const, hostname: "cdn-consum.aktiosdigitalservices.com" },
     { protocol: "https" as const, hostname: "www.consum.es" },
+    { protocol: "https" as const, hostname: "images.template.net" },
   ],
 };

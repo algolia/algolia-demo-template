@@ -485,7 +485,7 @@ export function ProductCard({ product, showCartControls = true, showBadges = tru
             </span>
           </div>
         )}
-        <AvailabilityBadge product={product} className="absolute bottom-2 right-2 z-10" />
+        <AvailabilityBadge product={product} />
       </div>
       <div className="p-4">
         <h3 className="font-semibold text-lg mb-2">{productName}</h3>
@@ -598,7 +598,7 @@ export function ProductListItem({ product, showCartControls = true, showBadges =
             </span>
           </div>
         )}
-        <AvailabilityBadge product={product} className="absolute bottom-0 right-0 z-10 text-[10px] px-1 py-0.5 rounded-tl-md rounded-br-md" />
+        <AvailabilityBadge product={product} />
       </div>
       <div className="flex-1 min-w-0">
         {product.brand && (

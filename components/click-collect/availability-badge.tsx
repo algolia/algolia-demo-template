@@ -5,13 +5,34 @@ import { useClickCollect } from "./click-collect-context";
 
 interface AvailabilityBadgeProps {
   product: Product;
-  className?: string;
 }
 
-export function AvailabilityBadge({
-  product,
-  className = "",
-}: AvailabilityBadgeProps) {
+const badgeStyle: React.CSSProperties = {
+  position: "absolute",
+  bottom: 8,
+  right: 8,
+  zIndex: 10,
+  display: "inline-flex",
+  alignItems: "center",
+  gap: 3,
+  fontSize: 9,
+  fontWeight: 500,
+  paddingLeft: 6,
+  paddingRight: 6,
+  paddingTop: 2,
+  paddingBottom: 2,
+  borderRadius: 9999,
+  color: "#fff",
+};
+
+const dotStyle: React.CSSProperties = {
+  width: 4,
+  height: 4,
+  borderRadius: 9999,
+  backgroundColor: "#fff",
+};
+
+export function AvailabilityBadge({ product }: AvailabilityBadgeProps) {
   const { currentShop, getProductAvailability } = useClickCollect();
 
   if (!currentShop) return null;
@@ -20,32 +41,26 @@ export function AvailabilityBadge({
 
   if (!availability || !availability.inStock) {
     return (
-      <span
-        className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2 py-1 rounded-full bg-red-600 text-white border-2 border-red-700 shadow-md ${className}`}
-      >
-        <span className="size-1.5 rounded-full bg-white" />
-        No disponible en tienda
+      <span style={{ ...badgeStyle, backgroundColor: "rgba(220, 38, 38, 0.85)" }}>
+        <span style={dotStyle} />
+        No disponible
       </span>
     );
   }
 
   if (availability.qty < 5) {
     return (
-      <span
-        className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2 py-1 rounded-full bg-orange-600 text-white border-2 border-orange-700 shadow-md ${className}`}
-      >
-        <span className="size-1.5 rounded-full bg-white" />
+      <span style={{ ...badgeStyle, backgroundColor: "rgba(234, 88, 12, 0.85)" }}>
+        <span style={dotStyle} />
         Stock limitado
       </span>
     );
   }
 
   return (
-    <span
-      className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2 py-1 rounded-full bg-emerald-700 text-white border-2 border-emerald-800 shadow-md ${className}`}
-    >
-      <span className="size-1.5 rounded-full bg-white" />
-      Disponible en tienda
+    <span style={{ ...badgeStyle, backgroundColor: "rgba(4, 120, 87, 0.85)" }}>
+      <span style={dotStyle} />
+      En tienda
     </span>
   );
 }
