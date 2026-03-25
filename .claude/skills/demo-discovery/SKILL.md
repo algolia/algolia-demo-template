@@ -53,19 +53,19 @@ Use `page_capture.py` to screenshot key pages on the customer's actual site:
 
 ```bash
 # Homepage
-python ~/.claude/skills/search-audit/scripts/page_capture.py \
+python scripts/page-capture.py \
   --url "SITE_URL" --output "data/discovery/homepage.png"
 
 # Search results (append a generic search query to the URL)
-python ~/.claude/skills/search-audit/scripts/page_capture.py \
+python scripts/page-capture.py \
   --url "SITE_URL/search?q=shoes" --output "data/discovery/search-results.png"
 
 # Product detail (pick a representative product URL)
-python ~/.claude/skills/search-audit/scripts/page_capture.py \
+python scripts/page-capture.py \
   --url "PRODUCT_URL" --output "data/discovery/product-detail.png"
 
 # Category page (pick a main category URL)
-python ~/.claude/skills/search-audit/scripts/page_capture.py \
+python scripts/page-capture.py \
   --url "CATEGORY_URL" --output "data/discovery/category-page.png"
 ```
 
@@ -91,7 +91,7 @@ If no customer website is available, pull visual references from existing implem
 
 3. Save all reference screenshots to `data/discovery/` with descriptive names:
    ```bash
-   python ~/.claude/skills/search-audit/scripts/page_capture.py \
+   python scripts/page-capture.py \
      --url "REFERENCE_URL" --output "data/discovery/ref-{source}-{page}.png"
    ```
 
