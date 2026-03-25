@@ -139,7 +139,22 @@ git branch -a
 
 Identify branches matching the vertical or use case (branch names typically include customer/vertical info).
 
-For each matching branch, inspect key config files (use `git show <branch>:<path>` — do NOT check out branches):
+For each matching branch, **check the README first** (use `git show <branch>:<path>` — do NOT check out branches):
+
+```bash
+git show <branch>:README.md
+```
+
+If the README contains a `## Use Case` section, this branch has a **demo card** (created by `/demo-showcase`). The demo card gives you the full picture — use case, differentiators, features, data strategy, personalization, and agent setup — without needing to inspect individual config files. Also check for showcase screenshots:
+
+```bash
+git show <branch>:data/showcase/homepage.lowres.png > /tmp/ref-<branch>-homepage.png
+git show <branch>:data/showcase/search-results.lowres.png > /tmp/ref-<branch>-search.png
+```
+
+Read the `.lowres.png` screenshots to understand the visual direction of the demo.
+
+**Fallback:** If the README is still the template version (no `## Use Case` section), inspect key config files individually:
 
 - `lib/demo-config/index.ts` — brand config, locale, image domains
 - `lib/demo-config/categories.ts` — category structure

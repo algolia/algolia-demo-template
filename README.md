@@ -9,7 +9,7 @@ The fastest way to set up a new demo is with `/demo-setup`, which orchestrates a
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │                        /demo-setup                                  │
-│                     (orchestrator)                                   │
+│                     (orchestrator)                                  │
 └────────────────────────────┬────────────────────────────────────────┘
                              │
                              ▼
@@ -17,16 +17,16 @@ The fastest way to set up a new demo is with `/demo-setup`, which orchestrates a
 │  Phase 1: Discovery                                                 │
 │  /demo-discovery                                                    │
 │                                                                     │
-│  ┌───────────────┐  ┌──────────────────┐  ┌──────────────────────┐ │
-│  │ Gather context │→ │ Screenshot site   │→ │ Review similar demos │ │
-│  │ from user      │  │ or references     │  │ in git branches      │ │
-│  └───────────────┘  │ → data/discovery/ │  └──────────────────────┘ │
-│                      └──────────────────┘                           │
+│  ┌───────────────┐  ┌──────────────────┐  ┌──────────────────────┐  │
+│  │ Gather context│→ │ Screenshot site  │→ │ Review similar demos │  │
+│  │ from user     │  │ or references    │  │ in git branches      │  │
+│  └───────────────┘  │ → data/discovery/│  └──────────────────────┘  │
+│                     └──────────────────┘                            │
 │                              │                                      │
 │                              ▼                                      │
 │                   ┌─────────────────────┐                           │
 │                   │ Suggest demo vision │                           │
-│                   │ → Discovery Brief    │                           │
+│                   │ → Discovery Brief   │                           │
 │                   └─────────────────────┘                           │
 └────────────────────────────┬────────────────────────────────────────┘
                              │
@@ -35,8 +35,8 @@ The fastest way to set up a new demo is with `/demo-setup`, which orchestrates a
 │  Phase 2: Branding (must run first — other scripts depend on it)    │
 │  /demo-branding                                                     │
 │                                                                     │
-│  • lib/demo-config/index.ts  → brand name, tagline, logo, locale   │
-│  • lib/algolia-config.ts     → APP_ID, INDEX_NAME, COMPOSITION_ID  │
+│  • lib/demo-config/index.ts  → brand name, tagline, logo, locale    │
+│  • lib/algolia-config.ts     → APP_ID, INDEX_NAME, COMPOSITION_ID   │
 │  • app/favicon.ico           → downloaded from customer site        │
 │  • public/logo.svg           → downloaded from customer site        │
 │  • app/globals.css           → brand colors (--primary)             │
@@ -46,75 +46,89 @@ The fastest way to set up a new demo is with `/demo-setup`, which orchestrates a
               │                             │
               ▼                             ▼
 ┌──────────────────────────┐  ┌──────────────────────────────────────┐
-│  Data Pipeline            │  │  User Profiles (parallel)            │
-│                           │  │  /demo-user-profiles                 │
-│  ┌──────────────────────┐ │  │                                      │
-│  │ /demo-scrape          │ │  │  • lib/demo-config/users.ts         │
-│  │ (optional)            │ │  │  • Persona definitions              │
-│  │ → data/products.json  │ │  │  • Preference weights for           │
-│  └──────────┬───────────┘ │  │    personalization & "For You"       │
-│             │             │  └──────────────────────────────────────┘
-│             ▼             │
-│  ┌──────────────────────┐ │
-│  │ /data-structure       │ │
-│  │                       │ │
-│  │ Analyze raw data      │ │
-│  │ against Product type  │ │
-│  │ → transform/enrich    │ │
-│  │   in index-data.ts    │ │
-│  └──────────┬───────────┘ │
-│             │             │
-│             ▼             │
-│  ┌──────────────────────┐ │
-│  │ /demo-data-indexing   │ │
-│  │                       │ │
-│  │ Index products        │ │
-│  │ Train Recommend       │ │
-│  │ Set up Query          │ │
-│  │ Suggestions           │ │
-│  │                       │ │
-│  │ Reports:              │ │
-│  │ • image domains       │ │
-│  │ • category values     │ │
-│  │ • facet attributes    │ │
-│  └──────────┬───────────┘ │
-└─────────────┼─────────────┘
+│  Data Pipeline           │  │  User Profiles (parallel)            │
+│                          │  │  /demo-user-profiles                 │
+│  ┌─────────────────────┐ │  │                                      │
+│  │ /demo-scrape        │ │  │  • lib/demo-config/users.ts          │
+│  │ (optional)          │ │  │  • Persona definitions               │
+│  │ → data/products.json│ │  │  • Preference weights for            │
+│  └──────────┬──────────┘ │  │    personalization & "For You"       │
+│             │            │  └──────────────────────────────────────┘
+│             ▼            │
+│  ┌─────────────────────┐ │
+│  │ /data-structure     │ │
+│  │                     │ │
+│  │ Analyze raw data    │ │
+│  │ against Product type│ │
+│  │ → transform/enrich  │ │
+│  │   in index-data.ts  │ │
+│  └──────────┬──────────┘ │
+│             │            │
+│             ▼            │
+│  ┌─────────────────────┐ │
+│  │ /demo-data-indexing │ │
+│  │                     │ │
+│  │ Index products      │ │
+│  │ Train Recommend     │ │
+│  │ Set up Query        │ │
+│  │ Suggestions         │ │
+│  │                     │ │
+│  │ Reports:            │ │
+│  │ • image domains     │ │
+│  │ • category values   │ │
+│  │ • facet attributes  │ │
+│  └──────────┬──────────┘ │
+└─────────────┼────────────┘
               │
               ▼
 ┌─────────────────────────────────────────────────────────────────────┐
 │  Phase 4: Post-Indexing Setup (after data pipeline completes)       │
 │                                                                     │
-│  ┌─────────────────────┐  ┌───────────────┐  ┌──────────────────┐  │
-│  │ Update imageDomains │  │ /demo-         │  │ /demo-agent-     │  │
-│  │ in demo-config      │  │ categories     │  │ setup            │  │
-│  │                     │  │                │  │                  │  │
-│  │                     │  │ Category tree  │  │ Agent Studio     │  │
-│  │                     │  │ from facet     │  │ instructions,    │  │
-│  │                     │  │ values         │  │ tools, deploy    │  │
-│  └─────────────────────┘  └───────────────┘  │ → AGENT_ID       │  │
-│                                               └──────────────────┘  │
+│  ┌─────────────────────┐  ┌───────────────┐  ┌──────────────────┐   │
+│  │ Update imageDomains │  │ /demo-        │  │ /demo-agent-     │   │
+│  │ in demo-config      │  │ categories    │  │ setup            │   │
+│  │                     │  │               │  │                  │   │
+│  │                     │  │ Category tree │  │ Agent Studio     │   │
+│  │                     │  │ from facet    │  │ instructions,    │   │
+│  │                     │  │ values        │  │ tools, deploy    │   │
+│  └─────────────────────┘  └───────────────┘  │ → AGENT_ID       │   │ 
+│                                              └──────────────────┘   │
 └────────────────────────────┬────────────────────────────────────────┘
                              │
                              ▼
                     ┌─────────────────┐
                     │   pnpm dev      │
                     │   localhost:3000 │
-                    └─────────────────┘
+                    └────────┬────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────┐
+│  Phase 5: Showcase (after demo is working)              │
+│  /demo-showcase                                         │
+│                                                         │
+│  • Screenshot live demo → data/showcase/*.png           │
+│  • Analyze customizations vs template                   │
+│  • Rewrite README.md as structured demo card            │
+│  • Future /demo-discovery reads this for branch context │
+└─────────────────────────────────────────────────────────┘
 ```
 
 ### Skills Reference
 
-| Skill | Purpose | Key outputs |
-|-------|---------|-------------|
-| `/demo-setup` | Orchestrate the full pipeline | Runs everything in order |
-| `/demo-discovery` | Explore use cases, screenshot site, review past demos | Discovery Brief, `data/discovery/*.png` |
-| `/demo-branding` | Visual identity, locale, Algolia connection | `lib/demo-config/index.ts`, `lib/algolia-config.ts` |
-| `/demo-scrape` | Scrape product data from a website | `data/products.json` |
-| `/data-structure` | Analyze data, generate transform/enrich code | `scripts/index-data.ts` |
-| `/demo-data-indexing` | Index products, train Recommend, set up QS | Algolia index, Composition |
-| `/demo-categories` | Category navigation from indexed data | `lib/demo-config/categories.ts` |
-| `/demo-user-profiles` | User personas with preference weights | `lib/demo-config/users.ts` |
-| `/demo-agent-setup` | AI shopping assistant config and deploy | `lib/demo-config/agents.ts`, AGENT_ID |
+
+| Skill                 | Purpose                                               | Key outputs                                         |
+| --------------------- | ----------------------------------------------------- | --------------------------------------------------- |
+| `/demo-setup`         | Orchestrate the full pipeline                         | Runs everything in order                            |
+| `/demo-discovery`     | Explore use cases, screenshot site, review past demos | Discovery Brief, `data/discovery/*.png`             |
+| `/demo-branding`      | Visual identity, locale, Algolia connection           | `lib/demo-config/index.ts`, `lib/algolia-config.ts` |
+| `/demo-scrape`        | Scrape product data from a website                    | `data/products.json`                                |
+| `/data-structure`     | Analyze data, generate transform/enrich code          | `scripts/index-data.ts`                             |
+| `/demo-data-indexing` | Index products, train Recommend, set up QS            | Algolia index, Composition                          |
+| `/demo-categories`    | Category navigation from indexed data                 | `lib/demo-config/categories.ts`                     |
+| `/demo-user-profiles` | User personas with preference weights                 | `lib/demo-config/users.ts`                          |
+| `/demo-agent-setup`   | AI shopping assistant config and deploy               | `lib/demo-config/agents.ts`, AGENT_ID               |
+| `/demo-showcase`      | Document the finished demo as a README demo card      | `README.md`, `data/showcase/*.png`                   |
+
 
 Each skill can be run independently (e.g. `/demo-categories` to update just the category nav after re-indexing).
 
@@ -148,3 +162,4 @@ lib/
 scripts/                Indexing, agent setup, relevance tests
 data/                   Product data and discovery screenshots
 ```
+
