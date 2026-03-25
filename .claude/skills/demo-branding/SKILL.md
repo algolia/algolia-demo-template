@@ -22,6 +22,8 @@ Ask the user for:
 4. **Algolia credentials** — use defaults in `lib/algolia-config.ts` or provide custom APP_ID + Search API Key
 5. **Locale** — language, currency code, currency symbol (default: en, USD, $)
 
+**Visual references:** If `data/discovery/` exists (created by `/demo-discovery`), read the `.lowres.png` screenshots there. Use them as reference when making visual decisions — logo style, color direction, layout preservation notes.
+
 ## Step 1: Update `lib/demo-config/index.ts`
 
 This file exports `DEMO_CONFIG`, used throughout the app for brand display and price formatting.
@@ -83,7 +85,31 @@ Fetch from the customer's actual website:
 6. **Verify:** Run `file app/favicon.ico` and check file size — warn if < 1KB
 7. **Fallback:** If no icon tags found or download fails, use `https://www.google.com/s2/favicons?domain=DOMAIN&sz=128`
 
-## Step 4: Download Logo
+## Step 4: Update Brand Colors in `app/globals.css`
+
+This file defines the shadcn/ui CSS custom properties that control the entire UI color scheme. The key variable to update is `--primary` (and its dark mode counterpart) — this drives buttons, active states, links, and accent UI throughout the app.
+
+1. Extract the customer's brand color from their website (logo, buttons, or primary accent)
+2. Convert the brand color to **oklch** format (all values in this file use oklch)
+3. Update these variables in `:root` and `.dark`:
+
+**`:root` (light mode):**
+- `--primary`: the brand color (e.g. `oklch(0.65 0.25 38)` for orange)
+- `--primary-foreground`: text on primary — usually white `oklch(1 0 0)` or black `oklch(0 0 0)` depending on contrast
+- `--sidebar-primary`: can match `--primary` or be a slightly muted variant
+
+**`.dark` (dark mode):**
+- `--primary`: slightly adjusted for dark backgrounds (often lower lightness or chroma)
+- `--sidebar-primary`: match or complement the dark primary
+
+4. **Do NOT change** non-primary variables (background, card, muted, border, etc.) unless specifically requested — the neutral grays work universally
+5. **Chart colors** (`--chart-1` through `--chart-5`): optionally update to harmonize with the new primary, but not required
+
+**Quick reference for oklch:**
+- Format: `oklch(lightness chroma hue)` where lightness is 0–1, chroma is 0–0.4, hue is 0–360
+- Common hues: red ~25, orange ~55, yellow ~95, green ~145, blue ~260, purple ~300
+
+## Step 5: Download Logo
 
 1. Fetch the customer's homepage HTML
 2. Look for logo `<img>` or `<svg>` in the site header/nav area

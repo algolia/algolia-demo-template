@@ -37,27 +37,95 @@ If the user already provided some of this info, skip those questions and proceed
 
 **WAIT for the user to respond before proceeding.**
 
-## Phase 1: Research — Customer Website
+## Phase 1: Research — Visual References
 
-Screenshot and analyze the customer's website. Visit and capture:
+Capture screenshots to use as reference throughout the demo build. All screenshots are saved to `data/discovery/` so downstream skills (`/demo-branding`, `/data-structure`, etc.) can reference them.
 
+```bash
+mkdir -p data/discovery
+```
+
+**Use the mode that applies (A → B → C, in priority order):**
+
+### Mode A: Customer Website Screenshots (when URL is provided)
+
+Use `page_capture.py` to screenshot key pages on the customer's actual site:
+
+```bash
+# Homepage
+python ~/.claude/skills/search-audit/scripts/page_capture.py \
+  --url "SITE_URL" --output "data/discovery/homepage.png"
+
+# Search results (append a generic search query to the URL)
+python ~/.claude/skills/search-audit/scripts/page_capture.py \
+  --url "SITE_URL/search?q=shoes" --output "data/discovery/search-results.png"
+
+# Product detail (pick a representative product URL)
+python ~/.claude/skills/search-audit/scripts/page_capture.py \
+  --url "PRODUCT_URL" --output "data/discovery/product-detail.png"
+
+# Category page (pick a main category URL)
+python ~/.claude/skills/search-audit/scripts/page_capture.py \
+  --url "CATEGORY_URL" --output "data/discovery/category-page.png"
+```
+
+For each capture, note:
 1. **Homepage** — layout, hero, featured products/categories
-2. **Search results page** — search for a generic term, note:
-   - What facets/filters are available
-   - How products are displayed (grid, list, card layout)
-   - What product info is shown (price, ratings, colors, sizes)
-   - Autocomplete/suggestions behavior
-3. **Product detail page** — pick a representative product, note:
-   - Image gallery style
-   - What product attributes are displayed
-   - Recommendations section (if any)
-   - Reviews display
-4. **Category page** — navigate to a category, note:
-   - Category hierarchy depth
-   - How sub-categories are presented
-   - Sorting options
+2. **Search results page** — facets/filters, product display (grid/list/card), product info shown (price, ratings, colors, sizes), autocomplete behavior
+3. **Product detail page** — image gallery style, product attributes displayed, recommendations section, reviews
+4. **Category page** — hierarchy depth, sub-category presentation, sorting options
 
-For each page, identify:
+Capture extra screenshots if needed (mobile view, mega-menu, checkout). Name them descriptively (e.g., `mobile-search.png`, `mega-menu.png`).
+
+### Mode B: Similar Demos & Algolia Customers (when no website URL)
+
+If no customer website is available, pull visual references from existing implementations:
+
+1. **Check git branches** for demos in the same vertical (branches explored further in Phase 2):
+   ```bash
+   git branch -a | grep -i "<vertical>"
+   ```
+   If matching branches have live deployments (check for Netlify URLs in commit history or READMEs), screenshot those.
+
+2. **Find live Algolia-powered sites** in the same vertical via web search. Screenshot key pages as reference.
+
+3. Save all reference screenshots to `data/discovery/` with descriptive names:
+   ```bash
+   python ~/.claude/skills/search-audit/scripts/page_capture.py \
+     --url "REFERENCE_URL" --output "data/discovery/ref-{source}-{page}.png"
+   ```
+
+### Mode C: User-Provided References (fallback)
+
+If neither A nor B yields good references:
+
+1. Ask the user for inspiration URLs, competitor sites, wireframes, or screenshots
+2. Screenshot any provided URLs using `page_capture.py`
+3. Save to `data/discovery/` with descriptive names (e.g., `inspiration-competitor-homepage.png`)
+
+**Always tell the user which mode you're using:**
+> "I'll capture screenshots of [website] to use as reference throughout the demo build."
+> or
+> "No website URL — I'll pull visual references from similar demos and Algolia customer sites in the same vertical."
+
+### Reference Index
+
+After capturing, create `data/discovery/README.md`:
+
+```markdown
+# Discovery Visual References
+
+| File | Source | Page | Key observations |
+|------|--------|------|------------------|
+| homepage.png | customer site | Homepage | [notes] |
+| search-results.png | customer site | Search Results | [notes] |
+| product-detail.png | customer site | Product Detail | [notes] |
+| category-page.png | customer site | Category Page | [notes] |
+```
+
+### Analysis
+
+Read the `.lowres.png` versions of each screenshot and for each page identify:
 - **Preserve**: What works well and should be reflected in the demo
 - **Improve**: What's weak and where the demo can show a better experience
 
@@ -182,8 +250,10 @@ Once confirmed, output the summary brief:
 - **Ranking signals:** [list]
 - **Category hierarchy:** [depth + structure notes]
 
-### Visual Direction
-- [key UX decisions and references]
+### Visual References
+- Screenshots saved in `data/discovery/`:
+  - [list files with what they show]
+- [key UX decisions informed by the screenshots]
 
 ### Reference Demos
 - [branch names with what was reused]
