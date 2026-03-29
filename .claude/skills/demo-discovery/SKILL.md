@@ -52,7 +52,12 @@ mkdir -p data/discovery
 Use `page_capture.py` to screenshot key pages on the customer's actual site:
 
 ```bash
-# Homepage
+# Homepage (full-page, no navbar) — used as the demo's hero image
+python scripts/page-capture.py \
+  --url "SITE_URL" --output "public/homepage.png" \
+  --full-page --remove-navbar
+
+# Homepage (reference copy for discovery analysis)
 python scripts/page-capture.py \
   --url "SITE_URL" --output "data/discovery/homepage.png"
 
@@ -68,6 +73,8 @@ python scripts/page-capture.py \
 python scripts/page-capture.py \
   --url "CATEGORY_URL" --output "data/discovery/category-page.png"
 ```
+
+The `public/homepage.png` capture replaces the template placeholder and becomes the hero image shown on the demo's landing page (when no search query is active). The `--full-page` flag captures the entire scrollable page and `--remove-navbar` strips the site's navigation so it blends cleanly under the demo's own navbar.
 
 For each capture, note:
 1. **Homepage** — layout, hero, featured products/categories

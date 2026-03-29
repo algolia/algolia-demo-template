@@ -18,7 +18,9 @@ Batch mode:
   --output-dir Directory for screenshots (named {name}.png)
 
 Options:
-  --wait      Seconds to wait after page load (default: 4)
+  --wait          Seconds to wait after page load (default: 4)
+  --full-page     Capture the full scrollable page, not just the viewport
+  --remove-navbar Remove navigation bar/header before capturing
 """
 
 import argparse
@@ -207,8 +209,22 @@ class ChromeBrowser:
     def navigate(self, url):
         self.cdp.send("Page.navigate", {"url": url})
 
-    def screenshot(self, path):
-        result = self.cdp.send("Page.captureScreenshot", {"format": "png"})
+    def screenshot(self, path, full_page=False):
+        params = {"format": "png"}
+        if full_page:
+            # Get full page dimensions
+            metrics = self.cdp.send(
+                "Page.getLayoutMetrics"
+            )
+            content = metrics.get("result", {}).get("contentSize", {})
+            width = content.get("width", 1440)
+            height = content.get("height", 900)
+            params["clip"] = {
+                "x": 0, "y": 0,
+                "width": width, "height": height,
+                "scale": 1,
+            }
+        result = self.cdp.send("Page.captureScreenshot", params)
         data = result.get("result", {}).get("data", "")
         if data:
             with open(path, "wb") as f:
@@ -323,7 +339,37 @@ def dismiss_overlays(browser):
 # ---------------------------------------------------------------------------
 
 
-def capture_page(browser, url, output_path, wait=4):
+def remove_navbar(browser):
+    """Remove nav/header elements from the page before screenshotting."""
+    browser.execute_script(
+        """
+        // Remove fixed/sticky navbars and headers
+        for (const tag of ['nav', 'header']) {
+            document.querySelectorAll(tag).forEach(el => el.remove());
+        }
+        // Remove elements with common navbar roles/classes
+        document.querySelectorAll(
+            '[role="navigation"], [role="banner"], ' +
+            '[class*="navbar" i], [class*="nav-bar" i], [class*="top-bar" i], ' +
+            '[class*="header" i][class*="site" i], [class*="header" i][class*="main" i], ' +
+            '[id*="navbar" i], [id*="header" i]'
+        ).forEach(el => el.remove());
+        // Remove any remaining fixed/sticky elements at the top
+        document.querySelectorAll('*').forEach(el => {
+            const s = window.getComputedStyle(el);
+            if ((s.position === 'fixed' || s.position === 'sticky') &&
+                el.getBoundingClientRect().top < 100) {
+                el.remove();
+            }
+        });
+        // Scroll to top after removal
+        window.scrollTo(0, 0);
+    """
+    )
+    time.sleep(0.3)
+
+
+def capture_page(browser, url, output_path, wait=4, full_page=False, strip_navbar=False):
     """Navigate to URL, dismiss overlays, take screenshot. Returns output paths."""
     os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
 
@@ -334,7 +380,10 @@ def capture_page(browser, url, output_path, wait=4):
     time.sleep(1)
     dismiss_overlays(browser)
 
-    browser.screenshot(output_path)
+    if strip_navbar:
+        remove_navbar(browser)
+
+    browser.screenshot(output_path, full_page=full_page)
     lowres_path = compress_screenshot(output_path)
 
     print(f"Captured: {output_path}")
@@ -355,6 +404,14 @@ def main():
     parser.add_argument(
         "--wait", type=int, default=4, help="Seconds to wait after page load"
     )
+    parser.add_argument(
+        "--full-page", action="store_true",
+        help="Capture the full scrollable page, not just the viewport"
+    )
+    parser.add_argument(
+        "--remove-navbar", action="store_true",
+        help="Remove navigation bar/header before capturing"
+    )
 
     args = parser.parse_args()
 
@@ -370,7 +427,10 @@ def main():
 
     try:
         if args.url:
-            result = capture_page(browser, args.url, args.output, args.wait)
+            result = capture_page(
+                browser, args.url, args.output, args.wait,
+                full_page=args.full_page, strip_navbar=args.remove_navbar,
+            )
             results.append(result)
         else:
             with open(args.urls_file) as f:
@@ -383,7 +443,10 @@ def main():
                 )
                 output_path = os.path.join(args.output_dir, f"{name}.png")
                 try:
-                    result = capture_page(browser, url, output_path, args.wait)
+                    result = capture_page(
+                        browser, url, output_path, args.wait,
+                        full_page=args.full_page, strip_navbar=args.remove_navbar,
+                    )
                     result["name"] = name
                     results.append(result)
                 except Exception as e:
