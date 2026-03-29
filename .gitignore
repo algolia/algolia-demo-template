@@ -30,6 +30,9 @@ data/*.json
 # One-time download script (not part of the template)
 scripts/download-index.ts
 
+# Python
+__pycache__/
+
 # OS files
 .DS_Store
 Thumbs.db
