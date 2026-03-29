@@ -16,8 +16,9 @@ Every field must be filled. Use "N/A" only if genuinely not applicable.
 
 ## Data Requirements
 
-Primary input for `/data-structure`. Name actual Product interface fields where possible.
+Primary input for `/data-structure`. The primary record type is usually products, but may also be articles, recipes, listings, courses, properties, or other content types depending on the vertical. If the demo involves multiple record types (e.g., products + editorial content + stores), describe each.
 
+- **Record types:** {e.g., "products (primary), editorial articles (secondary)" or just "products"}
 - **Required fields:** {e.g., "name, brand, price.value, color.filter_group, hierarchical_categories (3 levels), reviews.rating, primary_image, image_urls, description"}
 - **Facets with display types:**
   - {attribute} — {swatches | text list | range slider | toggle} {e.g., "color.filter_group — swatches"}
@@ -29,7 +30,7 @@ Primary input for `/data-structure`. Name actual Product interface fields where 
 
 ## Example Record
 
-A single JSON object showing how the ideal indexed product should look for this demo. This is the target output of `/data-structure`'s transform/enrich pipeline. Every field listed in Data Requirements should appear here with realistic sample values.
+A single JSON object per record type showing how the ideal indexed record should look for this demo. This is the target output of `/data-structure`'s transform/enrich pipeline. Every field listed in Data Requirements should appear here with realistic sample values. If multiple record types exist, include one example of each.
 
 Annotate fields with their Algolia role using inline comments:
 
@@ -59,7 +60,9 @@ Annotate fields with their Algolia role using inline comments:
 }
 ```
 
-Use the actual vertical's product data — not generic placeholders. If recon found real product names, use one. This record becomes the reference for `/data-structure` when building transform/enrich functions.
+Use the actual vertical's data — not generic placeholders. If recon found real product names, use one. This record becomes the reference for `/data-structure` when building transform/enrich functions.
+
+For non-product record types (articles, recipes, listings, etc.), include a separate example with the appropriate fields — they won't follow the Product interface.
 
 ## Product Card Spec
 
