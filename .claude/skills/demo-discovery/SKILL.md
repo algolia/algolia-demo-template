@@ -287,15 +287,15 @@ Search Results Page:
 ┌──────────────────────────────────────────┐
 │ [Search Bar with Autocomplete]           │
 ├──────────┬───────────────────────────────┤
-│ Filters  │ ┌─────┐ ┌─────┐ ┌─────┐     │
-│ ───────  │ │     │ │     │ │     │     │
-│ Brand    │ │ Pro │ │ Pro │ │ Pro │     │
-│ Color ●  │ │ duct│ │ duct│ │ duct│     │
-│ Size     │ │     │ │     │ │     │     │
-│ Price    │ └─────┘ └─────┘ └─────┘     │
+│ Filters  │ ┌─────┐ ┌─────┐ ┌─────┐       │
+│ ───────  │ │     │ │     │ │     │       │
+│ Brand    │ │ Pro │ │ Pro │ │ Pro │       │
+│ Color ●  │ │ duct│ │ duct│ │ duct│       │
+│ Size     │ │     │ │     │ │     │       │
+│ Price    │ └─────┘ └─────┘ └─────┘       │
 │          │                               │
-│ [For You]│ ┌─────┐ ┌─────┐ ┌─────┐     │
-│          │ │     │ │     │ │     │     │
+│ [For You]│ ┌─────┐ ┌─────┐ ┌─────┐       │
+│          │ │     │ │     │ │     │       │
 └──────────┴───────────────────────────────┘
 
 - Color facet uses swatches (components/facets/ColorSwatch.tsx)
@@ -323,7 +323,7 @@ Does this match what you had in mind? Anything to adjust before we move to data 
 
 **WAIT for confirmation.**
 
-Once confirmed, write the brief to `data/discovery/brief.md` following the template in `.claude/skills/demo-discovery/references/discovery-brief-template.md`. Fill in every section — the template contains field descriptions and examples for guidance.
+Once confirmed, write the brief to `data/discovery/brief.json` following the JSON schema in `.claude/skills/demo-discovery/references/discovery-brief-template.md`. Fill in every field — the template contains example values and a field reference section for enums.
 
 This brief is the primary input for downstream skills (`/data-structure`, `/demo-branding`, `/demo-user-profiles`, `/demo-agent-setup`).
 
