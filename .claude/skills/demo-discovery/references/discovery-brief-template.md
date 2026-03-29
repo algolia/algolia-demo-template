@@ -74,7 +74,36 @@ What appears on each product card in search results. Informs `/data-structure` a
 
 **Custom rendering:** {any non-standard display — e.g., "show material instead of brand", "show rating stars", "show discount badge when discount_rate > 0", "color swatches from variants array"}
 
-Reference: `components/ProductCard.tsx` has 4 variants (ProductCard, ProductListItem, CompactProductCard, CompactProductListItem). Default fields rendered: image, name, brand, description, top category, color swatches, price + discount, personalization badge.
+**Card mockup:** (adapt to this demo's fields)
+
+```
+┌─────────────────────┐
+│  ┌───────────────┐  │
+│  │               │  │
+│  │    [image]    │  │
+│  │               │  │
+│  └───────────────┘  │
+│  BRAND               │
+│  Product Name        │
+│  Short description…  │
+│  ● ● ● ○  (colors)  │
+│  $99.00  ̶$̶1̶2̶0̶  -17% │
+└─────────────────────┘
+```
+
+Redraw this for the actual demo — swap fields, reorder, add/remove lines as needed. If using list layout:
+
+```
+┌──────────────────────────────────────────┐
+│ ┌──────┐  BRAND                   $99.00 │
+│ │      │  Product Name         ̶$̶1̶2̶0̶ -17% │
+│ │[img] │  Short description…             │
+│ │      │  Category > Subcategory         │
+│ └──────┘  ● ● ● ○              [Add +]  │
+└──────────────────────────────────────────┘
+```
+
+Reference: `components/ProductCard.tsx` has 4 variants (ProductCard, ProductListItem, CompactProductCard, CompactProductListItem).
 
 ## Relevance Gaps
 
