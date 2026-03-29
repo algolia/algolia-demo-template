@@ -213,18 +213,30 @@ class ChromeBrowser:
         params = {"format": "png"}
         if full_page:
             # Get full page dimensions
-            metrics = self.cdp.send(
-                "Page.getLayoutMetrics"
-            )
+            metrics = self.cdp.send("Page.getLayoutMetrics")
             content = metrics.get("result", {}).get("contentSize", {})
             width = content.get("width", 1440)
             height = content.get("height", 900)
+            # Resize viewport to full page so Chrome renders all content
+            self.cdp.send(
+                "Emulation.setDeviceMetricsOverride",
+                {
+                    "width": int(width),
+                    "height": int(height),
+                    "deviceScaleFactor": 1,
+                    "mobile": False,
+                },
+            )
+            time.sleep(0.5)
             params["clip"] = {
                 "x": 0, "y": 0,
                 "width": width, "height": height,
                 "scale": 1,
             }
         result = self.cdp.send("Page.captureScreenshot", params)
+        if full_page:
+            # Reset viewport
+            self.cdp.send("Emulation.clearDeviceMetricsOverride")
         data = result.get("result", {}).get("data", "")
         if data:
             with open(path, "wb") as f:
@@ -236,6 +248,43 @@ class ChromeBrowser:
             {"expression": js, "returnByValue": True, "awaitPromise": False},
         )
         return result.get("result", {}).get("result", {}).get("value")
+
+    def scroll_to_load(self, step=600, pause=0.5):
+        """Scroll down the page incrementally to trigger lazy loading."""
+        total_height = self.execute_script("document.body.scrollHeight") or 900
+        current = 0
+        while current < total_height:
+            current += step
+            self.execute_script(f"window.scrollTo(0, {current})")
+            time.sleep(pause)
+            # Re-check height as lazy content may extend the page
+            total_height = self.execute_script("document.body.scrollHeight") or total_height
+        # Force-load all lazy images and iframes
+        self.execute_script("""
+            document.querySelectorAll('img[loading="lazy"], iframe[loading="lazy"]').forEach(el => {
+                el.loading = 'eager';
+            });
+            document.querySelectorAll('img[data-src]').forEach(el => {
+                if (el.dataset.src) el.src = el.dataset.src;
+            });
+            document.querySelectorAll('img[data-srcset]').forEach(el => {
+                if (el.dataset.srcset) el.srcset = el.dataset.srcset;
+            });
+            document.querySelectorAll('[data-background-image]').forEach(el => {
+                el.style.backgroundImage = 'url(' + el.dataset.backgroundImage + ')';
+            });
+        """)
+        # Second scroll pass to catch content that expanded after first pass
+        time.sleep(1)
+        total_height = self.execute_script("document.body.scrollHeight") or total_height
+        current = 0
+        while current < total_height:
+            current += step
+            self.execute_script(f"window.scrollTo(0, {current})")
+            time.sleep(0.2)
+        # Scroll back to top and let final images settle
+        self.execute_script("window.scrollTo(0, 0)")
+        time.sleep(1)
 
     def quit(self):
         self.cdp.close()
@@ -379,6 +428,9 @@ def capture_page(browser, url, output_path, wait=4, full_page=False, strip_navba
     dismiss_overlays(browser)
     time.sleep(1)
     dismiss_overlays(browser)
+
+    if full_page:
+        browser.scroll_to_load()
 
     if strip_navbar:
         remove_navbar(browser)
