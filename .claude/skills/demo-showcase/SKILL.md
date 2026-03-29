@@ -65,27 +65,27 @@ sleep 8
 mkdir -p data/showcase
 ```
 
-Capture these pages using `page-capture.py`:
+Capture these pages using `screenshot.py`:
 
 ```bash
 # Homepage
-python scripts/page-capture.py \
+python .claude/skills/demo-showcase/scripts/screenshot.py \
   --url "http://localhost:3000" \
   --output "data/showcase/homepage.png"
 
 # Search results — pick a query that shows off the demo's strengths
 # (e.g., a query that demonstrates good relevance, NeuralSearch, or faceting)
-python scripts/page-capture.py \
+python .claude/skills/demo-showcase/scripts/screenshot.py \
   --url "http://localhost:3000?q=REPRESENTATIVE_QUERY" \
   --output "data/showcase/search-results.png"
 
 # Product detail — pick a representative product
-python scripts/page-capture.py \
+python .claude/skills/demo-showcase/scripts/screenshot.py \
   --url "http://localhost:3000/products/PRODUCT_ID" \
   --output "data/showcase/product-detail.png"
 
 # Category page — pick a main category
-python scripts/page-capture.py \
+python .claude/skills/demo-showcase/scripts/screenshot.py \
   --url "http://localhost:3000/category/CATEGORY_SLUG" \
   --output "data/showcase/category-page.png"
 ```
@@ -96,7 +96,7 @@ python scripts/page-capture.py \
 - For the category, pick the deepest or most populated one
 - If the agent has a standout interaction, open the sidepanel and capture that too:
   ```bash
-  python scripts/page-capture.py \
+  python .claude/skills/demo-showcase/scripts/screenshot.py \
     --url "http://localhost:3000?agent=open" \
     --output "data/showcase/agent.png"
   ```
