@@ -1,0 +1,133 @@
+{
+  "description": "What to analyze for each page type when reviewing screenshots. For each item, determine whether to Preserve (keep in demo) or Improve (show a better version).",
+  "pages": {
+    "homepage": {
+      "screenshot": "homepage.png",
+      "analyze": [
+        {
+          "area": "Hero section",
+          "look_for": "Banner layout, promotional content, seasonal campaigns, value proposition"
+        },
+        {
+          "area": "Search bar",
+          "look_for": "Placement (top nav vs hero), placeholder text, search icon style, prominence"
+        },
+        {
+          "area": "Navigation",
+          "look_for": "Main categories visible, mega-menu vs dropdown, hierarchy depth exposed, mobile adaptation"
+        },
+        {
+          "area": "Featured products",
+          "look_for": "How products are surfaced on homepage — recommendations, trending, new arrivals, curated collections"
+        },
+        {
+          "area": "Product cards",
+          "look_for": "Info density — image, name, price, ratings, colors/variants, quick-add button, wishlist"
+        },
+        {
+          "area": "Personalization signals",
+          "look_for": "Any 'For You', 'Recommended', or personalized sections visible without login"
+        },
+        {
+          "area": "Trust elements",
+          "look_for": "Reviews, ratings, social proof, delivery promises, return policy"
+        }
+      ]
+    },
+    "search_results": {
+      "screenshot": "search-results.png",
+      "analyze": [
+        {
+          "area": "Autocomplete",
+          "look_for": "Product suggestions with images/prices, category suggestions, query suggestions, federated results, response speed"
+        },
+        {
+          "area": "Result layout",
+          "look_for": "Grid vs list, columns count, card density, image aspect ratio"
+        },
+        {
+          "area": "Facets/filters",
+          "look_for": "Which attributes are filterable, sidebar vs top-bar, visual facets (color swatches, size pills), collapsible sections, active filter chips"
+        },
+        {
+          "area": "Sort options",
+          "look_for": "Available sort modes — relevance, price asc/desc, popularity, newest, rating"
+        },
+        {
+          "area": "Result quality",
+          "look_for": "Are top results relevant to query? Any obvious misranking? Highlighting of matched terms?"
+        },
+        {
+          "area": "Empty/edge states",
+          "look_for": "What happens with zero results — suggestions, did-you-mean, category fallbacks?"
+        },
+        {
+          "area": "Result count & pagination",
+          "look_for": "Total count shown, pagination vs infinite scroll vs load-more"
+        },
+        {
+          "area": "Merchandising",
+          "look_for": "Banners in results, pinned/boosted products, promotional badges (sale, new, bestseller)"
+        }
+      ]
+    },
+    "product_detail": {
+      "screenshot": "product-detail.png",
+      "analyze": [
+        {
+          "area": "Image gallery",
+          "look_for": "Image count, zoom capability, thumbnail strip, video content, 360 view"
+        },
+        {
+          "area": "Product info",
+          "look_for": "Name, brand, price, description placement and length, SKU visibility"
+        },
+        {
+          "area": "Variants",
+          "look_for": "Color selection (swatches vs dropdown), size selection (pills vs dropdown), stock indicators per variant"
+        },
+        {
+          "area": "Reviews",
+          "look_for": "Rating display, review count, review snippets, rating breakdown"
+        },
+        {
+          "area": "Add to cart",
+          "look_for": "Button prominence, quantity selector, wishlist option, buy-now shortcut"
+        },
+        {
+          "area": "Recommendations",
+          "look_for": "Related products, 'Looking Similar', 'Frequently Bought Together', 'Complete the Look' — note which types are present and their placement"
+        },
+        {
+          "area": "Delivery & returns",
+          "look_for": "Shipping info, store availability, return policy, click & collect"
+        }
+      ]
+    },
+    "category_page": {
+      "screenshot": "category-page.png",
+      "analyze": [
+        {
+          "area": "Hierarchy display",
+          "look_for": "Breadcrumbs, sub-category links, depth of navigation, sibling categories visible"
+        },
+        {
+          "area": "Category-specific facets",
+          "look_for": "Do filters change per category? Are irrelevant facets hidden?"
+        },
+        {
+          "area": "Product grid",
+          "look_for": "Same as search results or different layout? Category-specific merchandising?"
+        },
+        {
+          "area": "Category content",
+          "look_for": "Category description, hero banner, editorial content, buying guides"
+        },
+        {
+          "area": "Sub-category navigation",
+          "look_for": "Visual sub-category cards/tiles, sidebar tree, tag cloud"
+        }
+      ]
+    }
+  }
+}

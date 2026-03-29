@@ -132,7 +132,9 @@ After capturing, create `data/discovery/README.md`:
 
 ### Analysis
 
-Read the `.lowres.png` versions of each screenshot and for each page identify:
+Read the visual analysis checklist: `.claude/skills/demo-discovery/references/visual-analysis-checklist.json`
+
+For each captured page, read the `.lowres.png` version and analyze every item in the checklist for that page type. For each item, determine:
 - **Preserve**: What works well and should be reflected in the demo
 - **Improve**: What's weak and where the demo can show a better experience
 
@@ -250,43 +252,9 @@ Does this match what you had in mind? Anything to adjust before we move to data 
 
 **WAIT for confirmation.**
 
-Once confirmed, output the summary brief:
+Once confirmed, write the brief to `data/discovery/brief.md` following the template in `.claude/skills/demo-discovery/references/discovery-brief-template.md`. Fill in every section — the template contains field descriptions and examples for guidance.
 
-```
-## Demo Discovery Brief
-
-**Customer:** [name]
-**Vertical:** [vertical]
-**Audience:** [who]
-**Key use cases:** [list]
-
-### Features (priority order)
-1. [feature]
-2. [feature]
-...
-
-### Data Requirements
-- **Required fields:** [list]
-- **Required facets:** [list]
-- **Enrichments needed:** [list]
-- **Ranking signals:** [list]
-- **Category hierarchy:** [depth + structure notes]
-
-### Visual References
-- Screenshots saved in `data/discovery/`:
-  - [list files with what they show]
-- [key UX decisions informed by the screenshots]
-
-### Reference Demos
-- [branch names with what was reused]
-- [external URLs]
-
-### Preservation Notes
-- [what to keep from customer's current site]
-- [what to improve]
-```
-
-This brief is passed to `/data-structure` as context for data analysis and transformation.
+This brief is the primary input for downstream skills (`/data-structure`, `/demo-branding`, `/demo-user-profiles`, `/demo-agent-setup`).
 
 ## Does NOT Run
 
