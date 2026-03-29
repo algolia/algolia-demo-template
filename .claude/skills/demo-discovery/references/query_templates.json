@@ -1,0 +1,90 @@
+{
+  "categories": {
+    "exact_product": {
+      "description": "Known product names — should rank #1",
+      "examples_by_vertical": {
+        "cosmetics": ["MAC Ruby Woo", "Clinique Moisture Surge"],
+        "fashion": ["Nike Air Force 1", "Levi's 501 jeans"],
+        "electronics": ["iPhone 15 Pro", "Sony WH-1000XM5"],
+        "general": ["Best seller item name from the site"]
+      },
+      "note": "Browse the site first to find real product names to test"
+    },
+    "typo_tolerance": {
+      "description": "Misspelled queries — should still return relevant results",
+      "patterns": [
+        "Swap two adjacent letters: 'moistruizer'",
+        "Missing letter: 'lipstik', 'sneakrs'",
+        "Extra letter: 'moisturizerr'",
+        "Common misspelling: 'recieve', 'seperate'"
+      ]
+    },
+    "long_conversational": {
+      "description": "Natural language / intent-based queries",
+      "examples_by_vertical": {
+        "cosmetics": ["gift for my mom who likes skincare", "something to help with dry skin in winter"],
+        "fashion": ["outfit for a summer wedding", "comfortable work shoes for standing all day"],
+        "electronics": ["laptop for a college student under 1000", "best camera for beginners"],
+        "general": ["what should I buy for a birthday gift"]
+      }
+    },
+    "short_vague": {
+      "description": "One-word or very short queries — tests broad matching and ranking",
+      "examples": ["red", "gift", "sale", "new", "best", "black", "summer"]
+    },
+    "multi_attribute": {
+      "description": "Queries combining multiple facets — tests attribute search",
+      "examples_by_vertical": {
+        "cosmetics": ["vegan red lipstick", "fragrance-free moisturizer for oily skin"],
+        "fashion": ["black leather boots size 10 women", "organic cotton t-shirt men XL"],
+        "electronics": ["wireless earbuds under $100 with noise cancelling", "4K monitor 27 inch"],
+        "general": ["cheap + quality + specific attributes"]
+      }
+    },
+    "synonyms": {
+      "description": "Different words for the same thing — tests synonym handling",
+      "examples_by_vertical": {
+        "cosmetics": [["perfume", "fragrance", "scent"], ["lipstick", "lip color"], ["moisturizer", "cream", "lotion"]],
+        "fashion": [["sneakers", "trainers", "running shoes"], ["trousers", "pants"], ["jumper", "sweater"]],
+        "electronics": [["laptop", "notebook"], ["earbuds", "earphones"], ["TV", "television"]],
+        "general": "Pick 2-3 synonym pairs relevant to the site's catalog"
+      }
+    },
+    "category_navigation": {
+      "description": "Category-level terms — should show relevant category or filtered results",
+      "examples_by_vertical": {
+        "cosmetics": ["skincare", "makeup", "fragrance", "tools"],
+        "fashion": ["dresses", "shoes", "accessories", "activewear"],
+        "electronics": ["phones", "laptops", "gaming", "audio"],
+        "general": "Use the site's main navigation categories as queries"
+      }
+    },
+    "stopwords_language": {
+      "description": "Queries with stopwords and language-specific processing — tests that filler words don't break relevance",
+      "examples_by_vertical": {
+        "cosmetics": ["cream for the face", "a serum with vitamin C", "the best foundation for dry skin"],
+        "fashion": ["a pair of black shoes", "dress for a night out", "the most comfortable sneakers"],
+        "electronics": ["a case for the iPhone", "best monitor for the office", "charger that works with USB-C"],
+        "general": ["the red one", "something in a size medium", "one with good reviews"]
+      },
+      "patterns": [
+        "Articles: 'a', 'an', 'the' — should be ignored without losing intent",
+        "Prepositions: 'for', 'with', 'in', 'of' — 'cream for face' vs 'face cream'",
+        "Conjunctions: 'and', 'or' — 'shampoo and conditioner'",
+        "Pronouns: 'that', 'which', 'it' — 'one that is waterproof'",
+        "Language-specific: French 'le/la/les/du/de', German 'der/die/das', Spanish 'el/la/los'"
+      ],
+      "note": "Compare results with and without stopwords — e.g. 'face cream' vs 'cream for the face' should return similar results"
+    },
+    "edge_cases": {
+      "description": "Unusual inputs — tests error handling and zero-result experience",
+      "examples": [
+        "xyznotaproduct123",
+        "     ",
+        "a",
+        "🎁",
+        "<script>alert(1)</script>"
+      ]
+    }
+  }
+}

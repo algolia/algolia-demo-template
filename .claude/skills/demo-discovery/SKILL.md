@@ -138,6 +138,77 @@ For each captured page, read the `.lowres.png` version and analyze every item in
 - **Preserve**: What works well and should be reflected in the demo
 - **Improve**: What's weak and where the demo can show a better experience
 
+## Phase 1.5: Search Relevance Testing (Mode A only)
+
+Skip this phase if no customer URL was provided. This tests the customer's current search to find concrete relevance gaps that the demo should fix.
+
+### 1. Recon
+
+Run recon to gather site intel (product names, categories, price range):
+
+```bash
+python .claude/skills/demo-discovery/scripts/search_capture.py \
+  --url "SITE_URL" \
+  --recon \
+  --output-dir "data/discovery/search-test"
+```
+
+Read `data/discovery/search-test/recon.json` for real product names, categories, and vertical guess.
+
+### 2. Design Test Queries
+
+Read the query templates: `.claude/skills/demo-discovery/references/query_templates.json`
+
+Design 8-10 queries tailored to this site using recon data:
+
+| Category | Count | Purpose |
+|----------|-------|---------|
+| Exact product name | 2 | Use real names from recon. Should rank #1 |
+| Typo | 1 | Misspell a popular product. Should still return it |
+| Conversational / intent | 2 | Natural language queries relevant to the vertical |
+| Synonym pair | 1 | Two words for the same thing — run both |
+| Multi-attribute | 1 | Combine facets: color + category + price intent |
+| Edge case | 1 | Gibberish or zero-result query |
+
+Save to `data/discovery/queries.json`:
+```json
+[
+  {"query": "Lift Seamless Leggings", "category": "exact_product", "expectation": "Exact product should be #1"},
+  {"query": "seamles leggins", "category": "typo", "expectation": "Should still show seamless leggings"},
+  {"query": "outfit for a summer wedding", "category": "conversational", "expectation": "Should show dresses, accessories"},
+  ...
+]
+```
+
+### 3. Run Captures
+
+```bash
+python .claude/skills/demo-discovery/scripts/search_capture.py \
+  --url "SITE_URL" \
+  --queries-file "data/discovery/queries.json" \
+  --output-dir "data/discovery/search-test" \
+  --site-name "Brand Name"
+```
+
+### 4. Analyze Results
+
+Read `data/discovery/search-test/capture-summary.json` — this is the primary data source (extracted text, product names, API timings). Only read `.lowres` screenshots for queries that failed or look suspicious.
+
+Score each query:
+
+| Score | Meaning |
+|-------|---------|
+| **Pass** | Top results are relevant, expected product appears |
+| **Weak** | Partially relevant — right category but wrong products, or slow |
+| **Fail** | Irrelevant results, zero results, or broken experience |
+
+Summarize the gaps:
+- Which query categories failed? (typos? synonyms? conversational?)
+- What Algolia capability would fix each gap? (typo tolerance, NeuralSearch, synonyms, query rules)
+- What are the best "before vs after" demo scenarios?
+
+This feeds directly into the brief's **Relevance Gaps** section and informs Phase 3's feature recommendations.
+
 ## Phase 2: Research — Similar Past Demos
 
 Explore git branches in this repo for similar demos:
@@ -191,7 +262,7 @@ Present a structured suggestion combining all research. This is the core output.
 
 ### 3a. Suggested Interactions & Features
 
-Based on use cases + vertical + customer website analysis, recommend which features to emphasize:
+Based on use cases + vertical + customer website analysis + **relevance test results**, recommend which features to emphasize. Prioritize features that directly address gaps found in Phase 1.5 — these make the strongest demo moments because you can show "their search fails here, ours doesn't."
 
 - **Search behavior** — autocomplete, query suggestions, NeuralSearch, typo tolerance
 - **Faceting strategy** — which attributes to facet on, filter vs searchable, visual facets (color swatches, size pills)
