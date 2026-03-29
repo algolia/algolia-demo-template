@@ -30,20 +30,43 @@ Primary input for `/data-structure`. The primary record type is usually products
 
 ## Data Audit
 
-Summary of Phase 1.75 data analysis. Omit if no data source was available during discovery.
+Summary of Phase 1.75 analysis. Omit if no data source was available during discovery.
 
-**Source:** {e.g., "data/products.json (scraped)", "existing Algolia index demo_products", "CSV from customer"}
-**Record count:** {total} records, {N} record types
-**Data quality:** {one-line summary — e.g., "clean product data, missing images on 15% of records, no review data"}
+**Source:** {e.g., "data/products.json (scraped)", "Algolia index demo_products", "CSV from customer"}
+**Records:** {count} | **Types:** {e.g., "products only" or "products (1200) + articles (85)"}
 
-| Field | % Populated | Quality | Action |
-|-------|-------------|---------|--------|
-| {field} | {0-100%} | {good / sparse / inconsistent / empty} | {use as-is / enrich / consolidate / drop} |
+### Images
+- **Coverage:** {X}% have image URLs | **Resolve:** {yes / no / partial — N of 5 checked returned 200} | **Quality:** {full-res / thumbnails / mixed}
+- **Multiple images:** {yes (avg N per record) / no — single image only}
 
-**Ready to use:** {fields that are clean and map directly to Product interface}
-**Needs enrichment:** {fields to AI-generate — e.g., "semantic_attributes, keywords, image_description"}
-**Needs consolidation:** {fields to merge/reshape — e.g., "color_1 + color_2 + color_3 → color.filter_group"}
-**Red flags:** {data quality issues — e.g., "prices are strings", "60% missing images", "HTML in descriptions"}
+### Pricing
+- **Format:** {number / string with symbol / nested object} | **Currency:** {single (USD) / mixed} | **Discount data:** {yes — has original + sale / no}
+
+### Categories
+- **Depth:** {N levels} | **Format:** {hierarchical string / flat tags / nested object — needs reshaping?}
+- **Distribution:** {balanced / skewed — e.g., "80% in Clothing, 2 categories with <5 records"}
+
+### Facet Candidates
+| Field | Unique values | Needs grouping? | Notes |
+|-------|--------------|-----------------|-------|
+| {field} | {N} | {yes / no} | {e.g., "raw color names — needs filter_group", "clean brand names"} |
+
+### Text & Language
+- **Descriptions:** {rich / thin / HTML / missing} | **Avg length:** {N words}
+- **Language:** {single (en) / mixed}
+- **NeuralSearch viable:** {yes — descriptions are rich enough / no — needs semantic_attributes enrichment}
+
+### Variants
+- **Structure:** {nested in record / separate records / no variants}
+- **Dedup needed:** {yes — N near-duplicate names detected / no}
+
+### Field Coverage
+| Field | % Populated | Format | Action |
+|-------|-------------|--------|--------|
+| {field} | {0-100%} | {type/format} | {use as-is / clean / enrich / consolidate / drop} |
+
+### Red Flags
+- {list any blockers — e.g., "60% missing images", "prices are strings with currency symbol", "HTML in descriptions needs stripping"}
 
 ## Example Record
 

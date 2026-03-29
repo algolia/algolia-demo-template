@@ -213,61 +213,61 @@ This feeds directly into the brief's **Relevance Gaps** section and informs Phas
 
 Skip if no data source is available yet. Run when the user has provided a JSON/CSV file, an existing Algolia index, or data has been scraped via `/demo-scrape`.
 
-The goal is to understand what's already in the data before deciding what to enrich, consolidate, or drop. This grounds the brief in reality rather than assumptions.
+### 1. Load & count
 
-### 1. Load a sample
+Load the data source and get basics:
+- **Record count** — <50 is thin for a demo (empty facets, sparse categories). >100k means enrichment time/cost matters.
+- **Record types** — check for a `type` field or distinct field patterns. Products? Articles? Mixed?
 
-Pick the data source that applies:
+### 2. Image audit
 
-**From a file** (JSON/CSV in `data/`):
-```bash
-# Read the first 3 records to understand the structure
-head -100 data/products.json
-```
+Broken images kill a demo instantly.
 
-**From an existing Algolia index:**
-```bash
-# Use the Algolia CLI or a quick script to pull sample records
-pnpm tsx -e "
-const algoliasearch = require('algoliasearch');
-const client = algoliasearch('APP_ID', 'SEARCH_API_KEY');
-const index = client.initIndex('INDEX_NAME');
-const { hits } = await index.search('', { hitsPerPage: 3 });
-console.log(JSON.stringify(hits, null, 2));
-"
-```
+- What % of records have an image URL field?
+- **Spot check**: HTTP HEAD 5 random image URLs — do they resolve (200) or 404?
+- Are they full-res or thumbnails? (check URL patterns like `_thumb`, `100x100`, or fetch one and check dimensions)
+- Multiple images per record (`image_urls` array) or just one?
 
-### 2. Analyze field coverage
+### 3. Price & currency
 
-For the full dataset (or a representative sample of 50-100 records), assess:
+- Is price present? What format — `19.99` (number), `"$19.99"` (string with symbol), `{ value: 19.99 }` (nested)?
+- Is there both original price and sale price for discount display?
+- Single currency or mixed? Symbol embedded in value or separate field?
 
-| Field | Present | % Populated | Quality | Notes |
-|-------|---------|-------------|---------|-------|
-| {field name} | yes/no | {0-100%} | {good / sparse / inconsistent / empty} | {e.g., "mix of HTML and plain text", "some have 'N/A' as value"} |
+### 4. Category structure
 
-Focus on:
-- **What's already good** — fields that are consistently populated with clean data, ready to use as-is
-- **What needs enrichment** — fields that are missing but needed (e.g., no `semantic_attributes`, no `keywords`) — these will be AI-generated during indexing
-- **What needs consolidation** — data spread across multiple fields that should be merged (e.g., `color_1`, `color_2`, `color_3` → `color.filter_group`)
-- **What has empty/junk values** — fields that exist but are mostly empty, contain placeholder text ("N/A", "TBD", "-"), or have inconsistent formats
+- How deep is the hierarchy? Flat tags, 2-level, 3-level?
+- **Distribution**: count records per top-level category. Flag if >70% are in one category or if any category has <5 records (empty sidebar).
+- Format: already `"Level1 > Level2 > Level3"` or needs reshaping from separate fields / flat arrays?
 
-### 3. Identify record types
+### 5. Facet candidates
 
-Check if the data contains multiple record types (e.g., products + articles + stores). Look for:
-- A `type` or `record_type` field
-- Distinct field patterns across records (some have `price`, others have `publish_date`)
-- Significantly different structures within the same dataset
+For each field that could be a facet:
+- **Cardinality** — how many unique values? >200 unique values may need grouping or a searchable facet.
+- **Color fields specifically** — consolidated names ("Red", "Blue") or raw names ("Dusty Rose Mauve", "Ocean Breeze Blue")? Raw names need `filter_group` consolidation.
+- Are values clean strings or do they contain junk (leading spaces, mixed case, "N/A")?
 
-### 4. Output
+### 6. Text quality
 
-Summarize findings for the brief:
-- Total record count and record types found
-- List of usable fields (map to Product interface where possible)
-- List of fields that need enrichment
-- List of fields that need cleanup or consolidation
-- Any data quality red flags (e.g., "60% of records have no image", "prices are strings not numbers")
+- **Descriptions**: rich paragraphs, one-liners, HTML, or missing entirely?
+- **Average word count** of description field across records.
+- If descriptions are thin (<20 words avg) or missing, NeuralSearch will need `semantic_attributes` enrichment.
+- **Language**: single or mixed? Detect from a sample of 10 descriptions.
 
-This analysis directly informs the brief's **Data Requirements** and **Example Record** sections — they should reflect what's actually achievable with this data, not just what's ideal.
+### 7. Variant / duplicate detection
+
+- Are color/size variants stored as separate records or nested arrays within a record?
+- Quick check: sort by name, look for near-duplicates (same name, different color/size). If variants are separate records, the demo needs dedup or grouping to avoid "5 identical shoes in different colors" in results.
+
+### 8. Field coverage summary
+
+After the specific checks above, produce one summary table:
+
+| Field | % Populated | Format | Action |
+|-------|-------------|--------|--------|
+| {field} | {0-100%} | {type/format notes} | {use as-is / clean / enrich / consolidate / drop} |
+
+This table, plus the findings from checks 2-7, feeds directly into the brief's **Data Audit** section.
 
 ## Phase 2: Research — Similar Past Demos
 
