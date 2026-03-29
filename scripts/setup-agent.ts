@@ -1,12 +1,11 @@
 import "dotenv/config";
 import * as fs from "fs";
 import * as path from "path";
-import { AGENT_CONFIG, AGENT_PRODUCT_ATTRIBUTES } from "../lib/demo-config/agents";
+import { AGENT_CONFIG } from "../lib/demo-config/agents";
 import { ALGOLIA_CONFIG } from "../lib/algolia-config";
 
 const ALGOLIA_APP_ID = ALGOLIA_CONFIG.APP_ID;
 const ALGOLIA_ADMIN_KEY = process.env.ALGOLIA_ADMIN_API_KEY!;
-const INDEX_NAME = ALGOLIA_CONFIG.INDEX_NAME;
 
 const ALGOLIA_CONFIG_PATH = path.resolve(__dirname, "../lib/algolia-config.ts");
 
@@ -171,31 +170,12 @@ async function upsertAndPublishAgent(
 
 async function main() {
   console.log(`App ID: ${ALGOLIA_APP_ID}`);
-  console.log(`Index: ${INDEX_NAME}`);
+  console.log(`Index: ${ALGOLIA_CONFIG.INDEX_NAME}`);
 
   const creds = await resolveCredentials();
   if (!creds) return;
 
   const { apiKey, providerId } = creds;
-
-  // Main shopping agent — includes the search index tool + client-side tools from config
-  const mainTools: AgentTool[] = [
-    {
-      name: "algolia_search_index",
-      type: "algolia_search_index",
-      indices: [
-        {
-          index: INDEX_NAME,
-          description: "Product catalog",
-          enhancedDescription: AGENT_CONFIG.main.indexDescription,
-          searchParameters: {
-            attributesToRetrieve: AGENT_PRODUCT_ATTRIBUTES,
-          },
-        },
-      ],
-    },
-    ...AGENT_CONFIG.main.tools,
-  ];
 
   await upsertAndPublishAgent(
     {
@@ -203,7 +183,7 @@ async function main() {
       instructions: AGENT_CONFIG.main.instructions,
       model: DEFAULT_MODEL,
       providerId,
-      tools: mainTools,
+      tools: AGENT_CONFIG.main.tools,
       config: { suggestions: { enabled: true } },
     },
     ALGOLIA_CONFIG.AGENT_ID,

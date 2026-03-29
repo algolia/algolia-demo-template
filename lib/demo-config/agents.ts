@@ -4,6 +4,7 @@
  * Edit this file to customize AI agent instructions, tools, and metadata.
  * These are used by scripts/setup-agent.ts to configure agents in Algolia.
  */
+import { ALGOLIA_CONFIG } from "../algolia-config";
 import { DEMO_CONFIG } from "./index";
 
 /**
@@ -47,7 +48,15 @@ You are a Shopping Assistant for ${DEMO_CONFIG.brand.name}. You help customers f
 **Language**
 - Respond in the language the customer uses, default to English`,
 
-    indexDescription: `Product catalog for ${DEMO_CONFIG.brand.name}.
+    tools: [
+      {
+        name: "algolia_search_index",
+        type: "algolia_search_index",
+        indices: [
+          {
+            index: ALGOLIA_CONFIG.INDEX_NAME,
+            description: "Product catalog",
+            enhancedDescription: `Product catalog for ${DEMO_CONFIG.brand.name}.
 
 **Key filterable fields:**
 - price: Product price (numeric)
@@ -55,9 +64,16 @@ You are a Shopping Assistant for ${DEMO_CONFIG.brand.name}. You help customers f
 - hierarchical_categories.lvl0, hierarchical_categories.lvl1, hierarchical_categories.lvl2: Category hierarchy
 - inStock: Boolean, true if available
 
-**IMPORTANT:** Only use exact category values that exist in your index for filtering.`,
 
-    tools: [
+**IMPORTANT:**
+- Only use exact category values that exist in your index for filtering.
+- Search for one product category at a time. If the user asks for multiple types of products (e.g. "jacket and pants"), run separate searches for each rather than combining them into one query.`,
+            searchParameters: {
+              attributesToRetrieve: AGENT_PRODUCT_ATTRIBUTES,
+            },
+          },
+        ],
+      },
       {
         name: "addToCart",
         type: "client_side",
