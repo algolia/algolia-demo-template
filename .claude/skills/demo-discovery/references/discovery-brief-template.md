@@ -28,6 +28,23 @@ Primary input for `/data-structure`. The primary record type is usually products
 - **Ranking signals:** {e.g., "sales_last_30d for popularity, reviews.bayesian_avg for quality, margin for business optimization"}
 - **Category hierarchy:** {depth + structure — e.g., "3 levels: Department > Category > Subcategory. Example: Women > Clothing > Dresses"}
 
+## Data Audit
+
+Summary of Phase 1.75 data analysis. Omit if no data source was available during discovery.
+
+**Source:** {e.g., "data/products.json (scraped)", "existing Algolia index demo_products", "CSV from customer"}
+**Record count:** {total} records, {N} record types
+**Data quality:** {one-line summary — e.g., "clean product data, missing images on 15% of records, no review data"}
+
+| Field | % Populated | Quality | Action |
+|-------|-------------|---------|--------|
+| {field} | {0-100%} | {good / sparse / inconsistent / empty} | {use as-is / enrich / consolidate / drop} |
+
+**Ready to use:** {fields that are clean and map directly to Product interface}
+**Needs enrichment:** {fields to AI-generate — e.g., "semantic_attributes, keywords, image_description"}
+**Needs consolidation:** {fields to merge/reshape — e.g., "color_1 + color_2 + color_3 → color.filter_group"}
+**Red flags:** {data quality issues — e.g., "prices are strings", "60% missing images", "HTML in descriptions"}
+
 ## Example Record
 
 A single JSON object per record type showing how the ideal indexed record should look for this demo. This is the target output of `/data-structure`'s transform/enrich pipeline. Every field listed in Data Requirements should appear here with realistic sample values. If multiple record types exist, include one example of each.

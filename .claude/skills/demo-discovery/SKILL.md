@@ -209,6 +209,66 @@ Summarize the gaps:
 
 This feeds directly into the brief's **Relevance Gaps** section and informs Phase 3's feature recommendations.
 
+## Phase 1.75: Data Audit
+
+Skip if no data source is available yet. Run when the user has provided a JSON/CSV file, an existing Algolia index, or data has been scraped via `/demo-scrape`.
+
+The goal is to understand what's already in the data before deciding what to enrich, consolidate, or drop. This grounds the brief in reality rather than assumptions.
+
+### 1. Load a sample
+
+Pick the data source that applies:
+
+**From a file** (JSON/CSV in `data/`):
+```bash
+# Read the first 3 records to understand the structure
+head -100 data/products.json
+```
+
+**From an existing Algolia index:**
+```bash
+# Use the Algolia CLI or a quick script to pull sample records
+pnpm tsx -e "
+const algoliasearch = require('algoliasearch');
+const client = algoliasearch('APP_ID', 'SEARCH_API_KEY');
+const index = client.initIndex('INDEX_NAME');
+const { hits } = await index.search('', { hitsPerPage: 3 });
+console.log(JSON.stringify(hits, null, 2));
+"
+```
+
+### 2. Analyze field coverage
+
+For the full dataset (or a representative sample of 50-100 records), assess:
+
+| Field | Present | % Populated | Quality | Notes |
+|-------|---------|-------------|---------|-------|
+| {field name} | yes/no | {0-100%} | {good / sparse / inconsistent / empty} | {e.g., "mix of HTML and plain text", "some have 'N/A' as value"} |
+
+Focus on:
+- **What's already good** — fields that are consistently populated with clean data, ready to use as-is
+- **What needs enrichment** — fields that are missing but needed (e.g., no `semantic_attributes`, no `keywords`) — these will be AI-generated during indexing
+- **What needs consolidation** — data spread across multiple fields that should be merged (e.g., `color_1`, `color_2`, `color_3` → `color.filter_group`)
+- **What has empty/junk values** — fields that exist but are mostly empty, contain placeholder text ("N/A", "TBD", "-"), or have inconsistent formats
+
+### 3. Identify record types
+
+Check if the data contains multiple record types (e.g., products + articles + stores). Look for:
+- A `type` or `record_type` field
+- Distinct field patterns across records (some have `price`, others have `publish_date`)
+- Significantly different structures within the same dataset
+
+### 4. Output
+
+Summarize findings for the brief:
+- Total record count and record types found
+- List of usable fields (map to Product interface where possible)
+- List of fields that need enrichment
+- List of fields that need cleanup or consolidation
+- Any data quality red flags (e.g., "60% of records have no image", "prices are strings not numbers")
+
+This analysis directly informs the brief's **Data Requirements** and **Example Record** sections — they should reflect what's actually achievable with this data, not just what's ideal.
+
 ## Phase 2: Research — Similar Past Demos
 
 Explore git branches in this repo for similar demos:
@@ -287,15 +347,15 @@ Search Results Page:
 ┌──────────────────────────────────────────┐
 │ [Search Bar with Autocomplete]           │
 ├──────────┬───────────────────────────────┤
-│ Filters  │ ┌─────┐ ┌─────┐ ┌─────┐       │
-│ ───────  │ │     │ │     │ │     │       │
-│ Brand    │ │ Pro │ │ Pro │ │ Pro │       │
-│ Color ●  │ │ duct│ │ duct│ │ duct│       │
-│ Size     │ │     │ │     │ │     │       │
-│ Price    │ └─────┘ └─────┘ └─────┘       │
+│ Filters  │ ┌─────┐ ┌─────┐ ┌─────┐     │
+│ ───────  │ │     │ │     │ │     │     │
+│ Brand    │ │ Pro │ │ Pro │ │ Pro │     │
+│ Color ●  │ │ duct│ │ duct│ │ duct│     │
+│ Size     │ │     │ │     │ │     │     │
+│ Price    │ └─────┘ └─────┘ └─────┘     │
 │          │                               │
-│ [For You]│ ┌─────┐ ┌─────┐ ┌─────┐       │
-│          │ │     │ │     │ │     │       │
+│ [For You]│ ┌─────┐ ┌─────┐ ┌─────┐     │
+│          │ │     │ │     │ │     │     │
 └──────────┴───────────────────────────────┘
 
 - Color facet uses swatches (components/facets/ColorSwatch.tsx)
@@ -323,7 +383,7 @@ Does this match what you had in mind? Anything to adjust before we move to data 
 
 **WAIT for confirmation.**
 
-Once confirmed, write the brief to `data/discovery/brief.json` following the JSON schema in `.claude/skills/demo-discovery/references/discovery-brief-template.md`. Fill in every field — the template contains example values and a field reference section for enums.
+Once confirmed, write the brief to `data/discovery/brief.md` following the template in `.claude/skills/demo-discovery/references/discovery-brief-template.md`. Fill in every section — the template contains field descriptions and examples for guidance.
 
 This brief is the primary input for downstream skills (`/data-structure`, `/demo-branding`, `/demo-user-profiles`, `/demo-agent-setup`).
 
