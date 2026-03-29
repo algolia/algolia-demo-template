@@ -142,9 +142,11 @@ For each captured page, read the `.lowres.png` version and analyze every item in
 
 Skip this phase if no customer URL was provided. This tests the customer's current search to find concrete relevance gaps that the demo should fix.
 
-### 1. Recon
+### Step 1: Recon + Verify Captures
 
-Run recon to gather site intel (product names, categories, price range):
+Before running the full test, confirm the script can actually find the search bar, type in it, and capture both autocomplete and results on this specific site. Failing to verify this leads to a batch of useless screenshots.
+
+**1a. Run recon** to gather site intel:
 
 ```bash
 python .claude/skills/demo-discovery/scripts/search_capture.py \
@@ -153,9 +155,30 @@ python .claude/skills/demo-discovery/scripts/search_capture.py \
   --output-dir "data/discovery/search-test"
 ```
 
-Read `data/discovery/search-test/recon.json` for real product names, categories, and vertical guess.
+Read `data/discovery/search-test/recon.json` for product names, categories, and vertical guess.
 
-### 2. Design Test Queries
+**1b. Run a single test query** using a real product name from recon:
+
+```bash
+python .claude/skills/demo-discovery/scripts/search_capture.py \
+  --url "SITE_URL" \
+  --query "PRODUCT_NAME_FROM_RECON" \
+  --output-dir "data/discovery/search-test"
+```
+
+**1c. Verify the captures** — read both `.lowres.png` screenshots:
+- **Autocomplete screenshot**: Is the autocomplete dropdown actually open and visible? Are suggestions showing? If the screenshot just shows the page with text in the search bar but no dropdown, the capture timing or selectors need adjusting.
+- **Results screenshot**: Did it navigate to the results page? Are product results visible?
+
+If either capture is wrong (autocomplete not open, results page didn't load, page is blocked), debug before proceeding. Common issues:
+- Search icon needs clicking before input is visible
+- Autocomplete takes longer than expected to appear
+- Site uses a search overlay/modal instead of a dropdown
+- Bot detection blocked the page
+
+**Do not proceed to Step 2 until both screenshots look correct.**
+
+### Step 2: Design Test Queries
 
 Read the query templates: `.claude/skills/demo-discovery/references/query_templates.json`
 
@@ -175,12 +198,11 @@ Save to `data/discovery/queries.json`:
 [
   {"query": "Lift Seamless Leggings", "category": "exact_product", "expectation": "Exact product should be #1"},
   {"query": "seamles leggins", "category": "typo", "expectation": "Should still show seamless leggings"},
-  {"query": "outfit for a summer wedding", "category": "conversational", "expectation": "Should show dresses, accessories"},
-  ...
+  {"query": "outfit for a summer wedding", "category": "conversational", "expectation": "Should show dresses, accessories"}
 ]
 ```
 
-### 3. Run Captures
+### Step 3: Run Captures
 
 ```bash
 python .claude/skills/demo-discovery/scripts/search_capture.py \
@@ -190,9 +212,9 @@ python .claude/skills/demo-discovery/scripts/search_capture.py \
   --site-name "Brand Name"
 ```
 
-### 4. Analyze Results
+### Step 4: Analyze Results
 
-Read `data/discovery/search-test/capture-summary.json` — this is the primary data source (extracted text, product names, API timings). Only read `.lowres` screenshots for queries that failed or look suspicious.
+Read `data/discovery/search-test/capture-summary.json` — this is the primary data source (extracted text, product names, API timings). Only read `.lowres` screenshots for queries that scored Weak or Fail.
 
 Score each query:
 
