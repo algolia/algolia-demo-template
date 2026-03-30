@@ -85,9 +85,9 @@
   │  └───────────────┬──────────────────┘ │    │                              │
   │                  ▼                     │    │  📝 WRITES:                  │
   │  ┌──────────────────────────────────┐ │    │  lib/demo-config/users.ts    │
-  │  │ /data-structure                  │ │    └──────────────────────────────┘
+  │  │ /demo-data-indexing              │ │    └──────────────────────────────┘
   │  │                                  │ │
-  │  │  🤖 AGENT:                       │ │
+  │  │  🤖 AGENT (analyze):            │ │
   │  │  • Samples products.json         │ │
   │  │  • Analyzes fields vs Product    │ │
   │  │    interface + Brief's data      │ │
@@ -105,7 +105,7 @@
   │  │  │ select source (OpenAI, etc)  │ │
   │  │  └─────────────────────────────  │ │
   │  │                                  │ │
-  │  │  🤖 AGENT:                       │ │
+  │  │  🤖 AGENT (transform/enrich):   │ │
   │  │  • Generates transformRecords()  │ │
   │  │    in scripts/index-data.ts      │ │
   │  │  • Generates enrichRecords()     │ │
@@ -114,12 +114,8 @@
   │  │  • Shows sample records          │ │
   │  │                                  │ │
   │  │  📝 WRITES: scripts/index-data.ts│ │
-  │  └───────────────┬──────────────────┘ │
-  │                  ▼                     │
-  │  ┌──────────────────────────────────┐ │
-  │  │ /demo-data-indexing              │ │
   │  │                                  │ │
-  │  │  🤖 AGENT:                       │ │
+  │  │  🤖 AGENT (index):              │ │
   │  │  • Runs scripts/index-data.ts    │ │
   │  │    (transform → enrich → index   │ │
   │  │     → settings → composition)    │ │

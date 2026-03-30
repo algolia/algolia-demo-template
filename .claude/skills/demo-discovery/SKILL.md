@@ -1,6 +1,6 @@
 ---
 name: demo-discovery
-description: 'Explore use cases, inspect the customer website, review similar past demos, and suggest what the demo should look like. Use before /data-structure when setting up a new demo, or when the user wants to explore what interactions and features the demo should have.'
+description: 'Explore use cases, inspect the customer website, review similar past demos, and suggest what the demo should look like. Use before /demo-data-indexing when setting up a new demo, or when the user wants to explore what interactions and features the demo should have.'
 ---
 
 # Demo Discovery
@@ -39,7 +39,7 @@ If the user already provided some of this info, skip those questions and proceed
 
 ## Phase 1: Research — Visual References
 
-Capture screenshots to use as reference throughout the demo build. All screenshots are saved to `data/discovery/` so downstream skills (`/demo-branding`, `/data-structure`, etc.) can reference them.
+Capture screenshots to use as reference throughout the demo build. All screenshots are saved to `data/discovery/` so downstream skills (`/demo-branding`, `/demo-data-indexing`, etc.) can reference them.
 
 ```bash
 mkdir -p data/discovery
@@ -387,7 +387,7 @@ Search Results Page:
 
 ### 3c. Data Requirements
 
-Based on the suggested features, list what the data MUST support. This section becomes the input brief for `/data-structure`.
+Based on the suggested features, list what the data MUST support. This section becomes the input brief for `/demo-data-indexing`.
 
 - **Required fields** — which Product interface fields are needed for the suggested features
 - **Required facets** — which attributes need to be filterable (e.g., "need `color.filter_group` for swatches")
@@ -407,13 +407,13 @@ Does this match what you had in mind? Anything to adjust before we move to data 
 
 Once confirmed, write the brief to `data/discovery/brief.md` following the template in `.claude/skills/demo-discovery/references/discovery-brief-template.md`. Fill in every section — the template contains field descriptions and examples for guidance.
 
-This brief is the primary input for downstream skills (`/data-structure`, `/demo-branding`, `/demo-user-profiles`, `/demo-agent-setup`).
+This brief is the primary input for downstream skills (`/demo-data-indexing`, `/demo-branding`, `/demo-user-profiles`, `/demo-agent-setup`).
 
 ## Does NOT Run
 
 This skill does NOT modify code or data. It produces a discovery brief that informs downstream skills:
 
-- `/data-structure` — uses the data requirements to prioritize field mappings and enrichments
+- `/demo-data-indexing` — uses the data requirements to prioritize field mappings and enrichments
 - `/demo-branding` — uses the visual direction and preservation notes
 - `/demo-user-profiles` — uses the personalization strategy
 - `/demo-agent-setup` — uses the agent feature suggestions

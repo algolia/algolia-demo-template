@@ -56,17 +56,12 @@ The fastest way to set up a new demo is with `/demo-setup`, which orchestrates a
 │             │            │  └──────────────────────────────────────┘
 │             ▼            │
 │  ┌─────────────────────┐ │
-│  │ /data-structure     │ │
+│  │ /demo-data-indexing │ │
 │  │                     │ │
 │  │ Analyze raw data    │ │
 │  │ against Product type│ │
 │  │ → transform/enrich  │ │
 │  │   in index-data.ts  │ │
-│  └──────────┬──────────┘ │
-│             │            │
-│             ▼            │
-│  ┌─────────────────────┐ │
-│  │ /demo-data-indexing │ │
 │  │                     │ │
 │  │ Index products      │ │
 │  │ Train Recommend     │ │
@@ -98,7 +93,7 @@ The fastest way to set up a new demo is with `/demo-setup`, which orchestrates a
                              ▼
                     ┌─────────────────┐
                     │   pnpm dev      │
-                    │   localhost:3000 │
+                    │   localhost:3000│
                     └────────┬────────┘
                              │
                              ▼
@@ -122,12 +117,11 @@ The fastest way to set up a new demo is with `/demo-setup`, which orchestrates a
 | `/demo-discovery`     | Explore use cases, screenshot site, review past demos | Discovery Brief, `data/discovery/*.png`             |
 | `/demo-branding`      | Visual identity, locale, Algolia connection           | `lib/demo-config/index.ts`, `lib/algolia-config.ts` |
 | `/demo-scrape`        | Scrape product data from a website                    | `data/products.json`                                |
-| `/data-structure`     | Analyze data, generate transform/enrich code          | `scripts/index-data.ts`                             |
-| `/demo-data-indexing` | Index products, train Recommend, set up QS            | Algolia index, Composition                          |
+| `/demo-data-indexing` | Analyze data, transform/enrich, index, Recommend, QS  | `scripts/index-data.ts`, Algolia index, Composition |
 | `/demo-categories`    | Category navigation from indexed data                 | `lib/demo-config/categories.ts`                     |
 | `/demo-user-profiles` | User personas with preference weights                 | `lib/demo-config/users.ts`                          |
 | `/demo-agent-setup`   | AI shopping assistant config and deploy               | `lib/demo-config/agents.ts`, AGENT_ID               |
-| `/demo-showcase`      | Document the finished demo as a README demo card      | `README.md`, `data/showcase/*.png`                   |
+| `/demo-showcase`      | Document the finished demo as a README demo card      | `README.md`, `data/showcase/*.png`                  |
 
 
 Each skill can be run independently (e.g. `/demo-categories` to update just the category nav after re-indexing).

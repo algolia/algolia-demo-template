@@ -106,8 +106,7 @@ Launch two agents:
 
 **Background agent** — Data pipeline:
 - If user chose web scraping: invoke `/demo-scrape` first
-- Invoke `/data-structure` to analyze data against the discovery brief's data requirements and generate transform/enrich code
-- Then invoke `/demo-data-indexing` to index, train Recommend, and set up QS
+- Invoke `/demo-data-indexing` to analyze data against the discovery brief's data requirements, generate transform/enrich code, index, train Recommend, and set up QS
 - Report back: record count, image domains, category facet values
 
 **Foreground agent** — User profiles:
@@ -145,8 +144,7 @@ Demo setup complete!
 Skills executed:
   - /demo-discovery       — use-case exploration, demo vision brief
   - /demo-branding        — brand, locale, Algolia config, favicon/logo
-  - /data-structure       — data analysis, transform/enrich code generated
-  - /demo-data-indexing   — <N> products indexed
+  - /demo-data-indexing   — data analysis, transform/enrich, <N> products indexed
   - /demo-user-profiles   — <N> user profiles created
   - /demo-categories      — <N> top-level categories configured
   - /demo-agent-setup     — agent deployed (AGENT_ID: <id>)

@@ -1,6 +1,6 @@
 # Demo Discovery Brief
 
-Output of `/demo-discovery`. Saved to `data/discovery/brief.md`. Consumed by `/data-structure`, `/demo-branding`, `/demo-user-profiles`, `/demo-agent-setup`.
+Output of `/demo-discovery`. Saved to `data/discovery/brief.md`. Consumed by `/demo-data-indexing`, `/demo-branding`, `/demo-user-profiles`, `/demo-agent-setup`.
 
 Every field must be filled. Use "N/A" only if genuinely not applicable.
 
@@ -16,7 +16,7 @@ Every field must be filled. Use "N/A" only if genuinely not applicable.
 
 ## Data Requirements
 
-Primary input for `/data-structure`. The primary record type is usually products, but may also be articles, recipes, listings, courses, properties, or other content types depending on the vertical. If the demo involves multiple record types (e.g., products + editorial content + stores), describe each.
+Primary input for `/demo-data-indexing`. The primary record type is usually products, but may also be articles, recipes, listings, courses, properties, or other content types depending on the vertical. If the demo involves multiple record types (e.g., products + editorial content + stores), describe each.
 
 - **Record types:** {e.g., "products (primary), editorial articles (secondary)" or just "products"}
 - **Required fields:** {e.g., "name, brand, price.value, color.filter_group, hierarchical_categories (3 levels), reviews.rating, primary_image, image_urls, description"}
@@ -70,7 +70,7 @@ Summary of Phase 1.75 analysis. Omit if no data source was available during disc
 
 ## Example Record
 
-A single JSON object per record type showing how the ideal indexed record should look for this demo. This is the target output of `/data-structure`'s transform/enrich pipeline. Every field listed in Data Requirements should appear here with realistic sample values. If multiple record types exist, include one example of each.
+A single JSON object per record type showing how the ideal indexed record should look for this demo. This is the target output of `/demo-data-indexing`'s transform/enrich pipeline. Every field listed in Data Requirements should appear here with realistic sample values. If multiple record types exist, include one example of each.
 
 Annotate fields with their Algolia role using inline comments:
 
@@ -100,13 +100,13 @@ Annotate fields with their Algolia role using inline comments:
 }
 ```
 
-Use the actual vertical's data — not generic placeholders. If recon found real product names, use one. This record becomes the reference for `/data-structure` when building transform/enrich functions.
+Use the actual vertical's data — not generic placeholders. If recon found real product names, use one. This record becomes the reference for `/demo-data-indexing` when building transform/enrich functions.
 
 For non-product record types (articles, recipes, listings, etc.), include a separate example with the appropriate fields — they won't follow the Product interface.
 
 ## Product Card Spec
 
-What appears on each product card in search results. Informs `/data-structure` about which fields are critical vs nice-to-have.
+What appears on each product card in search results. Informs `/demo-data-indexing` about which fields are critical vs nice-to-have.
 
 **Fields to display:**
 - {field} — {notes if any} {e.g., "brand — uppercase, above product name"}

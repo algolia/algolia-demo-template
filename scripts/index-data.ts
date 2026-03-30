@@ -11,7 +11,7 @@ const COMPOSITION_ID = ALGOLIA_CONFIG.COMPOSITION_ID || `${INDEX_NAME}_compositi
 /**
  * Transform: reshape raw source data to match the Product interface.
  * Field mappings, restructuring, and synthetic data generation go here.
- * Populated by /data-structure skill per demo.
+ * Populated by /demo-data-indexing skill per demo.
  */
 function transformRecords(
   records: Record<string, unknown>[]
@@ -32,7 +32,7 @@ function transformRecords(
  * Enriched fields use the _enriched namespace, then get promoted
  * to top-level record fields for indexing.
  * Can use OpenAI structured outputs, other APIs, scraping, etc.
- * Populated by /data-structure skill per demo.
+ * Populated by /demo-data-indexing skill per demo.
  *
  * @see https://developers.openai.com/api/docs/guides/structured-outputs
  */
@@ -113,15 +113,24 @@ async function main() {
   await client.setSettings({
     indexName: INDEX_NAME,
     indexSettings: {
+      // Searchable attributes — ORDER MATTERS for relevance (tie-breaking).
+      // Higher = breaks ties first. Short, precise attributes go higher; long noisy text goes lower.
+      // Attributes at the same level use comma separation (equal priority).
+      // See: https://www.algolia.com/doc/guides/managing-results/must-do/searchable-attributes/how-to/configuring-searchable-attributes-the-right-way/
       searchableAttributes: [
+        // P1: Short, precise text — brand/category/color matches are unambiguous
+        "unordered(brand)",
+        "unordered(hierarchical_categories.lvl0), unordered(hierarchical_categories.lvl1), unordered(hierarchical_categories.lvl2)",
+        "unordered(color.original_name), unordered(gender)",
+        // P2: Product name — ordered so matches at the start rank higher
         "name",
-        "brand",
-        "description",
-        "keywords",
-        "list_categories",
-        "sku",
-        "color.original_name",
-        "semantic_attributes",
+        // P3: Exact lookups
+        "unordered(sku)",
+        // P4: Enriched search terms
+        "unordered(keywords)",
+        // P5: Long text — catches long-tail but noisy, lowest priority
+        "unordered(description)",
+        "unordered(semantic_attributes)",
       ],
       attributesForFaceting: [
         "searchable(brand)",
@@ -186,6 +195,7 @@ async function main() {
         "sales_last_7d",
         "sales_last_30d",
         "sales_last_90d",
+        "_synthetic_fields",
       ],
       attributesToHighlight: ["name", "brand", "description"],
       attributesToSnippet: ["description:50"],

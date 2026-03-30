@@ -70,6 +70,10 @@ export interface Product {
   sales_last_30d: number;
   sales_last_90d: number;
 
+  // Synthetic data marker — lists field names that were fabricated for demo purposes
+  // (e.g., ["price", "reviews", "sales_last_24h", "margin"])
+  _synthetic_fields?: string[];
+
   // Algolia-specific fields (populated by search response)
   _highlightResult?: Record<string, unknown>;
   _snippetResult?: Record<string, unknown>;
