@@ -17,6 +17,9 @@ export interface Product {
   // Pricing
   price: { value: number };
   color: { filter_group: string; original_name: string };
+  primary_colour: string;
+  secondary_colour: string | null;
+  colour_list: string[];
 
   // Images
   primary_image: string;
@@ -33,6 +36,7 @@ export interface Product {
     lvl1: string;
     lvl2: string;
   };
+  category_leaf: string;
   list_categories: string[];
   categoryPageId: string[];
 

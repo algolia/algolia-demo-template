@@ -6,12 +6,12 @@
  */
 export const DEMO_CONFIG = {
   brand: {
-    name: "Acme Store",
-    tagline: "Your trusted online store",
+    name: "Dainese",
+    tagline: "Protection through innovation since 1972",
     logoUrl: "/logo.svg",
-    logoWidth: 120,
-    logoHeight: 40,
-    agentName: "Acme AI",
+    logoWidth: 80,
+    logoHeight: 22,
+    agentName: "Dainese Gear Advisor",
   },
   locale: {
     language: "en",
@@ -19,7 +19,6 @@ export const DEMO_CONFIG = {
     currencySymbol: "$",
   },
   imageDomains: [
-    { protocol: "https" as const, hostname: "fxqklbpngldowtbkqezm.supabase.co" },
-    { protocol: "https" as const, hostname: "img.theproteinworks.com" },
+    { protocol: "https" as const, hostname: "dainese-cdn.thron.com" },
   ],
 };

@@ -1,0 +1,57 @@
+{
+  "url": "https://www.dainese.com/us/en/",
+  "query": "sneakers",
+  "category": "synonym",
+  "expectation": "Should show casual motorcycle shoes if they exist",
+  "success": true,
+  "blocked": false,
+  "page_load_ms": 868,
+  "autocomplete": {
+    "results": [
+      "Men / \n                                        \n                                        Shoes\n                                        (13)",
+      "Women / \n                                        \n                                        Shoes\n                                        (13)",
+      "Men / \n                                        \n                                        Shoes\n                                        (32)",
+      "Urban / \n                                        \n                                        Shoes\n                                        (18)",
+      "torque 3",
+      "agv pista",
+      "boots"
+    ],
+    "time_ms": 2142,
+    "screenshot": "data/discovery/search-test/sneakers-autocomplete.png",
+    "screenshot_lowres": "data/discovery/search-test/sneakers-autocomplete.lowres.png"
+  },
+  "results_page": {
+    "results": [
+      "CARVE MASTER 4 GORE-TEX® - MEN'S WINTER MOTORCYCLE JACKET",
+      "QUICK DRY TEE - TECHNICAL MEN'S T-SHIRT - BASE LAYER",
+      "CARVE MASTER 4 GORE-TEX® - MEN'S WINTER MOTORCYCLE PANTS",
+      "OVERYOND XT GORE-TEX - MEN'S FOUR-SEASON GORE-TEX MOTORCYCLE BOOTS",
+      "SUBURB D-WP - WOMEN'S WATERPROOF MOTORCYCLE SHOES",
+      "SUBURB AIR - WOMEN'S SUMMER MOTORCYCLE SHOES IN FABRIC",
+      "SUBURB AIR - MEN'S SUMMER MOTORCYCLE SHOES IN FABRIC",
+      "SUBURB D-WP - MEN'S WATERPROOF MOTORCYCLE SHOES",
+      "HERIAN AIR SHOES WMN",
+      "HG MATERIA - BIKE SHOES",
+      "HG ACTO - BIKE SHOES",
+      "HERIAN AIR - SUMMER MOTORCYCLE SHOES",
+      "HERIAN D-WP - WATERPROOF MOTORCYCLE SHOES",
+      "HG MATERIA PRO - BIKE SHOES",
+      "HG ACTO PRO - BIKE SHOES",
+      "HERIAN D-WP - WOMEN'S WATERPROOF MOTORCYCLE SHOES",
+      "METRACTIVE D-WP - MEN'S WATERPROOF MOTORCYCLE SHOES",
+      "NALBAK WP MOTORCYCLE SHOES MEN - BLACK/ANTHRACITE",
+      "SUPERYA - SPORTS MOTORCYCLE SHOES"
+    ],
+    "time_ms": 3636,
+    "url": "https://www.dainese.com/us/en/search/?q=sneakers&lang=en_US",
+    "screenshot": "data/discovery/search-test/sneakers-results.png",
+    "screenshot_lowres": "data/discovery/search-test/sneakers-results.lowres.png"
+  },
+  "search_api": {
+    "autocomplete_calls": {},
+    "results_calls": {},
+    "detected_provider": "Unknown",
+    "rendering": "server-side"
+  },
+  "errors": []
+}

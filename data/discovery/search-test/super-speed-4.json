@@ -1,0 +1,42 @@
+{
+  "url": "https://www.dainese.com/us/en/",
+  "query": "Super Speed 4",
+  "category": "exact_product",
+  "expectation": "Super Speed 4 jacket should rank #1",
+  "success": true,
+  "blocked": false,
+  "page_load_ms": 769,
+  "autocomplete": {
+    "results": [
+      "Highlights / \n                                        \n                                        Speed Demon Lab\n                                        (2)",
+      "torque 3",
+      "agv pista",
+      "boots"
+    ],
+    "time_ms": 2692,
+    "screenshot": "data/discovery/search-test/super-speed-4-autocomplete.png",
+    "screenshot_lowres": "data/discovery/search-test/super-speed-4-autocomplete.lowres.png"
+  },
+  "results_page": {
+    "results": [
+      "CARVE MASTER 4 GORE-TEX® - MEN'S WINTER MOTORCYCLE JACKET",
+      "QUICK DRY TEE - TECHNICAL MEN'S T-SHIRT - BASE LAYER",
+      "CARVE MASTER 4 GORE-TEX® - MEN'S WINTER MOTORCYCLE PANTS",
+      "OVERYOND XT GORE-TEX - MEN'S FOUR-SEASON GORE-TEX MOTORCYCLE BOOTS",
+      "SUPER SPEED 4 - MEN PERFORATED LEATHER MOTORCYCLE JACKET",
+      "SUPER SPEED 4 - MEN'S MOTORCYCLE LEATHER JACKET",
+      "SUPER SPEED - MEN'S MOTORCYCLE PERFORATED LEATHER PANTS"
+    ],
+    "time_ms": 3597,
+    "url": "https://www.dainese.com/us/en/search/?q=Super+Speed+4&lang=en_US",
+    "screenshot": "data/discovery/search-test/super-speed-4-results.png",
+    "screenshot_lowres": "data/discovery/search-test/super-speed-4-results.lowres.png"
+  },
+  "search_api": {
+    "autocomplete_calls": {},
+    "results_calls": {},
+    "detected_provider": "Unknown",
+    "rendering": "server-side"
+  },
+  "errors": []
+}

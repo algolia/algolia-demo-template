@@ -144,7 +144,7 @@ export function CategoriesSheet() {
             className="h-10 w-10 cursor-pointer"
             aria-label="Open categories menu"
           >
-            <Menu className="size-8" />
+            <Menu className="size-5" />
           </Button>
         </SheetTrigger>
         <SheetContent side="left" showCloseButton={false} className="w-full p-0 sm:w-80">
@@ -288,7 +288,7 @@ export function CategoriesSheet() {
           className="h-10 w-10 cursor-pointer"
           aria-label="Open categories menu"
         >
-          <Menu className="size-8" />
+          <Menu className="size-5" />
         </Button>
       </SheetTrigger>
       <SheetContent

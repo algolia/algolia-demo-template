@@ -1,0 +1,12 @@
+[
+  {"query": "Avro 5 leather jacket", "category": "exact_product", "expectation": "Avro 5 leather jacket should be #1"},
+  {"query": "Super Speed 4", "category": "exact_product", "expectation": "Super Speed 4 jacket should rank #1"},
+  {"query": "lether jaket", "category": "typo", "expectation": "Should still return leather jackets"},
+  {"query": "gear for riding in the rain", "category": "conversational", "expectation": "Should show waterproof/D-Dry gear"},
+  {"query": "what to wear under a race suit", "category": "conversational", "expectation": "Should show base layers and undersuit products"},
+  {"query": "boots", "category": "synonym", "expectation": "Should show motorcycle boots/shoes"},
+  {"query": "sneakers", "category": "synonym", "expectation": "Should show casual motorcycle shoes if they exist"},
+  {"query": "black leather jacket men size 50", "category": "multi_attribute", "expectation": "Should filter to men's black leather jackets in size 50"},
+  {"query": "back protector CE level 2", "category": "multi_attribute", "expectation": "Should show CE level 2 back protectors"},
+  {"query": "xyznotaproduct123", "category": "edge_case", "expectation": "Should show zero results with suggestions"}
+]

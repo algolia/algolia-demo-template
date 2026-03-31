@@ -58,6 +58,7 @@ export type ContextSnapshot = {
     brand?: string;
     price?: string;
   }>;
+  isFirstMessage?: boolean;
 };
 
 // Simple in-memory cache for product data

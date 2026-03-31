@@ -1,0 +1,47 @@
+{
+  "url": "https://www.dainese.com/us/en/",
+  "query": "xyznotaproduct123",
+  "category": "edge_case",
+  "expectation": "Should show zero results with suggestions",
+  "success": true,
+  "blocked": false,
+  "page_load_ms": 775,
+  "autocomplete": {
+    "results": [
+      "Motorbike",
+      "Bike",
+      "Ski",
+      "Outlet"
+    ],
+    "time_ms": 3153,
+    "screenshot": "data/discovery/search-test/xyznotaproduct123-autocomplete.png",
+    "screenshot_lowres": "data/discovery/search-test/xyznotaproduct123-autocomplete.lowres.png"
+  },
+  "results_page": {
+    "results": [
+      "CARVE MASTER 4 GORE-TEX® - MEN'S WINTER MOTORCYCLE JACKET",
+      "QUICK DRY TEE - TECHNICAL MEN'S T-SHIRT - BASE LAYER",
+      "CARVE MASTER 4 GORE-TEX® - MEN'S WINTER MOTORCYCLE PANTS",
+      "OVERYOND XT GORE-TEX - MEN'S FOUR-SEASON GORE-TEX MOTORCYCLE BOOTS",
+      "NEXUS 3 IN & OUT - MOTORCYCLE BOOTS MEN",
+      "NEXUS 3 IN & OUT - MOTORCYCLE BOOTS WOMEN",
+      "DEMON SPRINT - MEN'S ONE-PIECE PERFORATED LEATHER MOTORCYCLE SUIT",
+      "TORQUE 4 AIR - MEN SUMMER RACING AND ROAD BOOTS",
+      "PONY 3 - WOMEN'S MOTORCYCLE LEATHER PANTS",
+      "NEXUS 3 IN & OUT BOOTS AIR",
+      "MISANO 2 D-AIR PERF. 1PC SUIT",
+      "TORQUE 4 - MEN RACING AND ROAD BOOTS"
+    ],
+    "time_ms": 3586,
+    "url": "https://www.dainese.com/us/en/search/?q=xyznotaproduct123&lang=en_US",
+    "screenshot": "data/discovery/search-test/xyznotaproduct123-results.png",
+    "screenshot_lowres": "data/discovery/search-test/xyznotaproduct123-results.lowres.png"
+  },
+  "search_api": {
+    "autocomplete_calls": {},
+    "results_calls": {},
+    "detected_provider": "Unknown",
+    "rendering": "server-side"
+  },
+  "errors": []
+}

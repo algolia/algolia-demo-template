@@ -13,6 +13,7 @@ import { Product } from "@/lib/types/product";
 import { ProductCard, ProductListItem } from "@/components/ProductCard";
 import { ProductToolbar, SearchStats } from "@/components/ProductToolbar";
 import { FiltersSidebar, ActiveFilters } from "@/components/filters-sidebar";
+import { useGenderFilter } from "@/components/gender-filter-context";
 import { useSidepanel } from "@/components/sidepanel-agent-studio/context/sidepanel-context";
 import { useCollapsibleFilters } from "@/components/hooks/use-collapsible-filters";
 
@@ -131,19 +132,25 @@ function CategoryContent({
   const { filtersOpen, toggleFilters } = useCollapsibleFilters();
   const categoryName = categoryPath[categoryPath.length - 1] || "All Products";
 
-  // Build filter using hierarchical_categories (supports filtering unlike searchable categoryPageId)
-  // e.g. ["Women"] -> hierarchical_categories.lvl0:"Women"
-  // e.g. ["Women", "Shoes"] -> hierarchical_categories.lvl1:"Women > Shoes"
-  const getCategoryFilter = () => {
-    if (categoryPath.length === 0) return undefined;
-    const level = categoryPath.length - 1;
-    const filterValue = categoryPath.join(" > ");
-    return `hierarchical_categories.lvl${level}:"${filterValue}"`;
+  const { genderFilter } = useGenderFilter();
+
+  // Build combined filter: category + gender
+  const getCombinedFilter = () => {
+    const parts: string[] = [];
+    if (categoryPath.length > 0) {
+      const level = categoryPath.length - 1;
+      const filterValue = categoryPath.join(" > ");
+      parts.push(`hierarchical_categories.lvl${level}:"${filterValue}"`);
+    }
+    if (genderFilter) {
+      parts.push(`(${genderFilter})`);
+    }
+    return parts.length > 0 ? parts.join(" AND ") : undefined;
   };
 
-  // Apply category filter using useConfigure (works with Composition API)
+  // Apply category + gender filter using useConfigure (works with Composition API)
   useConfigure({
-    filters: getCategoryFilter(),
+    filters: getCombinedFilter(),
     query: "",
   });
 

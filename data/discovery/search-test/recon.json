@@ -1,0 +1,133 @@
+{
+  "url": "https://www.dainese.com/us/en/",
+  "title": "Quality Motorcycle, Bike and Ski Clothing for Men and Women | Dainese",
+  "search_inputs": [
+    {
+      "selector": "input[name='q']",
+      "visible": true,
+      "placeholder": "Search (keywords,etc)",
+      "name": "q",
+      "type": "text",
+      "id": ""
+    },
+    {
+      "selector": "input[placeholder*='search' i]",
+      "visible": true,
+      "placeholder": "Search (keywords,etc)",
+      "name": "q",
+      "type": "text",
+      "id": ""
+    },
+    {
+      "selector": "input[placeholder*='search' i]",
+      "visible": false,
+      "placeholder": "Search…",
+      "name": "vendor-search-handler",
+      "type": "text",
+      "id": "vendor-search-handler"
+    },
+    {
+      "selector": "input[aria-label*='search' i]",
+      "visible": false,
+      "placeholder": "Search…",
+      "name": "vendor-search-handler",
+      "type": "text",
+      "id": "vendor-search-handler"
+    },
+    {
+      "selector": "input[id*='search' i]",
+      "visible": false,
+      "placeholder": "Search…",
+      "name": "vendor-search-handler",
+      "type": "text",
+      "id": "vendor-search-handler"
+    },
+    {
+      "selector": "input[class*='search' i]",
+      "visible": true,
+      "placeholder": "Search (keywords,etc)",
+      "name": "q",
+      "type": "text",
+      "id": ""
+    }
+  ],
+  "search_icons": [
+    {
+      "selector": "a[aria-label*='search' i]",
+      "visible": true,
+      "text": "",
+      "tag": "A"
+    }
+  ],
+  "meta": {
+    "viewport": "width=device-width, initial-scale=1",
+    "description": "Dainese is a leader in clothing and protections dedicated to the world of motorcycles, mountain bikes and ski. Discover the entire collection on Dainese.com",
+    "keywords": "",
+    "robots": "index, follow",
+    "msapplication-TileColor": "#f5f5f5",
+    "theme-color": "#ffffff",
+    "p:domain_verify": "02b2243ba9a09c1aa4371147736a013e"
+  },
+  "detected_provider": "Unknown",
+  "has_autocomplete": false,
+  "scripts": [
+    "https://analytics.tiktok.com/i18n/pixel/static/main.mtjlmjhknzmymq.js",
+    "https://analytics.tiktok.com/i18n/pixel/events.js?sdkid=cobco3jc77ufsp5uumn0&lib=ttq",
+    "https://bat.bing.com/bat.js",
+    "https://connect.facebook.net/signals/config/809973475718752?v=2.9.285&r=stable&domain=www.dainese.com&hme=12c8cdc903a327d6c396005880a21a0a6c955fe6b6fb47b10c9022424ec9b3ee&ex_m=101%2c194%2c143%2c22%2c69%2c70%2c136%2c65%2c64%2c11%2c151%2c87%2c16%2c130%2c123%2c72%2c75%2c129%2c148%2c153%2c8%2c4%2c5%2c7%2c6%2c3%2c88%2c98%2c154%2c159%2c208%2c59%2c175%2c176%2c52%2c264%2c30%2c71%2c220%2c219%2c218%2c23%2c32%2c100%2c58%2c10%2c60%2c94%2c95%2c96%2c102%2c126%2c31%2c29%2c128%2c125%2c124%2c144%2c73%2c147%2c145%2c146%2c47%2c57%2c119%2c15%2c150%2c42%2c251%2c252%2c250%2c26%2c27%2c28%2c45%2c137%2c74%2c109%2c18%2c20%2c41%2c37%2c39%2c38%2c80%2c89%2c93%2c107%2c135%2c138%2c43%2c108%2c24%2c21%2c115%2c66%2c35%2c140%2c139%2c141%2c132%2c131%2c25%2c34%2c56%2c106%2c149%2c67%2c17%2c142%2c111%2c78%2c63%2c19%2c82%2c83%2c112%2c81%2c33%2c280%2c201%2c190%2c191%2c189%2c283%2c275%2c49%2c202%2c104%2c127%2c77%2c117%2c51%2c44%2c46%2c110%2c116%2c122%2c55%2c61%2c50%2c53%2c97%2c152%2c1%2c120%2c14%2c118%2c12%2c2%2c54%2c90%2c62%2c114%2c86%2c85%2c155%2c156%2c91%2c92%2c9%2c121%2c99%2c48%2c133%2c84%2c76%2c68%2c113%2c103%2c40%2c134%2c0%2c79%2c36%2c105%2c13%2c157",
+    "https://connect.facebook.net/en_us/fbevents.js",
+    "https://container.pepperjam.com/4243330508.js",
+    "https://www.googletagmanager.com/gtag/js?id=aw-972734424&cx=c&gtm=4e63p1h1",
+    "https://www.googletagmanager.com/gtag/js?id=aw-581598386&cx=c&gtm=4e63p1h1",
+    "https://www.googletagmanager.com/gtag/js?id=aw-772886011&cx=c&gtm=4e63p1h1",
+    "https://www.googletagmanager.com/gtag/js?id=aw-379898070&cx=c&gtm=4e63p1h1",
+    "https://www.googletagmanager.com/gtag/js?id=aw-939280277&cx=c&gtm=4e63p1h1",
+    "https://scripts.clarity.ms/0.8.57/clarity.js",
+    "https://js.hs-analytics.net/analytics/1774815000000/3410681.js",
+    "https://js.hsadspixel.net/pixels.js",
+    "https://js.hs-banner.com/v2/3410681/banner.js",
+    "https://trckng.dainese.com/gtm.js?id=gtm-mxhd9vhk&gtg_health=1",
+    "https://trckng.dainese.com/trowroxj.js?st=mxhd9vhk",
+    "https://www.clarity.ms/tag/mjmbxwrjwr",
+    "https://static.hotjar.com/c/hotjar-3921216.js?sv=7",
+    "https://d16fk4ms6rqz1v.cloudfront.net/capture/dainese.js",
+    "https://www.googletagmanager.com/gtag/destination?id=aw-773016611&cx=c&gtm=4e63p1h1",
+    "https://www.googletagmanager.com/gtag/destination?id=dc-15404168&cx=c&gtm=4e63p1h1",
+    "https://www.gstatic.com/recaptcha/releases/79cledoi5xqbrrpl2l8kgmk3/recaptcha__en.js",
+    "https://trckng.dainese.com/trowroxj.js?st=mxhd9vhk",
+    "https://www.googletagmanager.com/gtm.js?id=gtm-5nz75b8",
+    "https://staticw2.yotpo.com/dswa0b8iaypx7s4b6kgfmhzf7urr3hlibad8b1pv/widget.js",
+    "https://www.dainese.com/on/demandware.static/sites-dainese-us-site/-/en_us/v1774760784406/js/critical.js",
+    "https://www.dainese.com/on/demandware.static/sites-dainese-us-site/-/en_us/v1774760784406/js/main.js",
+    "https://www.dainese.com/on/demandware.static/sites-dainese-us-site/-/en_us/v1774760784406/js/experience/banner.js",
+    "https://www.dainese.com/on/demandware.static/sites-dainese-us-site/-/en_us/v1774760784406/js/einsteincarousel.js",
+    "https://www.google.com/recaptcha/api.js?render=6ldoymyeaaaaabd1vcrlrat-ubptkuk66fyxxr09",
+    "https://www.dainese.com/on/demandware.static/sites-dainese-us-site/-/en_us/v1774760784406/js/clientsideevent.js",
+    "https://staticw2.yotpo.com/widget-assets/yotpo-pixel/2026-03-10_12-14-30/bundle.js",
+    "https://staticw2.yotpo.com/widget-assets/widgets-initializer/app.v0.9.8-7487.js",
+    "https://script.hotjar.com/modules.6a0f3932cb1341a35c18.js",
+    "https://cdn.cookielaw.org/scripttemplates/202503.1.0/otbannersdk.js",
+    "https://www.googletagmanager.com/gtag/js?id=aw-939280277",
+    "https://googleads.g.doubleclick.net/pagead/viewthroughconversion/773016611/?random=1774815253870&cv=11&fst=1774815253870&bg=ffffff&guid=on&async=1&gtm=45be63p1h1v9181633871z876074168za20gzb76074168zd76074168xea&gcd=13r3vpr2r5l1&dma_cps=a&dma=1&tag_exp=0~115616985~115938466~115938469~117484252~118289195&frm=0&gdid=dztq1zm&hn=www.googleadservices.com&npa=0&pscdl=noapi&auid=89188634.1774815254&uaa=&uab=&uafvl=&uamb=0&uam=&uap=&uapv=&uaw=0&_tu=ka&data=ads_data_redaction%3dtrue&rfmt=3&fmt=4",
+    "https://googleads.g.doubleclick.net/pagead/viewthroughconversion/773016611/?random=1774815253878&cv=11&fst=1774815253878&bg=ffffff&guid=on&async=1&en=gtag.config&gtm=45be63p1h1v9181633871za20gzb76074168zd76074168xec&gcd=13r3vpr2r5l1&dma_cps=a&dma=1&tag_exp=0~115616985~115938466~115938469~117484252~118289195&frm=0&did=dztq1zm&gdid=dztq1zm&hn=www.googleadservices.com&npa=0&pscdl=noapi&auid=89188634.1774815254&uaa=&uab=&uafvl=&uamb=0&uam=&uap=&uapv=&uaw=0&_tu=ca&data=event%3dgtag.config&rfmt=3&fmt=4",
+    "https://googleads.g.doubleclick.net/pagead/viewthroughconversion/972734424/?random=1774815253880&cv=11&fst=1774815253880&bg=ffffff&guid=on&async=1&en=gtag.config&gtm=45be63p1h1v9179000164za200zb76074168zd76074168xec&gcd=13r3vpr2r5l1&dma_cps=a&dma=1&tag_exp=0~115616986~115938466~115938468~117266400~117384405~117484252~118289195&frm=0&did=dztq1zm&gdid=dztq1zm&hn=www.googleadservices.com&npa=0&pscdl=noapi&auid=89188634.1774815254&uaa=&uab=&uafvl=&uamb=0&uam=&uap=&uapv=&uaw=0&_tu=ka&data=event%3dgtag.config&rfmt=3&fmt=4",
+    "https://googleads.g.doubleclick.net/pagead/viewthroughconversion/581598386/?random=1774815253883&cv=11&fst=1774815253883&bg=ffffff&guid=on&async=1&en=gtag.config&gtm=45be63p1h1v9116224091za200zb76074168zd76074168xec&gcd=13r3vpr2r5l1&dma_cps=a&dma=1&tag_exp=0~115938466~115938468~117484252~118128922~118289195&frm=0&did=dztq1zm&gdid=dztq1zm&hn=www.googleadservices.com&npa=0&pscdl=noapi&auid=89188634.1774815254&uaa=&uab=&uafvl=&uamb=0&uam=&uap=&uapv=&uaw=0&_tu=ka&data=event%3dgtag.config&rfmt=3&fmt=4",
+    "https://googleads.g.doubleclick.net/pagead/viewthroughconversion/379898070/?random=1774815253886&cv=11&fst=1774815253886&bg=ffffff&guid=on&async=1&en=gtag.config&gtm=45be63p1h1v9179203995za200zb76074168zd76074168xec&gcd=13r3vpr2r5l1&dma_cps=a&dma=1&tag_exp=0~115938466~115938469~116133312~117484252~118289195&frm=0&did=dztq1zm&gdid=dztq1zm&hn=www.googleadservices.com&npa=0&pscdl=noapi&auid=89188634.1774815254&uaa=&uab=&uafvl=&uamb=0&uam=&uap=&uapv=&uaw=0&_tu=ka&data=event%3dgtag.config&rfmt=3&fmt=4",
+    "https://googleads.g.doubleclick.net/pagead/viewthroughconversion/939280277/?random=1774815253889&cv=11&fst=1774815253889&bg=ffffff&guid=on&async=1&en=gtag.config&gtm=45be63p1v9133375990za200zb76074168zd76074168xec&gcd=13r3vpr2r5l1&dma_cps=a&dma=1&tag_exp=0~115938466~115938468~116991816~117266401~117384406~117484252~118289195&frm=0&did=dztq1zm&gdid=dztq1zm&hn=www.googleadservices.com&npa=0&pscdl=noapi&auid=89188634.1774815254&uaa=&uab=&uafvl=&uamb=0&uam=&uap=&uapv=&uaw=0&_tu=ka&data=event%3dgtag.config&rfmt=3&fmt=4",
+    "https://googleads.g.doubleclick.net/pagead/viewthroughconversion/772886011/?random=1774815253893&cv=11&fst=1774815253893&bg=ffffff&guid=on&async=1&en=gtag.config&gtm=45be63p1h1v9181636548za200zb76074168zd76074168xec&gcd=13r3vpr2r5l1&dma_cps=a&dma=1&tag_exp=0~115938466~115938468~116133314~117484252~118289195&frm=0&did=dztq1zm&gdid=dztq1zm&hn=www.googleadservices.com&npa=0&pscdl=noapi&auid=89188634.1774815254&uaa=&uab=&uafvl=&uamb=0&uam=&uap=&uapv=&uaw=0&_tu=ka&data=event%3dgtag.config&rfmt=3&fmt=4",
+    "https://cdn2.gbqofs.com/dainese/p/detector-dom.min.js",
+    "https://cdn2.gbqofs.com/dainese/p/config.js",
+    "https://cdn.gbqofs.com/sv/c/detector-bootstrap.min.js",
+    "https://bat.bing.com/p/action/26067230.js",
+    "https://www.dainese.com/on/demandware.static/sites-dainese-us-site/-/en_us/v1774760784406/internal/jscript/dwanalytics-22.2.js",
+    "https://www.dainese.com/on/demandware.static/sites-dainese-us-site/-/en_us/v1774760784406/internal/jscript/dwac-21.7.js",
+    "https://cdn.cquotient.com/js/v2/gretel.min.js",
+    "https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015",
+    "https://cdn.cookielaw.org/scripttemplates/otsdkstub.js",
+    "https://js.hs-scripts.com/3410681.js",
+    "https://cdn.equalweb.com/core/5.1.13/accessibility.js"
+  ],
+  "screenshot": "data/discovery/search-test/recon-homepage.png",
+  "screenshot_lowres": "data/discovery/search-test/recon-homepage.lowres.png",
+  "search_input_found": true
+}

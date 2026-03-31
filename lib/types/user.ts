@@ -3,15 +3,6 @@ export interface User {
   description: string;
   slug: string;
   preferences: {
-    "categories.lvl0"?: {
-      [key: string]: number;
-    };
-    "categories.lvl1"?: {
-      [key: string]: number;
-    };
-    "categories.lvl2"?: {
-      [key: string]: number;
-    };
     "hierarchical_categories.lvl0"?: {
       [key: string]: number;
     };
@@ -21,16 +12,22 @@ export interface User {
     "hierarchical_categories.lvl2"?: {
       [key: string]: number;
     };
-    "hierarchical_categories.lvl3"?: {
-      [key: string]: number;
-    };
     brand?: {
       [key: string]: number;
     };
-    characteristics?: {
+    gender?: {
       [key: string]: number;
     };
-    format?: {
+    "color.filter_group"?: {
+      [key: string]: number;
+    };
+    product_segment?: {
+      [key: string]: number;
+    };
+    Collection?: {
+      [key: string]: number;
+    };
+    product_line?: {
       [key: string]: number;
     };
   };

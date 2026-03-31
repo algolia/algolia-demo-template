@@ -1,0 +1,62 @@
+{
+  "url": "https://www.dainese.com/us/en/",
+  "query": "boots",
+  "category": "synonym",
+  "expectation": "Should show motorcycle boots/shoes",
+  "success": true,
+  "blocked": false,
+  "page_load_ms": 827,
+  "autocomplete": {
+    "results": [
+      "Motorbike / \n                                        \n                                        Boots\n                                        (18)",
+      "Men / \n                                        \n                                        Boots\n                                        (36)",
+      "Racing / \n                                        \n                                        Boots\n                                        (15)",
+      "Women / \n                                        \n                                        Boots\n                                        (5)",
+      "gloves",
+      "boots",
+      "pista"
+    ],
+    "time_ms": 1845,
+    "screenshot": "data/discovery/search-test/boots-autocomplete.png",
+    "screenshot_lowres": "data/discovery/search-test/boots-autocomplete.lowres.png"
+  },
+  "results_page": {
+    "results": [
+      "CARVE MASTER 4 GORE-TEX® - MEN'S WINTER MOTORCYCLE JACKET",
+      "QUICK DRY TEE - TECHNICAL MEN'S T-SHIRT - BASE LAYER",
+      "CARVE MASTER 4 GORE-TEX® - MEN'S WINTER MOTORCYCLE PANTS",
+      "OVERYOND XT GORE-TEX - MEN'S FOUR-SEASON GORE-TEX MOTORCYCLE BOOTS",
+      "S-TR1 WOMEN'S MOTORCYCLE BOOTS - BLACK/PEARL WHITE",
+      "TORQUE 4 - MEN RACING AND ROAD BOOTS",
+      "EXPLORER.4 GTX MEN'S WATERPROOF MOTORCYCLE TOURING BOOTS - BLACK",
+      "BLEND 2 GTX MEN'S WATERPROOF MOTORCYCLE BOOTS - BLACK",
+      "TORQUE 4 S - MEN RACING AND ROAD BOOTS",
+      "BLEND 2 WP MEN'S WATERPROOF MOTORCYCLE BOOTS - BROWN",
+      "S-TR1 MEN'S MOTORCYCLE BOOTS - BLACK",
+      "AXIAL 2 - MEN'S MOTORCYCLE RACING BOOTS",
+      "AIRTECH 3 GTX MEN'S WATERPROOF MOTORCYCLE TOURING BOOTS - BLACK",
+      "CLIMA 2 SURROUND GORE-TEX® MEN'S WATERPROOF MOTORCYCLE BOOTS - BLACK/DARK GREY",
+      "S-TR1 MEN'S MOTORCYCLE BOOTS - BLACK/RED/WHITE",
+      "FUEL WP MEN'S WATERPROOF MOTORCYCLE BOOTS - BLACK",
+      "X-BLAST MEN'S MOTORCYCLE BOOTS - BLACK",
+      "AXIAL 2 AIR - MEN'S MOTORCYCLE RACING SUMMER BOOTS",
+      "DRIFTER WP MEN'S WATERPROOF MOTORCYCLE TOURING BOOTS - DARK BROWN",
+      "TORQUE 4 AIR - MEN SUMMER RACING AND ROAD BOOTS",
+      "BLEND 2 WP MEN'S WATERPROOF MOTORCYCLE BOOTS - BLACK",
+      "FUEL WP WATERPROOF MOTORCYCLE BOOTS MEN – DARK BROWN",
+      "INFINITY 3 WP MEN'S WATERPROOF MOTORCYCLE BOOTS - BLACK",
+      "TORQUE 4 - WOMEN'S RACING AND ROAD BOOTS"
+    ],
+    "time_ms": 3594,
+    "url": "https://www.dainese.com/us/en/search/?q=boots&lang=en_US",
+    "screenshot": "data/discovery/search-test/boots-results.png",
+    "screenshot_lowres": "data/discovery/search-test/boots-results.lowres.png"
+  },
+  "search_api": {
+    "autocomplete_calls": {},
+    "results_calls": {},
+    "detected_provider": "Unknown",
+    "rendering": "server-side"
+  },
+  "errors": []
+}

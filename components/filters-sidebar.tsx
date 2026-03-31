@@ -17,6 +17,7 @@ import { type PreferenceKey } from "@/lib/types/user";
 import { PREFERENCE_METADATA } from "@/lib/demo-config/users";
 import { CATEGORY_ICONS } from "@/lib/demo-config/categories";
 import { cn } from "@/lib/utils";
+import { useGenderFilter } from "@/components/gender-filter-context";
 
 // ============================================================================
 // Helper Types and Functions
@@ -596,7 +597,7 @@ function ColorSwatch({ hex, className = "" }: { hex: string | null; className?: 
 
 export function ColorFilter() {
   const { items, refine } = useRefinementList({
-    attribute: "color.filter_group",
+    attribute: "colour_list",
     limit: 10,
     showMore: true,
     showMoreLimit: 30,
@@ -708,9 +709,44 @@ export function FilterSection({
   );
 }
 
+const GENDER_OPTIONS = ["Men", "Women", "Kids"] as const;
+
+function GenderFilter() {
+  const { selectedGender, setSelectedGender } = useGenderFilter();
+  const [isExpanded, setIsExpanded] = useState(true);
+
+  return (
+    <FilterSection
+      title="Gender"
+      isExpanded={isExpanded}
+      onToggle={() => setIsExpanded(!isExpanded)}
+    >
+      <div className="flex flex-wrap gap-2">
+        {GENDER_OPTIONS.map((gender) => (
+          <button
+            key={gender}
+            onClick={() =>
+              setSelectedGender(selectedGender === gender ? null : gender)
+            }
+            className={cn(
+              "px-3 py-1.5 text-sm font-medium rounded-full border transition-colors",
+              selectedGender === gender
+                ? "bg-primary text-primary-foreground border-primary"
+                : "bg-background text-foreground border-border hover:border-primary hover:bg-muted"
+            )}
+          >
+            {gender}
+          </button>
+        ))}
+      </div>
+    </FilterSection>
+  );
+}
+
 export function FiltersSidebar() {
   return (
     <aside className="space-y-4">
+      <GenderFilter />
       <ForYouFilter />
       <InStockFilter />
       <HierarchicalCategoryFilter
@@ -742,7 +778,7 @@ export function ActiveFilters() {
     <div className="flex flex-wrap items-center gap-2 mb-6">
       {items.map((item) =>
         item.refinements.map((refinement) => {
-          const isColor = item.attribute === "color.filter_group";
+          const isColor = item.attribute === "colour_list";
           const colorInfo = isColor ? parseColorValue(refinement.label) : null;
           return (
             <button

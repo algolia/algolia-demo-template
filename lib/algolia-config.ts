@@ -14,11 +14,11 @@ export const ALGOLIA_CONFIG = {
     "cf3b54fbfea633fb12808c8b2f59b990",
 
   // Indices
-  INDEX_NAME: "fashion_ns",
+  INDEX_NAME: "dainese_ns",
 
   // Composition
-  COMPOSITION_ID: "fashion_ns_composition",
+  COMPOSITION_ID: "dainese_ns_composition",
 
   // Agent Studio configuration
-  AGENT_ID:  "3db1f581-4e8d-4570-a856-dd46204d360a",
+  AGENT_ID: "81dc2b1f-b5d2-425e-9ecb-ced4adba1c60",
 };

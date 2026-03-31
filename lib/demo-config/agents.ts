@@ -1,8 +1,7 @@
 /**
  * Agent Studio configuration
  *
- * Edit this file to customize AI agent instructions, tools, and metadata.
- * These are used by scripts/setup-agent.ts to configure agents in Algolia.
+ * Defines the AI shopping assistant's behavior, tools, and product knowledge.
  */
 import { DEMO_CONFIG } from "./index";
 
@@ -12,26 +11,39 @@ import { DEMO_CONFIG } from "./index";
  */
 export const AGENT_PRODUCT_ATTRIBUTES = [
   "objectID",
-  "title",
+  "name",
   "brand",
   "price",
-  "shortDescription",
-  "ingredients",
-  "characteristics",
+  "description",
+  "gender",
+  "color",
+  "available_sizes",
+  "product_segment",
+  "product_line",
+  "hierarchical_categories",
+  "attrs",
+  "primary_image",
   "inStock",
-  "categories",
 ];
 
 export const AGENT_CONFIG = {
   main: {
-    name: `${DEMO_CONFIG.brand.name} Shopping Assistant`,
+    name: `${DEMO_CONFIG.brand.name} Gear Advisor`,
     instructions: `**AGENT ROLE**
-You are a Shopping Assistant for ${DEMO_CONFIG.brand.name}. You help customers find products and make purchase decisions.
+You are the ${DEMO_CONFIG.brand.name} Gear Advisor — an expert motorcycle, bike, and ski gear specialist. You help riders find the right protective equipment for their discipline, skill level, and conditions.
 
 **RESPONSE STYLE**
-- Keep responses concise and helpful
-- When context has "isFirstMessage": true, respond with a single short sentence (max 15 words) — no product searches, no lists, just a brief greeting or acknowledgment
-- Always offer clear next actions (add to cart, learn more, compare, etc.)
+- Keep responses concise and authoritative
+- When context has "isFirstMessage": true, respond with a single short sentence (max 15 words) — no product searches, no lists, just a brief greeting
+- Always offer clear next actions (add to cart, compare, learn more, etc.)
+- When discussing protection, mention CE certification levels when relevant
+
+**DOMAIN KNOWLEDGE**
+- Riding disciplines: Racing, Sport Touring, Adventure Touring, Urban, Off-Road
+- Protection standards: EN 17092 (A, AA, AAA for garments), EN 1621 (CE Level 1/2 for protectors)
+- Materials: leather (best abrasion), textile (versatility), Gore-Tex (waterproof), D-Dry (Dainese waterproof membrane)
+- D-air: Dainese's airbag technology for racing and street
+- Fit: Italian sizing runs slim — recommend sizing up if between sizes
 
 **Tools**
 - algolia_search_index - Search the product catalog
@@ -39,23 +51,29 @@ You are a Shopping Assistant for ${DEMO_CONFIG.brand.name}. You help customers f
 - showItems - Display product recommendations
 
 **Behavior**
-1. Understand customer needs
-2. Search for relevant products
-3. Use showItems to present 2-4 options
-4. Offer clear next steps
+1. Understand the rider's discipline and needs
+2. Search for relevant products using appropriate filters
+3. Use showItems to present 2-4 options with clear differentiators
+4. Explain protection levels and material choices when relevant
+5. Offer to complete an outfit (jacket + pants + gloves + boots)
 
 **Language**
 - Respond in the language the customer uses, default to English`,
 
-    indexDescription: `Product catalog for ${DEMO_CONFIG.brand.name}.
+    indexDescription: `Product catalog for ${DEMO_CONFIG.brand.name} — premium motorcycle, bike, and ski protective gear.
 
 **Key filterable fields:**
-- price: Product price (numeric)
-- brand: Brand name
-- hierarchical_categories.lvl0, hierarchical_categories.lvl1, hierarchical_categories.lvl2: Category hierarchy
-- inStock: Boolean, true if available
+- price.value: Product price in USD (numeric)
+- gender: Men, Women, Unisex, Kids
+- product_segment: Racing, Sport Touring, Adventure Touring, Urban, Merchandising, Piste
+- product_line: Motorcycles, Multisport - Snow, Demon Basics, Multisport - Wheels
+- hierarchical_categories.lvl0: Leather Jackets, Textile Jackets, Gloves, Boots, Safety, etc.
+- color.filter_group: Color name (BLACK, RED, WHITE, etc.)
+- available_sizes: Size codes (44, 46, 48, 50, XS, S, M, L, etc.)
 
-**IMPORTANT:** Only use exact category values that exist in your index for filtering.`,
+**Product attributes (attrs):** Rich technical specs including characteristics, protective_inserts, main_materials, ergonomics, temperature ratings.
+
+**IMPORTANT:** Only use exact facet values that exist in the index for filtering.`,
 
     tools: [
       {
@@ -79,7 +97,7 @@ You are a Shopping Assistant for ${DEMO_CONFIG.brand.name}. You help customers f
         name: "showItems",
         type: "client_side",
         description:
-          "Display product recommendations to the customer with a title and explanation. Use this to present products you want to recommend.",
+          "Display products as visual cards. Use for recommendations, comparisons, or results. Include a title and explanation.",
         inputSchema: {
           type: "object",
           properties: {
@@ -90,12 +108,13 @@ You are a Shopping Assistant for ${DEMO_CONFIG.brand.name}. You help customers f
             },
             title: {
               type: "string",
-              description: "A short title for the recommendation section",
+              description:
+                "Title for the product display section (e.g. 'Racing Jackets for You')",
             },
             explanation: {
               type: "string",
               description:
-                "Brief explanation of why these products are being recommended",
+                "Brief explanation of the selection (e.g. 'Top-rated leather jackets with CE AAA protection')",
             },
           },
           required: ["objectIDs", "title", "explanation"],
@@ -105,10 +124,10 @@ You are a Shopping Assistant for ${DEMO_CONFIG.brand.name}. You help customers f
   },
 
   fallbackSuggestions: [
-    "Show me today's best deals",
-    "Find popular products",
-    "Browse new arrivals",
-    "Compare top-rated items",
-    "Explore trending categories",
+    "Help me choose a riding jacket",
+    "What protection do I need for track days?",
+    "Show me waterproof touring gear",
+    "I need gloves for summer riding",
+    "What's the difference between leather and textile?",
   ] as string[],
 };

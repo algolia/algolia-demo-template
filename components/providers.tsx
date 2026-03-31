@@ -9,6 +9,7 @@ import { SelectionProvider } from "@/components/selection/selection-context";
 import { UserProvider, useUser } from "@/components/user/user-context";
 import { compositionClient } from "@algolia/composition";
 import { ALGOLIA_CONFIG } from "@/lib/algolia-config";
+import { GenderFilterProvider, useGenderFilter } from "@/components/gender-filter-context";
 
 const searchClient = compositionClient(
   ALGOLIA_CONFIG.APP_ID,
@@ -23,6 +24,7 @@ const searchClient = compositionClient(
  */
 function PersonalizedConfigure() {
   const { personalizationFilters, currentUser } = useUser();
+  const { genderFilter } = useGenderFilter();
   const { refresh } = useInstantSearch();
   const prevUserIdRef = useRef<string | null>(null);
 
@@ -34,10 +36,11 @@ function PersonalizedConfigure() {
     return undefined;
   }, [personalizationFilters]);
 
-  // Configure personalization
+  // Configure personalization and gender filter
   useConfigure({
     hitsPerPage: 12,
     optionalFilters,
+    ...(genderFilter ? { filters: genderFilter } : {}),
   });
 
   // Refresh search when user changes
@@ -64,6 +67,7 @@ export function Providers({ children }: { children: ReactNode }) {
       <UserProvider>
         <SelectionProvider>
           <SidepanelProvider>
+          <GenderFilterProvider>
           <InstantSearch
             compositionID={ALGOLIA_CONFIG.COMPOSITION_ID}
             searchClient={searchClient}
@@ -78,6 +82,7 @@ export function Providers({ children }: { children: ReactNode }) {
             </Suspense>
             {children}
           </InstantSearch>
+          </GenderFilterProvider>
           </SidepanelProvider>
         </SelectionProvider>
       </UserProvider>

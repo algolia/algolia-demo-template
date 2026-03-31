@@ -1,0 +1,44 @@
+{
+  "url": "https://www.dainese.com/us/en/",
+  "query": "Avro 5 leather jacket",
+  "category": "exact_product",
+  "expectation": "Avro 5 leather jacket should be #1",
+  "success": true,
+  "blocked": false,
+  "page_load_ms": 1129,
+  "autocomplete": {
+    "results": [
+      "Pants / \n                                        \n                                        Leather\n                                        (2)",
+      "Jackets / \n                                        \n                                        Leather\n                                        (14)",
+      "Shoes / \n                                        \n                                        Leather\n                                        (3)",
+      "Pants / \n                                        \n                                        Leather\n                                        (8)",
+      "torque 3",
+      "agv pista",
+      "boots"
+    ],
+    "time_ms": 3658,
+    "screenshot": "data/discovery/search-test/avro-5-leather-jacket-autocomplete.png",
+    "screenshot_lowres": "data/discovery/search-test/avro-5-leather-jacket-autocomplete.lowres.png"
+  },
+  "results_page": {
+    "results": [
+      "CARVE MASTER 4 GORE-TEX® - MEN'S WINTER MOTORCYCLE JACKET",
+      "QUICK DRY TEE - TECHNICAL MEN'S T-SHIRT - BASE LAYER",
+      "CARVE MASTER 4 GORE-TEX® - MEN'S WINTER MOTORCYCLE PANTS",
+      "OVERYOND XT GORE-TEX - MEN'S FOUR-SEASON GORE-TEX MOTORCYCLE BOOTS",
+      "AVRO 5 - MEN'S MOTORCYCLE LEATHER JACKET",
+      "AVRO 5 - WOMEN'S MOTORCYCLE LEATHER JACKET"
+    ],
+    "time_ms": 3640,
+    "url": "https://www.dainese.com/us/en/search/?q=Avro+5+leather+jacket&lang=en_US",
+    "screenshot": "data/discovery/search-test/avro-5-leather-jacket-results.png",
+    "screenshot_lowres": "data/discovery/search-test/avro-5-leather-jacket-results.lowres.png"
+  },
+  "search_api": {
+    "autocomplete_calls": {},
+    "results_calls": {},
+    "detected_provider": "Unknown",
+    "rendering": "server-side"
+  },
+  "errors": []
+}

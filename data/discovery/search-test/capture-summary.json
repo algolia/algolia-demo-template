@@ -1,0 +1,504 @@
+{
+  "mode": "capture",
+  "url": "https://www.dainese.com/us/en/",
+  "site_name": "Dainese",
+  "timestamp": "2026-03-29T20:16:30Z",
+  "total_queries": 10,
+  "successful": 10,
+  "blocked": 0,
+  "queries": [
+    {
+      "url": "https://www.dainese.com/us/en/",
+      "query": "Avro 5 leather jacket",
+      "category": "exact_product",
+      "expectation": "Avro 5 leather jacket should be #1",
+      "success": true,
+      "blocked": false,
+      "page_load_ms": 1129,
+      "autocomplete": {
+        "results": [
+          "Pants / \n                                        \n                                        Leather\n                                        (2)",
+          "Jackets / \n                                        \n                                        Leather\n                                        (14)",
+          "Shoes / \n                                        \n                                        Leather\n                                        (3)",
+          "Pants / \n                                        \n                                        Leather\n                                        (8)",
+          "torque 3",
+          "agv pista",
+          "boots"
+        ],
+        "time_ms": 3658,
+        "screenshot": "data/discovery/search-test/avro-5-leather-jacket-autocomplete.png",
+        "screenshot_lowres": "data/discovery/search-test/avro-5-leather-jacket-autocomplete.lowres.png"
+      },
+      "results_page": {
+        "results": [
+          "CARVE MASTER 4 GORE-TEX® - MEN'S WINTER MOTORCYCLE JACKET",
+          "QUICK DRY TEE - TECHNICAL MEN'S T-SHIRT - BASE LAYER",
+          "CARVE MASTER 4 GORE-TEX® - MEN'S WINTER MOTORCYCLE PANTS",
+          "OVERYOND XT GORE-TEX - MEN'S FOUR-SEASON GORE-TEX MOTORCYCLE BOOTS",
+          "AVRO 5 - MEN'S MOTORCYCLE LEATHER JACKET",
+          "AVRO 5 - WOMEN'S MOTORCYCLE LEATHER JACKET"
+        ],
+        "time_ms": 3640,
+        "url": "https://www.dainese.com/us/en/search/?q=Avro+5+leather+jacket&lang=en_US",
+        "screenshot": "data/discovery/search-test/avro-5-leather-jacket-results.png",
+        "screenshot_lowres": "data/discovery/search-test/avro-5-leather-jacket-results.lowres.png"
+      },
+      "search_api": {
+        "autocomplete_calls": {},
+        "results_calls": {},
+        "detected_provider": "Unknown",
+        "rendering": "server-side"
+      },
+      "errors": []
+    },
+    {
+      "url": "https://www.dainese.com/us/en/",
+      "query": "Super Speed 4",
+      "category": "exact_product",
+      "expectation": "Super Speed 4 jacket should rank #1",
+      "success": true,
+      "blocked": false,
+      "page_load_ms": 769,
+      "autocomplete": {
+        "results": [
+          "Highlights / \n                                        \n                                        Speed Demon Lab\n                                        (2)",
+          "torque 3",
+          "agv pista",
+          "boots"
+        ],
+        "time_ms": 2692,
+        "screenshot": "data/discovery/search-test/super-speed-4-autocomplete.png",
+        "screenshot_lowres": "data/discovery/search-test/super-speed-4-autocomplete.lowres.png"
+      },
+      "results_page": {
+        "results": [
+          "CARVE MASTER 4 GORE-TEX® - MEN'S WINTER MOTORCYCLE JACKET",
+          "QUICK DRY TEE - TECHNICAL MEN'S T-SHIRT - BASE LAYER",
+          "CARVE MASTER 4 GORE-TEX® - MEN'S WINTER MOTORCYCLE PANTS",
+          "OVERYOND XT GORE-TEX - MEN'S FOUR-SEASON GORE-TEX MOTORCYCLE BOOTS",
+          "SUPER SPEED 4 - MEN PERFORATED LEATHER MOTORCYCLE JACKET",
+          "SUPER SPEED 4 - MEN'S MOTORCYCLE LEATHER JACKET",
+          "SUPER SPEED - MEN'S MOTORCYCLE PERFORATED LEATHER PANTS"
+        ],
+        "time_ms": 3597,
+        "url": "https://www.dainese.com/us/en/search/?q=Super+Speed+4&lang=en_US",
+        "screenshot": "data/discovery/search-test/super-speed-4-results.png",
+        "screenshot_lowres": "data/discovery/search-test/super-speed-4-results.lowres.png"
+      },
+      "search_api": {
+        "autocomplete_calls": {},
+        "results_calls": {},
+        "detected_provider": "Unknown",
+        "rendering": "server-side"
+      },
+      "errors": []
+    },
+    {
+      "url": "https://www.dainese.com/us/en/",
+      "query": "lether jaket",
+      "category": "typo",
+      "expectation": "Should still return leather jackets",
+      "success": true,
+      "blocked": false,
+      "page_load_ms": 780,
+      "autocomplete": {
+        "results": [
+          "Pants / \n                                        \n                                        Leather\n                                        (2)",
+          "Jackets / \n                                        \n                                        Leather\n                                        (14)",
+          "Shoes / \n                                        \n                                        Leather\n                                        (3)",
+          "Pants / \n                                        \n                                        Leather\n                                        (8)",
+          "torque 3",
+          "agv pista",
+          "boots"
+        ],
+        "time_ms": 2529,
+        "screenshot": "data/discovery/search-test/lether-jaket-autocomplete.png",
+        "screenshot_lowres": "data/discovery/search-test/lether-jaket-autocomplete.lowres.png"
+      },
+      "results_page": {
+        "results": [
+          "CARVE MASTER 4 GORE-TEX® - MEN'S WINTER MOTORCYCLE JACKET",
+          "QUICK DRY TEE - TECHNICAL MEN'S T-SHIRT - BASE LAYER",
+          "CARVE MASTER 4 GORE-TEX® - MEN'S WINTER MOTORCYCLE PANTS",
+          "OVERYOND XT GORE-TEX - MEN'S FOUR-SEASON GORE-TEX MOTORCYCLE BOOTS",
+          "NEXUS 3 IN & OUT - MOTORCYCLE BOOTS MEN",
+          "NEXUS 3 IN & OUT - MOTORCYCLE BOOTS WOMEN",
+          "DEMON SPRINT - MEN'S ONE-PIECE PERFORATED LEATHER MOTORCYCLE SUIT",
+          "TORQUE 4 AIR - MEN SUMMER RACING AND ROAD BOOTS",
+          "PONY 3 - WOMEN'S MOTORCYCLE LEATHER PANTS",
+          "NEXUS 3 IN & OUT BOOTS AIR",
+          "MISANO 2 D-AIR PERF. 1PC SUIT",
+          "TORQUE 4 - MEN RACING AND ROAD BOOTS"
+        ],
+        "time_ms": 3588,
+        "url": "https://www.dainese.com/us/en/search/?q=lether+jaket&lang=en_US",
+        "screenshot": "data/discovery/search-test/lether-jaket-results.png",
+        "screenshot_lowres": "data/discovery/search-test/lether-jaket-results.lowres.png"
+      },
+      "search_api": {
+        "autocomplete_calls": {},
+        "results_calls": {},
+        "detected_provider": "Unknown",
+        "rendering": "server-side"
+      },
+      "errors": []
+    },
+    {
+      "url": "https://www.dainese.com/us/en/",
+      "query": "gear for riding in the rain",
+      "category": "conversational",
+      "expectation": "Should show waterproof/D-Dry gear",
+      "success": true,
+      "blocked": false,
+      "page_load_ms": 791,
+      "autocomplete": {
+        "results": [
+          "Accessories / \n                                        \n                                        Rain Gear\n                                        (6)",
+          "torque 3",
+          "agv pista",
+          "boots"
+        ],
+        "time_ms": 4035,
+        "screenshot": "data/discovery/search-test/gear-for-riding-in-the-rain-autocomplete.png",
+        "screenshot_lowres": "data/discovery/search-test/gear-for-riding-in-the-rain-autocomplete.lowres.png"
+      },
+      "results_page": {
+        "results": [
+          "CARVE MASTER 4 GORE-TEX® - MEN'S WINTER MOTORCYCLE JACKET",
+          "QUICK DRY TEE - TECHNICAL MEN'S T-SHIRT - BASE LAYER",
+          "CARVE MASTER 4 GORE-TEX® - MEN'S WINTER MOTORCYCLE PANTS",
+          "OVERYOND XT GORE-TEX - MEN'S FOUR-SEASON GORE-TEX MOTORCYCLE BOOTS",
+          "NEXUS 3 IN & OUT - MOTORCYCLE BOOTS MEN",
+          "NEXUS 3 IN & OUT - MOTORCYCLE BOOTS WOMEN",
+          "DEMON SPRINT - MEN'S ONE-PIECE PERFORATED LEATHER MOTORCYCLE SUIT",
+          "TORQUE 4 AIR - MEN SUMMER RACING AND ROAD BOOTS",
+          "PONY 3 - WOMEN'S MOTORCYCLE LEATHER PANTS",
+          "NEXUS 3 IN & OUT BOOTS AIR",
+          "MISANO 2 D-AIR PERF. 1PC SUIT",
+          "TORQUE 4 - MEN RACING AND ROAD BOOTS"
+        ],
+        "time_ms": 3588,
+        "url": "https://www.dainese.com/us/en/search/?q=gear+for+riding+in+the+rain&lang=en_US",
+        "screenshot": "data/discovery/search-test/gear-for-riding-in-the-rain-results.png",
+        "screenshot_lowres": "data/discovery/search-test/gear-for-riding-in-the-rain-results.lowres.png"
+      },
+      "search_api": {
+        "autocomplete_calls": {},
+        "results_calls": {},
+        "detected_provider": "Unknown",
+        "rendering": "server-side"
+      },
+      "errors": []
+    },
+    {
+      "url": "https://www.dainese.com/us/en/",
+      "query": "what to wear under a race suit",
+      "category": "conversational",
+      "expectation": "Should show base layers and undersuit products",
+      "success": true,
+      "blocked": false,
+      "page_load_ms": 808,
+      "autocomplete": {
+        "results": [
+          "Outlet / \n                                        \n                                        Ski\n                                        (190)",
+          "Ski\n                                        (78)",
+          "Gift ideas / \n                                        \n                                        Ski\n                                        (9)",
+          "Pants / \n                                        \n                                        Waterproof\n                                        (17)",
+          "Gloves / \n                                        \n                                        Waterproof\n                                        (3)",
+          "torque 3",
+          "agv pista",
+          "boots"
+        ],
+        "time_ms": 4215,
+        "screenshot": "data/discovery/search-test/what-to-wear-under-a-race-suit-autocomplete.png",
+        "screenshot_lowres": "data/discovery/search-test/what-to-wear-under-a-race-suit-autocomplete.lowres.png"
+      },
+      "results_page": {
+        "results": [
+          "CARVE MASTER 4 GORE-TEX® - MEN'S WINTER MOTORCYCLE JACKET",
+          "QUICK DRY TEE - TECHNICAL MEN'S T-SHIRT - BASE LAYER",
+          "CARVE MASTER 4 GORE-TEX® - MEN'S WINTER MOTORCYCLE PANTS",
+          "OVERYOND XT GORE-TEX - MEN'S FOUR-SEASON GORE-TEX MOTORCYCLE BOOTS",
+          "NEXUS 3 IN & OUT - MOTORCYCLE BOOTS MEN",
+          "NEXUS 3 IN & OUT - MOTORCYCLE BOOTS WOMEN",
+          "DEMON SPRINT - MEN'S ONE-PIECE PERFORATED LEATHER MOTORCYCLE SUIT",
+          "TORQUE 4 AIR - MEN SUMMER RACING AND ROAD BOOTS",
+          "PONY 3 - WOMEN'S MOTORCYCLE LEATHER PANTS",
+          "NEXUS 3 IN & OUT BOOTS AIR",
+          "MISANO 2 D-AIR PERF. 1PC SUIT",
+          "TORQUE 4 - MEN RACING AND ROAD BOOTS"
+        ],
+        "time_ms": 3588,
+        "url": "https://www.dainese.com/us/en/search/?q=what+to+wear+under+a+race+suit&lang=en_US",
+        "screenshot": "data/discovery/search-test/what-to-wear-under-a-race-suit-results.png",
+        "screenshot_lowres": "data/discovery/search-test/what-to-wear-under-a-race-suit-results.lowres.png"
+      },
+      "search_api": {
+        "autocomplete_calls": {},
+        "results_calls": {},
+        "detected_provider": "Unknown",
+        "rendering": "server-side"
+      },
+      "errors": []
+    },
+    {
+      "url": "https://www.dainese.com/us/en/",
+      "query": "boots",
+      "category": "synonym",
+      "expectation": "Should show motorcycle boots/shoes",
+      "success": true,
+      "blocked": false,
+      "page_load_ms": 827,
+      "autocomplete": {
+        "results": [
+          "Motorbike / \n                                        \n                                        Boots\n                                        (18)",
+          "Men / \n                                        \n                                        Boots\n                                        (36)",
+          "Racing / \n                                        \n                                        Boots\n                                        (15)",
+          "Women / \n                                        \n                                        Boots\n                                        (5)",
+          "gloves",
+          "boots",
+          "pista"
+        ],
+        "time_ms": 1845,
+        "screenshot": "data/discovery/search-test/boots-autocomplete.png",
+        "screenshot_lowres": "data/discovery/search-test/boots-autocomplete.lowres.png"
+      },
+      "results_page": {
+        "results": [
+          "CARVE MASTER 4 GORE-TEX® - MEN'S WINTER MOTORCYCLE JACKET",
+          "QUICK DRY TEE - TECHNICAL MEN'S T-SHIRT - BASE LAYER",
+          "CARVE MASTER 4 GORE-TEX® - MEN'S WINTER MOTORCYCLE PANTS",
+          "OVERYOND XT GORE-TEX - MEN'S FOUR-SEASON GORE-TEX MOTORCYCLE BOOTS",
+          "S-TR1 WOMEN'S MOTORCYCLE BOOTS - BLACK/PEARL WHITE",
+          "TORQUE 4 - MEN RACING AND ROAD BOOTS",
+          "EXPLORER.4 GTX MEN'S WATERPROOF MOTORCYCLE TOURING BOOTS - BLACK",
+          "BLEND 2 GTX MEN'S WATERPROOF MOTORCYCLE BOOTS - BLACK",
+          "TORQUE 4 S - MEN RACING AND ROAD BOOTS",
+          "BLEND 2 WP MEN'S WATERPROOF MOTORCYCLE BOOTS - BROWN",
+          "S-TR1 MEN'S MOTORCYCLE BOOTS - BLACK",
+          "AXIAL 2 - MEN'S MOTORCYCLE RACING BOOTS",
+          "AIRTECH 3 GTX MEN'S WATERPROOF MOTORCYCLE TOURING BOOTS - BLACK",
+          "CLIMA 2 SURROUND GORE-TEX® MEN'S WATERPROOF MOTORCYCLE BOOTS - BLACK/DARK GREY",
+          "S-TR1 MEN'S MOTORCYCLE BOOTS - BLACK/RED/WHITE",
+          "FUEL WP MEN'S WATERPROOF MOTORCYCLE BOOTS - BLACK",
+          "X-BLAST MEN'S MOTORCYCLE BOOTS - BLACK",
+          "AXIAL 2 AIR - MEN'S MOTORCYCLE RACING SUMMER BOOTS",
+          "DRIFTER WP MEN'S WATERPROOF MOTORCYCLE TOURING BOOTS - DARK BROWN",
+          "TORQUE 4 AIR - MEN SUMMER RACING AND ROAD BOOTS",
+          "BLEND 2 WP MEN'S WATERPROOF MOTORCYCLE BOOTS - BLACK",
+          "FUEL WP WATERPROOF MOTORCYCLE BOOTS MEN – DARK BROWN",
+          "INFINITY 3 WP MEN'S WATERPROOF MOTORCYCLE BOOTS - BLACK",
+          "TORQUE 4 - WOMEN'S RACING AND ROAD BOOTS"
+        ],
+        "time_ms": 3594,
+        "url": "https://www.dainese.com/us/en/search/?q=boots&lang=en_US",
+        "screenshot": "data/discovery/search-test/boots-results.png",
+        "screenshot_lowres": "data/discovery/search-test/boots-results.lowres.png"
+      },
+      "search_api": {
+        "autocomplete_calls": {},
+        "results_calls": {},
+        "detected_provider": "Unknown",
+        "rendering": "server-side"
+      },
+      "errors": []
+    },
+    {
+      "url": "https://www.dainese.com/us/en/",
+      "query": "sneakers",
+      "category": "synonym",
+      "expectation": "Should show casual motorcycle shoes if they exist",
+      "success": true,
+      "blocked": false,
+      "page_load_ms": 868,
+      "autocomplete": {
+        "results": [
+          "Men / \n                                        \n                                        Shoes\n                                        (13)",
+          "Women / \n                                        \n                                        Shoes\n                                        (13)",
+          "Men / \n                                        \n                                        Shoes\n                                        (32)",
+          "Urban / \n                                        \n                                        Shoes\n                                        (18)",
+          "torque 3",
+          "agv pista",
+          "boots"
+        ],
+        "time_ms": 2142,
+        "screenshot": "data/discovery/search-test/sneakers-autocomplete.png",
+        "screenshot_lowres": "data/discovery/search-test/sneakers-autocomplete.lowres.png"
+      },
+      "results_page": {
+        "results": [
+          "CARVE MASTER 4 GORE-TEX® - MEN'S WINTER MOTORCYCLE JACKET",
+          "QUICK DRY TEE - TECHNICAL MEN'S T-SHIRT - BASE LAYER",
+          "CARVE MASTER 4 GORE-TEX® - MEN'S WINTER MOTORCYCLE PANTS",
+          "OVERYOND XT GORE-TEX - MEN'S FOUR-SEASON GORE-TEX MOTORCYCLE BOOTS",
+          "SUBURB D-WP - WOMEN'S WATERPROOF MOTORCYCLE SHOES",
+          "SUBURB AIR - WOMEN'S SUMMER MOTORCYCLE SHOES IN FABRIC",
+          "SUBURB AIR - MEN'S SUMMER MOTORCYCLE SHOES IN FABRIC",
+          "SUBURB D-WP - MEN'S WATERPROOF MOTORCYCLE SHOES",
+          "HERIAN AIR SHOES WMN",
+          "HG MATERIA - BIKE SHOES",
+          "HG ACTO - BIKE SHOES",
+          "HERIAN AIR - SUMMER MOTORCYCLE SHOES",
+          "HERIAN D-WP - WATERPROOF MOTORCYCLE SHOES",
+          "HG MATERIA PRO - BIKE SHOES",
+          "HG ACTO PRO - BIKE SHOES",
+          "HERIAN D-WP - WOMEN'S WATERPROOF MOTORCYCLE SHOES",
+          "METRACTIVE D-WP - MEN'S WATERPROOF MOTORCYCLE SHOES",
+          "NALBAK WP MOTORCYCLE SHOES MEN - BLACK/ANTHRACITE",
+          "SUPERYA - SPORTS MOTORCYCLE SHOES"
+        ],
+        "time_ms": 3636,
+        "url": "https://www.dainese.com/us/en/search/?q=sneakers&lang=en_US",
+        "screenshot": "data/discovery/search-test/sneakers-results.png",
+        "screenshot_lowres": "data/discovery/search-test/sneakers-results.lowres.png"
+      },
+      "search_api": {
+        "autocomplete_calls": {},
+        "results_calls": {},
+        "detected_provider": "Unknown",
+        "rendering": "server-side"
+      },
+      "errors": []
+    },
+    {
+      "url": "https://www.dainese.com/us/en/",
+      "query": "black leather jacket men size 50",
+      "category": "multi_attribute",
+      "expectation": "Should filter to men's black leather jackets in size 50",
+      "success": true,
+      "blocked": false,
+      "page_load_ms": 783,
+      "autocomplete": {
+        "results": [
+          "torque 3",
+          "agv pista",
+          "boots"
+        ],
+        "time_ms": 4546,
+        "screenshot": "data/discovery/search-test/black-leather-jacket-men-size-50-autocomplete.png",
+        "screenshot_lowres": "data/discovery/search-test/black-leather-jacket-men-size-50-autocomplete.lowres.png"
+      },
+      "results_page": {
+        "results": [
+          "CARVE MASTER 4 GORE-TEX® - MEN'S WINTER MOTORCYCLE JACKET",
+          "QUICK DRY TEE - TECHNICAL MEN'S T-SHIRT - BASE LAYER",
+          "CARVE MASTER 4 GORE-TEX® - MEN'S WINTER MOTORCYCLE PANTS",
+          "OVERYOND XT GORE-TEX - MEN'S FOUR-SEASON GORE-TEX MOTORCYCLE BOOTS",
+          "NEXUS 3 IN & OUT - MOTORCYCLE BOOTS MEN",
+          "NEXUS 3 IN & OUT - MOTORCYCLE BOOTS WOMEN",
+          "DEMON SPRINT - MEN'S ONE-PIECE PERFORATED LEATHER MOTORCYCLE SUIT",
+          "TORQUE 4 AIR - MEN SUMMER RACING AND ROAD BOOTS",
+          "PONY 3 - WOMEN'S MOTORCYCLE LEATHER PANTS",
+          "NEXUS 3 IN & OUT BOOTS AIR",
+          "MISANO 2 D-AIR PERF. 1PC SUIT",
+          "TORQUE 4 - MEN RACING AND ROAD BOOTS"
+        ],
+        "time_ms": 3586,
+        "url": "https://www.dainese.com/us/en/search/?q=black+leather+jacket+men+size+50&lang=en_US",
+        "screenshot": "data/discovery/search-test/black-leather-jacket-men-size-50-results.png",
+        "screenshot_lowres": "data/discovery/search-test/black-leather-jacket-men-size-50-results.lowres.png"
+      },
+      "search_api": {
+        "autocomplete_calls": {},
+        "results_calls": {},
+        "detected_provider": "Unknown",
+        "rendering": "server-side"
+      },
+      "errors": []
+    },
+    {
+      "url": "https://www.dainese.com/us/en/",
+      "query": "back protector CE level 2",
+      "category": "multi_attribute",
+      "expectation": "Should show CE level 2 back protectors",
+      "success": true,
+      "blocked": false,
+      "page_load_ms": 776,
+      "autocomplete": {
+        "results": [
+          "Protections / \n                                        \n                                        Back Protectors\n                                        (8)",
+          "torque 3",
+          "agv pista",
+          "boots"
+        ],
+        "time_ms": 3614,
+        "screenshot": "data/discovery/search-test/back-protector-ce-level-2-autocomplete.png",
+        "screenshot_lowres": "data/discovery/search-test/back-protector-ce-level-2-autocomplete.lowres.png"
+      },
+      "results_page": {
+        "results": [
+          "CARVE MASTER 4 GORE-TEX® - MEN'S WINTER MOTORCYCLE JACKET",
+          "QUICK DRY TEE - TECHNICAL MEN'S T-SHIRT - BASE LAYER",
+          "CARVE MASTER 4 GORE-TEX® - MEN'S WINTER MOTORCYCLE PANTS",
+          "OVERYOND XT GORE-TEX - MEN'S FOUR-SEASON GORE-TEX MOTORCYCLE BOOTS",
+          "NEXUS 3 IN & OUT - MOTORCYCLE BOOTS MEN",
+          "NEXUS 3 IN & OUT - MOTORCYCLE BOOTS WOMEN",
+          "DEMON SPRINT - MEN'S ONE-PIECE PERFORATED LEATHER MOTORCYCLE SUIT",
+          "TORQUE 4 AIR - MEN SUMMER RACING AND ROAD BOOTS",
+          "PONY 3 - WOMEN'S MOTORCYCLE LEATHER PANTS",
+          "NEXUS 3 IN & OUT BOOTS AIR",
+          "MISANO 2 D-AIR PERF. 1PC SUIT",
+          "TORQUE 4 - MEN RACING AND ROAD BOOTS"
+        ],
+        "time_ms": 3591,
+        "url": "https://www.dainese.com/us/en/search/?q=back+protector+CE+level+2&lang=en_US",
+        "screenshot": "data/discovery/search-test/back-protector-ce-level-2-results.png",
+        "screenshot_lowres": "data/discovery/search-test/back-protector-ce-level-2-results.lowres.png"
+      },
+      "search_api": {
+        "autocomplete_calls": {},
+        "results_calls": {},
+        "detected_provider": "Unknown",
+        "rendering": "server-side"
+      },
+      "errors": []
+    },
+    {
+      "url": "https://www.dainese.com/us/en/",
+      "query": "xyznotaproduct123",
+      "category": "edge_case",
+      "expectation": "Should show zero results with suggestions",
+      "success": true,
+      "blocked": false,
+      "page_load_ms": 775,
+      "autocomplete": {
+        "results": [
+          "Motorbike",
+          "Bike",
+          "Ski",
+          "Outlet"
+        ],
+        "time_ms": 3153,
+        "screenshot": "data/discovery/search-test/xyznotaproduct123-autocomplete.png",
+        "screenshot_lowres": "data/discovery/search-test/xyznotaproduct123-autocomplete.lowres.png"
+      },
+      "results_page": {
+        "results": [
+          "CARVE MASTER 4 GORE-TEX® - MEN'S WINTER MOTORCYCLE JACKET",
+          "QUICK DRY TEE - TECHNICAL MEN'S T-SHIRT - BASE LAYER",
+          "CARVE MASTER 4 GORE-TEX® - MEN'S WINTER MOTORCYCLE PANTS",
+          "OVERYOND XT GORE-TEX - MEN'S FOUR-SEASON GORE-TEX MOTORCYCLE BOOTS",
+          "NEXUS 3 IN & OUT - MOTORCYCLE BOOTS MEN",
+          "NEXUS 3 IN & OUT - MOTORCYCLE BOOTS WOMEN",
+          "DEMON SPRINT - MEN'S ONE-PIECE PERFORATED LEATHER MOTORCYCLE SUIT",
+          "TORQUE 4 AIR - MEN SUMMER RACING AND ROAD BOOTS",
+          "PONY 3 - WOMEN'S MOTORCYCLE LEATHER PANTS",
+          "NEXUS 3 IN & OUT BOOTS AIR",
+          "MISANO 2 D-AIR PERF. 1PC SUIT",
+          "TORQUE 4 - MEN RACING AND ROAD BOOTS"
+        ],
+        "time_ms": 3586,
+        "url": "https://www.dainese.com/us/en/search/?q=xyznotaproduct123&lang=en_US",
+        "screenshot": "data/discovery/search-test/xyznotaproduct123-results.png",
+        "screenshot_lowres": "data/discovery/search-test/xyznotaproduct123-results.lowres.png"
+      },
+      "search_api": {
+        "autocomplete_calls": {},
+        "results_calls": {},
+        "detected_provider": "Unknown",
+        "rendering": "server-side"
+      },
+      "errors": []
+    }
+  ]
+}
