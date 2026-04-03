@@ -983,7 +983,7 @@ const ChatWidget = memo(function ChatWidget({
                 <div className="font-semibold text-xl text-foreground mb-2">
                   {exchange.userMessage.parts.map((part, index) =>
                     part.type === "text" ? (
-                      <span key={index}>{part.text}</span>
+                      <span key={index}>{part.text.replace(/\[CONTEXT\][\s\S]*?\[\/CONTEXT\]\s*/g, "")}</span>
                     ) : null
                   )}
                 </div>

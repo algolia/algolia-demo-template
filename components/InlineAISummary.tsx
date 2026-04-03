@@ -167,12 +167,11 @@ export function InlineAISummary({ query, submitCount }: InlineAISummaryProps) {
   const [lastSubmitCount, setLastSubmitCount] = useState(0);
   const [triggered, setTriggered] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
-  const { openSidepanel, openSidepanelWithContext, setAgentSuggestions } = useSidepanel();
+  const { openSidepanel, setAgentSuggestions } = useSidepanel();
   const { language, t } = useLanguage();
 
-  /** Build initial context messages from the summary for the sidepanel */
-  const buildContextMessages = () => {
-    // Get summary text from the current derived state
+  /** Build a message with summary context embedded so the conversational agent has context */
+  const buildContextMessage = (followUp: string) => {
     const text =
       phase === "complete" && completedData
         ? completedData.summary
@@ -181,19 +180,8 @@ export function InlineAISummary({ query, submitCount }: InlineAISummaryProps) {
           : phase === "fallback"
             ? fallbackText
             : "";
-    if (!text) return null;
-    return [
-      {
-        id: `summary-user-${Date.now()}`,
-        role: "user" as const,
-        parts: [{ type: "text" as const, text: query }],
-      },
-      {
-        id: `summary-assistant-${Date.now()}`,
-        role: "assistant" as const,
-        parts: [{ type: "text" as const, text }],
-      },
-    ];
+    if (!text) return followUp;
+    return `[CONTEXT]{"previousSummary":{"query":"${query.replace(/"/g, '\\"')}","summary":"${text.slice(0, 500).replace(/"/g, '\\"').replace(/\n/g, '\\n')}"},"requestType":"followUp"}[/CONTEXT]\n\n${followUp}`;
   };
 
   const agentId = ALGOLIA_CONFIG.AGENT_ID;
@@ -400,12 +388,7 @@ export function InlineAISummary({ query, submitCount }: InlineAISummaryProps) {
                   key={i}
                   onClick={() => {
                     setAgentSuggestions(suggestions);
-                    const ctx = buildContextMessages();
-                    if (ctx) {
-                      openSidepanelWithContext(ctx, s);
-                    } else {
-                      openSidepanel(s);
-                    }
+                    openSidepanel(buildContextMessage(s));
                   }}
                   className="px-3 py-1.5 text-[12px] font-medium border border-[#ddd] rounded-full bg-white hover:bg-[#ebebeb] hover:border-[#9B2335]/30 text-[#333] transition-colors"
                 >
@@ -424,12 +407,7 @@ export function InlineAISummary({ query, submitCount }: InlineAISummaryProps) {
                 if (suggestions.length > 0) {
                   setAgentSuggestions(suggestions);
                 }
-                const ctx = buildContextMessages();
-                if (ctx) {
-                  openSidepanelWithContext(ctx, query);
-                } else {
-                  openSidepanel(query);
-                }
+                openSidepanel(buildContextMessage(query));
               }}
               className="flex items-center gap-1 text-[13px] text-[#9B2335] font-medium hover:text-[#7a1c2a] transition-colors"
             >
