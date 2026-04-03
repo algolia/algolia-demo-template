@@ -921,6 +921,8 @@ const ChatWidget = memo(function ChatWidget({
 
   return (
     <div className="flex flex-col h-full overflow-y-auto p-4 bg-muted">
+      {/* Spacer pushes conversation to the bottom of the scroll area */}
+      <div className="flex-1 min-h-0" />
       <div className="flex flex-col gap-4">
         {exchanges.length === 0 && (
           <div className="flex flex-col gap-4 py-8">
