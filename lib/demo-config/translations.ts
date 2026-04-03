@@ -1,7 +1,21 @@
 export type Language = string;
 
 export const translations: Record<string, Record<string, string>> = {
-  it: {},
+  it: {
+    "filters.topic": "Categoria",
+    "filters.website": "Sito web",
+    "filters.searchWebsite": "Cerca sito web...",
+    "filters.fileType": "Tipo di file",
+    "filters.forYou": "Per te",
+    "filters.filters": "Filtri",
+    "filters.clearAll": "Cancella tutto",
+    "toolbar.results": "risultati",
+    "toolbar.gridView": "Vista griglia",
+    "toolbar.listView": "Vista lista",
+    "search.noResults": "Nessun risultato trovato",
+    "search.adjustTerms": "Prova a modificare i termini di ricerca",
+    "ai.continueConversation": "Continua la conversazione",
+  },
 };
 
 export function getInlineSummaryPrompt(_lang: Language, query: string): string {

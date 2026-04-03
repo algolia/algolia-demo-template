@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useMemo, ReactNode } from "react";
+import { translations } from "@/lib/demo-config/translations";
 
 interface LanguageContextType {
   language: string;
@@ -15,7 +16,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     () => ({
       language: "it",
       setLanguage: () => {},
-      t: (key: string) => key,
+      t: (key: string) => translations["it"]?.[key] ?? key,
     }),
     []
   );

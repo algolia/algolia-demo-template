@@ -72,7 +72,13 @@ export function NavBar() {
         <div className="md:hidden flex flex-col gap-2 w-full">
           <div className="flex items-center justify-between w-full">
             <CategoriesSheet />
-            <Link href="/" className="font-bold text-xl text-primary shrink-0">
+            <Link
+              href="/"
+              className="font-bold text-xl text-primary shrink-0"
+              onClick={() => {
+                refine("");
+              }}
+            >
               <Logo />
             </Link>
             <div className="flex items-center gap-1">

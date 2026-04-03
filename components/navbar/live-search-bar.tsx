@@ -341,7 +341,7 @@ function ProductResults({
 export function LiveSearchBar() {
   const router = useRouter();
   const pathname = usePathname();
-  const { refine } = useSearchBox();
+  const { refine, query: instantSearchQuery } = useSearchBox();
   const { personalizationFilters } = useUser();
   const [inputValue, setInputValue] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
@@ -420,6 +420,14 @@ export function LiveSearchBar() {
   });
 
   const displayValue = listening && transcript ? transcript : inputValue;
+
+  // Sync local state when InstantSearch query is cleared externally (e.g. logo click)
+  useEffect(() => {
+    if (instantSearchQuery === "" && inputValue !== "") {
+      setInputValue("");
+      setSearchQuery("");
+    }
+  }, [instantSearchQuery]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);

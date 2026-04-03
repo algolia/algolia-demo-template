@@ -8,7 +8,7 @@ import {
   useCurrentRefinements,
   useClearRefinements,
 } from "react-instantsearch";
-import { ChevronDown, X } from "lucide-react";
+import { ChevronDown, X, Sparkles, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -83,21 +83,25 @@ function ForYouFacetFilter({
   if (availableItems.length === 0) return null;
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-1">
+      <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground/70">
+        {facetTitle}
+      </span>
       {availableItems.map((item) => (
         <label
           key={`${facet}-${item.value}`}
-          className="flex items-center gap-2 cursor-pointer group"
+          className="flex items-center gap-2.5 cursor-pointer group py-1 px-2 -mx-2 hover:bg-muted/50 transition-colors"
         >
           <Checkbox
             checked={item.isRefined}
             onCheckedChange={() => refine(item.value)}
           />
-          <span className="text-sm flex-1 group-hover:text-primary transition-colors">
-            <span className="text-xs text-muted-foreground">{facetTitle}:</span>{" "}
+          <span className="text-[13px] flex-1 group-hover:text-foreground transition-colors text-foreground/80">
             {item.value}
           </span>
-          <span className="text-xs text-muted-foreground">({item.count})</span>
+          <span className="text-[11px] tabular-nums text-muted-foreground/60 font-medium">
+            {item.count}
+          </span>
         </label>
       ))}
     </div>
@@ -128,10 +132,12 @@ export function ForYouFilter() {
   return (
     <FilterSection
       title={t("filters.forYou")}
+      icon={<Sparkles className="w-3.5 h-3.5 text-primary" />}
       isExpanded={isExpanded}
       onToggle={() => setIsExpanded(!isExpanded)}
+      accent
     >
-      <div className="space-y-4 max-h-80 overflow-y-auto">
+      <div className="space-y-3 max-h-80 overflow-y-auto">
         {Object.entries(groupedPreferences).map(([facet, preferences]) => (
           <ForYouFacetFilter key={facet} facet={facet} preferences={preferences} />
         ))}
@@ -163,7 +169,6 @@ export function RefinementListFilter({
   limit = 10,
   showMoreLimit = 50,
   defaultExpanded = true,
-  maxHeight = "max-h-60",
 }: RefinementListFilterProps) {
   const { items, refine } = useRefinementList({
     attribute,
@@ -187,32 +192,40 @@ export function RefinementListFilter({
       onToggle={() => setIsExpanded(!isExpanded)}
     >
       {searchable && (
-        <Input
-          type="search"
-          placeholder={searchPlaceholder}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="mb-3 h-9 text-sm"
-        />
+        <div className="relative mb-3">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/50" />
+          <Input
+            type="search"
+            placeholder={searchPlaceholder}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="h-8 text-[13px] pl-8 bg-muted/30 border-transparent focus:border-border focus:bg-background transition-colors"
+          />
+        </div>
       )}
-      <div className={`space-y-2 ${maxHeight} overflow-y-auto`}>
+      <div className="space-y-0.5 max-h-60 overflow-y-auto">
         {filteredItems.map((item) => (
           <label
             key={item.value}
-            className="flex items-center gap-2 cursor-pointer group"
+            className="flex items-center gap-2.5 cursor-pointer group py-1.5 px-2 -mx-2 hover:bg-muted/50 transition-colors"
           >
             <Checkbox
               checked={item.isRefined}
               onCheckedChange={() => refine(item.value)}
             />
-            <span className="text-sm flex-1 group-hover:text-primary transition-colors truncate">
+            <span className="text-[13px] flex-1 group-hover:text-foreground transition-colors truncate text-foreground/80">
               {item.label}
             </span>
-            <span className="text-xs text-muted-foreground">
-              ({item.count})
+            <span className="text-[11px] tabular-nums text-muted-foreground/60 font-medium">
+              {item.count}
             </span>
           </label>
         ))}
+        {filteredItems.length === 0 && (
+          <p className="text-[12px] text-muted-foreground/50 py-2 px-2">
+            No results
+          </p>
+        )}
       </div>
     </FilterSection>
   );
@@ -242,49 +255,55 @@ function HierarchicalMenuItem({ item, refine, level = 0 }: HierarchicalMenuItemP
     <div>
       <button
         onClick={() => refine(item.value)}
-        className={`flex items-center gap-3 w-full transition-all ${
+        className={cn(
+          "flex items-center gap-2.5 w-full transition-all",
           isTopLevel
-            ? `p-3 rounded-lg border ${
+            ? cn(
+                "py-2.5 px-3 border",
                 item.isRefined
-                  ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                  : "bg-background border-border hover:border-primary hover:bg-muted"
-              }`
-            : `py-2 px-3 rounded-md ${
+                  ? "bg-foreground text-background border-foreground"
+                  : "bg-background border-border hover:border-foreground/30 hover:bg-muted/50"
+              )
+            : cn(
+                "py-1.5 px-2.5 text-[13px]",
                 item.isRefined
-                  ? "bg-primary/10 text-primary font-medium"
-                  : "hover:bg-muted"
-              }`
-        }`}
-        style={!isTopLevel ? { marginLeft: `${level * 12}px` } : undefined}
+                  ? "text-foreground font-medium bg-primary/10"
+                  : "text-foreground/70 hover:text-foreground hover:bg-muted/50"
+              )
+        )}
+        style={!isTopLevel ? { marginLeft: `${level * 10}px` } : undefined}
       >
         {IconComponent && (
           <IconComponent
-            className={`h-5 w-5 shrink-0 ${
-              item.isRefined ? "text-primary-foreground" : "text-primary"
-            }`}
+            className={cn(
+              "h-4 w-4 shrink-0",
+              item.isRefined ? "text-background" : "text-foreground/60"
+            )}
           />
         )}
         <span
-          className={`text-sm truncate flex-1 text-left ${
-            isTopLevel ? "font-medium" : ""
-          }`}
+          className={cn(
+            "truncate flex-1 text-left",
+            isTopLevel ? "text-[13px] font-semibold tracking-tight" : ""
+          )}
         >
           {item.label}
         </span>
         <span
-          className={`text-xs font-medium px-2 py-0.5 rounded-full shrink-0 ${
+          className={cn(
+            "text-[11px] tabular-nums font-medium shrink-0",
             isTopLevel
               ? item.isRefined
-                ? "bg-primary-foreground/20 text-primary-foreground"
-                : "bg-muted text-muted-foreground"
-              : "text-muted-foreground"
-          }`}
+                ? "text-background/60"
+                : "text-muted-foreground/50"
+              : "text-muted-foreground/50"
+          )}
         >
           {item.count}
         </span>
       </button>
       {item.data && item.data.length > 0 && (
-        <div className="mt-1 space-y-1">
+        <div className="mt-0.5 space-y-0.5">
           {item.data.map((childItem) => (
             <HierarchicalMenuItem
               key={childItem.value}
@@ -321,7 +340,7 @@ export function HierarchicalCategoryFilter({
       isExpanded={isExpanded}
       onToggle={() => setIsExpanded(!isExpanded)}
     >
-      <div className="space-y-2">
+      <div className="space-y-1">
         {items.map((item) => (
           <HierarchicalMenuItem key={item.value} item={item} refine={refine} />
         ))}
@@ -368,11 +387,11 @@ export function RangeFilter({
     >
       <div className="space-y-3">
         <div className="flex items-center gap-2">
-          <Input type="number" placeholder={`${minPlaceholder} (${range.min ?? 0})`} value={localMin} onChange={(e) => setLocalMin(e.target.value)} className="h-9 text-sm" />
-          <span className="text-muted-foreground">-</span>
-          <Input type="number" placeholder={`${maxPlaceholder} (${range.max ?? 0})`} value={localMax} onChange={(e) => setLocalMax(e.target.value)} className="h-9 text-sm" />
+          <Input type="number" placeholder={`${minPlaceholder} (${range.min ?? 0})`} value={localMin} onChange={(e) => setLocalMin(e.target.value)} className="h-8 text-[13px] bg-muted/30 border-transparent focus:border-border focus:bg-background" />
+          <span className="text-muted-foreground/40 text-xs">—</span>
+          <Input type="number" placeholder={`${maxPlaceholder} (${range.max ?? 0})`} value={localMax} onChange={(e) => setLocalMax(e.target.value)} className="h-8 text-[13px] bg-muted/30 border-transparent focus:border-border focus:bg-background" />
         </div>
-        <Button onClick={handleApply} variant="outline" size="sm" className="w-full">Aplicar</Button>
+        <Button onClick={handleApply} variant="outline" size="sm" className="w-full h-8 text-[13px]">Aplicar</Button>
       </div>
     </FilterSection>
   );
@@ -384,25 +403,42 @@ export function RangeFilter({
 
 export function FilterSection({
   title,
+  icon,
   isExpanded,
   onToggle,
   children,
+  accent,
 }: {
   title: string;
+  icon?: React.ReactNode;
   isExpanded: boolean;
   onToggle: () => void;
   children: React.ReactNode;
+  accent?: boolean;
 }) {
   return (
-    <div className="border-b border-border pb-4">
+    <div className={cn(
+      "pb-5",
+      accent ? "bg-primary/[0.04] -mx-3 px-3 pt-3 border-l-2 border-primary" : "border-b border-border/60"
+    )}>
       <button
         onClick={onToggle}
-        className="flex items-center justify-between w-full py-2 text-left font-medium"
+        className="flex items-center justify-between w-full py-1 text-left group"
       >
-        {title}
-        <ChevronDown className={`w-4 h-4 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
+        <div className="flex items-center gap-2">
+          {icon}
+          <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-foreground/70 group-hover:text-foreground transition-colors">
+            {title}
+          </span>
+        </div>
+        <ChevronDown
+          className={cn(
+            "w-3.5 h-3.5 text-muted-foreground/40 transition-transform duration-200",
+            isExpanded ? "rotate-180" : ""
+          )}
+        />
       </button>
-      {isExpanded && <div className="pt-2">{children}</div>}
+      {isExpanded && <div className="pt-3">{children}</div>}
     </div>
   );
 }
@@ -415,7 +451,7 @@ export function FiltersSidebar() {
   const { t } = useLanguage();
 
   return (
-    <aside className="space-y-4">
+    <aside className="space-y-1">
       <ForYouFilter />
       <HierarchicalCategoryFilter
         attributes={[
@@ -452,22 +488,22 @@ export function ActiveFilters() {
   if (!canRefine) return null;
 
   return (
-    <div className="flex flex-wrap items-center gap-2 mb-6">
+    <div className="flex flex-wrap items-center gap-1.5 mb-6">
       {items.map((item) =>
         item.refinements.map((refinement) => (
           <button
             key={`${item.attribute}-${refinement.label}`}
             onClick={() => refine(refinement)}
-            className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium bg-primary/10 text-primary rounded-full hover:bg-primary/20 transition-all hover:scale-105"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[12px] font-semibold bg-foreground text-background hover:bg-foreground/80 transition-colors"
           >
-            <span>{item.label}: {refinement.label}</span>
-            <X className="w-3.5 h-3.5" />
+            <span>{refinement.label}</span>
+            <X className="w-3 h-3 opacity-60" />
           </button>
         ))
       )}
       <button
         onClick={() => clearAll()}
-        className="text-sm font-medium text-muted-foreground hover:text-foreground underline underline-offset-2 transition-colors"
+        className="text-[12px] font-medium text-muted-foreground hover:text-foreground transition-colors ml-1"
       >
         {useLanguage().t("filters.clearAll")}
       </button>
