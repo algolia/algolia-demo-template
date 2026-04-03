@@ -84,6 +84,7 @@ import { Product } from "@/lib/types/product";
 import { useCart } from "@/components/cart/cart-context";
 import { useUser } from "@/components/user/user-context";
 import { useSelection } from "@/components/selection/selection-context";
+import { useSidepanel } from "@/components/sidepanel-agent-studio/context/sidepanel-context";
 import { Checkbox } from "@/components/ui/checkbox";
 import { PreferenceKey, extractProductFieldValues } from "@/lib/types/user";
 import { PREFERENCE_METADATA } from "@/lib/demo-config/users";
@@ -392,8 +393,12 @@ interface SelectionCheckboxProps {
 
 function SelectionCheckbox({ product, compact = false }: SelectionCheckboxProps) {
   const { isSelected, toggleSelection } = useSelection();
+  const { isSidepanelOpen } = useSidepanel();
   const productId = product.objectID;
   const selected = isSelected(productId);
+
+  // Only show checkbox when the AI agent sidepanel is actually open
+  if (!isSidepanelOpen) return null;
 
   const handleToggle = (e: React.MouseEvent) => {
     e.preventDefault();
