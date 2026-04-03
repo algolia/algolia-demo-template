@@ -1,7 +1,7 @@
 import "dotenv/config";
 import * as fs from "fs";
 import * as path from "path";
-import { AGENT_CONFIG } from "../lib/demo-config/agents";
+import { AGENT_CONFIG, AGENT_PRODUCT_ATTRIBUTES } from "../lib/demo-config/agents";
 import { ALGOLIA_CONFIG } from "../lib/algolia-config";
 
 const ALGOLIA_APP_ID = ALGOLIA_CONFIG.APP_ID;
@@ -198,7 +198,7 @@ async function main() {
       type: "algolia_search_index",
       indices: [
         {
-          index: INDEX_NAME,
+          index: ALGOLIA_CONFIG.INDEX_NAME,
           description: "Government content portal",
           enhancedDescription: AGENT_CONFIG.summary.indexDescription,
           searchParameters: {
