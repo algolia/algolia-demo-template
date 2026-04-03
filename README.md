@@ -6,9 +6,13 @@
 
 ## Screenshots
 
-| Homepage | Search Results |
-|----------|---------------|
-| ![Homepage](data/showcase/homepage.lowres.png) | ![Search Results](data/showcase/search-results.lowres.png) |
+| Homepage | AI Summary (`showSummary` tool) |
+|----------|-------------------------------|
+| ![Homepage](data/showcase/homepage.lowres.png) | ![AI Summary](data/showcase/ai-summary.lowres.png) |
+
+| Search Results |
+|---------------|
+| ![Search Results](data/showcase/search-results.lowres.png) |
 
 ## Use Case
 
