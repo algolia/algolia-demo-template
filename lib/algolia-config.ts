@@ -9,17 +9,17 @@
  */
 export const ALGOLIA_CONFIG = {
   // Core — safe to expose (search-only key, no write access)
-  APP_ID: "3FKQCCIUWO",
-  SEARCH_API_KEY:
-    "cf3b54fbfea633fb12808c8b2f59b990",
+  APP_ID: "CCZC5HO11D",
+  SEARCH_API_KEY: "2e8125c61e9831b9f59819d64d728542",
 
   // Indices
-  INDEX_NAME: "gencat_pages",
+  INDEX_NAME: "arcaplanet_products",
+  QUERY_SUGGESTIONS_INDEX: "arcaplanet_products_query_suggestions",
+  LOCATIONS_INDEX: "arcaplanet_locations",
 
   // Composition
-  COMPOSITION_ID: "gencat_pages_composition",
+  COMPOSITION_ID: "arcaplanet_products_composition",
 
   // Agent Studio configuration
-  AGENT_ID:  "3db1f581-4e8d-4570-a856-dd46204d360a",
-  SUMMARY_AGENT_ID: "00c699a7-59d3-4f13-ba07-73fd6c7f79b2",
+  AGENT_ID: "7214dfd6-b09c-4a1f-a6a5-4213e03c06cc",
 };

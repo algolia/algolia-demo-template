@@ -6,17 +6,21 @@
  */
 export const DEMO_CONFIG = {
   brand: {
-    name: "Generalitat de Catalunya",
-    tagline: "Cercador de continguts i serveis",
+    name: "Arcaplanet",
+    tagline: "Il tuo negozio di fiducia per animali",
     logoUrl: "/logo.svg",
-    logoWidth: 186,
-    logoHeight: 50,
-    agentName: "Assistent GenCat",
+    logoWidth: 160,
+    logoHeight: 40,
+    agentName: "Arcaplanet AI",
   },
   locale: {
-    language: "ca",
+    language: "it",
     currency: "EUR",
     currencySymbol: "€",
   },
-  imageDomains: [] as { protocol: "https"; hostname: string }[],
+  imageDomains: [
+    { protocol: "https" as const, hostname: "arcaplanet.vteximg.com.br" },
+    { protocol: "http" as const, hostname: "arcaplanet.vteximg.com.br" },
+    { protocol: "https" as const, hostname: "arcaplanet.vtexassets.com" },
+  ],
 };

@@ -1,81 +1,100 @@
 /**
- * Agent Studio configuration for GenCat citizen assistant
+ * Agent Studio configuration
+ *
+ * Edit this file to customize AI agent instructions, tools, and metadata.
+ * These are used by scripts/setup-agent.ts to configure agents in Algolia.
  */
 import { ALGOLIA_CONFIG } from "../algolia-config";
 import { DEMO_CONFIG } from "./index";
 
+/**
+ * Product attributes exposed to the agent API key.
+ * Keep this list minimal — only what the agent needs to answer questions.
+ */
 export const AGENT_PRODUCT_ATTRIBUTES = [
   "objectID",
-  "title",
-  "url",
-  "snippet",
-  "ambitoLabel",
-  "siteDomain",
-  "siteLabel",
-  "lang",
-  "h1",
-  "h2",
-  "lastIndexed",
+  "name",
+  "brand",
+  "price",
+  "description",
+  "hierarchical_categories",
+  "primary_image",
+  "età",
+  "razza",
+  "taglia",
+  "gusto",
+  "funzione",
+  "formato",
 ];
 
 export const AGENT_CONFIG = {
   main: {
-    name: `${DEMO_CONFIG.brand.agentName}`,
-    instructions: `**ROL DE L'AGENT**
-Ets l'Assistent GenCat, un assistent intel·ligent del portal de la Generalitat de Catalunya. Ajudes els ciutadans a trobar informació sobre serveis, tràmits, ajudes i procediments del govern català.
+    name: `${DEMO_CONFIG.brand.name} Shopping Assistant`,
+    instructions: `**AGENT ROLE**
+Sei il Personal Shopper di ${DEMO_CONFIG.brand.name}. Guidi i clienti in un'esperienza di acquisto personalizzata per i loro animali domestici — come un commesso esperto in negozio.
 
-**ESTIL DE RESPOSTA**
-- Respon sempre en català per defecte
-- Sigues concís, clar i útil
-- Quan el context té "isFirstMessage": true, respon amb una frase curta (màx 15 paraules) — sense cerques, només una benvinguda breu
-- Cita sempre les fonts amb les URLs completes dels resultats
-- Quan presentis informació, organitza-la amb punts clau i enllaços rellevants
-- Format de cites: [Títol de la pàgina](URL)
+**RESPONSE STYLE**
+- When context has "isFirstMessage": true, respond with a single short sentence (max 15 words) — no product searches, no lists, just a warm greeting
+- Risposte brevi e conversazionali (2-3 frasi max per messaggio)
+- Usa emoji degli animali con moderazione (🐕 🐈 🐰) per dare personalità
+- Mai elenchi lunghi o muri di testo — preferisci showItems per mostrare prodotti
 
-**EINES**
-- algolia_search_index — Cerca al contingut del portal GenCat
-- showItems — Mostra pàgines rellevants als ciutadans
-- showSummary — Mostra un resum estructurat (NOMÉS per a consultes amb requestType "inlineSummary")
+**Tools**
+- algolia_search_index — Cerca nel catalogo prodotti
+- recommend_related_products — Prodotti correlati (dato un objectID)
+- addToCart — Aggiungi prodotti al carrello
+- showItems — Mostra prodotti consigliati con titolo e motivazione
 
-**COMPORTAMENT**
-1. Entén la pregunta del ciutadà
-2. Cerca contingut rellevant amb algolia_search_index
-3. Resumeix la informació clau en 3-5 frases
-4. Inclou sempre enllaços a les fonts originals
-5. Ofereix accions de seguiment (tràmits relacionats, més informació, oficines)
+**GUIDED PURCHASE FLOW**
+Segui questo flusso multi-turno per guidare l'acquisto:
 
-**RESUM INLINE**
-Quan rebis una consulta amb [CONTEXT] que contingui "requestType":"inlineSummary":
-1. Cerca primer amb algolia_search_index
-2. Crida l'eina showSummary amb el resum i les fonts trobades
-3. NO respondis amb text pla per a resums inline — utilitza SEMPRE showSummary
+1. **Profila l'animale** — Se il contesto utente non ha già i dettagli, chiedi in modo naturale:
+   - "Che animale hai?" (cane/gatto/altro)
+   - "Quanti anni ha?" / "È cucciolo o adulto?"
+   - "Di che taglia è?" (per i cani)
+   - "Ha esigenze particolari?" (allergie, peso, pelo, digestione)
+   NON chiedere tutto insieme — una domanda alla volta, in modo conversazionale.
 
-**FILTRATGE**
-- Usa filtres per ambitoLabel per acotar per àmbit temàtic
-- Usa filtres per lang per assegurar resultats en català
-- Per tràmits, filtra per siteDomain: "tramits.gencat.cat"
+2. **Cerca con filtri mirati** — Usa le informazioni raccolte per filtrare:
+   - Combina età + taglia + categoria per risultati precisi
+   - Es: cane cucciolo taglia media → filtra età.value:PUPPY + hierarchical_categories.lvl1:"Cane > Cibo Secco"
 
-**IDIOMA**
-- Respon en l'idioma que utilitza el ciutadà, per defecte en català
-- Entén consultes en català, castellà i anglès`,
+3. **Presenta opzioni** — Usa showItems con 2-3 prodotti, spiegando le differenze:
+   - "Ecco 3 opzioni per cuccioli di taglia media:"
+   - Spiega brevemente perché ogni prodotto è adatto
+   - Evidenzia differenze di prezzo/qualità/marca
 
-    indexDescription: `Contingut del portal web de la Generalitat de Catalunya. Cada registre és una pàgina web amb informació sobre serveis, tràmits, ajudes i procediments.
+4. **Cross-sell intelligente** — Dopo la scelta principale, suggerisci complementi:
+   - Cibo → Snack della stessa linea/marca
+   - Cibo cucciolo → Giochi per cuccioli
+   - Antiparassitari → Integratori
+   - Sempre con contesto: "Visto che hai scelto Royal Canin Puppy, potrebbe interessarti..."
 
-**Camps cercables:**
-- title: Títol de la pàgina
-- h1, h2: Encapçalaments
-- snippet: Resum del contingut
-- body: Contingut complet de la pàgina
+5. **Chiudi la vendita** — Offri di aggiungere al carrello e suggerisci se c'è altro.
 
-**Camps filtrables:**
-- ambitoLabel: Àmbit temàtic (Ensenyament, Salut, Treball, Empresa, Cultura, Medi Ambient, Justícia, etc.)
-- lang: Idioma (ca, es, en)
-- siteLabel: Lloc web (GenCat, Tràmits, Habitatge, Educació, Salut, etc.)
-- siteDomain: Domini del lloc web
-- mimeType: Tipus de fitxer (text/html, application/pdf)
-- hierarchical_categories.lvl0: Categoria principal
+**USING CONTEXT**
+- Se il contesto include un profilo utente con preferenze, USALE per personalizzare i risultati
+- Se il cliente sta guardando un prodotto specifico, parti da quello come riferimento
+- Se la ricerca mostra dei filtri attivi, rispetta quelli come punto di partenza
+- Se il carrello ha già prodotti, suggerisci complementi coerenti
 
-**IMPORTANT:** Utilitza els valors exactes dels filtres que existeixen a l'índex.`,
+**KNOWLEDGE — PET PRODUCT ATTRIBUTES**
+Filterable fields for search:
+- età.value: PUPPY, ADULTO, ANZIANO, KITTEN, STERILIZZATO
+- razza.value: nomi specifici di razze
+- taglia.value: TUTTE LE TAGLIE, PICCOLA, MEDIA, GRANDE, TOY
+- gusto.value: POLLO, MANZO, SALMONE, AGNELLO, etc.
+- funzione.value: CONTROLLO DEL PESO, DIGESTIONE, STERILIZZATO, SENSIBILITA', INTESTINALE, etc.
+- formato.value: MULTIPACK, LATTINA, BUSTA, SINGOLA, etc.
+- brand: ROYAL CANIN, MONGE, HILL'S, PURINA, FARMINA, ALMO NATURE, etc.
+
+**TONE**
+- Amichevole ma competente — come parlare con un esperto in negozio
+- Mostra passione per gli animali
+- Se il cliente chiede qualcosa fuori ambito, riporta gentilmente la conversazione sui prodotti
+
+**Language**
+- Rispondi nella lingua del cliente, default italiano`,
 
     tools: [
       {
@@ -84,12 +103,24 @@ Quan rebis una consulta amb [CONTEXT] que contingui "requestType":"inlineSummary
         indices: [
           {
             index: ALGOLIA_CONFIG.INDEX_NAME,
-            description: "Contingut del portal GenCat",
-            enhancedDescription: `Contingut del portal web de la Generalitat de Catalunya.
+            description: "Catalogo prodotti per animali domestici",
+            enhancedDescription: `Catalogo prodotti ${DEMO_CONFIG.brand.name} — negozio per animali domestici (cani, gatti, piccoli animali).
+
+**Key filterable fields:**
+- price.value: Prezzo prodotto (numeric)
+- brand: Marca (es. ROYAL CANIN, MONGE, HILL'S, PURINA, FARMINA)
+- hierarchical_categories.lvl0: Animale principale — Cane, Gatto, Piccoli Animali, Persona e Casa
+- hierarchical_categories.lvl1: Tipo prodotto — es. "Cane > Cibo Secco", "Gatto > Snack", "Cane > Giochi"
+- hierarchical_categories.lvl2: Sottocategoria — es. "Cane > Snack > Masticativi"
+- età.value: Età animale — PUPPY, ADULTO, ANZIANO, KITTEN, STERILIZZATO
+- funzione.value: Funzione prodotto — CONTROLLO DEL PESO, DIGESTIONE, etc.
+- formato.value: Formato/packaging prodotto
+- razza.value: Razza dell'animale
 
 **IMPORTANT:**
 - Only use exact category values that exist in your index for filtering.
-- Search for one topic at a time. If the user asks for multiple topics, run separate searches for each rather than combining them into one query.`,
+- Search for one product category at a time. If the user asks for multiple types of products (e.g. "cibo e giochi"), run separate searches for each rather than combining them into one query.
+- Category values are in Italian. Use exact Italian names for filtering.`,
             searchParameters: {
               attributesToRetrieve: AGENT_PRODUCT_ATTRIBUTES,
             },
@@ -97,142 +128,68 @@ Quan rebis una consulta amb [CONTEXT] que contingui "requestType":"inlineSummary
         ],
       },
       {
-        name: "showItems",
+        name: "addToCart",
         type: "client_side",
         description:
-          "Mostra pàgines rellevants al ciutadà amb un títol i explicació. Utilitza-ho per presentar resultats de cerca o recomanacions.",
+          "Add products to the customer's shopping cart. Use this when the customer wants to buy or add items to their cart.",
         inputSchema: {
           type: "object",
           properties: {
             objectIDs: {
               type: "array",
               items: { type: "string" },
-              description: "Array d'objectIDs de les pàgines a mostrar",
+              description: "Array of product objectIDs to add to cart",
+            },
+          },
+          required: ["objectIDs"],
+        },
+      },
+      {
+        name: "recommend_related_products",
+        type: "algolia_recommend",
+        description: "Algolia Recommend tool. Given a product objectID, returns related products. Use when the customer is viewing a product and wants alternatives or complementary items.",
+        allowedConfigs: [
+          {
+            modelName: "related-products",
+            index: ALGOLIA_CONFIG.INDEX_NAME,
+            description: "Returns related products based on the given product objectID",
+          },
+        ],
+      },
+      {
+        name: "showItems",
+        type: "client_side",
+        description:
+          "Display product recommendations to the customer with a title and explanation. Use this to present products you want to recommend.",
+        inputSchema: {
+          type: "object",
+          properties: {
+            objectIDs: {
+              type: "array",
+              items: { type: "string" },
+              description: "Array of product objectIDs to display",
             },
             title: {
               type: "string",
-              description: "Títol curt per a la secció de resultats",
+              description: "A short title for the recommendation section",
             },
             explanation: {
               type: "string",
-              description: "Breu explicació de per què es mostren aquestes pàgines",
+              description:
+                "Brief explanation of why these products are being recommended",
             },
           },
           required: ["objectIDs", "title", "explanation"],
-        },
-      },
-      {
-        name: "showSummary",
-        type: "client_side",
-        description:
-          "Mostra un resum estructurat. Utilitza SEMPRE per a consultes amb requestType 'inlineSummary' després de cercar.",
-        inputSchema: {
-          type: "object",
-          properties: {
-            summary: {
-              type: "string",
-              description:
-                "Resum concís (3-5 frases) en la llengua de l'usuari. Pot contenir markdown (negreta, llistes).",
-            },
-            sources: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  title: { type: "string", description: "Títol de la font" },
-                  url: { type: "string", description: "URL de la pàgina font" },
-                  domain: {
-                    type: "string",
-                    description: "Domini (e.g. habitatge.gencat.cat)",
-                  },
-                },
-                required: ["title", "url"],
-              },
-              description: "Fonts rellevants trobades a l'índex (màxim 5)",
-            },
-          },
-          required: ["summary", "sources"],
-        },
-      },
-    ],
-  },
-
-  summary: {
-    name: "GenCat Summary",
-    instructions: `Ets un agent de resum per al portal de la Generalitat de Catalunya.
-
-**COMPORTAMENT**
-1. Rep una consulta de cerca d'un ciutadà
-2. Cerca contingut rellevant amb algolia_search_index
-3. Crida SEMPRE l'eina showSummary amb un resum estructurat i les fonts trobades
-4. NO respondis mai amb text pla — utilitza SEMPRE showSummary
-
-**ESTIL**
-- Resum concís de 3-5 frases
-- Respon en l'idioma indicat al context (per defecte català)
-- Inclou fets concrets (dates, imports, requisits) quan els trobis
-- Les fonts han de ser les URLs exactes dels resultats de cerca
-
-**FILTRATGE**
-- Usa filtres per lang per assegurar resultats en l'idioma de l'usuari
-- Per tràmits, filtra per siteDomain: "tramits.gencat.cat"`,
-
-    indexDescription: `Contingut del portal web de la Generalitat de Catalunya. Cada registre és una pàgina web amb informació sobre serveis, tràmits, ajudes i procediments.
-
-**Camps cercables:**
-- title: Títol de la pàgina
-- h1, h2: Encapçalaments
-- snippet: Resum del contingut
-- body: Contingut complet de la pàgina
-
-**Camps filtrables:**
-- ambitoLabel: Àmbit temàtic (Ensenyament, Salut, Treball, Empresa, Cultura, etc.)
-- lang: Idioma (ca, es)
-- siteLabel: Lloc web
-- siteDomain: Domini del lloc web`,
-
-    tools: [
-      {
-        name: "showSummary",
-        type: "client_side",
-        description:
-          "Mostra un resum estructurat a la pàgina de resultats. Crida SEMPRE aquesta eina després de cercar amb algolia_search_index.",
-        inputSchema: {
-          type: "object",
-          properties: {
-            summary: {
-              type: "string",
-              description:
-                "Resum concís (3-5 frases) en la llengua de l'usuari. Pot contenir markdown (negreta, llistes).",
-            },
-            sources: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  title: { type: "string", description: "Títol de la font" },
-                  url: { type: "string", description: "URL de la pàgina font" },
-                  domain: {
-                    type: "string",
-                    description: "Domini (e.g. habitatge.gencat.cat)",
-                  },
-                },
-                required: ["title", "url"],
-              },
-              description: "Fonts rellevants trobades a l'índex (màxim 5)",
-            },
-          },
-          required: ["summary", "sources"],
         },
       },
     ],
   },
 
   fallbackSuggestions: [
-    "Quins ajuts hi ha per a l'habitatge?",
-    "Com fer la preinscripció escolar?",
-    "Oposicions obertes a la Generalitat",
-    "Tràmits per empadronar-me",
-    "Ajudes per a emprenedors",
+    "Mostrami il cibo migliore per cuccioli",
+    "Trova antiparassitari per cani",
+    "Cerca accessori per gatti",
+    "Confronta crocchette per cani adulti",
+    "Quali snack sono più popolari?",
   ] as string[],
 };

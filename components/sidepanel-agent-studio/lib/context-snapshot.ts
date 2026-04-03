@@ -44,6 +44,7 @@ export type ContextSnapshot = {
     /** @deprecated Use searchState instead */
     urlState?: Record<string, string>;
   };
+  isFirstMessage?: boolean;
   product?: {
     objectID: string;
     name?: string;

@@ -37,11 +37,11 @@ const FACETS: string[][] = [
   ["brand"],
   ["hierarchical_categories.lvl0"],
   ["hierarchical_categories.lvl1"],
-  ["gender"],
-  ["color.filter_group"],
+  ["gusto.value"],
+  ["età.value"],
   ["brand", "hierarchical_categories.lvl0"],
-  ["brand", "gender"],
-  ["gender", "hierarchical_categories.lvl0"],
+  ["brand", "hierarchical_categories.lvl1"],
+  ["hierarchical_categories.lvl0", "gusto.value"],
 ];
 
 const CONFIGURATION = {
@@ -49,11 +49,11 @@ const CONFIGURATION = {
     {
       indexName: ALGOLIA_CONFIG.INDEX_NAME,
       minHits: 5,
-      minLetters: 4,
+      minLetters: 3,
       generate: FACETS,
     },
   ],
-  languages: ["en"],
+  languages: ["it"],
 };
 
 async function main() {

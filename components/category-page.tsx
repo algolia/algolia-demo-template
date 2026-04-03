@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import {
   useInfiniteHits,
   useConfigure,
   useSearchBox,
+  Configure,
 } from "react-instantsearch";
 import { ChevronRight, PanelLeftClose, PanelLeftOpen, SparklesIcon } from "lucide-react";
 import { useLanguage } from "@/components/language/language-context";
@@ -16,6 +17,11 @@ import { ProductToolbar, SearchStats } from "@/components/ProductToolbar";
 import { FiltersSidebar, ActiveFilters } from "@/components/filters-sidebar";
 import { useSidepanel } from "@/components/sidepanel-agent-studio/context/sidepanel-context";
 import { useCollapsibleFilters } from "@/components/hooks/use-collapsible-filters";
+import { classifyHits } from "@/lib/retail-media";
+import { ALGOLIA_CONFIG } from "@/lib/algolia-config";
+import { SponsoredCarousel } from "@/components/retail-media/SponsoredCarousel";
+import { SponsoredBanner } from "@/components/retail-media/SponsoredBanner";
+import { RetailMediaOverlay } from "@/components/retail-media/RetailMediaOverlay";
 
 // ============================================================================
 // Agent Suggestions
@@ -65,6 +71,11 @@ function ProductGrid({ viewMode, compact }: { viewMode: "grid" | "list"; compact
   const { t } = useLanguage();
   const sentinelRef = useRef<HTMLDivElement>(null);
 
+  const classified = useMemo(
+    () => classifyHits(hits, ALGOLIA_CONFIG.COMPOSITION_ID),
+    [hits]
+  );
+
   useEffect(() => {
     if (sentinelRef.current !== null) {
       const observer = new IntersectionObserver((entries) => {
@@ -94,27 +105,64 @@ function ProductGrid({ viewMode, compact }: { viewMode: "grid" | "list"; compact
     );
   }
 
+  const cols = compact ? 3 : 4;
+  const hasBanners = classified.banners.length > 0;
+  const bannerInsertIndex = hasBanners ? cols * 1 : classified.gridHits.length;
+  const beforeBanner = classified.gridHits.slice(0, bannerInsertIndex);
+  const rawAfter = classified.gridHits.slice(bannerInsertIndex);
+  const afterBanner = isLastPage
+    ? rawAfter
+    : rawAfter.slice(0, Math.floor(rawAfter.length / cols) * cols);
+  const gridClasses = `grid grid-cols-2 md:grid-cols-3 ${compact ? "" : "xl:grid-cols-4"} gap-4`;
+
   if (viewMode === "list") {
     return (
       <div className="ais-InfiniteHits">
+        {classified.carousel && (
+          <SponsoredCarousel label={classified.carousel.label} products={classified.carousel.hits as Product[]} />
+        )}
         <div className="ais-InfiniteHits-list space-y-4">
-          {hits.map((hit, index) => (
-            <ProductListItem key={`${hit.objectID}-${index}`} product={hit} />
+          {beforeBanner.map((hit, index) => (
+            <ProductListItem key={`${hit.objectID}-${index}`} product={hit as Product} sponsoredLabel={classified.inlinePlacements.get(hit.objectID!)} />
+          ))}
+          {classified.banners.map((banner, i) => (
+            <SponsoredBanner key={`banner-${i}`} label={banner.label} products={banner.hits as Product[]} />
+          ))}
+          {afterBanner.map((hit, index) => (
+            <ProductListItem key={`${hit.objectID}-after-${index}`} product={hit as Product} sponsoredLabel={classified.inlinePlacements.get(hit.objectID!)} />
           ))}
           <div ref={sentinelRef} className="ais-InfiniteHits-sentinel" aria-hidden="true" />
         </div>
+        <RetailMediaOverlay classified={classified} />
       </div>
     );
   }
 
   return (
     <div className="ais-InfiniteHits">
-      <div className={`ais-InfiniteHits-list grid grid-cols-2 md:grid-cols-3 ${compact ? "" : "xl:grid-cols-4"} gap-4`}>
-        {hits.map((hit, index) => (
-          <ProductCard key={`${hit.objectID}-${index}`} product={hit} />
+      {classified.carousel && (
+        <SponsoredCarousel label={classified.carousel.label} products={classified.carousel.hits as Product[]} />
+      )}
+      <div className={`ais-InfiniteHits-list ${gridClasses}`}>
+        {beforeBanner.map((hit, index) => (
+          <ProductCard key={`${hit.objectID}-${index}`} product={hit as Product} sponsoredLabel={classified.inlinePlacements.get(hit.objectID!)} />
         ))}
-        <div ref={sentinelRef} className="ais-InfiniteHits-sentinel col-span-full" aria-hidden="true" />
       </div>
+      {classified.banners.map((banner, i) => (
+        <SponsoredBanner key={`banner-${i}`} label={banner.label} products={banner.hits as Product[]} />
+      ))}
+      {afterBanner.length > 0 && (
+        <div className={`ais-InfiniteHits-list ${gridClasses}`}>
+          {afterBanner.map((hit, index) => (
+            <ProductCard key={`${hit.objectID}-after-${index}`} product={hit as Product} sponsoredLabel={classified.inlinePlacements.get(hit.objectID!)} />
+          ))}
+          <div ref={sentinelRef} className="ais-InfiniteHits-sentinel col-span-full" aria-hidden="true" />
+        </div>
+      )}
+      {afterBanner.length === 0 && (
+        <div ref={sentinelRef} className="ais-InfiniteHits-sentinel" aria-hidden="true" />
+      )}
+      <RetailMediaOverlay classified={classified} />
     </div>
   );
 }
@@ -147,6 +195,7 @@ function CategoryContent({
   useConfigure({
     filters: getCategoryFilter(),
     query: "",
+    getRankingInfo: true,
   });
 
   return (
