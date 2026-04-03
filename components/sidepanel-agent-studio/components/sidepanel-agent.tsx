@@ -1844,6 +1844,7 @@ export default function SidepanelExperience(config: AgentStudioConfig) {
       const initialMessages = sidepanelContext.initialMessagesRef.current;
       if (initialMessages && setMessages) {
         sidepanelContext.initialMessagesRef.current = null;
+        initialGreetingDoneRef.current = true; // skip greeting since we have context
         setMessages(initialMessages as any);
         // Delay sending follow-up to let messages settle
         setTimeout(() => {
@@ -1876,6 +1877,8 @@ export default function SidepanelExperience(config: AgentStudioConfig) {
     // Trigger when sidepanel is open, chat is empty, and greeting hasn't been done yet
     if (!isOpen || messages.length > 0 || initialGreetingDoneRef.current || initialSuggestionsLoading) return;
     if (!sendMessageRef.current) return;
+    // Skip greeting if we have pending context from the summary (will be injected separately)
+    if (sidepanelContext.initialMessagesRef.current) return;
 
     initialGreetingDoneRef.current = true;
     setInitialSuggestionsLoading(true);
@@ -1884,7 +1887,7 @@ export default function SidepanelExperience(config: AgentStudioConfig) {
     setTimeout(() => {
       sendMessageRef.current?.({ text: "What can you help me with?" });
     }, 100);
-  }, [isOpen, messages.length, initialSuggestionsLoading, greetingTrigger]);
+  }, [isOpen, messages.length, initialSuggestionsLoading, greetingTrigger, sidepanelContext]);
 
   // Clear chat after greeting response finishes (suggestions are captured via onData)
   useEffect(() => {
