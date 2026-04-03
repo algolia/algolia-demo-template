@@ -80,18 +80,26 @@ async function main() {
   console.log(`Connecting to Algolia (App: ${ALGOLIA_APP_ID}, Index: ${INDEX_NAME})...`);
   const client = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_ADMIN_KEY);
 
-  // Populate categoryPageId from hierarchical_categories for category page filtering
+  // Populate categoryPageId and searchable_categories from hierarchical_categories
   for (const record of enriched) {
     const hc = record.hierarchical_categories as
       | Record<string, string>
       | undefined;
     if (hc && typeof hc === "object") {
       const paths: string[] = [];
+      const searchable: Record<string, string> = {};
       for (let lvl = 0; lvl <= 3; lvl++) {
         const val = hc[`lvl${lvl}`];
-        if (typeof val === "string" && val) paths.push(val);
+        if (typeof val === "string" && val) {
+          paths.push(val);
+          // Extract leaf segment: "Helmets > Jet Helmets" -> "Jet Helmets"
+          const parts = val.split(" > ");
+          searchable[`lvl${lvl}`] = parts[parts.length - 1];
+        }
       }
       record.categoryPageId = paths;
+      // Leaf-only category values for searchable attributes (short, precise for tie-breaking)
+      record.searchable_categories = searchable;
     }
   }
 
@@ -120,7 +128,7 @@ async function main() {
       searchableAttributes: [
         // P1: Short, precise text — brand/category/color matches are unambiguous
         "unordered(brand)",
-        "unordered(hierarchical_categories.lvl0), unordered(hierarchical_categories.lvl1), unordered(hierarchical_categories.lvl2)",
+        "unordered(searchable_categories.lvl0), unordered(searchable_categories.lvl1), unordered(searchable_categories.lvl2)",
         "unordered(color.original_name), unordered(gender)",
         // P2: Product name — ordered so matches at the start rank higher
         "name",
@@ -181,6 +189,7 @@ async function main() {
         "image_description",
         "available_sizes",
         "hierarchical_categories",
+        "searchable_categories",
         "list_categories",
         "categoryPageId",
         "variants",

@@ -292,7 +292,7 @@ The base script has sensible defaults, but **review and adapt the order for each
 searchableAttributes: [
   // P1: Short, precise text — brand/category/color matches are unambiguous
   "unordered(brand)",
-  "unordered(hierarchical_categories.lvl0), unordered(hierarchical_categories.lvl1), unordered(hierarchical_categories.lvl2)",
+  "unordered(searchable_categories.lvl0), unordered(searchable_categories.lvl1), unordered(searchable_categories.lvl2)",
   "unordered(color.original_name), unordered(gender)",
   // P2: Product name — ordered so matches at the start rank higher
   "name",

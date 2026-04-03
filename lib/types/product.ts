@@ -33,6 +33,12 @@ export interface Product {
     lvl1: string;
     lvl2: string;
   };
+  // Leaf-only category values for search (e.g., "Jet Helmets" instead of "Helmets > Jet Helmets")
+  searchable_categories: {
+    lvl0: string;
+    lvl1: string;
+    lvl2: string;
+  };
   list_categories: string[];
   categoryPageId: string[];
 
