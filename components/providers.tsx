@@ -10,6 +10,7 @@ import { UserProvider, useUser } from "@/components/user/user-context";
 import { ClickCollectProvider } from "@/components/click-collect/click-collect-context";
 import { compositionClient } from "@algolia/composition";
 import { ALGOLIA_CONFIG } from "@/lib/algolia-config";
+import { LanguageProvider } from "@/components/language/language-context";
 
 const searchClient = compositionClient(
   ALGOLIA_CONFIG.APP_ID,
@@ -61,6 +62,7 @@ function PersonalizedConfigure() {
 
 export function Providers({ children }: { children: ReactNode }) {
   return (
+    <LanguageProvider>
     <CartProvider>
       <UserProvider>
         <ClickCollectProvider>
@@ -85,6 +87,7 @@ export function Providers({ children }: { children: ReactNode }) {
         </ClickCollectProvider>
       </UserProvider>
     </CartProvider>
+    </LanguageProvider>
   );
 }
 

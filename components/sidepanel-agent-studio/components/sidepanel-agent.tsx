@@ -1244,7 +1244,7 @@ const ChatWidget = memo(function ChatWidget({
                                         className="flex items-center gap-2 text-sm"
                                       >
                                         <span className="text-foreground truncate">
-                                          {product.title}
+                                          {product.name}
                                         </span>
                                       </div>
                                     ))}
