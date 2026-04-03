@@ -1423,7 +1423,7 @@ const ChatWidget = memo(function ChatWidget({
             </article>
           );
         })}
-        <div ref={messagesEndRef} />
+        <div ref={messagesEndRef} data-sidepanel-messages-end />
       </div>
     </div>
   );
@@ -1846,8 +1846,11 @@ export default function SidepanelExperience(config: AgentStudioConfig) {
         sidepanelContext.initialMessagesRef.current = null;
         initialGreetingDoneRef.current = true; // skip greeting since we have context
         setMessages(initialMessages as any);
-        // Delay sending follow-up to let messages settle
+        // Delay sending follow-up to let messages settle and scroll to bottom
         setTimeout(() => {
+          // Scroll to the end of injected context before sending follow-up
+          const endEl = document.querySelector("[data-sidepanel-messages-end]");
+          endEl?.scrollIntoView({ behavior: "instant" });
           sendMessageRef.current?.({ text: message });
         }, 300);
       } else {
