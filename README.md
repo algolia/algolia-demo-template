@@ -58,10 +58,66 @@ The data comes from Arcaplanet's VTEX e-commerce platform — 10,124 real produc
 - **Custom tools:** `algolia_search_index`, `recommend_related_products`, `addToCart`, `showItems`
 - **Notable instructions:** Full Italian instructions with a 5-step guided purchase flow (profile → filter → present → cross-sell → close). Knows all pet attribute values for precise filtering. Responds with pet-themed emoji personality.
 
-### Retail Media
-- **9 campaign rules** across 3 placement types (carousel, inline, banner)
-- **Brand sponsors:** Royal Canin (dog category + food searches), Purina Pro Plan (cat category + snacks), Advantix (antiparasitic searches), Vitakraft (small animals), Monge (conquest targeting Royal Canin), Almo Nature (wet cat food)
-- **Homepage sponsorship:** Category cards show brand attribution (e.g., "Sponsorizzato · Royal Canin")
+### Retail Media — How Composition Rules Power Sponsored Placements
+
+Retail media in this demo is powered by **Algolia Composition Rules** — the same rules engine used for merchandising, but repurposed to inject sponsored products into search results at specific positions.
+
+#### How it works
+
+1. **Rules are defined** in `lib/demo-config/retail-media.ts` — each rule specifies a trigger (query or filter match), a source (Algolia filter for the sponsor's products), and a placement type (carousel, inline, or banner).
+
+2. **Rules are deployed** to the Composition via `scripts/setup-composition-rules.ts`, which calls `POST /1/compositions/{compositionID}/rules/batch`. Each rule becomes a composition rule with:
+   - A **condition** — `{ pattern: "cibo cane", anchoring: "contains" }` for query triggers, or `{ filters: 'hierarchical_categories.lvl0:"Cane"' }` for filter triggers
+   - A **consequence** — injects products from a filtered search (e.g., `brand:"ROYAL CANIN" AND hierarchical_categories.lvl0:"Cane"`) at a specific position in the result set
+   - An **injectedItemKey** — encoded as `"{placement}:{label}"` (e.g., `"carousel:Royal Canin"`) which the frontend parses to choose the visualization component
+
+3. **The frontend classifies hits** — `lib/retail-media.ts` reads `_rankingInfo.composed[compositionID].injectedItemKey` from each hit to sort them into buckets: carousel products get extracted to a `<SponsoredCarousel>` above results, banner products go to a `<SponsoredBanner>` between rows, and inline products stay in the grid with a "Sponsorizzato" badge overlay.
+
+4. **Deduplication** — if a sponsored product would also appear organically, composition's `deduplication: { positioning: "highest" }` keeps it at the sponsored position only.
+
+#### Placement types in action
+
+**Carousel** — Brand sponsorship. A horizontal scrollable strip above organic results with the sponsor's logo and "AD" badge. Only one carousel per page.
+
+| Search "cibo cane" — Royal Canin carousel | Search "antiparassitari" — Advantix carousel |
+|-------------------------------------------|----------------------------------------------|
+| ![Carousel: cibo cane](data/showcase/retail-media-carousel.lowres.png) | ![Carousel: antiparassitari](data/showcase/retail-media-antiparassitari.lowres.png) |
+
+**Inline** — Conquest campaign. Sponsored products injected directly into the result grid at position 2, with a small "Sponsorizzato" + brand label. Stays mixed with organic results so the user sees them naturally.
+
+| Search "royal canin" — Monge conquest cards mixed into results |
+|----------------------------------------------------------------|
+| ![Inline: royal canin](data/showcase/retail-media-inline.lowres.png) |
+
+> Monge pays to appear when users search for competitor Royal Canin — a classic conquest campaign (high CPC, high conversion intent).
+
+**Banner** — Cross-category upsell. A full-width amber band injected between result rows, showing complementary products with a contextual CTA. Retailer-driven (not brand-funded) to increase basket size.
+
+| Search "crocchette" — Cross-sell snack banner between results |
+|---------------------------------------------------------------|
+| ![Banner: crocchette](data/showcase/retail-media-banner.lowres.png) |
+
+> When a customer searches for kibble, a banner suggests dog snacks — increasing average order value by promoting complementary categories.
+
+**Homepage sponsorship** — Category cards on the homepage show brand attribution (e.g., "Sponsorizzato · Royal Canin" on the Cane card). This is hardcoded in the homepage component, not a composition rule — it models a homepage takeover package.
+
+#### All 9 campaign rules
+
+| Rule | Placement | Trigger | Sponsor | Products |
+|------|-----------|---------|---------|----------|
+| `royal_canin_dog_food` | Carousel | Query: "cibo cane", "cibo secco cane", "cibo cucciolo" | Royal Canin | Dog products by Royal Canin (4 hits) |
+| `monge_conquest` | Inline | Query: "royal canin" | Monge | All Monge products (2 hits) |
+| `almo_nature_cat_wet_food` | Inline | Filter: `Gatto > Cibo Umido` | Almo Nature | Almo Nature products (2 hits) |
+| `cross_sell_snacks` | Banner | Query: "crocchette", "crocchette cane" | Retailer | Dog snacks (3 hits) |
+| `advantix_antiparassitari` | Carousel | Query: "antiparassitari", "pulci", "zecche" | Advantix | Advantix products (4 hits) |
+| `purina_cat_snacks` | Inline | Query: "snack gatto", "premio gatto" | Purina | Purina cat products (2 hits) |
+| `royal_canin_dog_category` | Carousel | Filter: `Cane` category | Royal Canin | Royal Canin dog products (4 hits) |
+| `purina_cat_category` | Carousel | Filter: `Gatto` category | Purina Pro Plan | Purina Pro Plan cat products (4 hits) |
+| `vitakraft_small_animals` | Inline | Filter: `Piccoli Animali` category | Vitakraft | Vitakraft products (2 hits) |
+
+#### Debug overlay
+
+Append `?retail_media=true` to any URL to show a floating debug overlay (bottom-right) that displays which rules fired, their placement type, and sponsored vs organic product counts. Useful during demo presentations.
 
 ### Click & Collect
 - **Store locator** with address search and interactive map
