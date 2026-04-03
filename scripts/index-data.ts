@@ -1,159 +1,239 @@
 import "dotenv/config";
-import { readFileSync } from "fs";
 import { algoliasearch } from "algoliasearch";
 import { ALGOLIA_CONFIG } from "../lib/algolia-config";
 
-const ALGOLIA_APP_ID = ALGOLIA_CONFIG.APP_ID;
-const ALGOLIA_ADMIN_KEY = process.env.ALGOLIA_ADMIN_API_KEY!;
+// Target app (where the demo runs)
+const TARGET_APP_ID = ALGOLIA_CONFIG.APP_ID;
+const TARGET_ADMIN_KEY = process.env.ALGOLIA_ADMIN_API_KEY!;
 const INDEX_NAME = ALGOLIA_CONFIG.INDEX_NAME;
 const COMPOSITION_ID = ALGOLIA_CONFIG.COMPOSITION_ID || `${INDEX_NAME}_composition`;
 
-/**
- * Transform: reshape raw source data to match the Product interface.
- * Field mappings, restructuring, and synthetic data generation go here.
- * Populated by /demo-data-indexing skill per demo.
- */
-function transformRecords(
-  records: Record<string, unknown>[]
-): Record<string, unknown>[] {
-  // Identity transform — replace with field mappings per demo
-  // Example:
-  //   return records.map((r) => ({
-  //     ...r,
-  //     name: r.title,
-  //     primary_image: r.image,
-  //     price: { value: Number(r.price) },
-  //   }));
-  return records;
+// Source app (where the data lives)
+const SOURCE_APP_ID = "QPQAVM8S9W";
+const SOURCE_API_KEY = "4dd8c689ae3105fa9c7d0ffcd526a61d";
+
+// ============================================================================
+// Ambito label mapping
+// ============================================================================
+
+const AMBITO_LABELS: Record<string, string> = {
+  empresa: "Empresa",
+  exteriors: "Afers Exteriors",
+  salut: "Salut",
+  economia: "Economia",
+  canalsalut: "Canal Salut",
+  presidencia: "Presidència",
+  DTES: "Drets Socials",
+  benestar: "Benestar Social",
+  treballiaferssocials: "Treball i Afers Socials",
+  ensenyament: "Ensenyament",
+  cultura: "Cultura",
+  mediambient: "Medi Ambient",
+  agricultura: "Agricultura",
+  interior: "Interior",
+  treball: "Treball",
+  dixit: "Ocupació (DIXIT)",
+  justicia: "Justícia",
+  llenguacatalana: "Llengua Catalana",
+  administraciojusticia: "Administració de Justícia",
+  eapc: "Administració Pública (EAPC)",
+  icaen: "Energia (ICAEN)",
+  ur: "Urbanisme",
+  educacio: "Educació",
+  finempresa: "Finançament Empresarial",
+  accio: "Acció Exterior",
+  webtreball: "Treball (Web)",
+  joventut: "Joventut",
+  governobert: "Govern Obert",
+  governacio: "Governació",
+  memoria: "Memòria Democràtica",
+  guia_web: "Guia Web",
+  rodalies: "Rodalies",
+  cads: "Desenvolupament Sostenible",
+  igualtat: "Igualtat",
+  cesicat: "Ciberseguretat",
+  ctti: "Tecnologia (CTTI)",
+  dadesculturals: "Dades Culturals",
+  comissiojuridicaassessora: "Comissió Jurídica Assessora",
+  administraciopublica: "Administració Pública",
+  habitatge: "Habitatge",
+};
+
+// Site domain → readable label
+function getSiteLabel(domain: string): string {
+  if (!domain) return "";
+  const parts = domain.replace(".gencat.cat", "").split(".");
+  const key = parts[0];
+  const labels: Record<string, string> = {
+    web: "GenCat",
+    tramits: "Tràmits",
+    habitatge: "Habitatge",
+    educacio: "Educació",
+    salut: "Salut",
+    canalempresa: "Canal Empresa",
+    exteriors: "Afers Exteriors",
+    xtec: "Educació (XTEC)",
+    cultura: "Cultura",
+    mediambient: "Medi Ambient",
+    treball: "Treball",
+    justicia: "Justícia",
+    agricultura: "Agricultura",
+    interior: "Interior",
+    parcsnaturals: "Parcs Naturals",
+    presidencia: "Presidència",
+    dogc: "DOGC",
+    portaljuridic: "Portal Jurídic",
+    preinscripcio: "Preinscripció",
+    administraciopublica: "Administració Pública",
+    igualtat: "Igualtat",
+    xarxaempren: "Xarxa Emprenedoria",
+  };
+  return labels[key] || key.charAt(0).toUpperCase() + key.slice(1);
 }
 
-/**
- * Enrich: add computed or AI-generated fields.
- * Enriched fields use the _enriched namespace, then get promoted
- * to top-level record fields for indexing.
- * Can use OpenAI structured outputs, other APIs, scraping, etc.
- * Populated by /demo-data-indexing skill per demo.
- *
- * @see https://developers.openai.com/api/docs/guides/structured-outputs
- */
-async function enrichRecords(
-  records: Record<string, unknown>[]
-): Promise<Record<string, unknown>[]> {
-  // No-op — replace with enrichment logic per demo
-  // Example with OpenAI structured outputs:
-  //   import OpenAI from "openai";
-  //   import { zodResponseFormat } from "openai/helpers/zod";
-  //   const EnrichedFields = z.object({
-  //     keywords: z.array(z.string()),
-  //     semantic_attributes: z.string(),
-  //   });
-  //   for (const record of records) {
-  //     const result = await openai.beta.chat.completions.parse({ ... });
-  //     record._enriched = result.choices[0].message.parsed;
-  //     Object.assign(record, record._enriched);
-  //   }
-  return records;
-}
+// ============================================================================
+// Transform
+// ============================================================================
 
-async function main() {
-  const feedPath = process.argv[2] || "data/products.json";
-  console.log(`Reading JSON feed from ${feedPath}...`);
-  const raw = readFileSync(feedPath, "utf-8");
-  const records: Record<string, unknown>[] = JSON.parse(raw);
-  console.log(`Loaded ${records.length} products`);
+function transformRecord(record: Record<string, any>): Record<string, any> {
+  const ambito: string[] = Array.isArray(record.ambito) ? record.ambito : [];
+  const primaryAmbito = ambito[0] || "";
+  const ambitoLabel = AMBITO_LABELS[primaryAmbito] || primaryAmbito;
 
-  // Transform raw records to match Product interface
-  console.log("Transforming records...");
-  const transformed = transformRecords(records);
-  console.log(`Transformed ${transformed.length} records`);
+  // Extract site domain from site array
+  const siteArray: string[] = Array.isArray(record.site) ? record.site : [];
+  const siteDomain = siteArray[0] || "";
+  const siteLabel = getSiteLabel(siteDomain);
 
-  // Enrich records with computed/AI-generated fields
-  console.log("Enriching records...");
-  const enriched = await enrichRecords(transformed);
-  console.log(`Enriched ${enriched.length} records`);
+  // Generate snippet from body (first ~200 clean chars)
+  const body: string = record.body || "";
+  const snippet = body
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 250)
+    .replace(/\s\S*$/, ""); // trim to last complete word
 
-  if (!ALGOLIA_APP_ID || !ALGOLIA_ADMIN_KEY) {
-    console.error("Missing ALGOLIA_APP_ID or ALGOLIA_ADMIN_API_KEY");
-    process.exit(1);
-  }
-
-  console.log(`Connecting to Algolia (App: ${ALGOLIA_APP_ID}, Index: ${INDEX_NAME})...`);
-  const client = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_ADMIN_KEY);
-
-  // Populate categoryPageId and searchable_categories from hierarchical_categories
-  for (const record of enriched) {
-    const hc = record.hierarchical_categories as
-      | Record<string, string>
-      | undefined;
-    if (hc && typeof hc === "object") {
-      const paths: string[] = [];
-      const searchable: Record<string, string> = {};
-      for (let lvl = 0; lvl <= 3; lvl++) {
-        const val = hc[`lvl${lvl}`];
-        if (typeof val === "string" && val) {
-          paths.push(val);
-          // Extract leaf segment: "Helmets > Jet Helmets" -> "Jet Helmets"
-          const parts = val.split(" > ");
-          searchable[`lvl${lvl}`] = parts[parts.length - 1];
-        }
+  // Build hierarchical categories from ambito
+  const hierarchical_categories: Record<string, string> = {};
+  if (ambitoLabel) {
+    hierarchical_categories.lvl0 = ambitoLabel;
+    if (ambito.length > 1) {
+      const secondLabel = AMBITO_LABELS[ambito[1]] || ambito[1];
+      if (secondLabel && secondLabel !== ambitoLabel) {
+        hierarchical_categories.lvl1 = `${ambitoLabel} > ${secondLabel}`;
       }
-      record.categoryPageId = paths;
-      // Leaf-only category values for searchable attributes (short, precise for tie-breaking)
-      record.searchable_categories = searchable;
     }
   }
 
-  console.log("Indexing products in batches...");
+  return {
+    objectID: record.objectID,
+    title: record.title || "",
+    url: record.url || "",
+    body,
+    snippet,
+    ambito,
+    ambitoLabel,
+    lang: record.lang || "ca",
+    siteDomain,
+    siteLabel,
+    h1: record.h1 || "",
+    h2: record.h2 || "",
+    mimeType: record.mimeType || "text/html",
+    lastIndexed: record.lastIndexed || 0,
+    hierarchical_categories,
+  };
+}
+
+// ============================================================================
+// Main
+// ============================================================================
+
+async function main() {
+  if (!TARGET_APP_ID || !TARGET_ADMIN_KEY) {
+    console.error("Missing ALGOLIA_ADMIN_API_KEY in .env");
+    process.exit(1);
+  }
+
+  console.log(`Source: ${SOURCE_APP_ID} / pro_GENCAT`);
+  console.log(`Target: ${TARGET_APP_ID} / ${INDEX_NAME}`);
+
+  // Connect to source app
+  const sourceClient = algoliasearch(SOURCE_APP_ID, SOURCE_API_KEY);
+  const targetClient = algoliasearch(TARGET_APP_ID, TARGET_ADMIN_KEY);
+
+  // Browse all records from source index
+  console.log("Browsing source index...");
+  const allRecords: Record<string, any>[] = [];
+
+  await sourceClient.browseObjects({
+    indexName: "pro_GENCAT",
+    browseParams: {
+      attributesToRetrieve: [
+        "title", "url", "body", "ambito", "lang", "site",
+        "h1", "h2", "h3", "mimeType", "lastIndexed", "chunks", "order",
+      ],
+    },
+    aggregator: (response) => {
+      allRecords.push(...response.hits);
+      if (allRecords.length % 10000 < 1000) {
+        console.log(`  Browsed ${allRecords.length} records...`);
+      }
+    },
+  });
+
+  console.log(`Browsed ${allRecords.length} total records from source`);
+
+  // Filter to Catalan + Spanish content
+  const bilingualRecords = allRecords.filter((r) => r.lang === "ca" || r.lang === "es");
+  console.log(`Filtered to ${bilingualRecords.length} Catalan + Spanish records`);
+
+  // Transform records
+  console.log("Transforming records...");
+  const transformed = bilingualRecords.map(transformRecord);
+  console.log(`Transformed ${transformed.length} records`);
+
+  // Clear target index first
+  console.log("Clearing target index...");
+  await targetClient.clearObjects({ indexName: INDEX_NAME });
+
+  // Index in batches
+  console.log("Indexing records in batches...");
   const BATCH_SIZE = 1000;
   let indexed = 0;
 
-  for (let i = 0; i < enriched.length; i += BATCH_SIZE) {
-    const batch = enriched.slice(i, i + BATCH_SIZE);
-    await client.saveObjects({
+  for (let i = 0; i < transformed.length; i += BATCH_SIZE) {
+    const batch = transformed.slice(i, i + BATCH_SIZE);
+    await targetClient.saveObjects({
       indexName: INDEX_NAME,
       objects: batch,
     });
     indexed += batch.length;
-    console.log(`Indexed ${indexed}/${enriched.length} products`);
+    console.log(`  Indexed ${indexed}/${transformed.length}`);
   }
 
+  // Configure index settings
   console.log("Configuring index settings...");
-  await client.setSettings({
+  await targetClient.setSettings({
     indexName: INDEX_NAME,
     indexSettings: {
-      // Searchable attributes — ORDER MATTERS for relevance (tie-breaking).
-      // Higher = breaks ties first. Short, precise attributes go higher; long noisy text goes lower.
-      // Attributes at the same level use comma separation (equal priority).
-      // See: https://www.algolia.com/doc/guides/managing-results/must-do/searchable-attributes/how-to/configuring-searchable-attributes-the-right-way/
       searchableAttributes: [
-        // P1: Short, precise text — brand/category/color matches are unambiguous
-        "unordered(brand)",
-        "unordered(searchable_categories.lvl0), unordered(searchable_categories.lvl1), unordered(searchable_categories.lvl2)",
-        "unordered(color.original_name), unordered(gender)",
-        // P2: Product name — ordered so matches at the start rank higher
-        "name",
-        // P3: Exact lookups
-        "unordered(sku)",
-        // P4: Enriched search terms
-        "unordered(keywords)",
-        // P5: Long text — catches long-tail but noisy, lowest priority
-        "unordered(description)",
-        "unordered(semantic_attributes)",
+        "title",
+        "h1",
+        "h2",
+        "snippet",
+        "body",
+        "ambito",
       ],
       attributesForFaceting: [
-        "searchable(brand)",
-        "searchable(gender)",
-        "searchable(color.filter_group)",
-        "searchable(available_sizes)",
+        "searchable(ambitoLabel)",
+        "searchable(lang)",
+        "searchable(siteDomain)",
+        "searchable(siteLabel)",
+        "mimeType",
         "hierarchical_categories.lvl0",
         "hierarchical_categories.lvl1",
-        "hierarchical_categories.lvl2",
-        "searchable(list_categories)",
-        "searchable(categoryPageId)",
-        "filterOnly(price.value)",
-        "filterOnly(reviews.rating)",
       ],
-      customRanking: ["desc(reviews.bayesian_avg)", "desc(sales_last_24h)"],
+      customRanking: ["desc(lastIndexed)"],
       ranking: [
         "typo",
         "geo",
@@ -164,96 +244,73 @@ async function main() {
         "exact",
         "custom",
       ],
-      ignorePlurals: ["en"],
-      indexLanguages: ["en"],
-      queryLanguages: ["en"],
-      removeStopWords: ["en"],
-      removeWordsIfNoResults: "allOptional",
+      indexLanguages: ["ca", "es"],
+      queryLanguages: ["ca", "es"],
+      removeStopWords: ["ca", "es"],
+      ignorePlurals: ["ca", "es"],
+      removeWordsIfNoResults: "allOptional" as const,
       attributesToRetrieve: [
         "objectID",
-        "name",
-        "slug",
-        "sku",
-        "parentID",
-        "description",
-        "brand",
-        "gender",
-        "isNew",
+        "title",
         "url",
-        "stock",
-        "price",
-        "color",
-        "primary_image",
-        "image_urls",
-        "image_blurred",
-        "image_description",
-        "available_sizes",
+        "snippet",
+        "ambito",
+        "ambitoLabel",
+        "lang",
+        "siteDomain",
+        "siteLabel",
+        "h1",
+        "h2",
+        "mimeType",
+        "lastIndexed",
         "hierarchical_categories",
-        "searchable_categories",
-        "list_categories",
-        "categoryPageId",
-        "variants",
-        "keywords",
-        "semantic_attributes",
-        "reviews",
-        "availableInStores",
-        "margin",
-        "discount_rate",
-        "product_aov",
-        "sales_last_24h",
-        "sales_last_7d",
-        "sales_last_30d",
-        "sales_last_90d",
-        "_synthetic_fields",
       ],
-      attributesToHighlight: ["name", "brand", "description"],
-      attributesToSnippet: ["description:50"],
+      attributesToHighlight: ["title", "h1", "snippet"],
+      attributesToSnippet: ["body:50", "snippet:80"],
     },
   });
 
-  console.log("Done! Indexed", enriched.length, "products to", INDEX_NAME);
+  console.log(`Done! Indexed ${transformed.length} records to ${INDEX_NAME}`);
 
   // Create or update the composition
   console.log(`Creating/updating composition (${COMPOSITION_ID})...`);
-  {
-    const compositionResponse = await fetch(
-      `https://${ALGOLIA_APP_ID}.algolia.net/1/compositions/${COMPOSITION_ID}`,
-      {
-        method: "PUT",
-        headers: {
-          "x-algolia-application-id": ALGOLIA_APP_ID,
-          "x-algolia-api-key": ALGOLIA_ADMIN_KEY,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          objectID: COMPOSITION_ID,
-          name: "Products Composition",
-          behavior: {
-            injection: {
-              main: {
-                source: {
-                  search: {
-                    index: INDEX_NAME,
-                    params: {
-                      hitsPerPage: 20,
-                      facets: ["*"],
-                    },
+  const compositionResponse = await fetch(
+    `https://${TARGET_APP_ID}.algolia.net/1/compositions/${COMPOSITION_ID}`,
+    {
+      method: "PUT",
+      headers: {
+        "x-algolia-application-id": TARGET_APP_ID,
+        "x-algolia-api-key": TARGET_ADMIN_KEY,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        objectID: COMPOSITION_ID,
+        name: "GenCat Content Composition",
+        behavior: {
+          injection: {
+            main: {
+              source: {
+                search: {
+                  index: INDEX_NAME,
+                  params: {
+                    hitsPerPage: 20,
+                    facets: ["*"],
                   },
                 },
               },
             },
           },
-        }),
-      }
-    );
-
-    if (!compositionResponse.ok) {
-      const error = await compositionResponse.text();
-      console.error("Failed to create composition:", error);
-    } else {
-      const result = await compositionResponse.json();
-      console.log("Composition created/updated, taskID:", result.taskID);
+        },
+      }),
     }
+  );
+
+  if (!compositionResponse.ok) {
+    const error = await compositionResponse.text();
+    console.error("Failed to create composition:", error);
+  } else {
+    const result = await compositionResponse.json();
+    console.log("Composition created/updated, taskID:", result.taskID);
   }
 }
 

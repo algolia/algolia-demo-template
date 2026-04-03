@@ -3,8 +3,8 @@ import { lastAssistantMessageIsCompleteWithToolCalls } from 'ai';
 import { useMemo, useRef, useEffect, useCallback, useState } from 'react';
 import { useInstantSearch } from 'react-instantsearch';
 
-import { useCart } from '@/components/cart/cart-context';
 import { useSelection, SelectedProduct } from '@/components/selection/selection-context';
+import { useLanguage } from '@/components/language/language-context';
 import { getObjectsByIds } from '@/lib/getObjectByIDs';
 import { Product } from '@/lib/types/product';
 import { ALGOLIA_CONFIG } from '@/lib/algolia-config';
@@ -16,13 +16,9 @@ export interface AgentStudioConfig {
   applicationId: string;
   apiKey: string;
   agentId: string;
-  /** Display variant: 'floating' shows as modal, 'inline' pushes page content */
   variant?: "floating" | "inline";
-  /** Placeholder text for input */
   placeholder?: string;
-  /** Custom button text */
   buttonText?: string;
-  /** Whether to show the trigger button (default: true) */
   showTrigger?: boolean;
 }
 
@@ -30,18 +26,6 @@ export type Item = {
   imageUrl: string;
   name: string;
   objectID: string;
-};
-
-
-export type CartToolCallInput = {
-  objectIDs: string[];
-};
-
-export type CartToolCallOutput = {
-  status: 'Successfully added to cart';
-  combination: {
-    products: Product[];
-  };
 };
 
 export type ShowItemsToolCallInput = {
@@ -58,25 +42,27 @@ export type ShowItemsToolCallOutput = {
 };
 
 
-
 export function useAgentStudio(config: AgentStudioConfig) {
   if (!config) {
     throw new Error('config is required for useAgentStudio');
   }
 
-  const { addItem } = useCart();
   const { selectedProducts } = useSelection();
   const { indexUiState } = useInstantSearch();
+  const { language } = useLanguage();
 
-  // Use refs to access latest values in the async callback without re-creating transport
   const selectedProductsRef = useRef<SelectedProduct[]>(selectedProducts);
   const indexUiStateRef = useRef(indexUiState);
+  const languageRef = useRef(language);
   useEffect(() => {
     selectedProductsRef.current = selectedProducts;
   }, [selectedProducts]);
   useEffect(() => {
     indexUiStateRef.current = indexUiState;
   }, [indexUiState]);
+  useEffect(() => {
+    languageRef.current = language;
+  }, [language]);
 
   const apiUrl = useMemo(() => buildAgentApiUrl(config), [config.applicationId, config.agentId]);
 
@@ -84,27 +70,27 @@ export function useAgentStudio(config: AgentStudioConfig) {
     return createAgentTransport(apiUrl, config, indexUiStateRef, {
       debugLabel: '[Agent Studio]',
       enrichContext: (ctx) => {
-        // Add selected products to context only when NOT on a product page
+        // Inject UI language so agent responds in the correct language
+        const enriched = { ...ctx, uiLanguage: languageRef.current } as ContextSnapshot & { uiLanguage: string };
+
+        // Add selected pages to context
         if (ctx.page.pageType !== 'product') {
           const currentSelectedProducts = selectedProductsRef.current;
           if (currentSelectedProducts.length > 0) {
             return {
-              ...ctx,
+              ...enriched,
               selectedProducts: currentSelectedProducts.map((p) => ({
                 objectID: p.objectID,
-                name: p.name,
-                brand: p.brand,
-                price: p.price?.toString(),
+                name: p.name || p.title,
               })),
             } as ContextSnapshot;
           }
         }
-        return ctx;
+        return enriched as ContextSnapshot;
       },
     });
   }, [apiUrl, config, indexUiStateRef]);
 
-  // Suggestions from built-in Agent Studio suggestions feature
   const [suggestions, setSuggestions] = useState<string[]>([]);
 
   const chat = useChat({
@@ -121,30 +107,6 @@ export function useAgentStudio(config: AgentStudioConfig) {
     async onToolCall({ toolCall }) {
       if (toolCall.dynamic) return;
 
-      if (toolCall.toolName === 'addToCart') {
-        const input = toolCall.input as CartToolCallInput;
-        const products = await getObjectsByIds(input.objectIDs, ALGOLIA_CONFIG.INDEX_NAME) as Product[];
-
-        // Add each product to the cart
-        for (const product of products) {
-          addItem({
-            id: product.objectID || '',
-            name: product.name || 'Unknown Product',
-            price: product.price?.value || 0,
-            image: product.primary_image,
-            brand: product.brand,
-          });
-        }
-
-        chat.addToolOutput({
-          tool: 'addToCart',
-          toolCallId: toolCall.toolCallId,
-          output: {
-            status: 'Successfully added to cart',
-            products: products,
-          },
-        });
-      }
       if (toolCall.toolName === 'showItems') {
         const input = toolCall.input as ShowItemsToolCallInput;
         const products = await getObjectsByIds(input.objectIDs, ALGOLIA_CONFIG.INDEX_NAME) as Product[];
@@ -167,7 +129,6 @@ export function useAgentStudio(config: AgentStudioConfig) {
   const isGenerating =
     chat.status === 'submitted' || chat.status === 'streaming';
 
-  // Fallback: extract suggestions from last assistant message parts
   const extractedSuggestions = useMemo(() => {
     if (suggestions.length > 0) return suggestions;
     const lastAssistant = [...chat.messages].reverse().find(m => m.role === 'assistant');
@@ -186,7 +147,6 @@ export function useAgentStudio(config: AgentStudioConfig) {
     return [];
   }, [suggestions, chat.messages]);
 
-  // Reset conversation state
   const resetConversation = useCallback(() => {
     chat.setMessages?.([]);
     setSuggestions([]);

@@ -90,13 +90,15 @@ function preferencesToItems(preferences?: {
 }
 
 // Map icon strings to icon components
-const iconMap = {
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   layers: Layers,
   tag: Tag,
   calendar: Calendar,
   target: Target,
   package: Package,
-} as const;
+  globe: Layers,
+  building: Package,
+};
 
 export default function UserPage({ user }: { user: User }) {
   if (!user) return <div>User not found</div>;

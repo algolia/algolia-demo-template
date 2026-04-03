@@ -9,6 +9,7 @@ import {
   useSearchBox,
 } from "react-instantsearch";
 import { ChevronRight, PanelLeftClose, PanelLeftOpen, SparklesIcon } from "lucide-react";
+import { useLanguage } from "@/components/language/language-context";
 import { Product } from "@/lib/types/product";
 import { ProductCard, ProductListItem } from "@/components/ProductCard";
 import { ProductToolbar, SearchStats } from "@/components/ProductToolbar";
@@ -61,6 +62,7 @@ function AgentSuggestions() {
 
 function ProductGrid({ viewMode, compact }: { viewMode: "grid" | "list"; compact?: boolean }) {
   const { hits, showMore, isLastPage } = useInfiniteHits<Product>();
+  const { t } = useLanguage();
   const sentinelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -84,9 +86,9 @@ function ProductGrid({ viewMode, compact }: { viewMode: "grid" | "list"; compact
   if (hits.length === 0) {
     return (
       <div className="text-center py-16">
-        <p className="text-lg text-muted-foreground">No products found</p>
+        <p className="text-lg text-muted-foreground">{t("search.noResults")}</p>
         <p className="text-sm text-muted-foreground mt-2">
-          Try adjusting your filters or search terms
+          {t("search.adjustTerms")}
         </p>
       </div>
     );

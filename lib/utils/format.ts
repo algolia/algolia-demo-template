@@ -1,11 +1,12 @@
-import { DEMO_CONFIG } from "@/lib/demo-config";
-
 /**
- * Format a price value using the configured locale currency.
- *
- * @param price - Numeric price value
- * @returns Formatted price string (e.g., "$29.99", "EUR29.99")
+ * Format a Unix timestamp to a human-readable Catalan date string.
  */
-export function formatPrice(price: number): string {
-  return `${DEMO_CONFIG.locale.currencySymbol}${price.toFixed(2)}`;
+export function formatDate(timestamp: number): string {
+  if (!timestamp) return "";
+  const date = new Date(timestamp * 1000);
+  return date.toLocaleDateString("ca-ES", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 }

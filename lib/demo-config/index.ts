@@ -6,20 +6,17 @@
  */
 export const DEMO_CONFIG = {
   brand: {
-    name: "Acme Store",
-    tagline: "Your trusted online store",
+    name: "Generalitat de Catalunya",
+    tagline: "Cercador de continguts i serveis",
     logoUrl: "/logo.svg",
-    logoWidth: 120,
-    logoHeight: 40,
-    agentName: "Acme AI",
+    logoWidth: 186,
+    logoHeight: 50,
+    agentName: "Assistent GenCat",
   },
   locale: {
-    language: "en",
-    currency: "USD",
-    currencySymbol: "$",
+    language: "ca",
+    currency: "EUR",
+    currencySymbol: "€",
   },
-  imageDomains: [
-    { protocol: "https" as const, hostname: "fxqklbpngldowtbkqezm.supabase.co" },
-    { protocol: "https" as const, hostname: "img.theproteinworks.com" },
-  ],
+  imageDomains: [] as { protocol: "https"; hostname: string }[],
 };

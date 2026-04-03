@@ -1,89 +1,85 @@
 /**
- * Demo user profiles and preference metadata
- *
- * Edit this file to define personas for demonstrating personalization.
- * Each user has preference weights (0-20) for various product attributes.
+ * Demo user profiles — citizen personas for GenCat
  */
 import type { User, PreferenceKey, PreferenceMetadata } from "@/lib/types/user";
 
-// ============================================================================
-// Demo User Profiles
-// ============================================================================
-
-/**
- * Demo users for showcasing personalization features.
- *
- * Each user's preferences map to Algolia facet attributes.
- * Higher scores (0-20) indicate stronger preference.
- *
- * Replace these with profiles relevant to your demo.
- */
 export const users: User[] = [
   {
     id: "1",
-    description: "Returning customer",
-    slug: "returning-customer",
+    description: "Família amb fills en edat escolar",
+    slug: "familia-escolar",
     preferences: {
-      // Add preference weights matching your Algolia facets:
-      // "categories.lvl0": { "Category Name": 20 },
-      // brand: { "Brand Name": 17 },
+      "hierarchical_categories.lvl0": {
+        "Ensenyament": 20,
+        "Educació": 18,
+      },
+      ambitoLabel: {
+        "Ensenyament": 20,
+        "Educació": 18,
+        "Joventut": 12,
+      },
     },
   },
   {
     id: "2",
-    description: "New visitor",
-    slug: "new-visitor",
+    description: "Emprenedor buscant ajudes",
+    slug: "emprenedor",
+    preferences: {
+      "hierarchical_categories.lvl0": {
+        "Empresa": 20,
+        "Economia": 15,
+        "Treball": 12,
+      },
+      ambitoLabel: {
+        "Empresa": 20,
+        "Economia": 15,
+        "Finançament Empresarial": 18,
+      },
+    },
+  },
+  {
+    id: "3",
+    description: "Persona buscant feina",
+    slug: "buscant-feina",
+    preferences: {
+      "hierarchical_categories.lvl0": {
+        "Treball": 20,
+        "Administració Pública (EAPC)": 15,
+      },
+      ambitoLabel: {
+        "Treball": 20,
+        "Ocupació (DIXIT)": 18,
+        "Administració Pública (EAPC)": 15,
+      },
+    },
+  },
+  {
+    id: "4",
+    description: "Visitant nou",
+    slug: "visitant-nou",
     preferences: {},
   },
 ];
 
-// ============================================================================
-// Preference Metadata
-// ============================================================================
-
-/**
- * Maps preference keys to human-readable titles and icons.
- * Used in the "For You" filter section and personalization badges.
- */
 export const PREFERENCE_METADATA: Record<PreferenceKey, PreferenceMetadata> = {
-  "categories.lvl0": {
-    title: "Main Categories",
-    icon: "layers",
-  },
-  "categories.lvl1": {
-    title: "Subcategories",
-    icon: "tag",
-  },
-  "categories.lvl2": {
-    title: "Specific Categories",
-    icon: "tag",
-  },
   "hierarchical_categories.lvl0": {
-    title: "Main Categories (Lvl 0)",
+    title: "Tema principal",
     icon: "layers",
   },
   "hierarchical_categories.lvl1": {
-    title: "Sub Categories (Lvl 1)",
+    title: "Subtema",
     icon: "layers",
   },
-  "hierarchical_categories.lvl2": {
-    title: "Sub Categories (Lvl 2)",
-    icon: "layers",
-  },
-  "hierarchical_categories.lvl3": {
-    title: "Sub Categories (Lvl 3)",
-    icon: "layers",
-  },
-  brand: {
-    title: "Brands",
+  ambitoLabel: {
+    title: "Àmbit",
     icon: "tag",
   },
-  characteristics: {
-    title: "Characteristics",
-    icon: "target",
+  lang: {
+    title: "Idioma",
+    icon: "globe",
   },
-  format: {
-    title: "Format",
-    icon: "package",
+  siteDomain: {
+    title: "Lloc web",
+    icon: "building",
   },
 };

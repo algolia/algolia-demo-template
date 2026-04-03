@@ -3,34 +3,19 @@ export interface User {
   description: string;
   slug: string;
   preferences: {
-    "categories.lvl0"?: {
-      [key: string]: number;
-    };
-    "categories.lvl1"?: {
-      [key: string]: number;
-    };
-    "categories.lvl2"?: {
-      [key: string]: number;
-    };
     "hierarchical_categories.lvl0"?: {
       [key: string]: number;
     };
     "hierarchical_categories.lvl1"?: {
       [key: string]: number;
     };
-    "hierarchical_categories.lvl2"?: {
+    ambitoLabel?: {
       [key: string]: number;
     };
-    "hierarchical_categories.lvl3"?: {
+    lang?: {
       [key: string]: number;
     };
-    brand?: {
-      [key: string]: number;
-    };
-    characteristics?: {
-      [key: string]: number;
-    };
-    format?: {
+    siteDomain?: {
       [key: string]: number;
     };
   };
@@ -40,13 +25,13 @@ export type PreferenceKey = keyof User["preferences"];
 
 export interface PreferenceMetadata {
   title: string;
-  icon: "layers" | "tag" | "calendar" | "target" | "package";
+  icon: "layers" | "tag" | "calendar" | "target" | "package" | "globe" | "building";
 }
 
 /**
  * Generic utility to extract a value from an object using a dot-notation path
  * @param obj The object to extract from
- * @param path The path (e.g., "categories.lvl0" or "brand")
+ * @param path The path (e.g., "hierarchical_categories.lvl0" or "ambitoLabel")
  * @returns Array of values (handles both single values and arrays)
  */
 export function extractProductFieldValues(obj: any, path: string): string[] {

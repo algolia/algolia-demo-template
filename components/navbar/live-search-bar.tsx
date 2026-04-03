@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useSpeechRecognition } from "@/hooks/use-speech-recognition";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/components/language/language-context";
 
 export function LiveSearchBar() {
   const router = useRouter();
@@ -15,6 +16,7 @@ export function LiveSearchBar() {
   const { query, refine } = useSearchBox();
   const [inputValue, setInputValue] = useState(query);
   const inputRef = useRef<HTMLInputElement>(null);
+  const { language, t } = useLanguage();
 
   // Sync input value with InstantSearch query
   useEffect(() => {
@@ -46,11 +48,13 @@ export function LiveSearchBar() {
     inputRef.current?.focus();
   }, [refine]);
 
-  // Handle form submit (for mobile keyboards)
+  // Handle form submit (Enter key)
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
       navigateToHomeIfNeeded();
+      // Dispatch custom event so InlineAISummary can trigger
+      window.dispatchEvent(new CustomEvent("search-submit"));
       inputRef.current?.blur();
     },
     [navigateToHomeIfNeeded]
@@ -75,7 +79,7 @@ export function LiveSearchBar() {
     transcript,
     toggle: toggleVoice,
   } = useSpeechRecognition({
-    lang: "it-IT",
+    lang: language === "ca" ? "ca-ES" : "es-ES",
     onTranscriptEnd: handleVoiceTranscriptEnd,
     silenceTimeout: 1500,
   });
@@ -98,7 +102,7 @@ export function LiveSearchBar() {
           type="text"
           value={inputValue}
           onChange={handleInputChange}
-          placeholder="Search products..."
+          placeholder={t("search.placeholder")}
           className={cn(
             "pl-9 pr-20 h-10 w-full",
             listening && "ring-2 ring-red-500 ring-offset-1"

@@ -12,7 +12,19 @@ import {
  * before sending them back to the API, which would reject unknown part types.
  */
 function filterDataParts(messages: UIMessage[]): UIMessage[] {
-  return messages.map((msg) => {
+  // Deduplicate messages by ID — the AI SDK may accumulate streaming
+  // snapshots as separate entries. Keep only the last occurrence of each ID.
+  const deduped: UIMessage[] = [];
+  const seenIds = new Set<string>();
+  for (let i = messages.length - 1; i >= 0; i--) {
+    const msg = messages[i];
+    const id = msg.id;
+    if (id && seenIds.has(id)) continue;
+    if (id) seenIds.add(id);
+    deduped.unshift(msg);
+  }
+
+  return deduped.map((msg) => {
     if (msg.role !== 'assistant') return msg;
     const filtered = msg.parts.filter(
       (p) =>

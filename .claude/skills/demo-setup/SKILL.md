@@ -90,6 +90,18 @@ Present the plan for user approval before executing anything.
 
 **WAIT for plan approval.**
 
+### Step 4: Create demo branch
+
+Before writing any code, create and switch to a demo branch:
+
+```bash
+git checkout -b demo/<customer-slug>-<vertical>
+```
+
+Example: `demo/gencat-government-portal`, `demo/acme-ecommerce`
+
+This keeps main clean as the template. All customizations happen on the branch.
+
 ## Phase 2: Execute Skills
 
 Run the skills in order, parallelizing where possible. The discovery brief informs every skill.

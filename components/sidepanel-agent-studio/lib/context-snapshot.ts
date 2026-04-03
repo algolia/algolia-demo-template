@@ -51,6 +51,7 @@ export type ContextSnapshot = {
     price?: string;
     description?: string;
   };
+  isFirstMessage?: boolean;
   user?: User;
   selectedProducts?: Array<{
     objectID: string;
@@ -232,10 +233,10 @@ export async function hydrateContext(
     if (product) {
       const productSnapshot: ContextSnapshot['product'] = {
         objectID: product.objectID || objectID,
-        name: product.name,
-        brand: product.brand,
-        price: product.price?.toString(),
-        description: product.description?.slice(0, 200), // Truncate for token efficiency
+        name: product.title,
+        brand: product.siteLabel,
+        price: undefined,
+        description: product.snippet?.slice(0, 200),
       };
 
       // Cache the result

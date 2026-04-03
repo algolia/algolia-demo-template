@@ -14,11 +14,12 @@ export const ALGOLIA_CONFIG = {
     "cf3b54fbfea633fb12808c8b2f59b990",
 
   // Indices
-  INDEX_NAME: "fashion_ns",
+  INDEX_NAME: "gencat_pages",
 
   // Composition
-  COMPOSITION_ID: "fashion_ns_composition",
+  COMPOSITION_ID: "gencat_pages_composition",
 
   // Agent Studio configuration
   AGENT_ID:  "3db1f581-4e8d-4570-a856-dd46204d360a",
+  SUMMARY_AGENT_ID: "00c699a7-59d3-4f13-ba07-73fd6c7f79b2",
 };

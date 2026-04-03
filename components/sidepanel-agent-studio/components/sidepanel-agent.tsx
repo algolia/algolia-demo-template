@@ -1241,15 +1241,8 @@ const ChatWidget = memo(function ChatWidget({
                                         key={product.objectID}
                                         className="flex items-center gap-2 text-sm"
                                       >
-                                        {product.primary_image && (
-                                          <img
-                                            src={product.primary_image}
-                                            alt={product.name}
-                                            className="w-8 h-8 object-cover rounded"
-                                          />
-                                        )}
                                         <span className="text-foreground truncate">
-                                          {product.name}
+                                          {product.title}
                                         </span>
                                       </div>
                                     ))}
@@ -1841,17 +1834,29 @@ export default function SidepanelExperience(config: AgentStudioConfig) {
     return unregister;
   }, [sidepanelContext]);
 
-  // Send pending message when sidepanel opens
+  // Send pending message when sidepanel opens — inject initial context if available
   useEffect(() => {
     if (isOpen && pendingMessageRef.current && sendMessageRef.current) {
       const message = pendingMessageRef.current;
       pendingMessageRef.current = null;
-      // Small delay to ensure sidepanel is fully rendered
-      setTimeout(() => {
-        sendMessageRef.current?.({ text: message });
-      }, 150);
+
+      // If there are initial messages from the summary, inject them first
+      const initialMessages = sidepanelContext.initialMessagesRef.current;
+      if (initialMessages && setMessages) {
+        sidepanelContext.initialMessagesRef.current = null;
+        setMessages(initialMessages as any);
+        // Delay sending follow-up to let messages settle
+        setTimeout(() => {
+          sendMessageRef.current?.({ text: message });
+        }, 300);
+      } else {
+        // Small delay to ensure sidepanel is fully rendered
+        setTimeout(() => {
+          sendMessageRef.current?.({ text: message });
+        }, 150);
+      }
     }
-  }, [isOpen, sendMessage]);
+  }, [isOpen, sendMessage, setMessages, sidepanelContext]);
 
   // Hidden greeting: send a greeting to get contextual suggestions, then clear the exchange
   const initialGreetingDoneRef = useRef(false);
