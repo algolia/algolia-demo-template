@@ -207,7 +207,7 @@ export function ProductCard({ product: page, showBadges = true, selectable = fal
       <div className="bg-muted/50 px-4 py-3 flex items-center gap-3 border-b">
         <MimeIcon className="h-5 w-5 text-muted-foreground shrink-0" />
         <span className="text-xs text-muted-foreground truncate flex-1">
-          {page.siteDomain}
+          {page.siteDomain || page.domain}
         </span>
         {showBadges && <PersonalizationBadge page={page} />}
         <ExternalLink className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
@@ -265,7 +265,7 @@ export function ProductListItem({ product: page, showBadges = true, selectable =
       </a>
 
       <p className="text-sm text-muted-foreground mt-1">
-        {page.siteDomain}
+        {page.siteDomain || page.domain}
       </p>
 
       <p
@@ -348,7 +348,7 @@ export const CompactProductListItem = memo(function CompactProductListItem({
           {page.title}
         </h4>
         <p className="text-xs text-muted-foreground truncate">
-          {page.siteLabel || page.siteDomain}
+          {page.siteLabel || page.siteDomain || page.domain}
         </p>
       </div>
     </a>

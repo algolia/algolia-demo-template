@@ -3,16 +3,24 @@ export interface Page {
   title: string;
   url: string;
   body: string;
-  snippet: string;
+  snippet?: string;
   ambito: string[];
-  ambitoLabel: string;
+  ambitoLabel?: string;
   lang: string;
-  siteDomain: string;
-  siteLabel: string;
+  // gencat_content uses "domain", gencat_pages uses "siteDomain"
+  domain?: string;
+  siteDomain?: string;
+  siteLabel?: string;
+  site?: string[];
   h1: string;
   h2: string;
+  h3?: string;
   mimeType: string;
   lastIndexed: number;
+  chunks?: number;
+  order?: number;
+  langValue?: number;
+  categoryPageId?: string[];
   hierarchical_categories: {
     lvl0: string;
     lvl1?: string;

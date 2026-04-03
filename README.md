@@ -1,6 +1,6 @@
 # Generalitat de Catalunya Demo
 
-> AI-powered citizen search portal for the Government of Catalonia — demonstrating Agent Studio with inline AI summaries, bilingual support (Catalan/Spanish), and semantic government content discovery across 132K web pages.
+> AI-powered citizen search portal for the Government of Catalonia — demonstrating Agent Studio with structured inline AI summaries, NeuralSearch over 152K government web pages, and bilingual Catalan/Spanish support.
 
 **Live:** https://alg-gencat-demo.netlify.app
 
@@ -10,85 +10,67 @@
 |----------|---------------|
 | ![Homepage](data/showcase/homepage.lowres.png) | ![Search Results](data/showcase/search-results.lowres.png) |
 
-| Category Page |
-|---------------|
-| ![Category Page](data/showcase/category-page.lowres.png) |
-
 ## Use Case
 
-- **Customer:** Generalitat de Catalunya (GenCat) — Government of Catalonia
+- **Customer:** Generalitat de Catalunya (Government of Catalonia)
 - **Vertical:** Government / Public Sector
-- **Audience:** Eduardo Capuano (AE) showing to Jonatan Freijomil (Head of Digital Experience) and Ricardo Garcia (Technical Lead)
-- **Competitor:** Google Vertex AI
-- **Key scenarios:** Citizens asking natural language questions about government services, procedures (tràmits), subsidies, education, and employment — and getting AI-generated answers with source citations
+- **Audience:** AE showing to Head of Digital Experience at GenCat — they're evaluating Agent Studio vs Google Vertex AI for citizen-facing search
+- **Key scenarios:** Natural language citizen queries in Catalan ("Necessito ajuda per pagar el lloguer") returning structured AI summaries with source citations, plus traditional search results with NeuralSearch semantic matching
 
 ## What Makes This Demo Different
 
-This is not an e-commerce demo — it's a complete reimagining of the template as a **government content discovery portal**. The entire Product/Cart/Checkout model was stripped out and replaced with a Page/Content/Sources model. Instead of shopping for products, citizens search for government information across 132,706 bilingual web pages (102K Catalan + 30K Spanish) crawled from `*.gencat.cat` subdomains.
+This is a government content portal, not e-commerce. The entire UI has been restyled to match the real web.gencat.cat website — 3-layer navbar with "Ciutadania | La Generalitat" tabs, "Cercador" hero banner, and clean list-style search results with underlined titles and domain labels. The data is 152K crawled web pages (not products), so every component was adapted: cards show titles/snippets/domains instead of prices/images, filters use topic areas (Ensenyament, Salut, Treball) instead of product categories, and the agent answers citizen questions about government services.
 
-The hero feature is an **inline AI summary with sources** — when a citizen presses Enter on a question like "Quins ajuts hi ha per pagar el lloguer?", an Agent Studio-powered answer appears above search results with numbered source citations linking to actual GenCat pages. This directly addresses GenCat's pain point: citizens struggle to find answers spread across dozens of government subdomains. The demo shows how Algolia + Agent Studio can provide a unified, intelligent answer layer on top of their existing content.
+The standout feature is the **structured `showSummary` client-side tool**: the agent searches the index, then calls `showSummary` with typed fields (summary text + source URLs), which renders as a polished "Resum amb IA" card with numbered source citations — matching the real GenCat site's AI summary feature. The tool call streams progressively so the summary appears word-by-word. Follow-up suggestions from the agent SSE stream appear as clickable pills that open the conversational sidepanel with context.
 
-The **bilingual CA/ES toggle** is a live language switcher that instantly filters search results by language, switches all UI strings, and changes the AI agent's response language — demonstrating Algolia's multilingual capabilities for Catalonia's bilingual population.
-
-The demo competes directly against Google Vertex AI, so it emphasizes search intelligence (semantic understanding of Catalan administrative vocabulary), source citation trustworthiness, and the ability to personalize results by citizen persona (parent, job seeker, entrepreneur).
+NeuralSearch is active on the index with tuned attribute weights (title: 1.0, h1: 0.9, snippet: 0.8, h2: 0.5) — this was critical because keyword search returned 0 results for 7 out of 10 of GenCat's test queries, while NeuralSearch recovered all of them.
 
 ## Features Highlighted
 
-- **Inline AI Summary + Sources** — Agent Studio generates a concise answer above search results with numbered citations to GenCat pages. Triggered on Enter press. The key differentiator vs Google Vertex.
-- **Bilingual Support (CA/ES)** — Language toggle filters the 132K bilingual index and switches all UI + agent prompts instantly.
-- **Sidepanel Conversational Agent** — "Assistent GenCat" for follow-up questions, deployed via Agent Studio with Catalan-first instructions.
-- **Government Content Cards** — Replaced product cards with content-focused cards showing title, snippet, topic badge, source site badge, file type (HTML/PDF), and external link to the real GenCat page.
-- **Topic-Based Faceting** — Filters by government domain (Educació, Salut, Treball, Empresa, etc.), source website, and file type instead of price/brand/color.
-- **Citizen Persona Personalization** — Four personas (family with school-age children, entrepreneur, job seeker, new visitor) boost relevant government topics.
+- **Agent Studio `showSummary` tool** — Structured client-side tool with progressive streaming, numbered source citations, and follow-up suggestions
+- **NeuralSearch** — Semantic search over government content in Catalan; recovers queries that keyword search completely misses
+- **Bilingual UI** — Full Catalan/Spanish language switcher affecting all UI text, agent prompts, and search queries
+- **GenCat-matching design** — 3-layer navbar, "Cercador" hero, clean list results matching web.gencat.cat
+- **Personalization** — 4 citizen personas (family, entrepreneur, job seeker, visitor) with topic preference weights
+- **Context handoff** — Summary suggestions pass context to the conversational sidepanel agent via `[CONTEXT]` injection
 
 ## Customizations vs Template
 
 ### Data & Relevance
-- **Record count:** 132,706 pages (102K Catalan + 30K Spanish)
-- **Data source:** Browsed from existing Algolia index `pro_GENCAT` on app `QPQAVM8S9W` (GenCat's production crawler index)
-- **Key facets:** `ambitoLabel` (topic domain), `lang` (language), `siteLabel` (source website), `mimeType` (file type), `hierarchical_categories` (topic hierarchy)
-- **Enrichments:** Snippet generation from body text, ambito code → readable Catalan labels mapping, site domain extraction and labeling
-- **Transform logic:** `scripts/index-data.ts` pulls from a source Algolia app (cross-app browse), maps 40+ ambito codes to human-readable labels, extracts site domains, generates snippets, and builds hierarchical categories from topic arrays
+- **Record count:** 152,475 pages (gencat_content index)
+- **Data source:** Crawled from web.gencat.cat and subdomains (habitatge, educacio, tramits, etc.)
+- **Key facets:** ambito (topic), domain, lang, mimeType, hierarchical_categories
+- **NeuralSearch:** Active with tuned weights — title (1.0), h1 (0.89), snippet (0.8), h2 (0.5)
+- **Languages:** Catalan + Spanish with stop words, plurals, and query language detection
 
 ### Personalization
-- **Família amb fills en edat escolar** — Boosts education, teaching
-- **Emprenedor buscant ajudes** — Boosts business, economy, financing
-- **Persona buscant feina** — Boosts employment, public administration
-- **Visitant nou** — No preferences (baseline)
+- **Familia escolar** — Education-focused parent (Ensenyament weighted high)
+- **Emprenedor** — Entrepreneur seeking grants (Empresa, Economia weighted)
+- **Buscant feina** — Job seeker (Treball, Administració Pública weighted)
+- **Visitant nou** — New visitor with no preferences (baseline)
 
 ### AI Agent
-- **Agent name:** Assistent GenCat
-- **Key capabilities:** Searches government content, cites sources with URLs, responds in Catalan/Spanish based on UI language context
-- **Custom tools:** `showItems` only (cart removed — no purchases in government portal). The `addToCart` tool was removed entirely.
-- **Notable instructions:** Full Catalan instructions with guidance on filtering by `ambitoLabel` and `siteDomain`, always citing sources, and handling the inline summary request type concisely
-
-### Architecture Changes (vs Template)
-- **`Product` type → `Page` type** — Completely replaced the 77-line e-commerce interface with a 30-line content interface (title, url, body, snippet, ambito, siteDomain, siteLabel, lang, mimeType)
-- **Cart/Checkout removed** — CartProvider stripped from providers, checkout page redirects to `/`, cart sheet emptied
-- **Product detail page → redirect** — `/products/[id]` fetches the page's URL from Algolia and redirects to the external GenCat page
-- **New component: `InlineAISummary`** — Calls Agent Studio via a separate `useChat` instance, streams markdown response, parses source URLs, renders two-column summary+sources card
-- **New component: `LanguageSwitcher`** — CA/ES toggle with `LanguageProvider` context that filters search results via `facetFilters: ["lang:ca|es"]`
-- **Translation system** — `lib/demo-config/translations.ts` with ~50 keys, `useLanguage()` hook providing `t()` function
+- **Two agents:** Main conversational agent + dedicated summary agent
+- **showSummary tool** — Client-side tool returning `{summary, sources[]}` for structured rendering
+- **showItems tool** — Displays relevant pages with title and explanation
+- **Instructions:** Catalan-first, searches index before responding, includes source URLs
+- **Suggestions:** SSE `data-suggestions` events captured and displayed as pills
 
 ### Branding
-- **Locale:** Catalan (`ca`) / Spanish (`es`), EUR
-- **Category depth:** 2 levels (topic → subtopic from ambito values)
-- **Visual identity:** GenCat institutional dark red (`rgb(192, 0, 0)` / `oklch(0.45 0.18 25)`), official SVG logo from web.gencat.cat, favicon from site
+- **Locale:** Catalan (ca) / EUR
+- **Category depth:** 2 levels (topic > site)
+- **Visual identity:** Matches web.gencat.cat — red coat of arms logo, 3-layer header, gray hero sections, government portal aesthetic
 
 ## Running This Demo
 
 ```bash
+git checkout demo/government-portal-gencat
 pnpm install
 pnpm dev
 ```
 
-Requires `.env` with `ALGOLIA_ADMIN_API_KEY` (for the target app `3FKQCCIUWO`) to run indexing scripts. Search works with the committed search-only key.
-
-To re-index data from the source GenCat index:
-```bash
-pnpm tsx scripts/index-data.ts
-```
+Requires `.env` with `ALGOLIA_ADMIN_API_KEY` for indexing scripts. Search works with the committed search-only key.
 
 ## Tech Stack
 
-Next.js 16, React 19, Algolia Composition API, Agent Studio, AI SDK v5, Tailwind CSS 4, shadcn/ui.
+Next.js 16, React 19, Algolia Composition API, Agent Studio, NeuralSearch, AI SDK v5, Tailwind CSS 4, shadcn/ui.

@@ -425,7 +425,7 @@ export function FiltersSidebar() {
         title={t("filters.topic")}
       />
       <RefinementListFilter
-        attribute="siteLabel"
+        attribute="domain"
         title={t("filters.website")}
         searchable
         searchPlaceholder={t("filters.searchWebsite")}

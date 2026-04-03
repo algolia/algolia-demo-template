@@ -14,10 +14,10 @@ export const ALGOLIA_CONFIG = {
     "cf3b54fbfea633fb12808c8b2f59b990",
 
   // Indices
-  INDEX_NAME: "gencat_pages",
+  INDEX_NAME: "gencat_content",
 
   // Composition
-  COMPOSITION_ID: "gencat_pages_composition",
+  COMPOSITION_ID: "gencat_content_composition",
 
   // Agent Studio configuration
   AGENT_ID:  "3db1f581-4e8d-4570-a856-dd46204d360a",
