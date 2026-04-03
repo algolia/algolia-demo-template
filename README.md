@@ -24,7 +24,7 @@
 
 ## What Makes This Demo Different
 
-This is not an e-commerce demo — it's a complete reimagining of the template as a **government content discovery portal** that matches the real web.gencat.cat design. The entire Product/Cart/Checkout model was stripped out and replaced with a Page/Content/Sources model. Instead of shopping for products, citizens search for government information across 152,475 bilingual web pages (Catalan + Spanish) crawled from `*.gencat.cat` subdomains.
+This is a **government content discovery portal** built on the demo template, matching the real web.gencat.cat design. The data model uses Pages instead of Products — citizens search for government information across 152,475 bilingual web pages (Catalan + Spanish) crawled from `*.gencat.cat` subdomains. Instead of product cards with prices and cart actions, results are clean content listings with titles, snippets, source domains, and external links to official government pages.
 
 The **3-layer navbar** replicates the real GenCat website exactly: top bar with "Ciutadania | La Generalitat" tabs, main bar with the official logo and "Cerca" button, and navigation links ("Inici", "Serveis i tramits", "Actualitat"). The search page features a "Cercador" hero banner with the search input in the page body — matching the government's existing UX so the demo feels like a natural evolution, not a foreign product.
 
