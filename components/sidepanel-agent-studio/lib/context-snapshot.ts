@@ -52,6 +52,7 @@ export type ContextSnapshot = {
     description?: string;
   };
   user?: User;
+  isFirstMessage?: boolean;
   selectedProducts?: Array<{
     objectID: string;
     name: string;
