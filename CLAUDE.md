@@ -234,3 +234,4 @@ bot/demo/<name>         ← Per-demo branches, created from bot/main.
 - InstantSearch URL routing: `routing={true}` with default config in `providers.tsx`
 - Agent tool calls execute client-side (no API routes needed)
 - `ALGOLIA_ADMIN_API_KEY` is the only secret — everything else is in committed config files
+# test PR
