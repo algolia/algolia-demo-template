@@ -1,49 +1,44 @@
-/**
- * Agent Studio configuration
- *
- * Edit this file to customize AI agent instructions, tools, and metadata.
- * These are used by scripts/setup-agent.ts to configure agents in Algolia.
- */
 import { ALGOLIA_CONFIG } from "../algolia-config";
 import { DEMO_CONFIG } from "./index";
 
-/**
- * Product attributes exposed to the agent API key.
- * Keep this list minimal — only what the agent needs to answer questions.
- */
 export const AGENT_PRODUCT_ATTRIBUTES = [
   "objectID",
-  "title",
+  "name",
   "brand",
   "price",
-  "shortDescription",
-  "ingredients",
-  "characteristics",
-  "inStock",
-  "categories",
+  "description",
+  "hierarchical_categories",
+  "stock",
+  "color",
+  "primary_image",
+  "url",
+  "available_sizes",
+  "gender",
 ];
 
 export const AGENT_CONFIG = {
   main: {
     name: `${DEMO_CONFIG.brand.name} Shopping Assistant`,
     instructions: `**AGENT ROLE**
-You are a Shopping Assistant for ${DEMO_CONFIG.brand.name}. You help customers find products and make purchase decisions.
+You are a Shopping Assistant for ${DEMO_CONFIG.brand.name}, a leading fitness apparel brand. You help customers find gym wear, workout clothing, and performance apparel to support their training goals.
 
 **RESPONSE STYLE**
 - Keep responses concise and helpful
 - When context has "isFirstMessage": true, respond with a single short sentence (max 15 words) — no product searches, no lists, just a brief greeting or acknowledgment
 - Always offer clear next actions (add to cart, learn more, compare, etc.)
+- Use an energetic, motivating tone that fits the Gymshark brand
 
 **Tools**
-- algolia_search_index - Search the product catalog
+- algolia_search_index - Search the Gymshark product catalog
 - addToCart - Add products to the customer's cart
 - showItems - Display product recommendations
 
 **Behavior**
-1. Understand customer needs
-2. Search for relevant products
+1. Understand customer fitness goals and training style
+2. Search for relevant gym wear and performance apparel
 3. Use showItems to present 2-4 options
 4. Offer clear next steps
+5. Consider activity type, fit preference, and gender when recommending
 
 **Language**
 - Respond in the language the customer uses, default to English`,
@@ -56,20 +51,28 @@ You are a Shopping Assistant for ${DEMO_CONFIG.brand.name}. You help customers f
           {
             index: ALGOLIA_CONFIG.INDEX_NAME,
             description: "Product catalog",
-            enhancedDescription: `Product catalog for ${DEMO_CONFIG.brand.name}.
+            enhancedDescription: `Product catalog for ${DEMO_CONFIG.brand.name} — fitness apparel and gym wear for men and women.
 
 **Key filterable fields:**
-- price: Product price (numeric)
-- brand: Brand name
-- hierarchical_categories.lvl0, hierarchical_categories.lvl1, hierarchical_categories.lvl2: Category hierarchy
-- inStock: Boolean, true if available
-
+- price: Product price (numeric, USD)
+- brand: "Gymshark"
+- hierarchical_categories.lvl0: Top-level category ("Men", "Women", "Accessories", "Unisex")
+- hierarchical_categories.lvl1: Sub-category as "Parent > Child" (e.g. "Women > Leggings", "Women > Sports Bras", "Women > Shorts", "Women > T-Shirts & Tops", "Women > Crop Tops", "Women > Sleeveless & Tank Tops", "Women > Pants", "Women > Hoodies & Sweatshirts", "Women > Long Sleeves", "Women > Jackets & Outerwear", "Men > T-Shirts & Tops", "Men > Shorts", "Men > Sleeveless & Tank Tops", "Men > Hoodies & Sweatshirts", "Men > Pants", "Men > Long Sleeves", "Men > Jackets & Outerwear", "Accessories > Bags", "Accessories > Socks", "Accessories > Headwear", "Accessories > Bottles & Shakers")
+- stock.in_stock: Boolean, true if in stock
+- color.filter_group: Color (e.g. "black", "grey", "blue", "green", "white", "pink")
+- available_sizes: Array of size strings (e.g. ["xs", "s", "m", "l", "xl"])
+- gender: "Men" or "Women"
 
 **IMPORTANT:**
-- Only use exact category values that exist in your index for filtering.
-- Search for one product category at a time. If the user asks for multiple types of products (e.g. "jacket and pants"), run separate searches for each rather than combining them into one query.`,
+- Only use exact category values for filtering.
+- Search for one category at a time.
+- Map customer activities to Gymshark product categories (e.g. running → Shorts, T-Shirts & Tops; weightlifting → Pants, Hoodies & Sweatshirts, Sleeveless & Tank Tops).`,
             searchParameters: {
-              attributesToRetrieve: AGENT_PRODUCT_ATTRIBUTES,
+              attributesToRetrieve: [
+                "objectID", "name", "brand", "price", "description",
+                "hierarchical_categories", "stock", "color", "primary_image",
+                "url", "available_sizes", "gender",
+              ],
             },
           },
         ],
@@ -77,8 +80,7 @@ You are a Shopping Assistant for ${DEMO_CONFIG.brand.name}. You help customers f
       {
         name: "addToCart",
         type: "client_side",
-        description:
-          "Add products to the customer's shopping cart. Use this when the customer wants to buy or add items to their cart.",
+        description: "Add products to the customer's shopping cart.",
         inputSchema: {
           type: "object",
           properties: {
@@ -94,8 +96,7 @@ You are a Shopping Assistant for ${DEMO_CONFIG.brand.name}. You help customers f
       {
         name: "showItems",
         type: "client_side",
-        description:
-          "Display product recommendations to the customer with a title and explanation. Use this to present products you want to recommend.",
+        description: "Display product recommendations with a title and explanation.",
         inputSchema: {
           type: "object",
           properties: {
@@ -104,15 +105,8 @@ You are a Shopping Assistant for ${DEMO_CONFIG.brand.name}. You help customers f
               items: { type: "string" },
               description: "Array of product objectIDs to display",
             },
-            title: {
-              type: "string",
-              description: "A short title for the recommendation section",
-            },
-            explanation: {
-              type: "string",
-              description:
-                "Brief explanation of why these products are being recommended",
-            },
+            title: { type: "string", description: "Short title for the recommendation section" },
+            explanation: { type: "string", description: "Brief explanation of why these products are recommended" },
           },
           required: ["objectIDs", "title", "explanation"],
         },
@@ -121,10 +115,10 @@ You are a Shopping Assistant for ${DEMO_CONFIG.brand.name}. You help customers f
   },
 
   fallbackSuggestions: [
-    "Show me today's best deals",
-    "Find popular products",
-    "Browse new arrivals",
-    "Compare top-rated items",
-    "Explore trending categories",
+    "Show me women's leggings",
+    "Find men's training shorts",
+    "Browse new gym wear",
+    "Show me running gear",
+    "Find a sports bra for high impact",
   ] as string[],
 };
