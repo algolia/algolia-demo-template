@@ -13,14 +13,16 @@ import { DEMO_CONFIG } from "./index";
  */
 export const AGENT_PRODUCT_ATTRIBUTES = [
   "objectID",
-  "title",
+  "name",
   "brand",
   "price",
-  "shortDescription",
+  "description",
   "hierarchical_categories",
-  "inStock",
-  "colors",
+  "stock",
+  "color",
+  "primary_image",
   "url",
+  "available_sizes",
 ];
 
 export const AGENT_CONFIG = {
@@ -63,11 +65,13 @@ You are a Shopping Assistant for ${DEMO_CONFIG.brand.name}, a leading fitness ap
 **Key filterable fields:**
 - price: Product price (numeric)
 - brand: Brand name (typically "Gymshark")
-- hierarchical_categories.lvl0: Top-level category (e.g. "Men's", "Women's", "Accessories")
-- hierarchical_categories.lvl1: Sub-category (e.g. "Leggings", "T-Shirts", "Shorts", "Sports Bras", "Training Tops", "Hoodies", "Joggers")
+- hierarchical_categories.lvl0: Top-level category (e.g. "Men", "Women", "Accessories")
+- hierarchical_categories.lvl1: Sub-category as "Parent > Child" (e.g. "Women > Leggings", "Men > Shorts", "Women > Sports Bras", "Men > T-Shirts & Tops", "Men > Hoodies & Sweatshirts", "Men > Tank Tops", "Men > Joggers & Pants", "Women > Joggers & Pants", "Accessories > Training Accessories", "Accessories > Socks", "Accessories > Footwear", "Accessories > Headwear")
 - hierarchical_categories.lvl2: Further sub-category if available
-- inStock: Boolean, true if available
-- colors: Available color options
+- stock.in_stock: Boolean, true if available
+- color.filter_group: Color group (e.g. "black", "grey", "blue", "green", "white")
+- color.original_name: Full color name
+- available_sizes: Array of available size codes (e.g. ["xs", "s", "m", "l", "xl"])
 
 
 **IMPORTANT:**
