@@ -15,24 +15,57 @@ import type { User, PreferenceKey, PreferenceMetadata } from "@/lib/types/user";
  *
  * Each user's preferences map to Algolia facet attributes.
  * Higher scores (0-20) indicate stronger preference.
- *
- * Replace these with profiles relevant to your demo.
  */
 export const users: User[] = [
   {
     id: "1",
-    description: "Returning customer",
-    slug: "returning-customer",
+    description: "Gym Enthusiast",
+    slug: "gym_enthusiast",
     preferences: {
-      // Add preference weights matching your Algolia facets:
-      // "categories.lvl0": { "Category Name": 20 },
-      // brand: { "Brand Name": 17 },
+      "hierarchical_categories.lvl0": {
+        "Women's": 20,
+      },
+      "hierarchical_categories.lvl1": {
+        "Leggings": 20,
+        "Training Tops": 18,
+        "Sports Bras": 15,
+      },
     },
   },
   {
     id: "2",
-    description: "New visitor",
-    slug: "new-visitor",
+    description: "Runner",
+    slug: "runner",
+    preferences: {
+      "hierarchical_categories.lvl0": {
+        "Men's": 20,
+      },
+      "hierarchical_categories.lvl1": {
+        "Running": 20,
+        "Shorts": 18,
+        "T-Shirts": 16,
+      },
+    },
+  },
+  {
+    id: "3",
+    description: "Weightlifter",
+    slug: "weightlifter",
+    preferences: {
+      "hierarchical_categories.lvl0": {
+        "Men's": 20,
+      },
+      "hierarchical_categories.lvl1": {
+        "Training": 20,
+        "Lifting Belts": 18,
+        "Gym Wear": 16,
+      },
+    },
+  },
+  {
+    id: "4",
+    description: "New Visitor",
+    slug: "new_visitor",
     preferences: {},
   },
 ];
