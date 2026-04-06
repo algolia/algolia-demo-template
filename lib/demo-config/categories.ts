@@ -8,7 +8,7 @@
 import {
   ShoppingBag,
   Shirt,
-  Gem,
+  Dumbbell,
 } from "lucide-react";
 
 // ============================================================================
@@ -44,107 +44,79 @@ export const HIERARCHICAL_CATEGORIES: Record<string, RootCategory> = {
   women: {
     name: "Women",
     slug: "women",
-    count: 1303,
+    count: 7,
     icon: ShoppingBag,
     children: {
-      bags: {
-        name: "Bags",
-        slug: "bags",
-        count: 693,
-        children: {
-          "shoulder-bags": { name: "Shoulder bags", slug: "shoulder-bags", count: 217 },
-          handbag: { name: "Handbag", slug: "handbag", count: 209 },
-          wallets: { name: "Wallets", slug: "wallets", count: 175 },
-          shopper: { name: "Shopper", slug: "shopper", count: 56 },
-          clutches: { name: "Clutches", slug: "clutches", count: 31 },
-        },
+      leggings: {
+        name: "Leggings",
+        slug: "leggings",
+        count: 1,
       },
-      clothing: {
-        name: "Clothing",
-        slug: "clothing",
-        count: 459,
-        children: {
-          "t-shirts": { name: "T-shirts", slug: "t-shirts", count: 217 },
-          jackets: { name: "Jackets", slug: "jackets", count: 60 },
-          jeans: { name: "Jeans", slug: "jeans", count: 60 },
-          tops: { name: "Tops", slug: "tops", count: 27 },
-          dresses: { name: "Dresses", slug: "dresses", count: 23 },
-          skirts: { name: "Skirts", slug: "skirts", count: 23 },
-          blazer: { name: "Blazer", slug: "blazer", count: 16 },
-          shirts: { name: "Shirts", slug: "shirts", count: 16 },
-          trouser: { name: "Trouser", slug: "trouser", count: 16 },
-        },
+      "sports-bras": {
+        name: "Sports Bras",
+        slug: "sports-bras",
+        count: 2,
       },
-      shoes: {
-        name: "Shoes",
-        slug: "shoes",
-        count: 151,
-        children: {
-          sneakers: { name: "Sneakers", slug: "sneakers", count: 66 },
-          sandals: { name: "Sandals", slug: "sandals", count: 36 },
-          loafers: { name: "Loafers", slug: "loafers", count: 17 },
-          pumps: { name: "Pumps", slug: "pumps", count: 15 },
-          ballerinas: { name: "Ballerinas", slug: "ballerinas", count: 14 },
-        },
+      shorts: {
+        name: "Shorts",
+        slug: "shorts",
+        count: 2,
+      },
+      "t-shirts": {
+        name: "T-Shirts",
+        slug: "t-shirts",
+        count: 1,
+      },
+      "hoodies-sweatshirts": {
+        name: "Hoodies & Sweatshirts",
+        slug: "hoodies-sweatshirts",
+        count: 1,
       },
     },
   },
   men: {
     name: "Men",
     slug: "men",
-    count: 278,
+    count: 5,
     icon: Shirt,
     children: {
-      clothing: {
-        name: "Clothing",
-        slug: "clothing",
-        count: 196,
-        children: {
-          "t-shirts": { name: "T-shirts", slug: "t-shirts", count: 50 },
-          jackets: { name: "Jackets", slug: "jackets", count: 46 },
-          tops: { name: "Tops", slug: "tops", count: 36 },
-          trousers: { name: "Trousers", slug: "trousers", count: 19 },
-          shirts: { name: "Shirts", slug: "shirts", count: 14 },
-          jeans: { name: "Jeans", slug: "jeans", count: 12 },
-          blazer: { name: "Blazer", slug: "blazer", count: 11 },
-          suits: { name: "Suits", slug: "suits", count: 8 },
-        },
+      shorts: {
+        name: "Shorts",
+        slug: "shorts",
+        count: 1,
       },
-      shoes: {
-        name: "Shoes",
-        slug: "shoes",
-        count: 82,
-        children: {
-          sneakers: { name: "Sneakers", slug: "sneakers", count: 55 },
-          loafers: { name: "Loafers", slug: "loafers", count: 10 },
-          "lace-up-shoes": { name: "Lace-up shoes", slug: "lace-up-shoes", count: 3 },
-        },
+      "t-shirts": {
+        name: "T-Shirts",
+        slug: "t-shirts",
+        count: 1,
+      },
+      joggers: {
+        name: "Joggers",
+        slug: "joggers",
+        count: 1,
+      },
+      "hoodies-sweatshirts": {
+        name: "Hoodies & Sweatshirts",
+        slug: "hoodies-sweatshirts",
+        count: 2,
       },
     },
   },
   accessories: {
     name: "Accessories",
     slug: "accessories",
-    count: 211,
-    icon: Gem,
+    count: 3,
+    icon: Dumbbell,
     children: {
-      women: {
-        name: "Women",
-        slug: "women",
-        count: 140,
-        children: {
-          clothing: { name: "Clothing", slug: "clothing", count: 18 },
-          looks: { name: "Looks", slug: "looks", count: 14 },
-          sunglasses: { name: "Sunglasses", slug: "sunglasses", count: 5 },
-        },
+      bags: {
+        name: "Bags",
+        slug: "bags",
+        count: 1,
       },
-      men: {
-        name: "Men",
-        slug: "men",
-        count: 71,
-        children: {
-          clothing: { name: "Clothing", slug: "clothing", count: 17 },
-        },
+      "gym-equipment": {
+        name: "Gym Equipment",
+        slug: "gym-equipment",
+        count: 2,
       },
     },
   },
@@ -166,5 +138,5 @@ export const CATEGORY_ICONS: Record<
 > = {
   "Women": ShoppingBag,
   "Men": Shirt,
-  "Accessories": Gem,
+  "Accessories": Dumbbell,
 };

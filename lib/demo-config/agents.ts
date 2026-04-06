@@ -17,33 +17,34 @@ export const AGENT_PRODUCT_ATTRIBUTES = [
   "brand",
   "price",
   "shortDescription",
-  "ingredients",
   "characteristics",
   "inStock",
-  "categories",
+  "color",
+  "sizes",
+  "hierarchical_categories",
 ];
 
 export const AGENT_CONFIG = {
   main: {
     name: `${DEMO_CONFIG.brand.name} Shopping Assistant`,
     instructions: `**AGENT ROLE**
-You are a Shopping Assistant for ${DEMO_CONFIG.brand.name}. You help customers find products and make purchase decisions.
+You are a fitness apparel expert and Shopping Assistant for Gymshark. You help customers find the perfect workout gear, from seamless leggings to training hoodies.
 
 **RESPONSE STYLE**
-- Keep responses concise and helpful
-- When context has "isFirstMessage": true, respond with a single short sentence (max 15 words) — no product searches, no lists, just a brief greeting or acknowledgment
-- Always offer clear next actions (add to cart, learn more, compare, etc.)
+- Keep responses concise and energetic — match the Gymshark brand voice
+- When context has "isFirstMessage": true, respond with a single short sentence (max 15 words) — no product searches, no lists, just a brief greeting
+- Always offer clear next actions (add to cart, view details, compare, etc.)
 
 **Tools**
-- algolia_search_index - Search the product catalog
+- algolia_search_index - Search the Gymshark product catalog
 - addToCart - Add products to the customer's cart
 - showItems - Display product recommendations
 
 **Behavior**
-1. Understand customer needs
-2. Search for relevant products
-3. Use showItems to present 2-4 options
-4. Offer clear next steps
+1. Understand the customer's fitness goals and style preferences
+2. Search for relevant products using category filters (e.g., hierarchical_categories.lvl0:"Women")
+3. Use showItems to present 2-4 options with brief explanations
+4. Suggest complete outfits or complementary items when relevant
 
 **Language**
 - Respond in the language the customer uses, default to English`,
@@ -55,19 +56,21 @@ You are a Shopping Assistant for ${DEMO_CONFIG.brand.name}. You help customers f
         indices: [
           {
             index: ALGOLIA_CONFIG.INDEX_NAME,
-            description: "Product catalog",
-            enhancedDescription: `Product catalog for ${DEMO_CONFIG.brand.name}.
+            description: "Gymshark fitness apparel and accessories catalog",
+            enhancedDescription: `Product catalog for Gymshark — performance fitness apparel and accessories.
 
 **Key filterable fields:**
-- price: Product price (numeric)
-- brand: Brand name
-- hierarchical_categories.lvl0, hierarchical_categories.lvl1, hierarchical_categories.lvl2: Category hierarchy
+- price: Product price in GBP (numeric)
+- brand: Always "Gymshark"
+- hierarchical_categories.lvl0: Top-level category ("Women", "Men", "Accessories")
+- hierarchical_categories.lvl1: Sub-category (e.g. "Women > Leggings", "Men > Shorts", "Accessories > Bags")
 - inStock: Boolean, true if available
-
+- color: Product color
+- characteristics: Array of product features (e.g. "Seamless", "Quick-Dry", "High-Waisted")
 
 **IMPORTANT:**
-- Only use exact category values that exist in your index for filtering.
-- Search for one product category at a time. If the user asks for multiple types of products (e.g. "jacket and pants"), run separate searches for each rather than combining them into one query.`,
+- Only use exact category values that exist in the index for filtering.
+- Search for one product category at a time. If the user asks for multiple types of products (e.g. "leggings and sports bra"), run separate searches for each.`,
             searchParameters: {
               attributesToRetrieve: AGENT_PRODUCT_ATTRIBUTES,
             },
@@ -121,10 +124,10 @@ You are a Shopping Assistant for ${DEMO_CONFIG.brand.name}. You help customers f
   },
 
   fallbackSuggestions: [
-    "Show me today's best deals",
-    "Find popular products",
-    "Browse new arrivals",
-    "Compare top-rated items",
-    "Explore trending categories",
+    "Show me women's leggings",
+    "Find men's training shorts",
+    "What seamless sets do you have?",
+    "Browse hoodies and sweatshirts",
+    "Show me gym accessories",
   ] as string[],
 };

@@ -6,20 +6,19 @@
  */
 export const DEMO_CONFIG = {
   brand: {
-    name: "Acme Store",
-    tagline: "Your trusted online store",
-    logoUrl: "/logo.svg",
-    logoWidth: 120,
+    name: "Gymshark",
+    tagline: "Fit for greatness",
+    logoUrl: "/logo.png",
+    logoWidth: 184,
     logoHeight: 40,
-    agentName: "Acme AI",
+    agentName: "Gymshark AI",
   },
   locale: {
     language: "en",
-    currency: "USD",
-    currencySymbol: "$",
+    currency: "GBP",
+    currencySymbol: "£",
   },
   imageDomains: [
-    { protocol: "https" as const, hostname: "fxqklbpngldowtbkqezm.supabase.co" },
-    { protocol: "https" as const, hostname: "img.theproteinworks.com" },
+    { protocol: "https" as const, hostname: "cdn.gymshark.com" },
   ],
 };

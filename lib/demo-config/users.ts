@@ -21,17 +21,27 @@ import type { User, PreferenceKey, PreferenceMetadata } from "@/lib/types/user";
 export const users: User[] = [
   {
     id: "1",
-    description: "Returning customer",
-    slug: "returning-customer",
+    description: "Fitness Enthusiast (Women)",
+    slug: "fitness-enthusiast-women",
     preferences: {
-      // Add preference weights matching your Algolia facets:
-      // "categories.lvl0": { "Category Name": 20 },
-      // brand: { "Brand Name": 17 },
+      "hierarchical_categories.lvl0": { "Women": 20 },
+      "hierarchical_categories.lvl1": { "Women > Leggings": 18, "Women > Sports Bras": 15 },
+      characteristics: { "Seamless": 17, "High-Waisted": 14 },
     },
   },
   {
     id: "2",
-    description: "New visitor",
+    description: "Gym Bro (Men)",
+    slug: "gym-bro-men",
+    preferences: {
+      "hierarchical_categories.lvl0": { "Men": 20 },
+      "hierarchical_categories.lvl1": { "Men > T-Shirts": 18, "Men > Shorts": 16 },
+      characteristics: { "Quick-Dry": 15, "Lightweight": 14 },
+    },
+  },
+  {
+    id: "3",
+    description: "New Visitor",
     slug: "new-visitor",
     preferences: {},
   },

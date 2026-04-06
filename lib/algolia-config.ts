@@ -14,11 +14,11 @@ export const ALGOLIA_CONFIG = {
     "cf3b54fbfea633fb12808c8b2f59b990",
 
   // Indices
-  INDEX_NAME: "fashion_ns",
+  INDEX_NAME: "gymshark_1_ecommerce",
 
   // Composition
-  COMPOSITION_ID: "fashion_ns_composition",
+  COMPOSITION_ID: "gymshark_1_ecommerce_composition",
 
   // Agent Studio configuration
-  AGENT_ID:  "3db1f581-4e8d-4570-a856-dd46204d360a",
+  AGENT_ID: "34a8ae9d-8ba8-459f-9881-34eedf79ad9e",
 };
