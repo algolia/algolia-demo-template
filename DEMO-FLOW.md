@@ -76,7 +76,7 @@ claude -p "<task prompt>" --allowedTools "Bash,Read,Write,Edit"
 **The task prompt must include:**
 - Customer name, website, slug
 - Algolia App ID + search-only key (from `lib/algolia-config.ts` defaults or custom)
-- Instruction to read and follow `/workspace/skills/algolia-demo-setup/SKILL.md`
+- Instruction to follow the repo's `CLAUDE.md` Demo Setup Flow (auto-discovered by Claude Code)
 - All file paths relative to the cloned repo (not the workspace root)
 - The deploy command using `172.17.0.1:3150` (Docker bridge, accessible from the exec context)
 
