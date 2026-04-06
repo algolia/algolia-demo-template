@@ -23,12 +23,13 @@ export const users: User[] = [
     slug: "gym_enthusiast",
     preferences: {
       "hierarchical_categories.lvl0": {
-        "Women's": 20,
+        "Women": 20,
       },
       "hierarchical_categories.lvl1": {
-        "Leggings": 20,
-        "Training Tops": 18,
-        "Sports Bras": 15,
+        "Women > Leggings": 20,
+        "Women > Sports Bras": 18,
+        "Women > T-Shirts & Tops": 15,
+        "Women > Tank Tops": 12,
       },
     },
   },
@@ -38,12 +39,12 @@ export const users: User[] = [
     slug: "runner",
     preferences: {
       "hierarchical_categories.lvl0": {
-        "Men's": 20,
+        "Men": 20,
       },
       "hierarchical_categories.lvl1": {
-        "Running": 20,
-        "Shorts": 18,
-        "T-Shirts": 16,
+        "Men > Shorts": 20,
+        "Men > T-Shirts & Tops": 18,
+        "Men > Tank Tops": 16,
       },
     },
   },
@@ -53,12 +54,13 @@ export const users: User[] = [
     slug: "weightlifter",
     preferences: {
       "hierarchical_categories.lvl0": {
-        "Men's": 20,
+        "Men": 20,
       },
       "hierarchical_categories.lvl1": {
-        "Training": 20,
-        "Lifting Belts": 18,
-        "Gym Wear": 16,
+        "Men > Hoodies & Sweatshirts": 20,
+        "Men > Joggers & Pants": 18,
+        "Men > T-Shirts & Tops": 16,
+        "Accessories > Training Accessories": 14,
       },
     },
   },
