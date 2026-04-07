@@ -1,89 +1,62 @@
-/**
- * Demo user profiles and preference metadata
- *
- * Edit this file to define personas for demonstrating personalization.
- * Each user has preference weights (0-20) for various product attributes.
- */
 import type { User, PreferenceKey, PreferenceMetadata } from "@/lib/types/user";
 
-// ============================================================================
-// Demo User Profiles
-// ============================================================================
-
-/**
- * Demo users for showcasing personalization features.
- *
- * Each user's preferences map to Algolia facet attributes.
- * Higher scores (0-20) indicate stronger preference.
- *
- * Replace these with profiles relevant to your demo.
- */
 export const users: User[] = [
   {
     id: "1",
-    description: "Returning customer",
-    slug: "returning-customer",
+    description: "Sala de Estar",
+    slug: "sala_de_estar",
     preferences: {
-      // Add preference weights matching your Algolia facets:
-      // "categories.lvl0": { "Category Name": 20 },
-      // brand: { "Brand Name": 17 },
+      "hierarchical_categories.lvl0": { "Sofás": 20, "Salas": 18 },
+      "hierarchical_categories.lvl1": {
+        "Sofás > Sofás com Chaise Longue": 20,
+        "Salas > Mesas de Jantar": 16,
+        "Salas > Aparadores": 14,
+      },
     },
   },
   {
     id: "2",
-    description: "New visitor",
-    slug: "new-visitor",
+    description: "Quarto",
+    slug: "quarto",
+    preferences: {
+      "hierarchical_categories.lvl0": { "Quartos": 20, "Colchões": 15 },
+      "hierarchical_categories.lvl1": {
+        "Quartos > Camas de Casal": 20,
+        "Quartos > Mesas de Cabeceira": 16,
+        "Quartos > Coleções de Quartos": 14,
+      },
+    },
+  },
+  {
+    id: "3",
+    description: "Decoração",
+    slug: "decoracao",
+    preferences: {
+      "hierarchical_categories.lvl0": { "Decoração": 20, "Cadeiras": 15 },
+      "hierarchical_categories.lvl1": {
+        "Decoração > Tapetes": 20,
+        "Decoração > Candeeiros de Mesa": 18,
+        "Decoração > Candeeiros de Teto": 16,
+      },
+    },
+  },
+  {
+    id: "4",
+    description: "Visitante",
+    slug: "visitante",
     preferences: {},
   },
 ];
 
-// ============================================================================
-// Preference Metadata
-// ============================================================================
-
-/**
- * Maps preference keys to human-readable titles and icons.
- * Used in the "For You" filter section and personalization badges.
- */
 export const PREFERENCE_METADATA: Record<PreferenceKey, PreferenceMetadata> = {
-  "categories.lvl0": {
-    title: "Main Categories",
-    icon: "layers",
-  },
-  "categories.lvl1": {
-    title: "Subcategories",
-    icon: "tag",
-  },
-  "categories.lvl2": {
-    title: "Specific Categories",
-    icon: "tag",
-  },
-  "hierarchical_categories.lvl0": {
-    title: "Main Categories (Lvl 0)",
-    icon: "layers",
-  },
-  "hierarchical_categories.lvl1": {
-    title: "Sub Categories (Lvl 1)",
-    icon: "layers",
-  },
-  "hierarchical_categories.lvl2": {
-    title: "Sub Categories (Lvl 2)",
-    icon: "layers",
-  },
-  "hierarchical_categories.lvl3": {
-    title: "Sub Categories (Lvl 3)",
-    icon: "layers",
-  },
-  brand: {
-    title: "Brands",
-    icon: "tag",
-  },
-  characteristics: {
-    title: "Characteristics",
-    icon: "target",
-  },
-  format: {
-    title: "Format",
-    icon: "package",
-  },
+  "categories.lvl0": { title: "Categorias Principais", icon: "layers" },
+  "categories.lvl1": { title: "Subcategorias", icon: "tag" },
+  "categories.lvl2": { title: "Categorias Específicas", icon: "tag" },
+  "hierarchical_categories.lvl0": { title: "Categorias Principais", icon: "layers" },
+  "hierarchical_categories.lvl1": { title: "Subcategorias", icon: "layers" },
+  "hierarchical_categories.lvl2": { title: "Subcategorias", icon: "layers" },
+  "hierarchical_categories.lvl3": { title: "Subcategorias", icon: "layers" },
+  brand: { title: "Marcas", icon: "tag" },
+  characteristics: { title: "Características", icon: "target" },
+  format: { title: "Formato", icon: "package" },
 };

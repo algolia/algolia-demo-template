@@ -1,19 +1,11 @@
-/**
- * Category tree and icon mapping
- *
- * Edit this file to define the store's category hierarchy.
- * Categories are displayed in the navigation sidebar (CategoriesSheet)
- * and used for icon mapping in the filters sidebar.
- */
 import {
-  ShoppingBag,
-  Shirt,
-  Gem,
+  Sofa,
+  Bed,
+  UtensilsCrossed,
+  Package,
+  Armchair,
+  Lamp,
 } from "lucide-react";
-
-// ============================================================================
-// Types
-// ============================================================================
 
 export type CategoryNode = {
   name: string;
@@ -26,145 +18,91 @@ export type RootCategory = CategoryNode & {
   icon: React.ComponentType<{ className?: string }>;
 };
 
-// ============================================================================
-// Category Tree
-// ============================================================================
-
-/**
- * Hierarchical category tree for the navigation sidebar.
- *
- * Each root category requires:
- * - name: Display name
- * - slug: URL-safe identifier
- * - icon: Lucide icon component
- * - count: (optional) Number of products
- * - children: (optional) Nested subcategories
- */
 export const HIERARCHICAL_CATEGORIES: Record<string, RootCategory> = {
-  women: {
-    name: "Women",
-    slug: "women",
-    count: 1303,
-    icon: ShoppingBag,
+  sofas: {
+    name: "Sofás",
+    slug: "sofas",
+    count: 134,
+    icon: Sofa,
     children: {
-      bags: {
-        name: "Bags",
-        slug: "bags",
-        count: 693,
-        children: {
-          "shoulder-bags": { name: "Shoulder bags", slug: "shoulder-bags", count: 217 },
-          handbag: { name: "Handbag", slug: "handbag", count: 209 },
-          wallets: { name: "Wallets", slug: "wallets", count: 175 },
-          shopper: { name: "Shopper", slug: "shopper", count: 56 },
-          clutches: { name: "Clutches", slug: "clutches", count: 31 },
-        },
-      },
-      clothing: {
-        name: "Clothing",
-        slug: "clothing",
-        count: 459,
-        children: {
-          "t-shirts": { name: "T-shirts", slug: "t-shirts", count: 217 },
-          jackets: { name: "Jackets", slug: "jackets", count: 60 },
-          jeans: { name: "Jeans", slug: "jeans", count: 60 },
-          tops: { name: "Tops", slug: "tops", count: 27 },
-          dresses: { name: "Dresses", slug: "dresses", count: 23 },
-          skirts: { name: "Skirts", slug: "skirts", count: 23 },
-          blazer: { name: "Blazer", slug: "blazer", count: 16 },
-          shirts: { name: "Shirts", slug: "shirts", count: 16 },
-          trouser: { name: "Trouser", slug: "trouser", count: 16 },
-        },
-      },
-      shoes: {
-        name: "Shoes",
-        slug: "shoes",
-        count: 151,
-        children: {
-          sneakers: { name: "Sneakers", slug: "sneakers", count: 66 },
-          sandals: { name: "Sandals", slug: "sandals", count: 36 },
-          loafers: { name: "Loafers", slug: "loafers", count: 17 },
-          pumps: { name: "Pumps", slug: "pumps", count: 15 },
-          ballerinas: { name: "Ballerinas", slug: "ballerinas", count: 14 },
-        },
-      },
+      "sofas-com-chaise-longue": { name: "Sofás com Chaise Longue", slug: "sofas-com-chaise-longue", count: 40 },
+      "sofas-de-3-lugares": { name: "Sofás de 3 lugares", slug: "sofas-de-3-lugares", count: 26 },
+      "sofas-cama": { name: "Sofás Cama", slug: "sofas-cama", count: 20 },
+      "sofas-de-canto": { name: "Sofás de Canto", slug: "sofas-de-canto", count: 15 },
+      "sofas-de-2-lugares": { name: "Sofás de 2 lugares", slug: "sofas-de-2-lugares", count: 12 },
     },
   },
-  men: {
-    name: "Men",
-    slug: "men",
-    count: 278,
-    icon: Shirt,
+  salas: {
+    name: "Salas",
+    slug: "salas",
+    count: 414,
+    icon: UtensilsCrossed,
     children: {
-      clothing: {
-        name: "Clothing",
-        slug: "clothing",
-        count: 196,
-        children: {
-          "t-shirts": { name: "T-shirts", slug: "t-shirts", count: 50 },
-          jackets: { name: "Jackets", slug: "jackets", count: 46 },
-          tops: { name: "Tops", slug: "tops", count: 36 },
-          trousers: { name: "Trousers", slug: "trousers", count: 19 },
-          shirts: { name: "Shirts", slug: "shirts", count: 14 },
-          jeans: { name: "Jeans", slug: "jeans", count: 12 },
-          blazer: { name: "Blazer", slug: "blazer", count: 11 },
-          suits: { name: "Suits", slug: "suits", count: 8 },
-        },
-      },
-      shoes: {
-        name: "Shoes",
-        slug: "shoes",
-        count: 82,
-        children: {
-          sneakers: { name: "Sneakers", slug: "sneakers", count: 55 },
-          loafers: { name: "Loafers", slug: "loafers", count: 10 },
-          "lace-up-shoes": { name: "Lace-up shoes", slug: "lace-up-shoes", count: 3 },
-        },
-      },
+      "colecoes-de-salas": { name: "Coleções de Salas", slug: "colecoes-de-salas", count: 97 },
+      "mesas-de-jantar": { name: "Mesas de Jantar", slug: "mesas-de-jantar", count: 69 },
+      "aparadores": { name: "Aparadores", slug: "aparadores", count: 67 },
+      "mesas-de-centro": { name: "Mesas de Centro", slug: "mesas-de-centro", count: 59 },
+      "moveis-de-tv": { name: "Móveis de TV", slug: "moveis-de-tv", count: 36 },
+      "estantes": { name: "Estantes", slug: "estantes", count: 35 },
     },
   },
-  accessories: {
-    name: "Accessories",
-    slug: "accessories",
-    count: 211,
-    icon: Gem,
+  quartos: {
+    name: "Quartos",
+    slug: "quartos",
+    count: 294,
+    icon: Bed,
     children: {
-      women: {
-        name: "Women",
-        slug: "women",
-        count: 140,
-        children: {
-          clothing: { name: "Clothing", slug: "clothing", count: 18 },
-          looks: { name: "Looks", slug: "looks", count: 14 },
-          sunglasses: { name: "Sunglasses", slug: "sunglasses", count: 5 },
-        },
-      },
-      men: {
-        name: "Men",
-        slug: "men",
-        count: 71,
-        children: {
-          clothing: { name: "Clothing", slug: "clothing", count: 17 },
-        },
-      },
+      "camas-de-casal": { name: "Camas de Casal", slug: "camas-de-casal", count: 48 },
+      "mesas-de-cabeceira": { name: "Mesas de Cabeceira", slug: "mesas-de-cabeceira", count: 43 },
+      "colecoes-de-quartos": { name: "Coleções de Quartos", slug: "colecoes-de-quartos", count: 33 },
+      "packs-camas-de-casal": { name: "Packs Camas de Casal", slug: "packs-camas-de-casal", count: 63 },
+    },
+  },
+  cadeiras: {
+    name: "Cadeiras",
+    slug: "cadeiras",
+    count: 235,
+    icon: Armchair,
+    children: {
+      "cadeiras": { name: "Cadeiras", slug: "cadeiras", count: 74 },
+      "packs-de-cadeiras": { name: "Packs de Cadeiras", slug: "packs-de-cadeiras", count: 68 },
+      "cadeiroes-e-poltronas": { name: "Cadeirões e Poltronas", slug: "cadeiroes-e-poltronas", count: 42 },
+    },
+  },
+  arrumacao: {
+    name: "Arrumação",
+    slug: "arrumacao",
+    count: 158,
+    icon: Package,
+    children: {
+      "comodos-e-camiseiros": { name: "Cómodas e Camiseiros", slug: "comodos-e-camiseiros", count: 38 },
+      "consolas-de-entrada": { name: "Consolas de Entrada", slug: "consolas-de-entrada", count: 29 },
+      "roupeiros-com-portas-de-bater": { name: "Roupeiros com Portas de Bater", slug: "roupeiros-com-portas-de-bater", count: 26 },
+    },
+  },
+  decoracao: {
+    name: "Decoração",
+    slug: "decoracao",
+    count: 120,
+    icon: Lamp,
+    children: {
+      "tapetes": { name: "Tapetes", slug: "tapetes", count: 30 },
+      "candeeiros-de-mesa": { name: "Candeeiros de Mesa", slug: "candeeiros-de-mesa", count: 29 },
+      "candeeiros-de-teto": { name: "Candeeiros de Teto", slug: "candeeiros-de-teto", count: 25 },
     },
   },
 };
 
-// ============================================================================
-// Category Icons (for filters sidebar)
-// ============================================================================
-
-/**
- * Maps category names (as they appear in Algolia's hierarchicalCategories.lvl0)
- * to Lucide icon components. Used in the HierarchicalCategoryFilter.
- *
- * Keys must match EXACTLY the category names in your Algolia index.
- */
 export const CATEGORY_ICONS: Record<
   string,
   React.ComponentType<{ className?: string }>
 > = {
-  "Women": ShoppingBag,
-  "Men": Shirt,
-  "Accessories": Gem,
+  "Sofás": Sofa,
+  "Salas": UtensilsCrossed,
+  "Quartos": Bed,
+  "Cadeiras": Armchair,
+  "Arrumação": Package,
+  "Decoração": Lamp,
+  "Colchões": Bed,
+  "Escritório": Package,
 };

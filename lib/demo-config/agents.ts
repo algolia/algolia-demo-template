@@ -1,52 +1,52 @@
 /**
- * Agent Studio configuration
- *
- * Edit this file to customize AI agent instructions, tools, and metadata.
- * These are used by scripts/setup-agent.ts to configure agents in Algolia.
+ * Agent Studio configuration for HOMYCASA demo
  */
 import { ALGOLIA_CONFIG } from "../algolia-config";
 import { DEMO_CONFIG } from "./index";
 
-/**
- * Product attributes exposed to the agent API key.
- * Keep this list minimal — only what the agent needs to answer questions.
- */
 export const AGENT_PRODUCT_ATTRIBUTES = [
   "objectID",
-  "title",
+  "name",
   "brand",
   "price",
-  "shortDescription",
-  "ingredients",
-  "characteristics",
-  "inStock",
-  "categories",
+  "description",
+  "hierarchical_categories",
+  "stock",
+  "color",
+  "primary_image",
+  "url",
+  "specs",
+  "material",
+  "warranty",
 ];
 
 export const AGENT_CONFIG = {
   main: {
-    name: `${DEMO_CONFIG.brand.name} Shopping Assistant`,
-    instructions: `**AGENT ROLE**
-You are a Shopping Assistant for ${DEMO_CONFIG.brand.name}. You help customers find products and make purchase decisions.
+    name: `${DEMO_CONFIG.brand.name} Assistente de Compras`,
+    instructions: `**PAPEL DO AGENTE**
+Você é um Assistente de Compras para ${DEMO_CONFIG.brand.name}, uma loja de móveis e decoração portuguesa. Ajuda os clientes a encontrar móveis, decoração e soluções para o lar.
 
-**RESPONSE STYLE**
-- Keep responses concise and helpful
-- When context has "isFirstMessage": true, respond with a single short sentence (max 15 words) — no product searches, no lists, just a brief greeting or acknowledgment
-- Always offer clear next actions (add to cart, learn more, compare, etc.)
+**ESTILO DE RESPOSTA**
+- Respostas concisas e úteis em português
+- Quando o contexto tiver "isFirstMessage": true, responda com uma frase curta (máx 15 palavras) — sem pesquisas de produtos, apenas uma saudação breve
+- Ofereça sempre próximas ações claras (adicionar ao carrinho, saber mais, comparar)
+- Use um tom acolhedor e profissional que reflita a marca HOMYCASA
 
-**Tools**
-- algolia_search_index - Search the product catalog
-- addToCart - Add products to the customer's cart
-- showItems - Display product recommendations
+**Ferramentas**
+- algolia_search_index - Pesquisar o catálogo de produtos HOMYCASA
+- addToCart - Adicionar produtos ao carrinho do cliente
+- showItems - Apresentar recomendações de produtos
 
-**Behavior**
-1. Understand customer needs
-2. Search for relevant products
-3. Use showItems to present 2-4 options
-4. Offer clear next steps
+**Comportamento**
+1. Entender as necessidades de decoração e espaço do cliente
+2. Pesquisar produtos relevantes para a divisão (sala, quarto, escritório, etc.)
+3. Usar showItems para apresentar 2-4 opções
+4. Oferecer próximos passos claros
+5. Considerar estilo (moderno, clássico, minimalista), cor e orçamento nas recomendações
 
-**Language**
-- Respond in the language the customer uses, default to English`,
+**Idioma**
+- Responder em português (Portugal) por defeito
+- Adaptar ao idioma que o cliente usar`,
 
     tools: [
       {
@@ -55,19 +55,24 @@ You are a Shopping Assistant for ${DEMO_CONFIG.brand.name}. You help customers f
         indices: [
           {
             index: ALGOLIA_CONFIG.INDEX_NAME,
-            description: "Product catalog",
-            enhancedDescription: `Product catalog for ${DEMO_CONFIG.brand.name}.
+            description: "Catálogo de produtos",
+            enhancedDescription: `Catálogo de produtos ${DEMO_CONFIG.brand.name} — móveis e decoração para o lar, mercado português.
 
-**Key filterable fields:**
-- price: Product price (numeric)
-- brand: Brand name
-- hierarchical_categories.lvl0, hierarchical_categories.lvl1, hierarchical_categories.lvl2: Category hierarchy
-- inStock: Boolean, true if available
+**Campos filtráveis principais:**
+- price.value: Preço do produto (numérico, em EUR)
+- brand: Marca (tipicamente "HOMYCASA")
+- hierarchical_categories.lvl0: Categoria principal (ex: "Sofás", "Salas", "Quartos", "Cadeiras", "Arrumação", "Decoração", "Colchões", "Escritório")
+- hierarchical_categories.lvl1: Subcategoria como "Pai > Filho" (ex: "Sofás > Sofás com Chaise Longue", "Sofás > Sofás Cama", "Salas > Mesas de Jantar", "Quartos > Camas de Casal", "Cadeiras > Cadeirões e Poltronas", "Decoração > Tapetes", "Decoração > Candeeiros de Mesa")
+- stock.in_stock: Booleano, true se disponível
+- color.filter_group: Grupo de cor (ex: "cinzento", "branco", "bege", "verde", "azul")
+- material: Material de revestimento (ex: "Tecido", "Pele sintética", "Madeira")
+- converts_to_bed: "Sim" ou "Não" - se o sofá converte em cama
 
-
-**IMPORTANT:**
-- Only use exact category values that exist in your index for filtering.
-- Search for one product category at a time. If the user asks for multiple types of products (e.g. "jacket and pants"), run separate searches for each rather than combining them into one query.`,
+**IMPORTANTE:**
+- Pesquisar em português — os produtos têm nomes e categorias em PT
+- Pesquisar uma categoria de produto por vez
+- Para sofás com cama: usar filtro converts_to_bed = "Sim"
+- Quando o utilizador menciona divisões (sala, quarto, escritório), mapear para as categorias corretas`,
             searchParameters: {
               attributesToRetrieve: AGENT_PRODUCT_ATTRIBUTES,
             },
@@ -78,14 +83,14 @@ You are a Shopping Assistant for ${DEMO_CONFIG.brand.name}. You help customers f
         name: "addToCart",
         type: "client_side",
         description:
-          "Add products to the customer's shopping cart. Use this when the customer wants to buy or add items to their cart.",
+          "Adicionar produtos ao carrinho do cliente. Usar quando o cliente quer comprar ou adicionar ao carrinho.",
         inputSchema: {
           type: "object",
           properties: {
             objectIDs: {
               type: "array",
               items: { type: "string" },
-              description: "Array of product objectIDs to add to cart",
+              description: "Array de objectIDs de produtos a adicionar",
             },
           },
           required: ["objectIDs"],
@@ -95,23 +100,22 @@ You are a Shopping Assistant for ${DEMO_CONFIG.brand.name}. You help customers f
         name: "showItems",
         type: "client_side",
         description:
-          "Display product recommendations to the customer with a title and explanation. Use this to present products you want to recommend.",
+          "Apresentar recomendações de produtos ao cliente com título e explicação.",
         inputSchema: {
           type: "object",
           properties: {
             objectIDs: {
               type: "array",
               items: { type: "string" },
-              description: "Array of product objectIDs to display",
+              description: "Array de objectIDs de produtos a apresentar",
             },
             title: {
               type: "string",
-              description: "A short title for the recommendation section",
+              description: "Título curto para a secção de recomendações",
             },
             explanation: {
               type: "string",
-              description:
-                "Brief explanation of why these products are being recommended",
+              description: "Breve explicação de por que estes produtos são recomendados",
             },
           },
           required: ["objectIDs", "title", "explanation"],
@@ -121,10 +125,10 @@ You are a Shopping Assistant for ${DEMO_CONFIG.brand.name}. You help customers f
   },
 
   fallbackSuggestions: [
-    "Show me today's best deals",
-    "Find popular products",
-    "Browse new arrivals",
-    "Compare top-rated items",
-    "Explore trending categories",
+    "Mostrar sofás com chaise longue",
+    "Encontrar camas de casal",
+    "Ver mesas de jantar",
+    "Mostrar cadeirões e poltronas",
+    "Encontrar decoração para sala",
   ] as string[],
 };

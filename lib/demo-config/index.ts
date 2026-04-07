@@ -1,25 +1,19 @@
-/**
- * Core demo configuration
- *
- * Edit this file to customize the store for a new demo/customer.
- * See SETUP.md for the full setup checklist.
- */
 export const DEMO_CONFIG = {
   brand: {
-    name: "Acme Store",
-    tagline: "Your trusted online store",
+    name: "HOMYCASA",
+    tagline: "O Meu Lar Mora Aqui",
     logoUrl: "/logo.svg",
-    logoWidth: 120,
+    logoWidth: 160,
     logoHeight: 40,
-    agentName: "Acme AI",
+    agentName: "HOMYCASA AI",
   },
   locale: {
-    language: "en",
-    currency: "USD",
-    currencySymbol: "$",
+    language: "pt",
+    currency: "EUR",
+    currencySymbol: "€",
   },
   imageDomains: [
-    { protocol: "https" as const, hostname: "fxqklbpngldowtbkqezm.supabase.co" },
-    { protocol: "https" as const, hostname: "img.theproteinworks.com" },
+    { protocol: "https" as const, hostname: "homycasa.vtexassets.com" },
+    { protocol: "https" as const, hostname: "assets.decocache.com" },
   ],
 };
