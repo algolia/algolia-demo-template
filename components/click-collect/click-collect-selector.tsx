@@ -13,6 +13,10 @@ import {
   CircleDot,
   Check,
   LocateFixed,
+  Scissors,
+  Stethoscope,
+  Heart,
+  Car,
 } from "lucide-react";
 
 // Demo position: central Milan (near Duomo)
@@ -30,7 +34,7 @@ import { Switch } from "@/components/ui/switch";
 import { useClickCollect } from "./click-collect-context";
 import { AddressSearch } from "./address-search";
 import { LocationMap } from "./location-map";
-import { Shop, ShopGeoloc } from "@/lib/types/shop";
+import { Shop, ShopGeoloc, StoreService } from "@/lib/types/shop";
 import { getQuickDateOptions } from "@/lib/click-collect-utils";
 import { cn } from "@/lib/utils";
 
@@ -39,6 +43,13 @@ type SelectionMode = "range" | "shop";
 
 const RADIUS_OPTIONS = [1, 5, 10, 25, 50];
 
+const SERVICE_FILTERS: { key: StoreService; label: string; icon: typeof Scissors }[] = [
+  { key: "toelettatura", label: "Toelettatura", icon: Scissors },
+  { key: "veterinario", label: "Veterinario", icon: Stethoscope },
+  { key: "adozioni", label: "Adozioni", icon: Heart },
+  { key: "parking", label: "Parking", icon: Car },
+];
+
 export function ClickCollectSelector() {
   const [open, setOpen] = useState(false);
   const [isRequestingLocation, setIsRequestingLocation] = useState(false);
@@ -46,6 +57,7 @@ export function ClickCollectSelector() {
   const [viewMode, setViewMode] = useState<ViewMode>("map");
   const [selectionMode, setSelectionMode] = useState<SelectionMode>("range");
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null);
+  const [serviceFilter, setServiceFilter] = useState<StoreService | null>(null);
 
   const {
     userLocation,
@@ -86,6 +98,12 @@ export function ClickCollectSelector() {
       hasExpressPickup: false,
     }));
   }, [allShops, allShopsByDistance]);
+
+  // Filter nearby shops by selected service
+  const filteredNearbyShops = useMemo(() => {
+    if (!serviceFilter) return nearbyShops;
+    return nearbyShops.filter((shop) => shop.services?.includes(serviceFilter));
+  }, [nearbyShops, serviceFilter]);
 
   const handleRequestBrowserLocation = useCallback(async () => {
     if (!navigator.geolocation) {
@@ -518,13 +536,43 @@ export function ClickCollectSelector() {
                     </div>
                   )}
 
+                  {/* Service filter pills */}
+                  <div className="flex flex-wrap gap-1.5">
+                    <button
+                      onClick={() => setServiceFilter(null)}
+                      className={cn(
+                        "px-2.5 py-1 rounded-full text-xs font-medium transition-colors",
+                        !serviceFilter
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-muted text-muted-foreground hover:bg-muted/80"
+                      )}
+                    >
+                      Tutti
+                    </button>
+                    {SERVICE_FILTERS.map(({ key, label, icon: Icon }) => (
+                      <button
+                        key={key}
+                        onClick={() => setServiceFilter(serviceFilter === key ? null : key)}
+                        className={cn(
+                          "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-colors",
+                          serviceFilter === key
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-muted text-muted-foreground hover:bg-muted/80"
+                        )}
+                      >
+                        <Icon className="h-3 w-3" />
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+
                   {/* Map and shop list grid */}
                   <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-4">
                     {/* Map */}
                     <div className="h-[300px] rounded-lg overflow-hidden">
                       <LocationMap
                         userLocation={userLocation}
-                        shops={nearbyShops}
+                        shops={filteredNearbyShops}
                         selectedShop={currentShop}
                         radiusKm={searchRadiusKm}
                         onLocationSelect={async (loc) => {
@@ -544,12 +592,12 @@ export function ClickCollectSelector() {
                         {currentShop ? "Cambia negozio:" : "Seleziona un negozio:"}
                       </p>
                       <div className="flex-1 overflow-y-auto space-y-2 pr-1">
-                        {nearbyShops.length === 0 ? (
+                        {filteredNearbyShops.length === 0 ? (
                           <p className="text-sm text-muted-foreground text-center py-4">
-                            Nessun negozio trovato
+                            {serviceFilter ? "Nessun negozio con questo servizio" : "Nessun negozio trovato"}
                           </p>
                         ) : (
-                          nearbyShops.map((shop, index) => {
+                          filteredNearbyShops.map((shop, index) => {
                             const isSelected = currentShop?.id === shop.id;
                             return (
                               <button
@@ -571,6 +619,21 @@ export function ClickCollectSelector() {
                                     <p className="text-xs text-muted-foreground truncate">
                                       {shop.city}
                                     </p>
+                                    {shop.services && shop.services.length > 0 && (
+                                      <div className="flex flex-wrap gap-1 mt-1">
+                                        {shop.services.map((s) => {
+                                          const f = SERVICE_FILTERS.find((sf) => sf.key === s);
+                                          if (!f) return null;
+                                          const SIcon = f.icon;
+                                          return (
+                                            <span key={s} className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground">
+                                              <SIcon className="h-2.5 w-2.5" />
+                                              {f.label}
+                                            </span>
+                                          );
+                                        })}
+                                      </div>
+                                    )}
                                   </div>
                                   <div className="text-right shrink-0 flex items-center gap-2">
                                     <div>
