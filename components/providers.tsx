@@ -8,6 +8,7 @@ import { SidepanelProvider } from "@/components/sidepanel-agent-studio/context/s
 import { SelectionProvider } from "@/components/selection/selection-context";
 import { UserProvider, useUser } from "@/components/user/user-context";
 import { ClickCollectProvider, useClickCollect } from "@/components/click-collect/click-collect-context";
+import { useCart } from "@/components/cart/cart-context";
 import { compositionClient } from "@algolia/composition";
 import { ALGOLIA_CONFIG } from "@/lib/algolia-config";
 import { LanguageProvider } from "@/components/language/language-context";
@@ -26,17 +27,19 @@ const searchClient = compositionClient(
 function PersonalizedConfigure() {
   const { personalizationFilters, currentUser } = useUser();
   const { shopBoostFilters } = useClickCollect();
+  const { cartStoreBoosts } = useCart();
   const { refresh } = useInstantSearch();
   const prevUserIdRef = useRef<string | null>(null);
   const prevShopBoostsRef = useRef<string[]>([]);
 
-  // Merge user personalization and shop boost filters
+  // Merge user personalization, shop boost, and cart store boost filters
   const optionalFilters = useMemo(() => {
     const filters: string[] = [];
     if (personalizationFilters?.length) filters.push(...personalizationFilters);
     if (shopBoostFilters?.length) filters.push(...shopBoostFilters);
+    if (cartStoreBoosts?.length) filters.push(...cartStoreBoosts);
     return filters.length > 0 ? filters : undefined;
-  }, [personalizationFilters, shopBoostFilters]);
+  }, [personalizationFilters, shopBoostFilters, cartStoreBoosts]);
 
   // Configure personalization
   useConfigure({

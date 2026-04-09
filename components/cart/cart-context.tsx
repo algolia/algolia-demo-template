@@ -35,6 +35,7 @@ interface CartContextType {
   itemCount: number;
   total: number;
   primaryCartStore: { storeId: string; storeName: string } | null;
+  cartStoreBoosts: string[];
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -98,6 +99,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
     return items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   }, [items]);
 
+  const cartStoreBoosts = useMemo(() => {
+    const storeCounts = new Map<string, number>();
+    for (const item of items) {
+      if (item.storeId) {
+        storeCounts.set(item.storeId, (storeCounts.get(item.storeId) || 0) + item.quantity);
+      }
+    }
+    return Array.from(storeCounts.entries()).map(([storeId, count]) => {
+      const score = Math.min(50, 5 + count * 5); // 10 for 1 item, 15 for 2, ..., capped at 50
+      return `availableInStores.objectID:${storeId}<score=${score}>`;
+    });
+  }, [items]);
+
   const primaryCartStore = useMemo(() => {
     const storeCounts = new Map<string, { count: number; name: string }>();
     for (const item of items) {
@@ -129,6 +143,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       itemCount,
       total,
       primaryCartStore,
+      cartStoreBoosts,
     }),
     [
       items,
@@ -139,6 +154,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       itemCount,
       total,
       primaryCartStore,
+      cartStoreBoosts,
     ]
   );
 
