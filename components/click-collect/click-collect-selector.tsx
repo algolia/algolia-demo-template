@@ -710,57 +710,62 @@ export function ClickCollectSelector() {
               </span>
             </Button>
 
-            {/* Alternative Options */}
-            <div className="space-y-3">
-              <p className="text-sm text-muted-foreground">Oppure scegli un altro giorno:</p>
-              <div className="grid grid-cols-2 gap-2">
-                {getQuickDateOptions()
-                  .filter((option) => option.label !== "Oggi")
-                  .map((option) => (
-                    <Button
-                      key={option.label}
-                      variant={
-                        selectedPickupDate &&
-                        option.date.toDateString() ===
-                          selectedPickupDate.toDateString()
-                          ? "default"
-                          : "outline"
-                      }
-                      onClick={() => handleDateSelect(option.date)}
-                      className="flex-col h-auto py-3"
-                    >
-                      <span className="text-sm font-medium">{option.label}</span>
-                      <span className="text-xs text-muted-foreground">
-                        {option.date.toLocaleDateString("it-IT", {
-                          day: "numeric",
-                          month: "short",
-                        })}
-                      </span>
-                    </Button>
-                  ))}
-              </div>
+            {/* Alternative Options — collapsible */}
+            <details className="group">
+              <summary className="text-sm text-muted-foreground cursor-pointer select-none list-none flex items-center gap-1.5 hover:text-foreground transition-colors">
+                <span className="text-xs transition-transform group-open:rotate-90">▶</span>
+                Oppure scegli un altro giorno
+              </summary>
+              <div className="space-y-3 mt-3">
+                <div className="grid grid-cols-2 gap-2">
+                  {getQuickDateOptions()
+                    .filter((option) => option.label !== "Oggi")
+                    .map((option) => (
+                      <Button
+                        key={option.label}
+                        variant={
+                          selectedPickupDate &&
+                          option.date.toDateString() ===
+                            selectedPickupDate.toDateString()
+                            ? "default"
+                            : "outline"
+                        }
+                        onClick={() => handleDateSelect(option.date)}
+                        className="flex-col h-auto py-3"
+                      >
+                        <span className="text-sm font-medium">{option.label}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {option.date.toLocaleDateString("it-IT", {
+                            day: "numeric",
+                            month: "short",
+                          })}
+                        </span>
+                      </Button>
+                    ))}
+                </div>
 
-              <div className="pt-2">
-                <label className="text-sm text-muted-foreground">
-                  Altra data
-                </label>
-                <input
-                  type="date"
-                  className="w-full mt-1 px-3 py-2 border rounded-md bg-background"
-                  min={new Date().toISOString().split("T")[0]}
-                  value={
-                    selectedPickupDate
-                      ? selectedPickupDate.toISOString().split("T")[0]
-                      : ""
-                  }
-                  onChange={(e) => {
-                    if (e.target.value) {
-                      handleDateSelect(new Date(e.target.value));
+                <div className="pt-2">
+                  <label className="text-sm text-muted-foreground">
+                    Altra data
+                  </label>
+                  <input
+                    type="date"
+                    className="w-full mt-1 px-3 py-2 border rounded-md bg-background"
+                    min={new Date().toISOString().split("T")[0]}
+                    value={
+                      selectedPickupDate
+                        ? selectedPickupDate.toISOString().split("T")[0]
+                        : ""
                     }
-                  }}
-                />
+                    onChange={(e) => {
+                      if (e.target.value) {
+                        handleDateSelect(new Date(e.target.value));
+                      }
+                    }}
+                  />
+                </div>
               </div>
-            </div>
+            </details>
           </section>
 
           {/* Confirm Button */}
