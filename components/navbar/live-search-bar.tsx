@@ -19,6 +19,7 @@ import {
   XIcon,
   TrendingUp,
   FolderOpen,
+  BookOpen,
 } from "lucide-react";
 import {
   Command,
@@ -68,7 +69,15 @@ type CategoryHit = {
   highlighted: string;
 };
 
-type SelectableItem = QuerySuggestion | Product | CategoryHit;
+type ArticleHit = {
+  objectID: string;
+  title: string;
+  summary: string;
+  url: string;
+  categories: string[];
+};
+
+type SelectableItem = QuerySuggestion | Product | CategoryHit | ArticleHit;
 
 export function HighlightedText({ value }: { value: string }) {
   const parts = value.split(/(<em>.*?<\/em>)/);
@@ -338,6 +347,58 @@ function ProductResults({
   );
 }
 
+function ArticleResults({
+  articles,
+  selectedIndex,
+  indexOffset,
+  onSelect,
+  onHover,
+}: {
+  articles: ArticleHit[];
+  selectedIndex: number;
+  indexOffset: number;
+  onSelect: (url: string) => void;
+  onHover: (index: number) => void;
+}) {
+  if (articles.length === 0) return null;
+
+  return (
+    <>
+      <div className="px-3 py-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+        Articoli
+      </div>
+      {articles.map((article, i) => {
+        const itemIndex = indexOffset + i;
+        const isSelected = selectedIndex === itemIndex;
+
+        return (
+          <CommandItem
+            key={article.objectID}
+            value={`article-${article.objectID}`}
+            onSelect={() => onSelect(article.url)}
+            onMouseEnter={() => onHover(itemIndex)}
+            data-selected={isSelected}
+            className={cn(
+              "flex items-start gap-3 px-3 py-2.5 cursor-pointer",
+              isSelected && "bg-accent text-accent-foreground"
+            )}
+          >
+            <BookOpen className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
+            <div className="min-w-0">
+              <span className="text-sm line-clamp-1">{article.title}</span>
+              {article.categories.length > 0 && (
+                <span className="text-xs text-muted-foreground">
+                  {article.categories[0]}
+                </span>
+              )}
+            </div>
+          </CommandItem>
+        );
+      })}
+    </>
+  );
+}
+
 export function LiveSearchBar() {
   const router = useRouter();
   const pathname = usePathname();
@@ -350,6 +411,7 @@ export function LiveSearchBar() {
   const [suggestions, setSuggestions] = useState<QuerySuggestion[]>([]);
   const [categories, setCategories] = useState<CategoryHit[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
+  const [articles, setArticles] = useState<ArticleHit[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
   const mobileInputRef = useRef<HTMLInputElement>(null);
@@ -380,9 +442,10 @@ export function LiveSearchBar() {
     const items: SelectableItem[] = [];
     suggestions.forEach((s) => items.push(s));
     categories.forEach((c) => items.push(c));
+    articles.forEach((a) => items.push(a));
     products.forEach((p) => items.push(p));
     return items;
-  }, [suggestions, categories, products, isEmptyQuery]);
+  }, [suggestions, categories, articles, products, isEmptyQuery]);
 
   const navigateWithQuery = useCallback(
     (query: string) => {
@@ -443,7 +506,7 @@ export function LiveSearchBar() {
 
     const fetchResults = async () => {
       try {
-        // Parallel: query suggestions + products + category facet search
+        // Parallel: query suggestions + products + articles + category facet search
         const [searchResults, facetResult] = await Promise.all([
           searchClient.search({
             requests: [
@@ -457,6 +520,11 @@ export function LiveSearchBar() {
                 query: queryToSearch,
                 hitsPerPage: 6,
                 optionalFilters: personalizationFilters,
+              },
+              {
+                indexName: ALGOLIA_CONFIG.ARTICLES_INDEX,
+                query: queryToSearch,
+                hitsPerPage: 3,
               },
             ],
           }),
@@ -472,12 +540,16 @@ export function LiveSearchBar() {
 
         const suggestionsResult = searchResults.results[0];
         const productsResult = searchResults.results[1];
+        const articlesResult = searchResults.results[2];
 
         if ("hits" in suggestionsResult) {
           setSuggestions(suggestionsResult.hits as QuerySuggestion[]);
         }
         if ("hits" in productsResult) {
           setProducts(productsResult.hits as Product[]);
+        }
+        if (articlesResult && "hits" in articlesResult) {
+          setArticles(articlesResult.hits as ArticleHit[]);
         }
 
         // Map facet hits to CategoryHit
@@ -549,6 +621,12 @@ export function LiveSearchBar() {
     router.push(`/category/${slugParts.join("/")}`);
   };
 
+  const handleArticleSelect = (url: string) => {
+    setIsOpen(false);
+    setSelectedIndex(-1);
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const queryToSubmit = listening && transcript ? transcript : inputValue;
@@ -612,6 +690,8 @@ export function LiveSearchBar() {
             handleSuggestionSelect((item as QuerySuggestion).query);
           } else if (item && "highlighted" in item) {
             handleCategorySelect((item as CategoryHit).value);
+          } else if (item && "summary" in item) {
+            handleArticleSelect((item as ArticleHit).url);
           } else {
             handleProductSelect((item as Product).objectID!);
           }
@@ -740,11 +820,23 @@ export function LiveSearchBar() {
                       </CommandGroup>
                     )}
 
+                    {articles.length > 0 && (
+                      <CommandGroup className="px-2">
+                        <ArticleResults
+                          articles={articles}
+                          selectedIndex={selectedIndex}
+                          indexOffset={suggestions.length + categories.length}
+                          onSelect={handleArticleSelect}
+                          onHover={handleHoverWrapper}
+                        />
+                      </CommandGroup>
+                    )}
+
                     <CommandGroup className="px-2 pb-4">
                       <ProductResults
                         products={products}
                         selectedIndex={selectedIndex}
-                        indexOffset={suggestions.length + categories.length}
+                        indexOffset={suggestions.length + categories.length + articles.length}
                         onSelect={handleProductSelect}
                         onHover={handleHoverWrapper}
                       />
@@ -862,11 +954,22 @@ export function LiveSearchBar() {
                     </div>
 
                     <div className="p-2">
+                      {articles.length > 0 && (
+                        <CommandGroup>
+                          <ArticleResults
+                            articles={articles}
+                            selectedIndex={selectedIndex}
+                            indexOffset={suggestions.length + categories.length}
+                            onSelect={handleArticleSelect}
+                            onHover={handleHoverWrapper}
+                          />
+                        </CommandGroup>
+                      )}
                       <CommandGroup>
                         <ProductResults
                           products={products}
                           selectedIndex={selectedIndex}
-                          indexOffset={suggestions.length + categories.length}
+                          indexOffset={suggestions.length + categories.length + articles.length}
                           onSelect={handleProductSelect}
                           onHover={handleHoverWrapper}
                         />

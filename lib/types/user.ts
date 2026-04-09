@@ -2,6 +2,27 @@ export interface User {
   id: string;
   description: string;
   slug: string;
+  /** Pet profile — displayed on the user page and injected into agent context */
+  pet?: {
+    name: string;
+    species: "cane" | "gatto" | "altro";
+    breed: string;
+    ageMonths: number;
+    ageLabel: string;
+    size?: string;
+    sensitivities?: string[];
+  };
+  /** Additional pets for multi-pet households */
+  pets?: Array<{
+    name: string;
+    species: "cane" | "gatto" | "altro";
+    breed: string;
+    ageMonths: number;
+    ageLabel: string;
+    size?: string;
+  }>;
+  /** DY segments this user belongs to — passed as ruleContexts to Compositions */
+  segments?: string[];
   preferences: {
     "categories.lvl0"?: {
       [key: string]: number;

@@ -139,6 +139,21 @@ function buildCompositionRules(rule: RetailMediaRule) {
     });
   }
 
+  // Context-based trigger (segment matching via ruleContexts)
+  if (rule.trigger.context) {
+    rules.push({
+      action: "upsert",
+      body: {
+        objectID: `retail_media_${rule.name}_ctx`,
+        description: `${rule.description} (trigger: context=${rule.trigger.context})`,
+        enabled: true,
+        conditions: [{ context: rule.trigger.context }],
+        consequence,
+        tags: ["retail-media", rule.placement, "segment"],
+      },
+    });
+  }
+
   // Fallback: no triggers = fires on all queries
   if (rules.length === 0) {
     rules.push({

@@ -237,6 +237,56 @@ function RuleBanner() {
   );
 }
 
+function ZeroResultsFallback() {
+  const { openSidepanel } = useSidepanel();
+  const { query } = useSearchBox();
+
+  const suggestions = [
+    {
+      label: "Chiedi al nostro esperto",
+      message: query
+        ? `Non trovo "${query}" nel catalogo. Puoi aiutarmi a trovare un'alternativa?`
+        : "Ciao! Ho bisogno di aiuto per trovare il prodotto giusto.",
+    },
+    {
+      label: "Consigliami per il mio cucciolo",
+      message: "Ho un cucciolo, cosa mi consigli come primo acquisto?",
+    },
+    {
+      label: "Cerca negli articoli",
+      message: query
+        ? `Hai articoli o guide su "${query}"?`
+        : "Quali guide avete per nuovi proprietari di animali?",
+    },
+  ];
+
+  return (
+    <div className="text-center py-16 max-w-md mx-auto">
+      <Search className="h-12 w-12 text-muted-foreground/40 mx-auto mb-4" />
+      <p className="text-lg font-medium text-foreground mb-1">
+        Nessun prodotto trovato
+      </p>
+      <p className="text-sm text-muted-foreground mb-6">
+        {query
+          ? `Nessun risultato per "${query}". Prova a chiedere al nostro assistente!`
+          : "Prova a modificare la ricerca o chiedi aiuto al nostro assistente."}
+      </p>
+      <div className="flex flex-col gap-2">
+        {suggestions.map((s) => (
+          <button
+            key={s.label}
+            onClick={() => openSidepanel(s.message)}
+            className="flex items-center gap-2 px-4 py-3 rounded-lg border border-border bg-background hover:bg-muted/50 hover:border-primary/30 transition-colors text-left"
+          >
+            <SparklesIcon className="h-4 w-4 text-primary shrink-0" />
+            <span className="text-sm font-medium">{s.label}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function CustomHits({ viewMode, compact, selectable }: { viewMode: "grid" | "list"; compact?: boolean; selectable?: boolean }) {
   const { hits, showMore, isLastPage } = useInfiniteHits<Product>();
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -267,14 +317,7 @@ function CustomHits({ viewMode, compact, selectable }: { viewMode: "grid" | "lis
   }, [isLastPage, showMore]);
 
   if (hits.length === 0) {
-    return (
-      <div className="text-center py-16">
-        <p className="text-lg text-muted-foreground">No products found</p>
-        <p className="text-sm text-muted-foreground mt-2">
-          Try adjusting your search terms
-        </p>
-      </div>
-    );
+    return <ZeroResultsFallback />;
   }
 
   // Split grid at row 1 to insert banner.

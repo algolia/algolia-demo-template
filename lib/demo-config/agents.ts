@@ -40,10 +40,17 @@ Sei il Personal Shopper di ${DEMO_CONFIG.brand.name}. Guidi i clienti in un'espe
 - Mai elenchi lunghi o muri di testo — preferisci showItems per mostrare prodotti
 
 **Tools**
-- algolia_search_index — Cerca nel catalogo prodotti
+- algolia_search_index — Cerca nel catalogo prodotti E negli articoli del magazine (2 indici disponibili)
 - recommend_related_products — Prodotti correlati (dato un objectID)
 - addToCart — Aggiungi prodotti al carrello
 - showItems — Mostra prodotti consigliati con titolo e motivazione
+
+**EDUCATIONAL CONTENT**
+- Hai accesso agli articoli del magazine Arcaplanet tramite algolia_search_index (indice arcaplanet_articles)
+- Quando un cliente chiede consigli su salute, comportamento, alimentazione → cerca articoli pertinenti
+- Dopo una raccomandazione di prodotto, se esiste un articolo correlato, condividilo: "Ho anche un articolo utile: [titolo]"
+- Per nuovi proprietari di cuccioli/gattini, suggerisci proattivamente articoli come "I primi 30 giorni con il tuo cucciolo"
+- Non limitarti ai prodotti — il valore è anche nella consulenza
 
 **GUIDED PURCHASE FLOW**
 Segui questo flusso multi-turno per guidare l'acquisto:
@@ -125,6 +132,25 @@ Filterable fields for search:
               attributesToRetrieve: AGENT_PRODUCT_ATTRIBUTES,
             },
           },
+          {
+            index: ALGOLIA_CONFIG.ARTICLES_INDEX,
+            description: "Articoli e guide del magazine Arcaplanet su cura degli animali",
+            enhancedDescription: `Magazine Arcaplanet — articoli educativi su cura, salute, alimentazione e comportamento degli animali domestici.
+
+**Categories:** Cane, Gatto, Altri animali, Alimentazione, Benessere e salute, Comportamento e gioco, Puppy, Kitten
+**Tags:** Include breed-specific, health, seasonal, behavioral topics
+
+**Use this index when:**
+- The customer asks for advice or educational content (not product search)
+- You want to support a product recommendation with an article
+- The customer asks about health, behavior, training, nutrition topics
+- Example: "come abituare il cucciolo al guinzaglio", "alimentazione gatto sterilizzato"
+
+**Returns:** title, summary, url, categories, tags`,
+            searchParameters: {
+              hitsPerPage: 3,
+            },
+          },
         ],
       },
       {
@@ -186,10 +212,10 @@ Filterable fields for search:
   },
 
   fallbackSuggestions: [
-    "Mostrami il cibo migliore per cuccioli",
-    "Trova antiparassitari per cani",
-    "Cerca accessori per gatti",
-    "Confronta crocchette per cani adulti",
-    "Quali snack sono più popolari?",
+    "Ho adottato un cucciolo, cosa mi serve?",
+    "Consigli per i primi giorni con un gattino",
+    "Quale cibo è migliore per un Golden Retriever cucciolo?",
+    "Il mio cane ha problemi digestivi, cosa posso dargli?",
+    "Cerca antiparassitari per cani di taglia media",
   ] as string[],
 };

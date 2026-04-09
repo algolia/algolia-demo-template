@@ -232,8 +232,10 @@ function ProductBadges({ product, compact = false }: ProductBadgesProps) {
   // Don't render anything if no badges to show
   if (!hasPersonalization) return null;
 
-  const iconSize = compact ? "h-3 w-3" : "h-4 w-4";
-  const badgeSize = compact ? "h-5 w-5" : "h-6 w-6";
+  const petName = currentUser?.pet?.name;
+  const badgeLabel = petName
+    ? `Consigliato per ${petName}`
+    : "Consigliato per te";
 
   return (
     <div
@@ -243,18 +245,19 @@ function ProductBadges({ product, compact = false }: ProductBadgesProps) {
         e.stopPropagation();
       }}
     >
-      {/* Personalization Badge */}
       <TooltipProvider>
         <Tooltip delayDuration={200}>
           <TooltipTrigger asChild>
-            <div
-              className={cn(
-                "flex items-center justify-center rounded-full bg-purple-100 text-purple-700 cursor-pointer",
-                badgeSize
-              )}
-            >
-              <Sparkles className={iconSize} />
-            </div>
+            {compact ? (
+              <div className="flex items-center justify-center rounded-full bg-purple-100 text-purple-700 h-5 w-5">
+                <Sparkles className="h-3 w-3" />
+              </div>
+            ) : (
+              <div className="flex items-center gap-1 rounded-full bg-purple-100 text-purple-700 px-2 py-0.5 cursor-pointer">
+                <Sparkles className="h-3 w-3" />
+                <span className="text-xs font-medium">{badgeLabel}</span>
+              </div>
+            )}
           </TooltipTrigger>
           <TooltipContent side="right" className="max-w-xs">
             <div className="text-sm">

@@ -14,6 +14,7 @@ export const ALGOLIA_CONFIG = {
 
   // Indices
   INDEX_NAME: "arcaplanet_products",
+  ARTICLES_INDEX: "arcaplanet_articles",
   QUERY_SUGGESTIONS_INDEX: "arcaplanet_products_query_suggestions",
   LOCATIONS_INDEX: "arcaplanet_locations",
 

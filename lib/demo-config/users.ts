@@ -21,8 +21,17 @@ import type { User, PreferenceKey, PreferenceMetadata } from "@/lib/types/user";
 export const users: User[] = [
   {
     id: "1",
-    description: "Nuovo proprietario cucciolo",
-    slug: "new-puppy-owner",
+    description: "Maria — Luna's owner",
+    slug: "maria-luna",
+    pet: {
+      name: "Luna",
+      species: "cane",
+      breed: "Golden Retriever",
+      ageMonths: 3,
+      ageLabel: "Cucciolo — 3 mesi",
+      size: "GRANDE",
+    },
+    segments: ["puppy_owner", "cane_grande"],
     preferences: {
       categoryPageId: {
         "Cane > Cibo Secco": 18,
@@ -31,20 +40,41 @@ export const users: User[] = [
       },
       "età.value": { PUPPY: 20 },
       brand: { "ROYAL CANIN": 17 },
+      "funzione.value": { CRESCITA: 15 },
     },
   },
   {
     id: "2",
-    description: "Proprietario cane anziano",
-    slug: "senior-dog-owner",
+    description: "Luca — Rocco & Milo",
+    slug: "luca-rocco-milo",
+    pet: {
+      name: "Rocco",
+      species: "cane",
+      breed: "Labrador Retriever",
+      ageMonths: 96,
+      ageLabel: "Anziano — 8 anni",
+      size: "GRANDE",
+    },
+    pets: [
+      {
+        name: "Milo",
+        species: "cane",
+        breed: "Beagle",
+        ageMonths: 4,
+        ageLabel: "Cucciolo — 4 mesi",
+        size: "MEDIA",
+      },
+    ],
+    segments: ["puppy_owner", "senior_dog_owner"],
     preferences: {
       categoryPageId: {
-        "Cane > Diete Cibo Secco": 20,
-        "Cane > Antiparassitari e Curativi": 18,
+        "Cane > Cibo Secco": 18,
+        "Cane > Snack": 14,
+        "Cane > Antiparassitari e Curativi": 16,
       },
-      "età.value": { ANZIANO: 20 },
-      "funzione.value": { "CONTROLLO DEL PESO": 18 },
-      brand: { "ROYAL CANIN": 17 },
+      "età.value": { PUPPY: 18, ANZIANO: 18 },
+      brand: { "ROYAL CANIN": 15, "HILL'S": 16 },
+      "funzione.value": { CRESCITA: 14, "CONTROLLO DEL PESO": 16 },
     },
   },
 ];

@@ -9,6 +9,7 @@ interface UserContextType {
   setUser: (user: User | null) => void;
   selectUserById: (userId: string) => void;
   personalizationFilters: string[] | undefined;
+  segments: string[];
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -64,14 +65,19 @@ export function UserProvider({ children }: { children: ReactNode }) {
     return filters.length > 0 ? filters : undefined;
   }, [currentUser]);
 
+  const segments = useMemo(() => {
+    return currentUser?.segments ?? [];
+  }, [currentUser]);
+
   const value = useMemo(
     () => ({
       currentUser,
       setUser,
       selectUserById,
       personalizationFilters,
+      segments,
     }),
-    [currentUser, setUser, selectUserById, personalizationFilters]
+    [currentUser, setUser, selectUserById, personalizationFilters, segments]
   );
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;

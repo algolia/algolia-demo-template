@@ -484,6 +484,7 @@ export function FiltersSidebar() {
 export function ActiveFilters() {
   const { items, refine } = useCurrentRefinements();
   const { refine: clearAll, canRefine } = useClearRefinements();
+  const { t } = useLanguage();
 
   if (!canRefine) return null;
 
@@ -505,7 +506,7 @@ export function ActiveFilters() {
         onClick={() => clearAll()}
         className="text-[12px] font-medium text-muted-foreground hover:text-foreground transition-colors ml-1"
       >
-        {useLanguage().t("filters.clearAll")}
+        {t("filters.clearAll")}
       </button>
     </div>
   );

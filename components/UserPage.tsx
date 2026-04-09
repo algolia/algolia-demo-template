@@ -139,11 +139,86 @@ export default function UserPage({ user }: { user: User }) {
         </span>
       </div>
 
-      {/* User ID */}
-      <div className="mb-8">
-        <span className="text-sm text-gray-500">User ID:</span>
-        <span className="ml-2 text-sm font-mono text-gray-700">{user.id}</span>
+      {/* User ID + Segments */}
+      <div className="flex items-center gap-4 mb-8">
+        <div>
+          <span className="text-sm text-gray-500">User ID:</span>
+          <span className="ml-2 text-sm font-mono text-gray-700">{user.id}</span>
+        </div>
+        {user.segments && user.segments.length > 0 && (
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-500">DY Segments:</span>
+            {user.segments.map((seg) => (
+              <span
+                key={seg}
+                className="rounded-full bg-blue-100 text-blue-700 px-2 py-0.5 text-xs font-medium"
+              >
+                {seg}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
+
+      {/* Pet Profile Cards */}
+      {(user.pet || user.pets) && (
+        <div className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+          {user.pet && (
+            <div className="rounded-xl border bg-white shadow-sm p-6">
+              <h2 className="text-xl font-semibold mb-3">
+                {user.pet.name}
+              </h2>
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div>
+                  <span className="text-gray-500">Razza</span>
+                  <p className="font-medium">{user.pet.breed}</p>
+                </div>
+                <div>
+                  <span className="text-gray-500">Eta</span>
+                  <p className="font-medium">{user.pet.ageLabel}</p>
+                </div>
+                {user.pet.size && (
+                  <div>
+                    <span className="text-gray-500">Taglia</span>
+                    <p className="font-medium">{user.pet.size}</p>
+                  </div>
+                )}
+                <div>
+                  <span className="text-gray-500">Specie</span>
+                  <p className="font-medium capitalize">{user.pet.species}</p>
+                </div>
+              </div>
+            </div>
+          )}
+          {user.pets?.map((pet) => (
+            <div key={pet.name} className="rounded-xl border bg-white shadow-sm p-6">
+              <h2 className="text-xl font-semibold mb-3">
+                {pet.name}
+              </h2>
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div>
+                  <span className="text-gray-500">Razza</span>
+                  <p className="font-medium">{pet.breed}</p>
+                </div>
+                <div>
+                  <span className="text-gray-500">Eta</span>
+                  <p className="font-medium">{pet.ageLabel}</p>
+                </div>
+                {pet.size && (
+                  <div>
+                    <span className="text-gray-500">Taglia</span>
+                    <p className="font-medium">{pet.size}</p>
+                  </div>
+                )}
+                <div>
+                  <span className="text-gray-500">Specie</span>
+                  <p className="font-medium capitalize">{pet.species}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Section Title */}
       <div className="flex items-center gap-3 mb-6">

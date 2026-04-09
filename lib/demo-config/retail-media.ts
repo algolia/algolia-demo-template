@@ -49,6 +49,8 @@ export interface RetailMediaRule {
   trigger: {
     queryContains?: string[];
     filterMatch?: string;
+    /** Fires when ruleContexts includes this value (segment-based targeting) */
+    context?: string;
   };
   /** What products to inject */
   source: {
@@ -182,6 +184,39 @@ export const RETAIL_MEDIA_RULES: RetailMediaRule[] = [
     source: {
       filters: 'brand:"VITAKRAFT"',
       hitsPerPage: 2,
+    },
+  },
+  // =========================================================================
+  // Segment-Based Rules (triggered by DY segments via ruleContexts)
+  // =========================================================================
+  {
+    name: "segment_puppy_starter_kit",
+    description:
+      "Puppy starter kit for puppy_owner segment — carousel at top",
+    placement: "carousel",
+    label: "Consigliato per cuccioli",
+    trigger: {
+      context: "puppy_owner",
+    },
+    source: {
+      filters:
+        'età.value:"PUPPY" AND hierarchical_categories.lvl0:"Cane"',
+      hitsPerPage: 4,
+    },
+  },
+  {
+    name: "segment_large_breed",
+    description:
+      "Large breed products for cane_grande segment — inline sponsored cards",
+    placement: "inline",
+    label: "Per taglie grandi",
+    trigger: {
+      context: "cane_grande",
+    },
+    source: {
+      filters:
+        'taglia.value:"GRANDE" AND hierarchical_categories.lvl0:"Cane"',
+      hitsPerPage: 3,
     },
   },
 ];

@@ -25,12 +25,13 @@ const searchClient = compositionClient(
  * Automatically refreshes search when user changes
  */
 function PersonalizedConfigure() {
-  const { personalizationFilters, currentUser } = useUser();
+  const { personalizationFilters, currentUser, segments } = useUser();
   const { shopBoostFilters, storeFirstFilter, storeMode } = useClickCollect();
   const { cartStoreBoosts } = useCart();
   const { refresh } = useInstantSearch();
   const prevUserIdRef = useRef<string | null>(null);
   const prevShopBoostsRef = useRef<string[]>([]);
+  const prevSegmentsRef = useRef<string[]>([]);
 
   // Merge user personalization, shop boost, and cart store boost filters
   const optionalFilters = useMemo(() => {
@@ -46,21 +47,24 @@ function PersonalizedConfigure() {
     hitsPerPage: 12,
     optionalFilters: storeMode === "store-first" ? undefined : optionalFilters,
     filters: storeFirstFilter || undefined,
+    ruleContexts: segments.length > 0 ? segments : undefined,
   });
 
-  // Refresh when user or shop boosts change
+  // Refresh when user, shop boosts, or segments change
   useEffect(() => {
     const currentUserId = currentUser?.id ?? null;
     const userChanged = prevUserIdRef.current !== null && prevUserIdRef.current !== currentUserId;
     const boostsChanged = JSON.stringify(prevShopBoostsRef.current) !== JSON.stringify(shopBoostFilters);
+    const segmentsChanged = JSON.stringify(prevSegmentsRef.current) !== JSON.stringify(segments);
 
-    if (userChanged || boostsChanged) {
+    if (userChanged || boostsChanged || segmentsChanged) {
       refresh();
     }
 
     prevUserIdRef.current = currentUserId;
     prevShopBoostsRef.current = shopBoostFilters;
-  }, [currentUser?.id, shopBoostFilters, refresh]);
+    prevSegmentsRef.current = segments;
+  }, [currentUser?.id, shopBoostFilters, segments, refresh]);
 
   return null;
 }
