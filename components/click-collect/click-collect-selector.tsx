@@ -305,8 +305,7 @@ export function ClickCollectSelector() {
                       variant="ghost"
                       size="sm"
                       onClick={() => {
-                        setUserLocation(null);
-                        setSelectedAddress(null);
+                        handleClear();
                       }}
                       className="h-7 text-xs text-green-700 hover:bg-green-100"
                     >
