@@ -131,9 +131,9 @@ export function StoreFinder() {
             </div>
           )}
 
-          {shopsToShow.map((shop) => (
+          {shopsToShow.map((shop, index) => (
             <div
-              key={shop.id}
+              key={`${shop.id}-${index}`}
               className={`p-4 border rounded-lg transition-colors cursor-pointer hover:border-primary/50 ${
                 currentShop?.id === shop.id ? "border-primary bg-primary/5" : ""
               }`}

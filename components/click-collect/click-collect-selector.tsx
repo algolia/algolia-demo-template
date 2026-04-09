@@ -549,11 +549,11 @@ export function ClickCollectSelector() {
                             Nessun negozio trovato
                           </p>
                         ) : (
-                          nearbyShops.map((shop) => {
+                          nearbyShops.map((shop, index) => {
                             const isSelected = currentShop?.id === shop.id;
                             return (
                               <button
-                                key={shop.id}
+                                key={`${shop.id}-${index}`}
                                 type="button"
                                 onClick={() => handleShopSelect(shop)}
                                 className={cn(
