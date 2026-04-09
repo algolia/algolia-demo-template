@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSearchBox } from "react-instantsearch";
-import { BrainIcon, MapPin } from "lucide-react";
+import { Sparkles, MapPin } from "lucide-react";
 import { CategoriesSheet } from "./categories-sheet";
 import { ClickCollectSelector } from "@/components/click-collect/click-collect-selector";
 import { CartSheet } from "./cart-sheet";
@@ -30,7 +30,7 @@ export function NavBar() {
             <CategoriesSheet />
           </div>
 
-          {/* Center section: Logo and Search */}
+          {/* Center section: Logo, Search, and AI button */}
           <div className="flex-1 flex items-center justify-center gap-4">
             <Link
               href="/"
@@ -41,12 +41,28 @@ export function NavBar() {
             >
               <Logo />
             </Link>
-            <div className="flex-1 max-w-2xl">
-              <LiveSearchBar />
+            <div className="flex-1 max-w-2xl flex items-center gap-2">
+              <div className="flex-1">
+                <LiveSearchBar />
+              </div>
+              <Button
+                variant="default"
+                size="icon"
+                onClick={() => openSidepanel()}
+                className="shrink-0 relative rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white shadow-sm"
+                aria-label="Open AI Assistant"
+              >
+                <Sparkles className="size-4" />
+                {selectionCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full min-w-5 h-5 flex items-center justify-center font-medium">
+                    {selectionCount}
+                  </span>
+                )}
+              </Button>
             </div>
           </div>
 
-          {/* Right section: User, Click & Collect, AI, Cart */}
+          {/* Right section: User, Click & Collect, Cart */}
           <div className="shrink-0 flex items-center gap-6">
             <UserSelector />
             <Link
@@ -57,20 +73,6 @@ export function NavBar() {
               Negozi
             </Link>
             <ClickCollectSelector />
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => openSidepanel()}
-              className="hover:bg-muted [&>svg]:hover:stroke-[2.5] relative"
-              aria-label="Open AI Assistant"
-            >
-              <BrainIcon className="size-5" />
-              {selectionCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full min-w-5 h-5 flex items-center justify-center font-medium">
-                  {selectionCount}
-                </span>
-              )}
-            </Button>
             <CartSheet />
           </div>
         </div>
@@ -91,25 +93,27 @@ export function NavBar() {
             <div className="flex items-center gap-1">
               <UserSelector />
               <ClickCollectSelector />
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => openSidepanel()}
-                className="hover:bg-muted [&>svg]:hover:stroke-[2.5] relative"
-                aria-label="Open AI Assistant"
-              >
-                <BrainIcon className="size-5" />
-                {selectionCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full min-w-5 h-5 flex items-center justify-center font-medium">
-                    {selectionCount}
-                  </span>
-                )}
-              </Button>
               <CartSheet />
             </div>
           </div>
-          <div className="w-full">
-            <LiveSearchBar />
+          <div className="w-full flex items-center gap-2">
+            <div className="flex-1">
+              <LiveSearchBar />
+            </div>
+            <Button
+              variant="default"
+              size="icon"
+              onClick={() => openSidepanel()}
+              className="shrink-0 relative rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white shadow-sm"
+              aria-label="Open AI Assistant"
+            >
+              <Sparkles className="size-4" />
+              {selectionCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full min-w-5 h-5 flex items-center justify-center font-medium">
+                  {selectionCount}
+                </span>
+              )}
+            </Button>
           </div>
         </div>
       </div>
