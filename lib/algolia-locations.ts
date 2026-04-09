@@ -33,6 +33,9 @@ export async function fetchShops(): Promise<Shop[]> {
       address: hit.address,
       region: hit.region,
       _geoloc: hit._geoloc,
+      phone: hit.phone,
+      openingHours: hit.openingHours,
+      services: hit.services,
     }));
   } catch (error) {
     console.error("Failed to fetch shops from Algolia:", error);

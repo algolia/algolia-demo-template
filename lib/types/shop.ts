@@ -3,6 +3,8 @@ export interface ShopGeoloc {
   lng: number;
 }
 
+export type StoreService = "toelettatura" | "veterinario" | "adozioni" | "parking";
+
 export interface Shop {
   id: string;
   name: string;
@@ -10,6 +12,9 @@ export interface Shop {
   address?: string;
   region?: string;
   _geoloc: ShopGeoloc;
+  phone?: string;
+  openingHours?: string;
+  services?: StoreService[];
 }
 
 export interface ShopWithDistance extends Shop {

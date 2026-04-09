@@ -1,0 +1,878 @@
+[
+  {
+    "objectID": "ec3e14997e8f_dashboard_generated_id",
+    "id": "shop_bari_centro",
+    "name": "Bari Centro",
+    "city": "Bari",
+    "region": "Puglia",
+    "address": "Via Sparano 50",
+    "_geoloc": {
+      "lat": 41.1171,
+      "lng": 16.8719
+    },
+    "phone": "+39 02 280 4762",
+    "openingHours": "Lun-Dom 9:00-21:00",
+    "services": [
+      "toelettatura",
+      "veterinario",
+      "parking"
+    ]
+  },
+  {
+    "objectID": "1211476cf75813_dashboard_generated_id",
+    "id": "shop_bergamo_centro",
+    "name": "Bergamo Centro",
+    "city": "Bergamo",
+    "region": "Lombardia",
+    "address": "Via XX Settembre 50",
+    "_geoloc": {
+      "lat": 45.6983,
+      "lng": 9.6773
+    },
+    "phone": "+39 02 332 8690",
+    "openingHours": "Lun-Sab 9:00-20:00, Dom 10:00-19:00",
+    "services": [
+      "toelettatura",
+      "veterinario",
+      "parking"
+    ]
+  },
+  {
+    "objectID": "61a697b73a0d5_dashboard_generated_id",
+    "id": "shop_bologna_centro",
+    "name": "Bologna Centro",
+    "city": "Bologna",
+    "region": "Emilia-Romagna",
+    "address": "Via Rizzoli 10",
+    "_geoloc": {
+      "lat": 44.4949,
+      "lng": 11.3426
+    },
+    "phone": "+39 02 373 2421",
+    "openingHours": "Lun-Sab 9:30-20:30, Dom 10:00-19:30",
+    "services": [
+      "toelettatura",
+      "veterinario",
+      "adozioni"
+    ]
+  },
+  {
+    "objectID": "747d4a5863a22_dashboard_generated_id",
+    "id": "shop_brescia_centro",
+    "name": "Brescia Centro",
+    "city": "Brescia",
+    "region": "Lombardia",
+    "address": "Corso Zanardelli 20",
+    "_geoloc": {
+      "lat": 45.5416,
+      "lng": 10.2118
+    },
+    "phone": "+39 02 127 6395",
+    "openingHours": "Lun-Sab 9:00-20:00, Dom 10:00-19:00",
+    "services": [
+      "toelettatura"
+    ]
+  },
+  {
+    "objectID": "12c465e5e245d9_dashboard_generated_id",
+    "id": "shop_cagliari_centro",
+    "name": "Cagliari Centro",
+    "city": "Cagliari",
+    "region": "Sardegna",
+    "address": "Via Roma 80",
+    "_geoloc": {
+      "lat": 39.2238,
+      "lng": 9.1217
+    },
+    "phone": "+39 02 825 9057",
+    "openingHours": "Lun-Dom 9:00-21:00",
+    "services": [
+      "toelettatura"
+    ]
+  },
+  {
+    "objectID": "ecfe0e3efd62a_dashboard_generated_id",
+    "id": "shop_catania_centro",
+    "name": "Catania Centro",
+    "city": "Catania",
+    "region": "Sicilia",
+    "address": "Via Etnea 50",
+    "_geoloc": {
+      "lat": 37.5079,
+      "lng": 15.083
+    },
+    "phone": "+39 02 345 1282",
+    "openingHours": "Lun-Dom 9:00-21:00",
+    "services": [
+      "toelettatura",
+      "veterinario",
+      "parking"
+    ]
+  },
+  {
+    "objectID": "912c95d2fb822_dashboard_generated_id",
+    "id": "shop_florence_centro",
+    "name": "Firenze Centro",
+    "city": "Firenze",
+    "region": "Toscana",
+    "address": "Via Calzaiuoli 5",
+    "_geoloc": {
+      "lat": 43.7696,
+      "lng": 11.2558
+    },
+    "phone": "+39 02 412 4948",
+    "openingHours": "Lun-Sab 8:30-20:00, Dom 9:30-19:00",
+    "services": [
+      "parking"
+    ]
+  },
+  {
+    "objectID": "2f69aa90c0245_dashboard_generated_id",
+    "id": "shop_genoa_porto",
+    "name": "Genova Porto",
+    "city": "Genova",
+    "region": "Liguria",
+    "address": "Via di Sottoripa 5",
+    "_geoloc": {
+      "lat": 44.4056,
+      "lng": 8.9463
+    },
+    "phone": "+39 02 371 7379",
+    "openingHours": "Lun-Dom 9:00-20:00",
+    "services": [
+      "adozioni"
+    ]
+  },
+  {
+    "objectID": "milano_bocconi",
+    "id": "shop_milan_bocconi",
+    "name": "Bocconi",
+    "city": "Milano",
+    "region": "Lombardia",
+    "address": "Viale Bligny",
+    "_geoloc": {
+      "lat": 45.4486,
+      "lng": 9.1896
+    },
+    "phone": "+39 02 254 6224",
+    "openingHours": "Lun-Dom 9:00-20:00",
+    "services": [
+      "toelettatura",
+      "parking"
+    ]
+  },
+  {
+    "objectID": "milano_brera",
+    "id": "shop_milan_brera",
+    "name": "Brera",
+    "city": "Milano",
+    "region": "Lombardia",
+    "address": "Via Brera",
+    "_geoloc": {
+      "lat": 45.4719,
+      "lng": 9.1878
+    },
+    "phone": "+39 02 118 9737",
+    "openingHours": "Lun-Dom 9:00-21:00",
+    "services": [
+      "toelettatura"
+    ]
+  },
+  {
+    "objectID": "milano_cadorna",
+    "id": "shop_milan_cadorna",
+    "name": "Cadorna",
+    "city": "Milano",
+    "region": "Lombardia",
+    "address": "Piazzale Cadorna",
+    "_geoloc": {
+      "lat": 45.4683,
+      "lng": 9.175
+    },
+    "phone": "+39 02 444 1617",
+    "openingHours": "Lun-Dom 9:00-21:00",
+    "services": [
+      "toelettatura"
+    ]
+  },
+  {
+    "objectID": "milano_citylife",
+    "id": "shop_milan_citylife",
+    "name": "CityLife",
+    "city": "Milano",
+    "region": "Lombardia",
+    "address": "Piazza Tre Torri",
+    "_geoloc": {
+      "lat": 45.4789,
+      "lng": 9.1557
+    },
+    "phone": "+39 02 409 7908",
+    "openingHours": "Lun-Sab 8:30-20:00, Dom 9:30-19:00",
+    "services": [
+      "parking"
+    ]
+  },
+  {
+    "objectID": "milano_galleria",
+    "id": "shop_milan_galleria",
+    "name": "Galleria Vittorio Emanuele II",
+    "city": "Milano",
+    "region": "Lombardia",
+    "address": "Piazza del Duomo",
+    "_geoloc": {
+      "lat": 45.4659,
+      "lng": 9.19
+    },
+    "phone": "+39 02 592 8980",
+    "openingHours": "Lun-Sab 9:00-20:00, Dom 10:00-19:00",
+    "services": [
+      "toelettatura",
+      "veterinario",
+      "parking"
+    ]
+  },
+  {
+    "objectID": "milano_isola",
+    "id": "shop_milan_isola",
+    "name": "Isola",
+    "city": "Milano",
+    "region": "Lombardia",
+    "address": "Via Borsieri",
+    "_geoloc": {
+      "lat": 45.4875,
+      "lng": 9.187
+    },
+    "phone": "+39 02 468 5875",
+    "openingHours": "Lun-Sab 9:00-20:00, Dom 10:00-19:00",
+    "services": [
+      "toelettatura"
+    ]
+  },
+  {
+    "objectID": "milano_loreto",
+    "id": "shop_milan_loreto",
+    "name": "Loreto",
+    "city": "Milano",
+    "region": "Lombardia",
+    "address": "Piazzale Loreto",
+    "_geoloc": {
+      "lat": 45.4849,
+      "lng": 9.2169
+    },
+    "phone": "+39 02 681 8366",
+    "openingHours": "Lun-Sab 9:30-20:30, Dom 10:00-19:30",
+    "services": [
+      "parking"
+    ]
+  },
+  {
+    "objectID": "milano_centrale",
+    "id": "shop_milan_centrale",
+    "name": "Milano Centrale",
+    "city": "Milano",
+    "region": "Lombardia",
+    "address": "Piazza Duca d'Aosta",
+    "_geoloc": {
+      "lat": 45.4855,
+      "lng": 9.2044
+    },
+    "phone": "+39 02 282 9213",
+    "openingHours": "Lun-Sab 8:30-20:00, Dom 9:30-19:00",
+    "services": [
+      "toelettatura"
+    ]
+  },
+  {
+    "objectID": "197684e6940d64_dashboard_generated_id",
+    "id": "shop_milan_citylife",
+    "name": "Milano CityLife",
+    "city": "Milano",
+    "region": "Lombardia",
+    "address": "Piazza Tre Torri 1",
+    "_geoloc": {
+      "lat": 45.4773,
+      "lng": 9.1536
+    },
+    "phone": "+39 02 644 2132",
+    "openingHours": "Lun-Dom 9:00-21:00",
+    "services": [
+      "toelettatura",
+      "veterinario",
+      "parking"
+    ]
+  },
+  {
+    "objectID": "milano_duomo",
+    "id": "shop_milan_duomo",
+    "name": "Milano Duomo",
+    "city": "Milano",
+    "region": "Lombardia",
+    "address": "Piazza del Duomo 1",
+    "_geoloc": {
+      "lat": 45.4642,
+      "lng": 9.19
+    },
+    "phone": "+39 02 924 3853",
+    "openingHours": "Lun-Sab 8:30-20:00, Dom 9:30-19:00",
+    "services": [
+      "toelettatura",
+      "adozioni"
+    ]
+  },
+  {
+    "objectID": "f567a10ce6837_dashboard_generated_id_galleria",
+    "id": "shop_milan_galleria",
+    "name": "Milano Galleria Vittorio Emanuele II",
+    "city": "Milano",
+    "region": "Lombardia",
+    "address": "Piazza del Duomo, 20121 Milano",
+    "_geoloc": {
+      "lat": 45.4659,
+      "lng": 9.19
+    },
+    "phone": "+39 02 432 8417",
+    "openingHours": "Lun-Dom 9:00-21:00",
+    "services": [
+      "toelettatura"
+    ]
+  },
+  {
+    "objectID": "milano_linate",
+    "id": "shop_milan_linate",
+    "name": "Milano Linate Airport",
+    "city": "Milano",
+    "region": "Lombardia",
+    "address": "Viale Enrico Forlanini",
+    "_geoloc": {
+      "lat": 45.4451,
+      "lng": 9.2767
+    },
+    "phone": "+39 02 115 4222",
+    "openingHours": "Lun-Dom 9:00-21:00",
+    "services": [
+      "toelettatura",
+      "veterinario",
+      "parking"
+    ]
+  },
+  {
+    "objectID": "1f0d6d95f86291_dashboard_generated_id",
+    "id": "shop_milan_navigli",
+    "name": "Milano Navigli",
+    "city": "Milano",
+    "region": "Lombardia",
+    "address": "Alzaia Naviglio Grande 12",
+    "_geoloc": {
+      "lat": 45.4505,
+      "lng": 9.1672
+    },
+    "phone": "+39 02 911 8620",
+    "openingHours": "Lun-Sab 9:00-20:00, Dom 10:00-19:00",
+    "services": [
+      "toelettatura",
+      "veterinario",
+      "parking"
+    ]
+  },
+  {
+    "objectID": "milano_navigli",
+    "id": "shop_milan_navigli",
+    "name": "Navigli",
+    "city": "Milano",
+    "region": "Lombardia",
+    "address": "Alzaia Naviglio Grande",
+    "_geoloc": {
+      "lat": 45.4521,
+      "lng": 9.1742
+    },
+    "phone": "+39 02 540 1711",
+    "openingHours": "Lun-Sab 9:30-20:30, Dom 10:00-19:30",
+    "services": [
+      "toelettatura",
+      "veterinario"
+    ]
+  },
+  {
+    "objectID": "milano_no_lo",
+    "id": "shop_milan_nolo",
+    "name": "NoLo",
+    "city": "Milano",
+    "region": "Lombardia",
+    "address": "Via Padova",
+    "_geoloc": {
+      "lat": 45.4972,
+      "lng": 9.215
+    },
+    "phone": "+39 02 020 2796",
+    "openingHours": "Lun-Sab 9:30-20:30, Dom 10:00-19:30",
+    "services": [
+      "parking"
+    ]
+  },
+  {
+    "objectID": "milano_garibaldi",
+    "id": "shop_milan_garibaldi",
+    "name": "Porta Garibaldi",
+    "city": "Milano",
+    "region": "Lombardia",
+    "address": "Piazza Sigmund Freud",
+    "_geoloc": {
+      "lat": 45.4841,
+      "lng": 9.1876
+    },
+    "phone": "+39 02 702 9620",
+    "openingHours": "Lun-Sab 9:00-20:00, Dom 10:00-19:00",
+    "services": [
+      "toelettatura",
+      "veterinario",
+      "parking"
+    ]
+  },
+  {
+    "objectID": "milano_porta_nuova",
+    "id": "shop_milan_porta_nuova",
+    "name": "Porta Nuova",
+    "city": "Milano",
+    "region": "Lombardia",
+    "address": "Piazza Gae Aulenti",
+    "_geoloc": {
+      "lat": 45.4836,
+      "lng": 9.195
+    },
+    "phone": "+39 02 690 3559",
+    "openingHours": "Lun-Dom 9:00-20:00",
+    "services": [
+      "adozioni"
+    ]
+  },
+  {
+    "objectID": "milano_porta_romana",
+    "id": "shop_milan_porta_romana",
+    "name": "Porta Romana",
+    "city": "Milano",
+    "region": "Lombardia",
+    "address": "Corso di Porta Romana",
+    "_geoloc": {
+      "lat": 45.4539,
+      "lng": 9.2036
+    },
+    "phone": "+39 02 807 0064",
+    "openingHours": "Lun-Dom 9:00-20:00",
+    "services": [
+      "toelettatura",
+      "parking"
+    ]
+  },
+  {
+    "objectID": "milano_portello",
+    "id": "shop_milan_portello",
+    "name": "Portello",
+    "city": "Milano",
+    "region": "Lombardia",
+    "address": "Viale Serra",
+    "_geoloc": {
+      "lat": 45.488,
+      "lng": 9.149
+    },
+    "phone": "+39 02 119 8088",
+    "openingHours": "Lun-Sab 8:30-20:00, Dom 9:30-19:00",
+    "services": [
+      "adozioni",
+      "parking"
+    ]
+  },
+  {
+    "objectID": "milano_san_siro",
+    "id": "shop_milan_san_siro",
+    "name": "San Siro",
+    "city": "Milano",
+    "region": "Lombardia",
+    "address": "Piazzale Angelo Moratti",
+    "_geoloc": {
+      "lat": 45.4781,
+      "lng": 9.124
+    },
+    "phone": "+39 02 138 0193",
+    "openingHours": "Lun-Sab 8:30-20:00, Dom 9:30-19:00",
+    "services": [
+      "toelettatura"
+    ]
+  },
+  {
+    "objectID": "milano_santambrogio",
+    "id": "shop_milan_santambrogio",
+    "name": "Sant'Ambrogio",
+    "city": "Milano",
+    "region": "Lombardia",
+    "address": "Piazza Sant'Ambrogio",
+    "_geoloc": {
+      "lat": 45.4627,
+      "lng": 9.1756
+    },
+    "phone": "+39 02 380 6491",
+    "openingHours": "Lun-Sab 9:30-20:30, Dom 10:00-19:30",
+    "services": [
+      "toelettatura",
+      "veterinario"
+    ]
+  },
+  {
+    "objectID": "milano_della_spiga",
+    "id": "shop_milan_spiga",
+    "name": "Via della Spiga",
+    "city": "Milano",
+    "region": "Lombardia",
+    "address": "Via della Spiga",
+    "_geoloc": {
+      "lat": 45.4693,
+      "lng": 9.1964
+    },
+    "phone": "+39 02 267 5046",
+    "openingHours": "Lun-Sab 9:30-20:30, Dom 10:00-19:30",
+    "services": [
+      "parking"
+    ]
+  },
+  {
+    "objectID": "milano_montenapoleone",
+    "id": "shop_milan_montenapoleone",
+    "name": "Via Montenapoleone",
+    "city": "Milano",
+    "region": "Lombardia",
+    "address": "Via Montenapoleone",
+    "_geoloc": {
+      "lat": 45.4686,
+      "lng": 9.1949
+    },
+    "phone": "+39 02 235 5851",
+    "openingHours": "Lun-Sab 9:30-20:30, Dom 10:00-19:30",
+    "services": [
+      "toelettatura",
+      "veterinario",
+      "adozioni"
+    ]
+  },
+  {
+    "objectID": "milano_tortona",
+    "id": "shop_milan_tortona",
+    "name": "Zona Tortona",
+    "city": "Milano",
+    "region": "Lombardia",
+    "address": "Via Tortona",
+    "_geoloc": {
+      "lat": 45.4536,
+      "lng": 9.1606
+    },
+    "phone": "+39 02 210 2552",
+    "openingHours": "Lun-Dom 9:00-21:00",
+    "services": [
+      "toelettatura",
+      "veterinario",
+      "parking"
+    ]
+  },
+  {
+    "objectID": "13cd7e65b077cf_dashboard_generated_id",
+    "id": "shop_naples_toledo",
+    "name": "Napoli Toledo",
+    "city": "Napoli",
+    "region": "Campania",
+    "address": "Via Toledo 100",
+    "_geoloc": {
+      "lat": 40.8518,
+      "lng": 14.2681
+    },
+    "phone": "+39 02 938 1492",
+    "openingHours": "Lun-Dom 9:00-21:00",
+    "services": [
+      "toelettatura",
+      "veterinario",
+      "parking"
+    ]
+  },
+  {
+    "objectID": "2d94b836b1469_dashboard_generated_id",
+    "id": "shop_naples_vomero",
+    "name": "Napoli Vomero",
+    "city": "Napoli",
+    "region": "Campania",
+    "address": "Via Scarlatti 20",
+    "_geoloc": {
+      "lat": 40.845,
+      "lng": 14.235
+    },
+    "phone": "+39 02 387 2691",
+    "openingHours": "Lun-Sab 9:30-20:30, Dom 10:00-19:30",
+    "services": [
+      "toelettatura",
+      "veterinario"
+    ]
+  },
+  {
+    "objectID": "15b4f54f67ee55_dashboard_generated_id",
+    "id": "shop_padova_centro",
+    "name": "Padova Centro",
+    "city": "Padova",
+    "region": "Veneto",
+    "address": "Via Roma 30",
+    "_geoloc": {
+      "lat": 45.4064,
+      "lng": 11.8768
+    },
+    "phone": "+39 02 288 8253",
+    "openingHours": "Lun-Sab 8:30-20:00, Dom 9:30-19:00",
+    "services": [
+      "toelettatura"
+    ]
+  },
+  {
+    "objectID": "5c8f525cc5cc6_dashboard_generated_id",
+    "id": "shop_palermo_centro",
+    "name": "Palermo Centro",
+    "city": "Palermo",
+    "region": "Sicilia",
+    "address": "Via Maqueda 100",
+    "_geoloc": {
+      "lat": 38.1157,
+      "lng": 13.3615
+    },
+    "phone": "+39 02 273 0360",
+    "openingHours": "Lun-Sab 9:00-20:00, Dom 10:00-19:00",
+    "services": [
+      "toelettatura",
+      "veterinario",
+      "parking"
+    ]
+  },
+  {
+    "objectID": "8ea984053745b_dashboard_generated_id",
+    "id": "shop_parma_centro",
+    "name": "Parma Centro",
+    "city": "Parma",
+    "region": "Emilia-Romagna",
+    "address": "Strada della Repubblica 45",
+    "_geoloc": {
+      "lat": 44.8015,
+      "lng": 10.328
+    },
+    "phone": "+39 02 009 1938",
+    "openingHours": "Lun-Sab 8:30-20:00, Dom 9:30-19:00",
+    "services": [
+      "parking"
+    ]
+  },
+  {
+    "objectID": "17fdc2d0f889e3_dashboard_generated_id",
+    "id": "shop_perugia_centro",
+    "name": "Perugia Centro",
+    "city": "Perugia",
+    "region": "Umbria",
+    "address": "Corso Vannucci 1",
+    "_geoloc": {
+      "lat": 43.1107,
+      "lng": 12.3908
+    },
+    "phone": "+39 02 285 9115",
+    "openingHours": "Lun-Sab 9:00-20:00, Dom 10:00-19:00",
+    "services": [
+      "toelettatura"
+    ]
+  },
+  {
+    "objectID": "78deab2f497e1_dashboard_generated_id",
+    "id": "shop_pisa_centro",
+    "name": "Pisa Centro",
+    "city": "Pisa",
+    "region": "Toscana",
+    "address": "Corso Italia 30",
+    "_geoloc": {
+      "lat": 43.7228,
+      "lng": 10.4017
+    },
+    "phone": "+39 02 864 2258",
+    "openingHours": "Lun-Sab 8:30-20:00, Dom 9:30-19:00",
+    "services": [
+      "parking"
+    ]
+  },
+  {
+    "objectID": "49700ac7e101f_dashboard_generated_id",
+    "id": "shop_reggio_calabria",
+    "name": "Reggio Calabria",
+    "city": "Reggio Calabria",
+    "region": "Calabria",
+    "address": "Corso Garibaldi 20",
+    "_geoloc": {
+      "lat": 38.1147,
+      "lng": 15.65
+    },
+    "phone": "+39 02 969 5423",
+    "openingHours": "Lun-Sab 8:30-20:00, Dom 9:30-19:00",
+    "services": [
+      "toelettatura"
+    ]
+  },
+  {
+    "objectID": "c8c23370d907b_dashboard_generated_id",
+    "id": "shop_rimini_centro",
+    "name": "Rimini Centro",
+    "city": "Rimini",
+    "region": "Emilia-Romagna",
+    "address": "Corso d'Augusto 100",
+    "_geoloc": {
+      "lat": 44.0594,
+      "lng": 12.5683
+    },
+    "phone": "+39 02 406 2348",
+    "openingHours": "Lun-Sab 8:30-20:00, Dom 9:30-19:00",
+    "services": [
+      "adozioni",
+      "parking"
+    ]
+  },
+  {
+    "objectID": "11762ee9a25a70_dashboard_generated_id",
+    "id": "shop_rome_corso",
+    "name": "Roma Corso",
+    "city": "Roma",
+    "region": "Lazio",
+    "address": "Via del Corso 200",
+    "_geoloc": {
+      "lat": 41.9028,
+      "lng": 12.4964
+    },
+    "phone": "+39 02 619 2135",
+    "openingHours": "Lun-Sab 9:00-20:00, Dom 10:00-19:00",
+    "services": [
+      "toelettatura",
+      "adozioni"
+    ]
+  },
+  {
+    "objectID": "16b1fdac9ee0a9_dashboard_generated_id",
+    "id": "shop_rome_eur",
+    "name": "Roma EUR",
+    "city": "Roma",
+    "region": "Lazio",
+    "address": "Viale Europa 100",
+    "_geoloc": {
+      "lat": 41.83,
+      "lng": 12.465
+    },
+    "phone": "+39 02 535 6654",
+    "openingHours": "Lun-Dom 9:00-20:00",
+    "services": [
+      "toelettatura",
+      "parking"
+    ]
+  },
+  {
+    "objectID": "fd1f4d531eda2_dashboard_generated_id",
+    "id": "shop_rome_trastevere",
+    "name": "Roma Trastevere",
+    "city": "Roma",
+    "region": "Lazio",
+    "address": "Viale Trastevere 50",
+    "_geoloc": {
+      "lat": 41.8843,
+      "lng": 12.4702
+    },
+    "phone": "+39 02 045 6203",
+    "openingHours": "Lun-Sab 8:30-20:00, Dom 9:30-19:00",
+    "services": [
+      "toelettatura",
+      "adozioni"
+    ]
+  },
+  {
+    "objectID": "6b50701f2ad45_dashboard_generated_id",
+    "id": "shop_turin_centro",
+    "name": "Torino Centro",
+    "city": "Torino",
+    "region": "Piemonte",
+    "address": "Via Roma 50",
+    "_geoloc": {
+      "lat": 45.0703,
+      "lng": 7.6869
+    },
+    "phone": "+39 02 613 8412",
+    "openingHours": "Lun-Dom 9:00-21:00",
+    "services": [
+      "toelettatura",
+      "veterinario",
+      "parking"
+    ]
+  },
+  {
+    "objectID": "168fa6d74618c8_dashboard_generated_id",
+    "id": "shop_turin_lingotto",
+    "name": "Torino Lingotto",
+    "city": "Torino",
+    "region": "Piemonte",
+    "address": "Via Nizza 280",
+    "_geoloc": {
+      "lat": 45.0305,
+      "lng": 7.664
+    },
+    "phone": "+39 02 760 5732",
+    "openingHours": "Lun-Dom 9:00-21:00",
+    "services": [
+      "toelettatura",
+      "veterinario",
+      "parking"
+    ]
+  },
+  {
+    "objectID": "1e74b1a2b309b4_dashboard_generated_id",
+    "id": "shop_trieste_centro",
+    "name": "Trieste Centro",
+    "city": "Trieste",
+    "region": "Friuli-Venezia Giulia",
+    "address": "Piazza Unita d'Italia 1",
+    "_geoloc": {
+      "lat": 45.6495,
+      "lng": 13.7768
+    },
+    "phone": "+39 02 640 5752",
+    "openingHours": "Lun-Dom 9:00-21:00",
+    "services": [
+      "toelettatura",
+      "veterinario",
+      "parking"
+    ]
+  },
+  {
+    "objectID": "d3d8207aff4_dashboard_generated_id",
+    "id": "shop_venice_rialto",
+    "name": "Venezia Rialto",
+    "city": "Venezia",
+    "region": "Veneto",
+    "address": "Rialto 100",
+    "_geoloc": {
+      "lat": 45.4408,
+      "lng": 12.3355
+    },
+    "phone": "+39 02 547 1316",
+    "openingHours": "Lun-Sab 9:30-20:30, Dom 10:00-19:30",
+    "services": [
+      "parking"
+    ]
+  },
+  {
+    "objectID": "166bff8af6e646_dashboard_generated_id",
+    "id": "shop_verona_arena",
+    "name": "Verona Arena",
+    "city": "Verona",
+    "region": "Veneto",
+    "address": "Piazza Bra 1",
+    "_geoloc": {
+      "lat": 45.4384,
+      "lng": 10.9916
+    },
+    "phone": "+39 02 639 4776",
+    "openingHours": "Lun-Sab 9:30-20:30, Dom 10:00-19:30",
+    "services": [
+      "parking"
+    ]
+  }
+]
