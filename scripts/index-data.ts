@@ -126,34 +126,30 @@ async function main() {
       // Attributes at the same level use comma separation (equal priority).
       // See: https://www.algolia.com/doc/guides/managing-results/must-do/searchable-attributes/how-to/configuring-searchable-attributes-the-right-way/
       searchableAttributes: [
-        // P1: Short, precise text — brand/category/color matches are unambiguous
+        // P1: Short, precise text — brand/category matches are unambiguous
         "unordered(brand)",
         "unordered(searchable_categories.lvl0), unordered(searchable_categories.lvl1), unordered(searchable_categories.lvl2)",
-        "unordered(color.original_name), unordered(gender)",
+        "unordered(colour)",
         // P2: Product name — ordered so matches at the start rank higher
         "name",
         // P3: Exact lookups
-        "unordered(sku)",
+        "unordered(sku), unordered(objectID)",
         // P4: Enriched search terms
         "unordered(keywords)",
         // P5: Long text — catches long-tail but noisy, lowest priority
         "unordered(description)",
-        "unordered(semantic_attributes)",
       ],
       attributesForFaceting: [
         "searchable(brand)",
-        "searchable(gender)",
-        "searchable(color.filter_group)",
-        "searchable(available_sizes)",
+        "searchable(colour)",
         "hierarchical_categories.lvl0",
         "hierarchical_categories.lvl1",
         "hierarchical_categories.lvl2",
         "searchable(list_categories)",
         "searchable(categoryPageId)",
         "filterOnly(price.value)",
-        "filterOnly(reviews.rating)",
       ],
-      customRanking: ["desc(reviews.bayesian_avg)", "desc(sales_last_24h)"],
+      customRanking: ["desc(sales_last_24h)"],
       ranking: [
         "typo",
         "geo",
