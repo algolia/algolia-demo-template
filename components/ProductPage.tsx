@@ -22,6 +22,18 @@ import { getPriceInfo, getPreferredCategory } from "@/lib/utils/product";
 import ProductAskAI from "@/components/sidepanel-agent-studio/components/product-page-agent";
 import ProductRecommendations from "@/components/ProductRecommendations";
 import { useCart } from "@/components/cart/cart-context";
+import { useClickCollect } from "@/components/click-collect/click-collect-context";
+import { resolveStoreForProduct } from "@/lib/click-collect-utils";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface ProductPageProps {
   product: Product;
@@ -31,7 +43,13 @@ export default function ProductPage({ product }: ProductPageProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
-  const { addItem } = useCart();
+  const [pendingDifferentStore, setPendingDifferentStore] = useState<{
+    storeId: string;
+    storeName: string;
+    cartStoreName: string;
+  } | null>(null);
+  const { addItem, primaryCartStore } = useCart();
+  const { currentShop, nearbyShops } = useClickCollect();
 
   const images = product.image_urls?.length ? product.image_urls : product.primary_image ? [product.primary_image] : [];
   const productName = product.name || "Untitled Product";
@@ -57,15 +75,38 @@ export default function ProductPage({ product }: ProductPageProps) {
 
     const category = getPreferredCategory(product);
 
-    addItem({
-      id: productId,
-      name: productName,
-      price,
-      quantity,
-      image: images[0],
-      brand: product.brand,
-      category,
-    });
+    const doAdd = (storeId?: string, storeName?: string) => {
+      addItem({
+        id: productId,
+        name: productName,
+        price,
+        quantity,
+        image: images[0],
+        brand: product.brand,
+        category,
+        ...(storeId && storeName && { storeId, storeName }),
+      });
+    };
+
+    const resolution = resolveStoreForProduct(
+      product.availableInStores,
+      currentShop,
+      nearbyShops,
+      primaryCartStore?.storeId,
+      primaryCartStore?.storeName,
+    );
+
+    if (resolution.type === "resolved") {
+      doAdd(resolution.storeId, resolution.storeName);
+    } else if (resolution.type === "different-store") {
+      setPendingDifferentStore({
+        storeId: resolution.storeId,
+        storeName: resolution.storeName,
+        cartStoreName: resolution.cartStoreName,
+      });
+    } else {
+      doAdd();
+    }
   };
 
   const specifications = extractSpecifications(product);
@@ -331,6 +372,46 @@ export default function ProductPage({ product }: ProductPageProps) {
         <ProductRecommendations objectID={product.objectID} />
 
       </main>
+
+      <AlertDialog
+        open={!!pendingDifferentStore}
+        onOpenChange={(open) => !open && setPendingDifferentStore(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Negozio diverso</AlertDialogTitle>
+            <AlertDialogDescription>
+              Questo prodotto non è disponibile presso{" "}
+              {pendingDifferentStore?.cartStoreName}. Vuoi aggiungerlo da{" "}
+              {pendingDifferentStore?.storeName}?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annulla</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (pendingDifferentStore) {
+                  const productId = product.objectID || product.sku || "";
+                  addItem({
+                    id: productId,
+                    name: productName,
+                    price,
+                    quantity,
+                    image: images[0],
+                    brand: product.brand,
+                    category: getPreferredCategory(product),
+                    storeId: pendingDifferentStore.storeId,
+                    storeName: pendingDifferentStore.storeName,
+                  });
+                }
+                setPendingDifferentStore(null);
+              }}
+            >
+              Aggiungi
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

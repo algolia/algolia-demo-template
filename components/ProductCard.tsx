@@ -85,6 +85,8 @@ import { useCart } from "@/components/cart/cart-context";
 import { useUser } from "@/components/user/user-context";
 import { useSelection } from "@/components/selection/selection-context";
 import { useSidepanel } from "@/components/sidepanel-agent-studio/context/sidepanel-context";
+import { useClickCollect } from "@/components/click-collect/click-collect-context";
+import { resolveStoreForProduct } from "@/lib/click-collect-utils";
 import { Checkbox } from "@/components/ui/checkbox";
 import { PreferenceKey, extractProductFieldValues } from "@/lib/types/user";
 import { PREFERENCE_METADATA } from "@/lib/demo-config/users";
@@ -96,6 +98,16 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
 import { formatPrice } from "@/lib/utils/format";
 import { getPriceInfo, getPreferredCategory } from "@/lib/utils/product";
@@ -276,6 +288,7 @@ interface QuantityControlsProps {
   brand?: string;
   category?: string;
   compact?: boolean;
+  availableInStores?: Array<{ inStock: boolean; objectID: string }>;
 }
 
 function QuantityControls({
@@ -287,17 +300,21 @@ function QuantityControls({
   brand,
   category,
   compact = false,
+  availableInStores,
 }: QuantityControlsProps) {
-  const { items, addItem, updateQuantity } = useCart();
+  const { items, addItem, updateQuantity, primaryCartStore } = useCart();
+  const { currentShop, nearbyShops } = useClickCollect();
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [pendingDifferentStore, setPendingDifferentStore] = useState<{
+    storeId: string;
+    storeName: string;
+    cartStoreName: string;
+  } | null>(null);
 
   const cartItem = items.find((item) => item.id === productId);
   const quantity = cartItem?.quantity || 0;
 
-  const handleAdd = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-
+  const doAdd = (storeId?: string, storeName?: string) => {
     addItem({
       id: productId,
       name: productName,
@@ -306,10 +323,35 @@ function QuantityControls({
       image: imageUrl,
       brand,
       category,
+      ...(storeId && storeName && { storeId, storeName }),
     });
-
     setShowConfirmation(true);
     setTimeout(() => setShowConfirmation(false), 1500);
+  };
+
+  const handleAdd = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const resolution = resolveStoreForProduct(
+      availableInStores,
+      currentShop,
+      nearbyShops,
+      primaryCartStore?.storeId,
+      primaryCartStore?.storeName,
+    );
+
+    if (resolution.type === "resolved") {
+      doAdd(resolution.storeId, resolution.storeName);
+    } else if (resolution.type === "different-store") {
+      setPendingDifferentStore({
+        storeId: resolution.storeId,
+        storeName: resolution.storeName,
+        cartStoreName: resolution.cartStoreName,
+      });
+    } else {
+      doAdd();
+    }
   };
 
   const handleIncrease = (e: React.MouseEvent) => {
@@ -327,58 +369,101 @@ function QuantityControls({
   const buttonSize = compact ? "h-6 w-6" : "h-7 w-7";
   const iconSize = compact ? "h-3 w-3" : "h-4 w-4";
 
-  if (quantity === 0) {
-    return (
-      <Button
-        onClick={handleAdd}
-        size="icon-sm"
-        variant="default"
-        className={`absolute top-2 right-2 z-10 transition-all ${buttonSize} ${
-          showConfirmation ? "bg-green-600 hover:bg-green-600" : ""
-        }`}
-        aria-label="Add to cart"
-      >
-        {showConfirmation ? (
-          <Check className={iconSize} />
-        ) : (
-          <Plus className={iconSize} />
-        )}
-      </Button>
-    );
-  }
-
   return (
-    <div
-      className="absolute top-2 right-2 z-10 flex items-center gap-1 bg-background border rounded-md shadow-sm"
-      onClick={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-      }}
-    >
-      <Button
-        onClick={handleDecrease}
-        size="icon-sm"
-        variant="ghost"
-        className={buttonSize}
-        aria-label="Decrease quantity"
+    <>
+      {quantity === 0 ? (
+        <Button
+          onClick={handleAdd}
+          size="icon-sm"
+          variant="default"
+          className={`absolute top-2 right-2 z-10 transition-all ${buttonSize} ${
+            showConfirmation ? "bg-green-600 hover:bg-green-600" : ""
+          }`}
+          aria-label="Add to cart"
+        >
+          {showConfirmation ? (
+            <Check className={iconSize} />
+          ) : (
+            <Plus className={iconSize} />
+          )}
+        </Button>
+      ) : (
+        <div
+          className="absolute top-2 right-2 z-10 flex items-center gap-1 bg-background border rounded-md shadow-sm"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+        >
+          <Button
+            onClick={handleDecrease}
+            size="icon-sm"
+            variant="ghost"
+            className={buttonSize}
+            aria-label="Decrease quantity"
+          >
+            <Minus className="h-3 w-3" />
+          </Button>
+          <span
+            className={`text-center font-medium ${compact ? "w-5 text-xs" : "w-6 text-sm"}`}
+          >
+            {quantity}
+          </span>
+          <Button
+            onClick={handleIncrease}
+            size="icon-sm"
+            variant="ghost"
+            className={buttonSize}
+            aria-label="Increase quantity"
+          >
+            <Plus className="h-3 w-3" />
+          </Button>
+        </div>
+      )}
+      <AlertDialog
+        open={!!pendingDifferentStore}
+        onOpenChange={(open) => !open && setPendingDifferentStore(null)}
       >
-        <Minus className="h-3 w-3" />
-      </Button>
-      <span
-        className={`text-center font-medium ${compact ? "w-5 text-xs" : "w-6 text-sm"}`}
-      >
-        {quantity}
-      </span>
-      <Button
-        onClick={handleIncrease}
-        size="icon-sm"
-        variant="ghost"
-        className={buttonSize}
-        aria-label="Increase quantity"
-      >
-        <Plus className="h-3 w-3" />
-      </Button>
-    </div>
+        <AlertDialogContent
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+        >
+          <AlertDialogHeader>
+            <AlertDialogTitle>Negozio diverso</AlertDialogTitle>
+            <AlertDialogDescription>
+              Questo prodotto non è disponibile presso{" "}
+              {pendingDifferentStore?.cartStoreName}. Vuoi aggiungerlo da{" "}
+              {pendingDifferentStore?.storeName}?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              Annulla
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.stopPropagation();
+                if (pendingDifferentStore) {
+                  doAdd(
+                    pendingDifferentStore.storeId,
+                    pendingDifferentStore.storeName,
+                  );
+                }
+                setPendingDifferentStore(null);
+              }}
+            >
+              Aggiungi
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }
 
@@ -541,6 +626,7 @@ export function ProductCard({ product, showCartControls = true, showBadges = tru
           imageUrl={imageUrl}
           brand={product.brand}
           category={category}
+          availableInStores={product.availableInStores}
         />
       )}
 
@@ -651,6 +737,7 @@ export function ProductListItem({ product, showCartControls = true, showBadges =
           imageUrl={imageUrl}
           brand={product.brand}
           category={category}
+          availableInStores={product.availableInStores}
         />
       )}
 
@@ -760,6 +847,7 @@ export const CompactProductCard = memo(function CompactProductCard({
           brand={product.brand}
           category={category}
           compact
+          availableInStores={product.availableInStores}
         />
       )}
 
@@ -861,6 +949,7 @@ export const CompactProductListItem = memo(function CompactProductListItem({
           brand={product.brand}
           category={category}
           compact
+          availableInStores={product.availableInStores}
         />
       )}
 
