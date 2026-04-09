@@ -12,10 +12,6 @@ import {
   Store,
   Check,
   LocateFixed,
-  Scissors,
-  Stethoscope,
-  Heart,
-  Car,
 } from "lucide-react";
 
 // Demo position: central Milan (near Duomo)
@@ -33,6 +29,7 @@ import { Switch } from "@/components/ui/switch";
 import { useClickCollect } from "./click-collect-context";
 import { AddressSearch } from "./address-search";
 import { LocationMap } from "./location-map";
+import { ShopCard, SERVICE_CONFIG } from "./shop-card";
 import { Shop, ShopGeoloc, StoreService } from "@/lib/types/shop";
 import { getQuickDateOptions } from "@/lib/click-collect-utils";
 import { cn } from "@/lib/utils";
@@ -41,12 +38,7 @@ type ViewMode = "list" | "map";
 
 const RADIUS_OPTIONS = [1, 5, 10, 25, 50];
 
-const SERVICE_FILTERS: { key: StoreService; label: string; icon: typeof Scissors }[] = [
-  { key: "toelettatura", label: "Toelettatura", icon: Scissors },
-  { key: "veterinario", label: "Veterinario", icon: Stethoscope },
-  { key: "adozioni", label: "Adozioni", icon: Heart },
-  { key: "parking", label: "Parking", icon: Car },
-];
+const SERVICE_FILTERS = Object.entries(SERVICE_CONFIG) as [StoreService, (typeof SERVICE_CONFIG)[StoreService]][];
 
 export function ClickCollectSelector() {
   const [open, setOpen] = useState(false);
@@ -407,7 +399,7 @@ export function ClickCollectSelector() {
                   >
                     Tutti
                   </button>
-                  {SERVICE_FILTERS.map(({ key, label, icon: Icon }) => (
+                  {SERVICE_FILTERS.map(([key, { label, icon: Icon }]) => (
                     <button
                       key={key}
                       onClick={() => setServiceFilter(serviceFilter === key ? null : key)}
@@ -455,61 +447,15 @@ export function ClickCollectSelector() {
                           {serviceFilter ? "Nessun negozio con questo servizio" : "Nessun negozio trovato"}
                         </p>
                       ) : (
-                        filteredNearbyShops.map((shop, index) => {
-                          const isSelected = currentShop?.id === shop.id;
-                          return (
-                            <button
-                              key={`${shop.id}-${index}`}
-                              type="button"
-                              onClick={() => handleShopSelect(shop)}
-                              className={cn(
-                                "w-full p-2.5 rounded-lg border text-left transition-all",
-                                isSelected
-                                  ? "border-primary bg-primary/5"
-                                  : "border-border hover:border-primary/50"
-                              )}
-                            >
-                              <div className="flex items-center justify-between gap-2">
-                                <div className="min-w-0 flex-1">
-                                  <p className={cn("text-sm truncate", isSelected && "font-medium")}>
-                                    {shop.name}
-                                  </p>
-                                  <p className="text-xs text-muted-foreground truncate">
-                                    {shop.city}
-                                  </p>
-                                  {shop.services && shop.services.length > 0 && (
-                                    <div className="flex flex-wrap gap-1 mt-1">
-                                      {shop.services.map((s) => {
-                                        const f = SERVICE_FILTERS.find((sf) => sf.key === s);
-                                        if (!f) return null;
-                                        const SIcon = f.icon;
-                                        return (
-                                          <span key={s} className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground">
-                                            <SIcon className="h-2.5 w-2.5" />
-                                            {f.label}
-                                          </span>
-                                        );
-                                      })}
-                                    </div>
-                                  )}
-                                </div>
-                                <div className="text-right shrink-0 flex items-center gap-2">
-                                  <div>
-                                    <p className="text-xs font-medium">
-                                      {shop.distance < 1
-                                        ? `${Math.round(shop.distance * 1000)} m`
-                                        : `${shop.distance.toFixed(1)} km`}
-                                    </p>
-                                    {shop.hasExpressPickup && (
-                                      <p className="text-xs text-green-600">Express</p>
-                                    )}
-                                  </div>
-                                  {isSelected && <Check className="h-4 w-4 text-primary" />}
-                                </div>
-                              </div>
-                            </button>
-                          );
-                        })
+                        filteredNearbyShops.map((shop, index) => (
+                          <ShopCard
+                            key={`${shop.id}-${index}`}
+                            shop={shop}
+                            isSelected={currentShop?.id === shop.id}
+                            compact
+                            onClick={() => handleShopSelect(shop)}
+                          />
+                        ))
                       )}
                     </div>
                   </div>

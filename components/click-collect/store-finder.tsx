@@ -4,21 +4,14 @@ import { useState, useMemo } from "react";
 import { useClickCollect } from "./click-collect-context";
 import { AddressSearch } from "./address-search";
 import { LocationMap } from "./location-map";
-import { MapPin, Navigation, Zap, Store, LocateFixed, Clock, Phone, Scissors, Stethoscope, Heart, Car } from "lucide-react";
+import { ShopCard, SERVICE_CONFIG } from "./shop-card";
+import { MapPin, Navigation, LocateFixed, Store } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Shop, StoreService } from "@/lib/types/shop";
-import { formatDistance } from "@/lib/click-collect-utils";
 import { useRouter } from "next/navigation";
 
 // Demo position: central Milan (near Duomo)
 const DEMO_LOCATION = { lat: 45.4642, lng: 9.19 };
-
-const SERVICE_CONFIG: Record<StoreService, { label: string; icon: typeof Scissors; color: string }> = {
-  toelettatura: { label: "Toelettatura", icon: Scissors, color: "text-purple-600 bg-purple-50" },
-  veterinario: { label: "Veterinario", icon: Stethoscope, color: "text-blue-600 bg-blue-50" },
-  adozioni: { label: "Adozioni", icon: Heart, color: "text-rose-600 bg-rose-50" },
-  parking: { label: "Parking", icon: Car, color: "text-gray-600 bg-gray-100" },
-};
 
 export function StoreFinder() {
   const {
@@ -123,7 +116,7 @@ export function StoreFinder() {
         >
           Tutti
         </button>
-        {(Object.entries(SERVICE_CONFIG) as [StoreService, typeof SERVICE_CONFIG[StoreService]][]).map(
+        {(Object.entries(SERVICE_CONFIG) as [StoreService, (typeof SERVICE_CONFIG)[StoreService]][]).map(
           ([key, { label, icon: Icon }]) => (
             <button
               key={key}
@@ -183,73 +176,12 @@ export function StoreFinder() {
           )}
 
           {shopsToShow.map((shop, index) => (
-            <div
+            <ShopCard
               key={`${shop.id}-${index}`}
-              className={`p-4 border rounded-lg transition-colors cursor-pointer hover:border-primary/50 ${
-                currentShop?.id === shop.id ? "border-primary bg-primary/5" : ""
-              }`}
+              shop={shop}
+              isSelected={currentShop?.id === shop.id}
               onClick={() => handleSelectStore(shop)}
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex-1">
-                  <h3 className="font-medium">{shop.name}</h3>
-                  {shop.address && (
-                    <p className="text-sm text-muted-foreground mt-1">{shop.address}</p>
-                  )}
-                  <p className="text-sm text-muted-foreground">
-                    {shop.city}{shop.region ? `, ${shop.region}` : ""}
-                  </p>
-
-                  <div className="flex items-center gap-3 mt-2">
-                    <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-                      <MapPin className="h-3 w-3" />
-                      {formatDistance(shop.distance)}
-                    </span>
-                    {shop.hasExpressPickup && (
-                      <span className="inline-flex items-center gap-1 text-xs text-green-600">
-                        <Zap className="h-3 w-3" />
-                        Ritiro express 1h
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Opening hours & phone */}
-                  <div className="flex flex-wrap items-center gap-3 mt-2">
-                    {shop.openingHours && (
-                      <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-                        <Clock className="h-3 w-3" />
-                        {shop.openingHours}
-                      </span>
-                    )}
-                    {shop.phone && (
-                      <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-                        <Phone className="h-3 w-3" />
-                        {shop.phone}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Services */}
-                  {shop.services && shop.services.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5 mt-2">
-                      {shop.services.map((service) => {
-                        const config = SERVICE_CONFIG[service];
-                        if (!config) return null;
-                        const Icon = config.icon;
-                        return (
-                          <span
-                            key={service}
-                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium ${config.color}`}
-                          >
-                            <Icon className="h-2.5 w-2.5" />
-                            {config.label}
-                          </span>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-
+              action={
                 <Button
                   size="sm"
                   variant={currentShop?.id === shop.id ? "default" : "outline"}
@@ -261,8 +193,8 @@ export function StoreFinder() {
                   <Store className="h-4 w-4 mr-1" />
                   Sfoglia
                 </Button>
-              </div>
-            </div>
+              }
+            />
           ))}
         </div>
       </div>
