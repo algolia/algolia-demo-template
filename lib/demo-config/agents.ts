@@ -13,40 +13,46 @@ import { DEMO_CONFIG } from "./index";
  */
 export const AGENT_PRODUCT_ATTRIBUTES = [
   "objectID",
-  "title",
+  "name",
   "brand",
   "price",
-  "shortDescription",
-  "ingredients",
-  "characteristics",
-  "inStock",
-  "categories",
+  "description",
+  "hierarchical_categories",
+  "stock",
+  "colour",
+  "primary_image",
+  "url",
+  "dimensions",
 ];
 
 export const AGENT_CONFIG = {
   main: {
     name: `${DEMO_CONFIG.brand.name} Shopping Assistant`,
     instructions: `**AGENT ROLE**
-You are a Shopping Assistant for ${DEMO_CONFIG.brand.name}. You help customers find products and make purchase decisions.
+You are a Shopping Assistant for ${DEMO_CONFIG.brand.name}, a leading UK bathroom retailer. You help customers find bathroom products including baths, showers, toilets, basins, taps, furniture, and accessories to create their dream bathroom.
 
 **RESPONSE STYLE**
 - Keep responses concise and helpful
 - When context has "isFirstMessage": true, respond with a single short sentence (max 15 words) — no product searches, no lists, just a brief greeting or acknowledgment
 - Always offer clear next actions (add to cart, learn more, compare, etc.)
+- Use a professional yet friendly tone appropriate for a premium UK bathroom retailer
+- Use British English spelling (colour, favourite, etc.)
+- Show prices in GBP (£)
 
 **Tools**
-- algolia_search_index - Search the product catalog
+- algolia_search_index - Search the Ideal Bathrooms product catalog
 - addToCart - Add products to the customer's cart
 - showItems - Display product recommendations
 
 **Behavior**
-1. Understand customer needs
-2. Search for relevant products
+1. Understand customer's bathroom project, style preferences, and budget
+2. Search for relevant bathroom products
 3. Use showItems to present 2-4 options
 4. Offer clear next steps
+5. Consider factors like bathroom size, style (modern, traditional, industrial), budget, and specific requirements when recommending
 
 **Language**
-- Respond in the language the customer uses, default to English`,
+- Respond in the language the customer uses, default to British English`,
 
     tools: [
       {
@@ -56,18 +62,20 @@ You are a Shopping Assistant for ${DEMO_CONFIG.brand.name}. You help customers f
           {
             index: ALGOLIA_CONFIG.INDEX_NAME,
             description: "Product catalog",
-            enhancedDescription: `Product catalog for ${DEMO_CONFIG.brand.name}.
+            enhancedDescription: `Product catalog for ${DEMO_CONFIG.brand.name} — bathroom products including baths, showers, toilets, basins, taps, tiles, and accessories for UK homes.
 
 **Key filterable fields:**
-- price: Product price (numeric)
-- brand: Brand name
-- hierarchical_categories.lvl0, hierarchical_categories.lvl1, hierarchical_categories.lvl2: Category hierarchy
-- inStock: Boolean, true if available
-
+- price: Product price in GBP (numeric)
+- brand: Brand name (e.g. "Grohe", "Roca", "Vitra", "Ideal Standard", "Crosswater")
+- hierarchical_categories.lvl0: Top-level category (e.g. "Baths", "Showers", "Sanitaryware", "Taps", "Furniture", "Tiles", "Accessories")
+- hierarchical_categories.lvl1: Sub-category as "Parent > Child" (e.g. "Baths > Freestanding Baths", "Baths > Double Ended Baths", "Showers > Electric Showers", "Showers > Shower Enclosures", "Showers > Shower Trays", "Sanitaryware > Toilets", "Sanitaryware > Basins", "Taps > Bath Taps", "Taps > Basin Taps", "Furniture > Vanity Units", "Furniture > Bathroom Cabinets")
+- colour: Product colour (e.g. "white", "chrome", "black", "brushed nickel")
+- stock.in_stock: Boolean, true if available
 
 **IMPORTANT:**
 - Only use exact category values that exist in your index for filtering.
-- Search for one product category at a time. If the user asks for multiple types of products (e.g. "jacket and pants"), run separate searches for each rather than combining them into one query.`,
+- Search for one product category at a time. If the user asks for multiple types of products (e.g. "bath and toilet"), run separate searches for each rather than combining them into one query.
+- When users mention bathroom styles (modern, contemporary, traditional, industrial), map to appropriate product styles and brands.`,
             searchParameters: {
               attributesToRetrieve: AGENT_PRODUCT_ATTRIBUTES,
             },
@@ -121,10 +129,10 @@ You are a Shopping Assistant for ${DEMO_CONFIG.brand.name}. You help customers f
   },
 
   fallbackSuggestions: [
-    "Show me today's best deals",
-    "Find popular products",
-    "Browse new arrivals",
-    "Compare top-rated items",
-    "Explore trending categories",
+    "Show me freestanding baths",
+    "Find electric showers under £300",
+    "Browse modern bathroom furniture",
+    "Show me chrome taps",
+    "Find a close-coupled toilet",
   ] as string[],
 };
