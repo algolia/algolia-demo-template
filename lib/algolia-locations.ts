@@ -70,6 +70,9 @@ export async function fetchShopsByDistance(
         address: hit.address,
         region: hit.region,
         _geoloc: hit._geoloc,
+        phone: hit.phone,
+        openingHours: hit.openingHours,
+        services: hit.services,
         distance,
         hasExpressPickup: hasExpressPickup(distance),
       };
@@ -110,6 +113,9 @@ export async function fetchNearbyShops(
         address: hit.address,
         region: hit.region,
         _geoloc: hit._geoloc,
+        phone: hit.phone,
+        openingHours: hit.openingHours,
+        services: hit.services,
         distance,
         hasExpressPickup: hasExpressPickup(distance),
       };
