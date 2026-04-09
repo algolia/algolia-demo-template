@@ -1,4 +1,4 @@
-import { ShopGeoloc, StoreAvailability, ShopWithDistance, EXPRESS_PICKUP_RADIUS_KM } from "./types/shop";
+import { ShopGeoloc, StoreAvailability, ShopWithDistance, Shop, EXPRESS_PICKUP_RADIUS_KM } from "./types/shop";
 
 // Minimal interface for cart items (avoid circular dependency with cart-context)
 interface CartItemWithAvailability {
@@ -178,6 +178,86 @@ export function findShopWithAllItems(
 
     if (allCartItemsInStock) {
       return shop;
+    }
+  }
+
+  return null;
+}
+
+export type StoreResolution =
+  | { type: "resolved"; storeId: string; storeName: string }
+  | { type: "different-store"; storeId: string; storeName: string; cartStoreName: string }
+  | { type: "none" };
+
+/**
+ * Resolve which store a product should be associated with for cart purposes.
+ *
+ * Priority:
+ * 1. If cart already has items from a store ("primary cart store"), prefer that store
+ *    → avoids splitting pickup across multiple stores
+ * 2. If not available at the cart's primary store, return "different-store" result
+ *    so the UI can warn the user before adding
+ * 3. If cart is empty: use currentShop if in stock, otherwise closest nearby shop
+ * 4. null if no store has stock
+ */
+export function resolveStoreForProduct(
+  availableInStores: StoreAvailability[] | undefined,
+  currentShop: Shop | null,
+  nearbyShops: ShopWithDistance[],
+  primaryCartStoreId?: string | null,
+  primaryCartStoreName?: string | null,
+): StoreResolution {
+  if (!availableInStores?.length) return { type: "none" };
+
+  // If cart has a primary store, try to keep items together
+  if (primaryCartStoreId && primaryCartStoreName) {
+    const atCartStore = availableInStores.find(
+      (a) => a.objectID === primaryCartStoreId && a.inStock
+    );
+    if (atCartStore) {
+      return { type: "resolved", storeId: primaryCartStoreId, storeName: primaryCartStoreName };
+    }
+
+    // Not available at cart's primary store — find the best alternative
+    const alternative = findBestStore(availableInStores, currentShop, nearbyShops);
+    if (alternative) {
+      return {
+        type: "different-store",
+        storeId: alternative.storeId,
+        storeName: alternative.storeName,
+        cartStoreName: primaryCartStoreName,
+      };
+    }
+    return { type: "none" };
+  }
+
+  // Cart is empty — standard resolution
+  const best = findBestStore(availableInStores, currentShop, nearbyShops);
+  return best ? { type: "resolved", ...best } : { type: "none" };
+}
+
+function findBestStore(
+  availableInStores: StoreAvailability[],
+  currentShop: Shop | null,
+  nearbyShops: ShopWithDistance[],
+): { storeId: string; storeName: string } | null {
+  // Check current selected shop first
+  if (currentShop) {
+    const atCurrentShop = availableInStores.find(
+      (a) => a.objectID === currentShop.id && a.inStock
+    );
+    if (atCurrentShop) {
+      return { storeId: currentShop.id, storeName: currentShop.name };
+    }
+  }
+
+  // Find closest nearby shop with stock
+  for (const shop of nearbyShops) {
+    const hasStock = availableInStores.find(
+      (a) => a.objectID === shop.id && a.inStock
+    );
+    if (hasStock) {
+      return { storeId: shop.id, storeName: shop.name };
     }
   }
 

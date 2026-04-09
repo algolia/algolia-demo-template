@@ -18,6 +18,8 @@ export interface CartItem {
   image?: string;
   brand?: string;
   category?: string;
+  storeId?: string;
+  storeName?: string;
 }
 
 interface CartContextType {
@@ -32,6 +34,7 @@ interface CartContextType {
   clearCart: () => void;
   itemCount: number;
   total: number;
+  primaryCartStore: { storeId: string; storeName: string } | null;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -95,6 +98,27 @@ export function CartProvider({ children }: { children: ReactNode }) {
     return items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   }, [items]);
 
+  const primaryCartStore = useMemo(() => {
+    const storeCounts = new Map<string, { count: number; name: string }>();
+    for (const item of items) {
+      if (item.storeId && item.storeName) {
+        const existing = storeCounts.get(item.storeId);
+        if (existing) {
+          existing.count += item.quantity;
+        } else {
+          storeCounts.set(item.storeId, { count: item.quantity, name: item.storeName });
+        }
+      }
+    }
+    if (storeCounts.size === 0) return null;
+
+    let maxStore = { id: "", name: "", count: 0 };
+    for (const [id, { count, name }] of storeCounts) {
+      if (count > maxStore.count) maxStore = { id, name, count };
+    }
+    return { storeId: maxStore.id, storeName: maxStore.name };
+  }, [items]);
+
   const value = useMemo(
     () => ({
       items,
@@ -104,6 +128,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       clearCart,
       itemCount,
       total,
+      primaryCartStore,
     }),
     [
       items,
@@ -113,6 +138,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       clearCart,
       itemCount,
       total,
+      primaryCartStore,
     ]
   );
 
