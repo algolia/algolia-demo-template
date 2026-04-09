@@ -4,7 +4,10 @@ import { useState } from "react";
 import { useClickCollect } from "./click-collect-context";
 import { AddressSearch } from "./address-search";
 import { LocationMap } from "./location-map";
-import { MapPin, Navigation, Zap, Store } from "lucide-react";
+import { MapPin, Navigation, Zap, Store, LocateFixed } from "lucide-react";
+
+// Demo position: central Milan (near Duomo) — used when browser geolocation is unavailable
+const DEMO_LOCATION = { lat: 45.4642, lng: 9.19 };
 import { Button } from "@/components/ui/button";
 import { Shop } from "@/lib/types/shop";
 import { formatDistance } from "@/lib/click-collect-utils";
@@ -55,6 +58,13 @@ export function StoreFinder() {
     );
   };
 
+  const handleDemoLocation = async () => {
+    setUserLocation(DEMO_LOCATION);
+    setLocationSource("address");
+    await fetchShopsByLocation(DEMO_LOCATION);
+    setSearchPerformed(true);
+  };
+
   const handleSelectStore = (shop: Shop) => {
     setShop(shop);
   };
@@ -82,6 +92,10 @@ export function StoreFinder() {
         <Button variant="outline" onClick={handleBrowserLocation} className="shrink-0">
           <Navigation className="h-4 w-4 mr-2" />
           Usa la mia posizione
+        </Button>
+        <Button variant="secondary" onClick={handleDemoLocation} className="shrink-0">
+          <LocateFixed className="h-4 w-4 mr-2" />
+          Posizione demo (Milano)
         </Button>
       </div>
 

@@ -12,7 +12,11 @@ import {
   Store,
   CircleDot,
   Check,
+  LocateFixed,
 } from "lucide-react";
+
+// Demo position: central Milan (near Duomo)
+const DEMO_LOCATION: ShopGeoloc = { lat: 45.4642, lng: 9.19 };
 import {
   Sheet,
   SheetClose,
@@ -141,6 +145,13 @@ export function ClickCollectSelector() {
     },
     [setUserLocation, setLocationSource, fetchShopsByLocation]
   );
+
+  const handleDemoLocation = useCallback(async () => {
+    setUserLocation(DEMO_LOCATION);
+    setLocationSource("address");
+    setSelectedAddress("Milano Centro (Demo)");
+    await fetchShopsByLocation(DEMO_LOCATION);
+  }, [setUserLocation, setLocationSource, fetchShopsByLocation]);
 
   const handleDateSelect = useCallback(
     (date: Date) => {
@@ -319,6 +330,15 @@ export function ClickCollectSelector() {
                     Usa la mia posizione
                   </Button>
 
+                  <Button
+                    variant="secondary"
+                    className="w-full justify-start gap-2"
+                    onClick={handleDemoLocation}
+                  >
+                    <LocateFixed className="h-4 w-4" />
+                    Posizione demo (Milano)
+                  </Button>
+
                   <div className="relative">
                     <div className="absolute inset-0 flex items-center">
                       <span className="w-full border-t" />
@@ -445,6 +465,15 @@ export function ClickCollectSelector() {
                       <Navigation className="h-4 w-4" />
                     )}
                     Usa la mia posizione
+                  </Button>
+
+                  <Button
+                    variant="secondary"
+                    className="w-full justify-start gap-2"
+                    onClick={handleDemoLocation}
+                  >
+                    <LocateFixed className="h-4 w-4" />
+                    Posizione demo (Milano)
                   </Button>
 
                   <AddressSearch
