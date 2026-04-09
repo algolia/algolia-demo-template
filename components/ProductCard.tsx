@@ -591,6 +591,7 @@ interface ProductCardProps {
 export function ProductCard({ product, showCartControls = true, showBadges = true, selectable = false, sponsoredLabel }: ProductCardProps) {
   const { isSelected } = useSelection();
   const { currentShop, nearbyShops, setShop } = useClickCollect();
+  const { primaryCartStore } = useCart();
   const imageUrl = product.primary_image || "";
   const productName = product.name || "Untitled Product";
   const productId = product.objectID;
@@ -689,6 +690,8 @@ export function ProductCard({ product, showCartControls = true, showBadges = tru
           currentShop={currentShop}
           nearbyShops={nearbyShops}
           onShopSelect={setShop}
+          primaryCartStoreId={primaryCartStore?.storeId}
+          primaryCartStoreName={primaryCartStore?.storeName}
         />
       </div>
     </Link>
@@ -710,6 +713,7 @@ interface ProductListItemProps {
 export function ProductListItem({ product, showCartControls = true, showBadges = true, selectable = false, sponsoredLabel }: ProductListItemProps) {
   const { isSelected } = useSelection();
   const { currentShop, nearbyShops, setShop } = useClickCollect();
+  const { primaryCartStore } = useCart();
   const imageUrl = product.primary_image || "";
   const productName = product.name || "Untitled Product";
   const productLink = `/products/${product.objectID}`;
@@ -815,6 +819,8 @@ export function ProductListItem({ product, showCartControls = true, showBadges =
           currentShop={currentShop}
           nearbyShops={nearbyShops}
           onShopSelect={setShop}
+          primaryCartStoreId={primaryCartStore?.storeId}
+          primaryCartStoreName={primaryCartStore?.storeName}
         />
       </div>
     </Link>

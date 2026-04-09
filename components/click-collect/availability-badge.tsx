@@ -1,6 +1,6 @@
 "use client";
 
-import { MapPin, Clock, Truck } from "lucide-react";
+import { MapPin, Clock, Truck, ShoppingBag } from "lucide-react";
 import { Product } from "@/lib/types/product";
 import { Shop, ShopWithDistance } from "@/lib/types/shop";
 import {
@@ -20,6 +20,8 @@ interface AvailabilityBadgeProps {
   currentShop: Shop | null;
   nearbyShops: ShopWithDistance[];
   onShopSelect?: (shop: Shop) => void;
+  primaryCartStoreId?: string | null;
+  primaryCartStoreName?: string | null;
 }
 
 export function AvailabilityBadge({
@@ -27,8 +29,34 @@ export function AvailabilityBadge({
   currentShop,
   nearbyShops,
   onShopSelect,
+  primaryCartStoreId,
+  primaryCartStoreName,
 }: AvailabilityBadgeProps) {
   const availability = product.availableInStores || [];
+
+  // Check if product is available at the cart's primary store
+  const atCartStore = primaryCartStoreId
+    ? availability.some((a) => a.objectID === primaryCartStoreId && a.inStock)
+    : false;
+
+  // Case 0: Product is at the store where user is building their basket
+  if (atCartStore && primaryCartStoreName) {
+    return (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="inline-flex items-center gap-1 text-xs text-primary bg-primary/10 px-2 py-1 rounded-full font-medium">
+              <ShoppingBag className="h-3 w-3" />
+              <span>Disponibile nel tuo negozio</span>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>In stock presso {primaryCartStoreName} — stesso ritiro degli altri articoli</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
+  }
 
   // Check availability at current shop
   const currentShopAvailability = currentShop
