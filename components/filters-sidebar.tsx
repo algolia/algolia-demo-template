@@ -7,6 +7,7 @@ import {
   useRange,
   useCurrentRefinements,
   useClearRefinements,
+  DynamicWidgets,
 } from "react-instantsearch";
 import { ChevronDown, X, Sparkles, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -460,18 +461,16 @@ export function FiltersSidebar() {
         ]}
         title={t("filters.topic")}
       />
-      <RefinementListFilter
-        attribute="siteLabel"
-        title={t("filters.website")}
-        searchable
-        searchPlaceholder={t("filters.searchWebsite")}
-        limit={10}
-        showMoreLimit={30}
-      />
-      <RefinementListFilter
-        attribute="mimeType"
-        title={t("filters.fileType")}
-        limit={5}
+      <DynamicWidgets
+        fallbackComponent={({ attribute }: { attribute: string }) => (
+          <RefinementListFilter
+            attribute={attribute}
+            title={attribute.replace('.value', '').replace(/_/g, ' ').replace(/^\w/, (c: string) => c.toUpperCase())}
+            searchable
+            limit={10}
+            showMoreLimit={30}
+          />
+        )}
       />
     </aside>
   );
