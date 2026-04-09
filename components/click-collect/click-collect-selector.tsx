@@ -22,6 +22,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { useClickCollect } from "./click-collect-context";
 import { AddressSearch } from "./address-search";
 import { LocationMap } from "./location-map";
@@ -55,6 +56,8 @@ export function ClickCollectSelector() {
     allShops,
     allShopsByDistance,
     nearbyShops,
+    storeMode,
+    setStoreMode,
     clearSelection,
     fetchShopsByLocation,
     fetchAllShops,
@@ -465,6 +468,24 @@ export function ClickCollectSelector() {
                         </div>
                         <Check className="h-5 w-5 text-primary" />
                       </div>
+                    </div>
+                  )}
+
+                  {/* Store-first mode toggle */}
+                  {currentShop && (
+                    <div className="flex items-center justify-between gap-3 px-4 py-3 bg-muted/50 rounded-lg">
+                      <div className="flex-1">
+                        <p className="text-sm font-medium">Solo prodotti disponibili qui</p>
+                        <p className="text-xs text-muted-foreground">
+                          Mostra solo prodotti in stock presso {currentShop.name}
+                        </p>
+                      </div>
+                      <Switch
+                        checked={storeMode === "store-first"}
+                        onCheckedChange={(checked) =>
+                          setStoreMode(checked ? "store-first" : "radius")
+                        }
+                      />
                     </div>
                   )}
 

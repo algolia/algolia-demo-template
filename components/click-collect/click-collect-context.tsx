@@ -25,7 +25,10 @@ const STORAGE_KEY_SHOP = "arcaplanet_selected_shop";
 const STORAGE_KEY_LOCATION = "arcaplanet_user_location";
 const STORAGE_KEY_PICKUP_DATE = "arcaplanet_pickup_date";
 const STORAGE_KEY_RADIUS = "arcaplanet_search_radius";
+const STORAGE_KEY_STORE_MODE = "arcaplanet_store_mode";
 const DEFAULT_RADIUS_KM = 10;
+
+type StoreMode = "radius" | "store-first";
 
 interface ClickCollectContextType {
   // User location
@@ -61,6 +64,11 @@ interface ClickCollectContextType {
   // Loading states
   isLoadingShops: boolean;
 
+  // Store-first mode
+  storeMode: StoreMode;
+  setStoreMode: (mode: StoreMode) => void;
+  storeFirstFilter: string | null;
+
   // Actions
   clearSelection: () => void;
   fetchShopsByLocation: (loc: ShopGeoloc, radiusKm?: number) => Promise<void>;
@@ -90,6 +98,12 @@ export function ClickCollectProvider({ children }: { children: ReactNode }) {
   >([]);
   const [isLoadingShops, setIsLoadingShops] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
+  const [storeMode, setStoreModeState] = useState<StoreMode>(() => {
+    if (typeof window !== "undefined") {
+      return (localStorage.getItem(STORAGE_KEY_STORE_MODE) as StoreMode) || "radius";
+    }
+    return "radius";
+  });
 
   // Hydrate from localStorage on mount
   useEffect(() => {
@@ -124,6 +138,11 @@ export function ClickCollectProvider({ children }: { children: ReactNode }) {
         if (!isNaN(radius) && radius > 0) {
           setSearchRadiusKmState(radius);
         }
+      }
+
+      const storedStoreMode = localStorage.getItem(STORAGE_KEY_STORE_MODE);
+      if (storedStoreMode === "radius" || storedStoreMode === "store-first") {
+        setStoreModeState(storedStoreMode);
       }
     } catch (error) {
       console.error("Error hydrating click-collect state:", error);
@@ -186,6 +205,13 @@ export function ClickCollectProvider({ children }: { children: ReactNode }) {
     localStorage.setItem(STORAGE_KEY_RADIUS, radius.toString());
   }, []);
 
+  const setStoreMode = useCallback((mode: StoreMode) => {
+    setStoreModeState(mode);
+    if (typeof window !== "undefined") {
+      localStorage.setItem(STORAGE_KEY_STORE_MODE, mode);
+    }
+  }, []);
+
   const clearSelection = useCallback(() => {
     setUserLocationState(null);
     setLocationSource(null);
@@ -193,9 +219,11 @@ export function ClickCollectProvider({ children }: { children: ReactNode }) {
     setCurrentShopState(null);
     setNearbyShops([]);
     setAllShopsByDistance([]);
+    setStoreModeState("radius");
     localStorage.removeItem(STORAGE_KEY_LOCATION);
     localStorage.removeItem(STORAGE_KEY_SHOP);
     localStorage.removeItem(STORAGE_KEY_PICKUP_DATE);
+    localStorage.removeItem(STORAGE_KEY_STORE_MODE);
   }, []);
 
   const fetchShopsByLocation = useCallback(async (loc: ShopGeoloc, radiusKm?: number) => {
@@ -235,6 +263,14 @@ export function ClickCollectProvider({ children }: { children: ReactNode }) {
     return `availableInStores.objectID:${currentShop.id}<score=${SHOP_BOOST_SCORE}>`;
   }, [currentShop]);
 
+  // Hard filter for store-first mode: show ONLY products available at the selected store
+  const storeFirstFilter = useMemo(() => {
+    if (storeMode === "store-first" && currentShop) {
+      return `availableInStores.objectID:${currentShop.id}`;
+    }
+    return null;
+  }, [storeMode, currentShop]);
+
   const value = useMemo(
     () => ({
       userLocation,
@@ -252,6 +288,9 @@ export function ClickCollectProvider({ children }: { children: ReactNode }) {
       allShopsByDistance,
       shopBoostFilters,
       shopBoostFilter,
+      storeMode,
+      setStoreMode,
+      storeFirstFilter,
       isLoadingShops,
       clearSelection,
       fetchShopsByLocation,
@@ -272,6 +311,9 @@ export function ClickCollectProvider({ children }: { children: ReactNode }) {
       allShopsByDistance,
       shopBoostFilters,
       shopBoostFilter,
+      storeMode,
+      setStoreMode,
+      storeFirstFilter,
       isLoadingShops,
       clearSelection,
       fetchShopsByLocation,
@@ -299,6 +341,9 @@ export function ClickCollectProvider({ children }: { children: ReactNode }) {
           allShopsByDistance: [],
           shopBoostFilters: [],
           shopBoostFilter: undefined,
+          storeMode: "radius" as StoreMode,
+          setStoreMode: () => {},
+          storeFirstFilter: null,
           isLoadingShops: false,
           clearSelection: () => {},
           fetchShopsByLocation: async () => {},

@@ -26,7 +26,7 @@ const searchClient = compositionClient(
  */
 function PersonalizedConfigure() {
   const { personalizationFilters, currentUser } = useUser();
-  const { shopBoostFilters } = useClickCollect();
+  const { shopBoostFilters, storeFirstFilter, storeMode } = useClickCollect();
   const { cartStoreBoosts } = useCart();
   const { refresh } = useInstantSearch();
   const prevUserIdRef = useRef<string | null>(null);
@@ -44,7 +44,8 @@ function PersonalizedConfigure() {
   // Configure personalization
   useConfigure({
     hitsPerPage: 12,
-    optionalFilters,
+    optionalFilters: storeMode === "store-first" ? undefined : optionalFilters,
+    filters: storeFirstFilter || undefined,
   });
 
   // Refresh when user or shop boosts change
