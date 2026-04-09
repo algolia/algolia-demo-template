@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSearchBox } from "react-instantsearch";
-import { BrainIcon } from "lucide-react";
+import { BrainIcon, MapPin } from "lucide-react";
 import { CategoriesSheet } from "./categories-sheet";
 import { ClickCollectSelector } from "@/components/click-collect/click-collect-selector";
 import { CartSheet } from "./cart-sheet";
@@ -49,6 +49,13 @@ export function NavBar() {
           {/* Right section: User, Click & Collect, AI, Cart */}
           <div className="shrink-0 flex items-center gap-6">
             <UserSelector />
+            <Link
+              href="/stores"
+              className="hidden sm:flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <MapPin className="h-4 w-4" />
+              Negozi
+            </Link>
             <ClickCollectSelector />
             <Button
               variant="ghost"
