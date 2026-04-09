@@ -87,6 +87,7 @@ import { useSelection } from "@/components/selection/selection-context";
 import { useSidepanel } from "@/components/sidepanel-agent-studio/context/sidepanel-context";
 import { useClickCollect } from "@/components/click-collect/click-collect-context";
 import { resolveStoreForProduct } from "@/lib/click-collect-utils";
+import { AvailabilityBadge } from "@/components/click-collect/availability-badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { PreferenceKey, extractProductFieldValues } from "@/lib/types/user";
 import { PREFERENCE_METADATA } from "@/lib/demo-config/users";
@@ -589,6 +590,7 @@ interface ProductCardProps {
 
 export function ProductCard({ product, showCartControls = true, showBadges = true, selectable = false, sponsoredLabel }: ProductCardProps) {
   const { isSelected } = useSelection();
+  const { currentShop, nearbyShops, setShop } = useClickCollect();
   const imageUrl = product.primary_image || "";
   const productName = product.name || "Untitled Product";
   const productId = product.objectID;
@@ -682,6 +684,12 @@ export function ProductCard({ product, showCartControls = true, showBadges = tru
             )}
           </div>
         )}
+        <AvailabilityBadge
+          product={product}
+          currentShop={currentShop}
+          nearbyShops={nearbyShops}
+          onShopSelect={setShop}
+        />
       </div>
     </Link>
   );
@@ -701,6 +709,7 @@ interface ProductListItemProps {
 
 export function ProductListItem({ product, showCartControls = true, showBadges = true, selectable = false, sponsoredLabel }: ProductListItemProps) {
   const { isSelected } = useSelection();
+  const { currentShop, nearbyShops, setShop } = useClickCollect();
   const imageUrl = product.primary_image || "";
   const productName = product.name || "Untitled Product";
   const productLink = `/products/${product.objectID}`;
@@ -801,6 +810,12 @@ export function ProductListItem({ product, showCartControls = true, showBadges =
             )}
           </div>
         )}
+        <AvailabilityBadge
+          product={product}
+          currentShop={currentShop}
+          nearbyShops={nearbyShops}
+          onShopSelect={setShop}
+        />
       </div>
     </Link>
   );
