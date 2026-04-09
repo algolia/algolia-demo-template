@@ -175,17 +175,47 @@ export function AvailabilityBadge({
     );
   }
 
-  // Case 5: No shop selected - show number of shops with stock
+  // Case 5: No shop selected - show number of shops with stock + top 5 closest on hover
   const shopsWithStock = availability.filter((a) => a.inStock).length;
   if (shopsWithStock > 0) {
+    // Find top 5 closest shops that have this product in stock
+    const closestStoresWithStock = nearbyShops
+      .filter((shop) => availability.some((a) => a.objectID === shop.id && a.inStock))
+      .slice(0, 5);
+
     return (
-      <div className="inline-flex items-center gap-1 text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">
-        <MapPin className="h-3 w-3" />
-        <span>
-          Disponibile in {shopsWithStock}{" "}
-          {shopsWithStock === 1 ? "negozio" : "negozi"}
-        </span>
-      </div>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="inline-flex items-center gap-1 text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">
+              <MapPin className="h-3 w-3" />
+              <span>
+                Disponibile in {shopsWithStock}{" "}
+                {shopsWithStock === 1 ? "negozio" : "negozi"}
+              </span>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent side="bottom" className="max-w-xs">
+            {closestStoresWithStock.length > 0 ? (
+              <div className="space-y-1">
+                <p className="font-medium text-xs mb-1">Negozi piu vicini:</p>
+                {closestStoresWithStock.map((shop, i) => (
+                  <p key={`${shop.id}-${i}`} className="text-xs">
+                    {shop.name} — {formatDistance(shop.distance)}
+                  </p>
+                ))}
+                {shopsWithStock > 5 && (
+                  <p className="text-xs text-muted-foreground mt-1">
+                    e altri {shopsWithStock - 5} negozi
+                  </p>
+                )}
+              </div>
+            ) : (
+              <p>Disponibile in {shopsWithStock} {shopsWithStock === 1 ? "negozio" : "negozi"}</p>
+            )}
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     );
   }
 
