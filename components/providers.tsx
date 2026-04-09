@@ -7,7 +7,7 @@ import { NavBar } from "@/components/navbar/navbar";
 import { SidepanelProvider } from "@/components/sidepanel-agent-studio/context/sidepanel-context";
 import { SelectionProvider } from "@/components/selection/selection-context";
 import { UserProvider, useUser } from "@/components/user/user-context";
-import { ClickCollectProvider } from "@/components/click-collect/click-collect-context";
+import { ClickCollectProvider, useClickCollect } from "@/components/click-collect/click-collect-context";
 import { compositionClient } from "@algolia/composition";
 import { ALGOLIA_CONFIG } from "@/lib/algolia-config";
 import { LanguageProvider } from "@/components/language/language-context";
@@ -25,16 +25,18 @@ const searchClient = compositionClient(
  */
 function PersonalizedConfigure() {
   const { personalizationFilters, currentUser } = useUser();
+  const { shopBoostFilters } = useClickCollect();
   const { refresh } = useInstantSearch();
   const prevUserIdRef = useRef<string | null>(null);
+  const prevShopBoostsRef = useRef<string[]>([]);
 
-  // Use user preferences as optionalFilters
+  // Merge user personalization and shop boost filters
   const optionalFilters = useMemo(() => {
-    if (personalizationFilters && personalizationFilters.length > 0) {
-      return personalizationFilters;
-    }
-    return undefined;
-  }, [personalizationFilters]);
+    const filters: string[] = [];
+    if (personalizationFilters?.length) filters.push(...personalizationFilters);
+    if (shopBoostFilters?.length) filters.push(...shopBoostFilters);
+    return filters.length > 0 ? filters : undefined;
+  }, [personalizationFilters, shopBoostFilters]);
 
   // Configure personalization
   useConfigure({
@@ -42,20 +44,19 @@ function PersonalizedConfigure() {
     optionalFilters,
   });
 
-  // Refresh search when user changes
+  // Refresh when user or shop boosts change
   useEffect(() => {
     const currentUserId = currentUser?.id ?? null;
+    const userChanged = prevUserIdRef.current !== null && prevUserIdRef.current !== currentUserId;
+    const boostsChanged = JSON.stringify(prevShopBoostsRef.current) !== JSON.stringify(shopBoostFilters);
 
-    const userChanged =
-      prevUserIdRef.current !== null && prevUserIdRef.current !== currentUserId;
-
-    // Only refresh if user actually changed (not on initial mount)
-    if (userChanged) {
+    if (userChanged || boostsChanged) {
       refresh();
     }
 
     prevUserIdRef.current = currentUserId;
-  }, [currentUser?.id, refresh]);
+    prevShopBoostsRef.current = shopBoostFilters;
+  }, [currentUser?.id, shopBoostFilters, refresh]);
 
   return null;
 }
