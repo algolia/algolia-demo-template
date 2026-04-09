@@ -250,7 +250,7 @@ export function LocationMap({
         )}
 
         {/* Shop markers */}
-        {shops.map((shop) => {
+        {shops.map((shop, index) => {
           const isSelected = selectedShop?.id === shop.id;
           const icon = isSelected ? icons.selectedShopIcon : icons.shopIcon;
 
@@ -258,7 +258,7 @@ export function LocationMap({
 
           return (
             <Marker
-              key={shop.id}
+              key={`${shop.id}-${index}`}
               position={[shop._geoloc.lat, shop._geoloc.lng]}
               icon={icon}
               eventHandlers={{
