@@ -1,25 +1,21 @@
-/**
- * Core demo configuration
- *
- * Edit this file to customize the store for a new demo/customer.
- * See SETUP.md for the full setup checklist.
- */
 export const DEMO_CONFIG = {
   brand: {
-    name: "Acme Store",
-    tagline: "Your trusted online store",
-    logoUrl: "/logo.svg",
-    logoWidth: 120,
-    logoHeight: 40,
-    agentName: "Acme AI",
+    name: "Ideal Bathrooms",
+    tagline: "Transform your bathroom into a sanctuary",
+    logoUrl: "/logo.png",
+    logoWidth: 200,
+    logoHeight: 50,
+    agentName: "Ideal Bathrooms AI",
   },
   locale: {
     language: "en",
-    currency: "USD",
-    currencySymbol: "$",
+    currency: "GBP",
+    currencySymbol: "£",
   },
   imageDomains: [
-    { protocol: "https" as const, hostname: "fxqklbpngldowtbkqezm.supabase.co" },
-    { protocol: "https" as const, hostname: "img.theproteinworks.com" },
+    { protocol: "https" as const, hostname: "www.idealbathrooms.com" },
+    { protocol: "https" as const, hostname: "media.idealbathrooms.com" },
+    { protocol: "https" as const, hostname: "images.ctfassets.net" },
+    { protocol: "https" as const, hostname: "cdn.idealbathrooms.com" },
   ],
 };
