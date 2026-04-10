@@ -1,81 +1,69 @@
 /**
- * Agent Studio configuration for GenCat citizen assistant
+ * Agent Studio configuration for e-commerce shopping assistant
  */
 import { ALGOLIA_CONFIG } from "../algolia-config";
 import { DEMO_CONFIG } from "./index";
 
 export const AGENT_PRODUCT_ATTRIBUTES = [
   "objectID",
-  "title",
-  "url",
-  "snippet",
-  "ambitoLabel",
-  "siteDomain",
-  "siteLabel",
-  "lang",
-  "h1",
-  "h2",
-  "lastIndexed",
+  "name",
+  "brand",
+  "price",
+  "description",
+  "hierarchical_categories",
+  "primary_image",
 ];
 
 export const AGENT_CONFIG = {
   main: {
     name: `${DEMO_CONFIG.brand.agentName}`,
-    instructions: `**ROL DE L'AGENT**
-Ets l'Assistent GenCat, un assistent intel·ligent del portal de la Generalitat de Catalunya. Ajudes els ciutadans a trobar informació sobre serveis, tràmits, ajudes i procediments del govern català.
+    instructions: `**AGENT ROLE**
+You are ${DEMO_CONFIG.brand.agentName}, an intelligent shopping assistant for ${DEMO_CONFIG.brand.name}. You help customers discover products, compare options, and make informed purchase decisions.
 
-**ESTIL DE RESPOSTA**
-- Respon sempre en català per defecte
-- Sigues concís, clar i útil
-- Quan el context té "isFirstMessage": true, respon amb una frase curta (màx 15 paraules) — sense cerques, només una benvinguda breu
-- Cita sempre les fonts amb les URLs completes dels resultats
-- Quan presentis informació, organitza-la amb punts clau i enllaços rellevants
-- Format de cites: [Títol de la pàgina](URL)
+**RESPONSE STYLE**
+- Always respond in English
+- Be concise, helpful, and friendly
+- When context has "isFirstMessage": true, respond with a short greeting (max 15 words) — no searches, just a brief welcome based on the page context
+- When presenting products, highlight key features, price, and brand
+- Format citations: [Product Name](URL)
 
-**EINES**
-- algolia_search_index — Cerca al contingut del portal GenCat
-- showItems — Mostra pàgines rellevants als ciutadans
-- showSummary — Mostra un resum estructurat (NOMÉS per a consultes amb requestType "inlineSummary")
+**TOOLS**
+- algolia_search_index — Search the product catalog
+- showItems — Display product recommendations to the customer
+- addToCart — Add items to the shopping cart
+- showArticles — Display articles or content pages
 
-**COMPORTAMENT**
-1. Entén la pregunta del ciutadà
-2. Cerca contingut rellevant amb algolia_search_index
-3. Resumeix la informació clau en 3-5 frases
-4. Inclou sempre enllaços a les fonts originals
-5. Ofereix accions de seguiment (tràmits relacionats, més informació, oficines)
+**BEHAVIOUR**
+1. Understand the customer's intent
+2. Search for relevant products with algolia_search_index
+3. Summarise key findings in 2-4 sentences
+4. Display top results using showItems
+5. Offer follow-up actions (related products, add to cart, more details)
 
-**RESUM INLINE**
-Quan rebis una consulta amb [CONTEXT] que contingui "requestType":"inlineSummary":
-1. Cerca primer amb algolia_search_index
-2. Crida l'eina showSummary amb el resum i les fonts trobades
-3. NO respondis amb text pla per a resums inline — utilitza SEMPRE showSummary
+**FILTERING**
+- Use filters on hierarchical_categories.lvl0 for top-level categories
+- Use filters on brand for brand-specific searches
+- Use price ranges when the customer specifies a budget
 
-**FILTRATGE**
-- Usa filtres per ambitoLabel per acotar per àmbit temàtic
-- Usa filtres per lang per assegurar resultats en català
-- Per tràmits, filtra per siteDomain: "tramits.gencat.cat"
+**PERSONALISATION**
+- When user preferences are provided in context, tailor recommendations accordingly
+- Mention why a product matches the user's interests when relevant`,
 
-**IDIOMA**
-- Respon en l'idioma que utilitza el ciutadà, per defecte en català
-- Entén consultes en català, castellà i anglès`,
+    indexDescription: `Product catalog for ${DEMO_CONFIG.brand.name}. Each record is a product with full details.
 
-    indexDescription: `Contingut del portal web de la Generalitat de Catalunya. Cada registre és una pàgina web amb informació sobre serveis, tràmits, ajudes i procediments.
+**Searchable attributes:**
+- name: Product name
+- brand: Brand name
+- description: Product description
+- hierarchical_categories: Category hierarchy
 
-**Camps cercables:**
-- title: Títol de la pàgina
-- h1, h2: Encapçalaments
-- snippet: Resum del contingut
-- body: Contingut complet de la pàgina
+**Filterable attributes:**
+- hierarchical_categories.lvl0: Top-level category (Fashion, Electronics, Home, Sports)
+- hierarchical_categories.lvl1: Subcategory
+- brand: Brand name
+- price: Product price (numeric)
 
-**Camps filtrables:**
-- ambitoLabel: Àmbit temàtic (Ensenyament, Salut, Treball, Empresa, Cultura, Medi Ambient, Justícia, etc.)
-- lang: Idioma (ca, es, en)
-- siteLabel: Lloc web (GenCat, Tràmits, Habitatge, Educació, Salut, etc.)
-- siteDomain: Domini del lloc web
-- mimeType: Tipus de fitxer (text/html, application/pdf)
-- hierarchical_categories.lvl0: Categoria principal
-
-**IMPORTANT:** Utilitza els valors exactes dels filtres que existeixen a l'índex.`,
+**IMPORTANT:** Use exact category and brand values that exist in the index for filtering.`,
 
     tools: [
       {
@@ -84,8 +72,8 @@ Quan rebis una consulta amb [CONTEXT] que contingui "requestType":"inlineSummary
         indices: [
           {
             index: ALGOLIA_CONFIG.INDEX_NAME,
-            description: "Contingut del portal GenCat",
-            enhancedDescription: `Contingut del portal web de la Generalitat de Catalunya.
+            description: "Product catalog",
+            enhancedDescription: `Product catalog for ${DEMO_CONFIG.brand.name}.
 
 **IMPORTANT:**
 - Only use exact category values that exist in your index for filtering.
@@ -100,139 +88,84 @@ Quan rebis una consulta amb [CONTEXT] que contingui "requestType":"inlineSummary
         name: "showItems",
         type: "client_side",
         description:
-          "Mostra pàgines rellevants al ciutadà amb un títol i explicació. Utilitza-ho per presentar resultats de cerca o recomanacions.",
+          "Display products to the customer with a title and explanation. Use this to present search results or recommendations.",
         inputSchema: {
           type: "object",
           properties: {
             objectIDs: {
               type: "array",
               items: { type: "string" },
-              description: "Array d'objectIDs de les pàgines a mostrar",
+              description: "Array of objectIDs of the products to display",
             },
             title: {
               type: "string",
-              description: "Títol curt per a la secció de resultats",
+              description: "Short title for the results section",
             },
             explanation: {
               type: "string",
-              description: "Breu explicació de per què es mostren aquestes pàgines",
+              description: "Brief explanation of why these products are shown",
             },
           },
           required: ["objectIDs", "title", "explanation"],
         },
       },
       {
-        name: "showSummary",
+        name: "addToCart",
         type: "client_side",
         description:
-          "Mostra un resum estructurat. Utilitza SEMPRE per a consultes amb requestType 'inlineSummary' després de cercar.",
+          "Add a product to the customer's shopping cart. Use when the customer wants to buy or save an item.",
         inputSchema: {
           type: "object",
           properties: {
-            summary: {
+            objectID: {
               type: "string",
-              description:
-                "Resum concís (3-5 frases) en la llengua de l'usuari. Pot contenir markdown (negreta, llistes).",
+              description: "The objectID of the product to add to cart",
             },
-            sources: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  title: { type: "string", description: "Títol de la font" },
-                  url: { type: "string", description: "URL de la pàgina font" },
-                  domain: {
-                    type: "string",
-                    description: "Domini (e.g. habitatge.gencat.cat)",
-                  },
-                },
-                required: ["title", "url"],
-              },
-              description: "Fonts rellevants trobades a l'índex (màxim 5)",
+            quantity: {
+              type: "number",
+              description: "Number of items to add (default 1)",
             },
           },
-          required: ["summary", "sources"],
+          required: ["objectID"],
         },
       },
-    ],
-  },
-
-  summary: {
-    name: "GenCat Summary",
-    instructions: `Ets un agent de resum per al portal de la Generalitat de Catalunya.
-
-**COMPORTAMENT**
-1. Rep una consulta de cerca d'un ciutadà
-2. Cerca contingut rellevant amb algolia_search_index
-3. Crida SEMPRE l'eina showSummary amb un resum estructurat i les fonts trobades
-4. NO respondis mai amb text pla — utilitza SEMPRE showSummary
-
-**ESTIL**
-- Resum concís de 3-5 frases
-- Respon en l'idioma indicat al context (per defecte català)
-- Inclou fets concrets (dates, imports, requisits) quan els trobis
-- Les fonts han de ser les URLs exactes dels resultats de cerca
-
-**FILTRATGE**
-- Usa filtres per lang per assegurar resultats en l'idioma de l'usuari
-- Per tràmits, filtra per siteDomain: "tramits.gencat.cat"`,
-
-    indexDescription: `Contingut del portal web de la Generalitat de Catalunya. Cada registre és una pàgina web amb informació sobre serveis, tràmits, ajudes i procediments.
-
-**Camps cercables:**
-- title: Títol de la pàgina
-- h1, h2: Encapçalaments
-- snippet: Resum del contingut
-- body: Contingut complet de la pàgina
-
-**Camps filtrables:**
-- ambitoLabel: Àmbit temàtic (Ensenyament, Salut, Treball, Empresa, Cultura, etc.)
-- lang: Idioma (ca, es)
-- siteLabel: Lloc web
-- siteDomain: Domini del lloc web`,
-
-    tools: [
       {
-        name: "showSummary",
+        name: "showArticles",
         type: "client_side",
         description:
-          "Mostra un resum estructurat a la pàgina de resultats. Crida SEMPRE aquesta eina després de cercar amb algolia_search_index.",
+          "Display articles or content pages to the customer. Use for guides, blog posts, or informational content.",
         inputSchema: {
           type: "object",
           properties: {
-            summary: {
-              type: "string",
-              description:
-                "Resum concís (3-5 frases) en la llengua de l'usuari. Pot contenir markdown (negreta, llistes).",
-            },
-            sources: {
+            objectIDs: {
               type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  title: { type: "string", description: "Títol de la font" },
-                  url: { type: "string", description: "URL de la pàgina font" },
-                  domain: {
-                    type: "string",
-                    description: "Domini (e.g. habitatge.gencat.cat)",
-                  },
-                },
-                required: ["title", "url"],
-              },
-              description: "Fonts rellevants trobades a l'índex (màxim 5)",
+              items: { type: "string" },
+              description: "Array of objectIDs of the articles to display",
+            },
+            title: {
+              type: "string",
+              description: "Short title for the articles section",
+            },
+            explanation: {
+              type: "string",
+              description: "Brief explanation of why these articles are shown",
             },
           },
-          required: ["summary", "sources"],
+          required: ["objectIDs", "title", "explanation"],
         },
       },
     ],
   },
 
   fallbackSuggestions: [
-    "Quins ajuts hi ha per a l'habitatge?",
-    "Com fer la preinscripció escolar?",
-    "Oposicions obertes a la Generalitat",
-    "Tràmits per empadronar-me",
-    "Ajudes per a emprenedors",
+    "What are the best deals today?",
+    "Show me new arrivals",
+    "Help me find a gift",
+    "What's trending right now?",
+    "Compare products for me",
   ] as string[],
+
+  suggestions: {
+    enabled: true,
+  },
 };

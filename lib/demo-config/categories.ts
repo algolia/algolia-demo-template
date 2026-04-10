@@ -1,20 +1,7 @@
 /**
- * Category tree and icon mapping for GenCat topics
+ * Category tree and icon mapping for e-commerce store
  */
-import {
-  GraduationCap,
-  Heart,
-  Briefcase,
-  Home,
-  Leaf,
-  BookOpen,
-  Building2,
-  Scale,
-  Globe,
-  Shield,
-  Users,
-  Landmark,
-} from "lucide-react";
+import { Shirt, Laptop, Home, Dumbbell, ShoppingBag } from "lucide-react";
 
 export type CategoryNode = {
   name: string;
@@ -28,65 +15,36 @@ export type RootCategory = CategoryNode & {
 };
 
 export const HIERARCHICAL_CATEGORIES: Record<string, RootCategory> = {
-  ensenyament: {
-    name: "Ensenyament",
-    slug: "Ensenyament",
-    icon: GraduationCap,
+  fashion: {
+    name: "Fashion",
+    slug: "fashion",
+    icon: Shirt,
+    children: {
+      tops: { name: "Tops", slug: "tops" },
+      bottoms: { name: "Bottoms", slug: "bottoms" },
+      shoes: { name: "Shoes", slug: "shoes" },
+    },
   },
-  educacio: {
-    name: "Educació",
-    slug: "Educació",
-    icon: GraduationCap,
+  electronics: {
+    name: "Electronics",
+    slug: "electronics",
+    icon: Laptop,
+    children: {
+      phones: { name: "Phones", slug: "phones" },
+      laptops: { name: "Laptops", slug: "laptops" },
+    },
   },
-  salut: {
-    name: "Salut",
-    slug: "Salut",
-    icon: Heart,
+  home: {
+    name: "Home",
+    slug: "home",
+    icon: Home,
+    children: {},
   },
-  treball: {
-    name: "Treball",
-    slug: "Treball",
-    icon: Briefcase,
-  },
-  empresa: {
-    name: "Empresa",
-    slug: "Empresa",
-    icon: Building2,
-  },
-  cultura: {
-    name: "Cultura",
-    slug: "Cultura",
-    icon: BookOpen,
-  },
-  mediambient: {
-    name: "Medi Ambient",
-    slug: "Medi Ambient",
-    icon: Leaf,
-  },
-  justicia: {
-    name: "Justícia",
-    slug: "Justícia",
-    icon: Scale,
-  },
-  exteriors: {
-    name: "Afers Exteriors",
-    slug: "Afers Exteriors",
-    icon: Globe,
-  },
-  interior: {
-    name: "Interior",
-    slug: "Interior",
-    icon: Shield,
-  },
-  benestar: {
-    name: "Benestar Social",
-    slug: "Benestar Social",
-    icon: Users,
-  },
-  presidencia: {
-    name: "Presidència",
-    slug: "Presidència",
-    icon: Landmark,
+  sports: {
+    name: "Sports",
+    slug: "sports",
+    icon: Dumbbell,
+    children: {},
   },
 };
 
@@ -94,22 +52,9 @@ export const CATEGORY_ICONS: Record<
   string,
   React.ComponentType<{ className?: string }>
 > = {
-  "Ensenyament": GraduationCap,
-  "Educació": GraduationCap,
-  "Salut": Heart,
-  "Canal Salut": Heart,
-  "Treball": Briefcase,
-  "Treball i Afers Socials": Briefcase,
-  "Empresa": Building2,
-  "Cultura": BookOpen,
-  "Medi Ambient": Leaf,
-  "Justícia": Scale,
-  "Afers Exteriors": Globe,
-  "Interior": Shield,
-  "Benestar Social": Users,
-  "Drets Socials": Users,
-  "Presidència": Landmark,
-  "Economia": Building2,
-  "Agricultura": Leaf,
-  "Habitatge": Home,
+  Fashion: Shirt,
+  Electronics: Laptop,
+  Home: Home,
+  Sports: Dumbbell,
+  Accessories: ShoppingBag,
 };

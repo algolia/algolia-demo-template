@@ -6,17 +6,17 @@
  */
 export const DEMO_CONFIG = {
   brand: {
-    name: "Generalitat de Catalunya",
-    tagline: "Cercador de continguts i serveis",
+    name: "Demo Store",
+    tagline: "Your one-stop shop",
     logoUrl: "/logo.svg",
-    logoWidth: 186,
-    logoHeight: 50,
-    agentName: "Assistent GenCat",
+    logoWidth: 160,
+    logoHeight: 40,
+    agentName: "Shopping Assistant",
   },
   locale: {
-    language: "ca",
+    language: "en",
     currency: "EUR",
-    currencySymbol: "€",
+    currencySymbol: "\u20ac",
   },
-  imageDomains: [] as { protocol: "https"; hostname: string }[],
+  imageDomains: [] as { protocol: "https" | "http"; hostname: string }[],
 };
