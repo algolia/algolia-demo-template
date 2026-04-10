@@ -10,7 +10,7 @@ export interface SelectedProduct {
   brand?: string;
   price?: number;
   imageUrl?: string;
-  // Content fields (GenCat)
+  // Content fields
   title?: string;
   url?: string;
 }
