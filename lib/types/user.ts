@@ -66,6 +66,9 @@ export interface User {
     "formato.value"?: {
       [key: string]: number;
     };
+    "taglia.value"?: {
+      [key: string]: number;
+    };
     age_bucket?: {
       [key: string]: number;
     };

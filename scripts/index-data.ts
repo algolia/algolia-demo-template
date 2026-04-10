@@ -218,6 +218,19 @@ function transformRecords(
  *
  * @see https://developers.openai.com/api/docs/guides/structured-outputs
  */
+function extractTaglia(name: string): string | null {
+  const lower = name.toLowerCase();
+  if (lower.includes('giant')) return 'GRANDE';
+  if (lower.includes('small & mini') || lower.includes('small&mini') || lower.includes('small mini')) return 'PICCOLA';
+  if (lower.includes('maxi')) return 'GRANDE';
+  if (lower.includes('medium')) return 'MEDIA';
+  if (lower.includes('large')) return 'GRANDE';
+  if (lower.includes('small')) return 'PICCOLA';
+  if (lower.includes('mini')) return 'PICCOLA';
+  if (lower.includes('toy')) return 'TOY';
+  return null;
+}
+
 function extractAgeBucket(name: string, etaValue?: string): string | null {
   // Priority 1: explicit "N+" pattern in product name (e.g., "Ageing 8+", "Mature 7+")
   const match = name.match(/(\d{1,2})\s*\+/);
@@ -251,6 +264,23 @@ async function enrichRecords(
     }
   }
   console.log(`  → Assigned age_bucket to ${bucketCount}/${records.length} records`);
+
+  // Fill missing taglia from product name
+  let tagliaCount = 0;
+  for (const record of records) {
+    const taglia = record.taglia as { value: string } | undefined;
+    if (taglia?.value) continue; // already has taglia, skip
+    const name = (record.name as string) || "";
+    const extracted = extractTaglia(name);
+    if (extracted) {
+      record.taglia = { value: extracted };
+      tagliaCount++;
+      const synth = (record._synthetic_fields as string[]) || [];
+      if (!synth.includes("taglia")) { synth.push("taglia"); record._synthetic_fields = synth; }
+    }
+  }
+  console.log(`  → Auto-tagged taglia for ${tagliaCount} records missing size data`);
+
   return records;
 }
 
@@ -334,10 +364,10 @@ async function main() {
       searchableAttributes: [
         // P1: Short, precise text — brand/category matches are unambiguous
         "unordered(brand)",
-        "unordered(searchable_categories.lvl0), unordered(searchable_categories.lvl1), unordered(searchable_categories.lvl2)",
+        "searchable_categories.lvl0, searchable_categories.lvl1, searchable_categories.lvl2",
         // P1.5: Pet-specific short attributes
-        "unordered(gusto.value), unordered(razza.value), unordered(taglia.value)",
-        "unordered(età.value), unordered(funzione.value)",
+        "gusto.value, razza.value, taglia.value",
+        "età.value, funzione.value",
         // P2: Product name — ordered so matches at the start rank higher
         "name",
         // P3: Exact lookups
@@ -433,6 +463,38 @@ async function main() {
       ],
       attributesToHighlight: ["name", "brand", "description"],
       attributesToSnippet: ["description:50"],
+      renderingContent: {
+        facetOrdering: {
+          facets: {
+            order: [
+              "brand",
+              "gusto.value",
+              "taglia.value",
+              "età.value",
+              "peso.value",
+              "formato.value",
+              "funzione.value",
+              "razza.value",
+              "conservazione.value",
+              "consistenza.value",
+              "tipo.value",
+            ],
+          },
+          values: {
+            "brand": { sortRemainingBy: "count" },
+            "gusto.value": { sortRemainingBy: "count" },
+            "taglia.value": { sortRemainingBy: "count" },
+            "età.value": { sortRemainingBy: "count" },
+            "peso.value": { sortRemainingBy: "count" },
+            "formato.value": { sortRemainingBy: "count" },
+            "funzione.value": { sortRemainingBy: "count" },
+            "razza.value": { sortRemainingBy: "count" },
+            "conservazione.value": { sortRemainingBy: "count" },
+            "consistenza.value": { sortRemainingBy: "count" },
+            "tipo.value": { sortRemainingBy: "count" },
+          },
+        },
+      },
     },
   });
 

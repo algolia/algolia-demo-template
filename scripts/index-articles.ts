@@ -109,6 +109,8 @@ async function main() {
       removeStopWords: true,
       ignorePlurals: true,
       customRanking: ["desc(date_modified)"],
+      attributeForDistinct: "url",
+      distinct: true,
     },
   });
 
