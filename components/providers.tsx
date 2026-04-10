@@ -6,7 +6,7 @@ import { NavBar } from "@/components/navbar/navbar";
 import { SidepanelProvider } from "@/components/sidepanel-agent-studio/context/sidepanel-context";
 import { SelectionProvider } from "@/components/selection/selection-context";
 import { UserProvider, useUser } from "@/components/user/user-context";
-import { LanguageProvider, useLanguage } from "@/components/language/language-context";
+import { CartProvider } from "@/components/cart/cart-context";
 import { compositionClient } from "@algolia/composition";
 import { ALGOLIA_CONFIG } from "@/lib/algolia-config";
 
@@ -17,10 +17,8 @@ const searchClient = compositionClient(
 
 function PersonalizedConfigure() {
   const { personalizationFilters, currentUser } = useUser();
-  const { language } = useLanguage();
   const { refresh } = useInstantSearch();
   const prevUserIdRef = useRef<string | null>(null);
-  const prevLanguageRef = useRef<string>(language);
 
   const optionalFilters = useMemo(() => {
     if (personalizationFilters && personalizationFilters.length > 0) {
@@ -29,30 +27,26 @@ function PersonalizedConfigure() {
     return undefined;
   }, [personalizationFilters]);
 
-  // Filter results by selected language
   useConfigure({
     hitsPerPage: 12,
     optionalFilters,
-    facetFilters: [`lang:${language}`],
   });
 
   useEffect(() => {
     const currentUserId = currentUser?.id ?? null;
     const userChanged =
       prevUserIdRef.current !== null && prevUserIdRef.current !== currentUserId;
-    const languageChanged = prevLanguageRef.current !== language;
 
-    if (userChanged || languageChanged) refresh();
+    if (userChanged) refresh();
     prevUserIdRef.current = currentUserId;
-    prevLanguageRef.current = language;
-  }, [currentUser?.id, language, refresh]);
+  }, [currentUser?.id, refresh]);
 
   return null;
 }
 
 export function Providers({ children }: { children: ReactNode }) {
   return (
-    <LanguageProvider>
+    <CartProvider>
       <UserProvider>
         <SelectionProvider>
           <SidepanelProvider>
@@ -73,7 +67,7 @@ export function Providers({ children }: { children: ReactNode }) {
           </SidepanelProvider>
         </SelectionProvider>
       </UserProvider>
-    </LanguageProvider>
+    </CartProvider>
   );
 }
 
