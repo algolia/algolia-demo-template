@@ -110,7 +110,7 @@ Run the skills in order, parallelizing where possible. The discovery brief infor
 
 Invoke `/demo-branding` with the customer name, vertical, website URL, credentials, locale, and visual direction from the discovery brief.
 
-This configures `lib/demo-config/index.ts` and `lib/algolia-config.ts` (INDEX_NAME, COMPOSITION_ID, etc.) which the data indexing scripts need.
+This configures `lib/demo-config/index.ts` and `lib/algolia-config.ts` (INDEX_NAME, COMPOSITION_ID, etc.) which the data indexing scripts need. Branding now also configures `ARTICLES_INDEX`, `QUERY_SUGGESTIONS_INDEX`, and `LOCATIONS_INDEX` in `lib/algolia-config.ts`.
 
 ### Step 2: Data + Users (in parallel)
 
@@ -132,7 +132,23 @@ Once the data agent reports back:
 2. **Categories** — invoke `/demo-categories` with the reported facet values
 3. **Agent setup** — invoke `/demo-agent-setup` with the customer info, product attributes, and agent feature suggestions from the discovery brief
 
-### Step 4: Launch
+### Step 4: Additional indices and features (after data indexing completes)
+
+Run these in parallel if applicable:
+
+**Article indexing** (if demo includes educational content):
+- Scrape or prepare article data to `data/articles.json`
+- Run `pnpm tsx scripts/index-articles.ts`
+
+**Store location indexing** (if demo includes click & collect):
+- Prepare store data to `data/stores.json` (each store needs `objectID`, `name`, `city`, `_geoloc: { lat, lng }`)
+- Run `pnpm tsx scripts/index-stores.ts`
+
+**Retail media rules** (if demo includes sponsored placements):
+- Define rules in `lib/demo-config/retail-media.ts`
+- Run `pnpm tsx scripts/setup-composition-rules.ts`
+
+### Step 5: Launch
 
 Start the dev server:
 
@@ -160,10 +176,15 @@ Skills executed:
   - /demo-user-profiles   — <N> user profiles created
   - /demo-categories      — <N> top-level categories configured
   - /demo-agent-setup     — agent deployed (AGENT_ID: <id>)
+  - /index-articles       — <N> articles indexed (if applicable)
+  - /index-stores         — <N> store locations indexed (if applicable)
+  - /setup-composition-rules — <N> retail media rules deployed (if applicable)
 
 Next steps:
   - Browse the demo at http://localhost:3000
   - Review categories in lib/demo-config/categories.ts
   - Review user profiles in lib/demo-config/users.ts
   - Test search relevance with: pnpm tsx scripts/test-relevance.ts
+  - Configure retail media rules in lib/demo-config/retail-media.ts
+  - Add store locations in data/stores.json
 ```
