@@ -1,1 +1,26 @@
-[]
+[
+  {
+    "objectID": "store-london-oxford",
+    "id": "store-london-oxford",
+    "name": "Demo Store Oxford Street",
+    "city": "London",
+    "address": "123 Oxford Street",
+    "region": "Greater London",
+    "_geoloc": { "lat": 51.5155, "lng": -0.1419 },
+    "phone": "+44 20 7123 4567",
+    "openingHours": "Mon-Sat 10:00-20:00, Sun 11:00-18:00",
+    "services": ["fitting_room", "personal_shopper", "alterations", "click_collect"]
+  },
+  {
+    "objectID": "store-london-covent",
+    "id": "store-london-covent",
+    "name": "Demo Store Covent Garden",
+    "city": "London",
+    "address": "45 Long Acre, Covent Garden",
+    "region": "Greater London",
+    "_geoloc": { "lat": 51.5117, "lng": -0.1240 },
+    "phone": "+44 20 7987 6543",
+    "openingHours": "Mon-Sat 10:00-21:00, Sun 12:00-18:00",
+    "services": ["fitting_room", "click_collect", "parking"]
+  }
+]

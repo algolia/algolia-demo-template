@@ -55,29 +55,29 @@ function cleanText(html: string): string {
     .trim();
 }
 
-function transformArticles(raw: RawArticle[]) {
+function transformArticles(raw: Record<string, unknown>[]) {
   return raw
-    .filter((a) => a.body_text?.trim())
+    .filter((a) => a.title)
     .map((a, i) => ({
-      objectID: `article_${i}`,
-      title: cleanText(a.title),
-      body_text: cleanText(a.body_text).slice(0, 5000),
-      summary: cleanText(a.body_text).slice(0, 300),
-      url: a.url,
-      date_published: a.date_published,
-      date_modified: a.date_modified,
-      author: a.author,
-      categories: a.categories,
-      tags: a.tags,
-      image_url: a.image_url,
-      word_count: a.word_count,
+      objectID: (a.objectID as string) || `article_${i}`,
+      title: cleanText(String(a.title || "")),
+      body_text: cleanText(String(a.body_text || a.summary || a.description || "")).slice(0, 5000),
+      summary: cleanText(String(a.summary || a.description || a.body_text || "")).slice(0, 300),
+      url: a.url as string,
+      date_published: (a.date_published as string) || "",
+      date_modified: (a.date_modified as string) || "",
+      author: (a.author as string) || "",
+      categories: (a.categories as string[]) || [(a.category as string) || ""].filter(Boolean),
+      tags: (a.tags as string[]) || [],
+      image_url: (a.image_url as string) || "",
+      word_count: (a.word_count as number) || 0,
       type: "article",
     }));
 }
 
 async function main() {
   console.log("Reading articles from data/articles.json...");
-  const raw: RawArticle[] = JSON.parse(
+  const raw: Record<string, unknown>[] = JSON.parse(
     readFileSync("data/articles.json", "utf-8")
   );
   console.log(`Found ${raw.length} articles`);

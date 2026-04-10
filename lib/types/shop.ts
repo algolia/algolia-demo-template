@@ -3,7 +3,7 @@ export interface ShopGeoloc {
   lng: number;
 }
 
-export type StoreService = "toelettatura" | "veterinario" | "adozioni" | "parking";
+export type StoreService = "fitting_room" | "personal_shopper" | "alterations" | "parking" | "click_collect";
 
 export interface Shop {
   id: string;
