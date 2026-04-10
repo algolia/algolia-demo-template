@@ -71,13 +71,27 @@ function HighlightedText({ value }: { value: string }) {
 
 function AgentSuggestions() {
   const { agentSuggestions, agentSuggestionsLoading, openSidepanel } = useSidepanel();
+  const hadSuggestionsRef = useRef(false);
 
-  if (agentSuggestionsLoading) {
+  // Track whether we've ever shown suggestions
+  if (agentSuggestions.length > 0) {
+    hadSuggestionsRef.current = true;
+  }
+
+  // Show skeleton only when refreshing (had suggestions before, now loading new ones)
+  // On initial load, render nothing until suggestions arrive — avoids a flash
+  if (agentSuggestionsLoading && hadSuggestionsRef.current) {
     return (
       <div className="mb-6">
-        <div className="flex items-center gap-2 text-muted-foreground text-sm">
-          <SparklesIcon size={14} className="animate-pulse" />
-          <span className="animate-pulse">Loading suggestions...</span>
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
+          <SparklesIcon size={14} className="shrink-0 text-muted-foreground animate-pulse" />
+          {[112, 160, 136].map((w, i) => (
+            <div
+              key={i}
+              className="shrink-0 h-[38px] rounded-full bg-muted animate-pulse"
+              style={{ width: w }}
+            />
+          ))}
         </div>
       </div>
     );

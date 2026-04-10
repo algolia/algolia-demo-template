@@ -4,6 +4,7 @@ import type { UIMessage } from "@ai-sdk/react";
 import type { UIDataTypes, UIMessagePart } from "ai";
 import {
   ArrowUpIcon,
+  BookOpen,
   BrainIcon,
   CheckIcon,
   ChevronDown,
@@ -125,6 +126,25 @@ export interface AddToCartTool {
   };
 }
 
+export interface ArticleItem {
+  title: string;
+  summary: string;
+  url?: string;
+  category?: string;
+}
+
+export interface ShowArticlesTool {
+  input: {
+    articles: ArticleItem[];
+    title?: string;
+  };
+  output: {
+    status: string;
+    articles: ArticleItem[];
+    title?: string;
+  };
+}
+
 export type Message = UIMessage<
   unknown,
   UIDataTypes,
@@ -132,6 +152,7 @@ export type Message = UIMessage<
     algolia_search_index: AlgoliaSearchIndexTool;
     showItems: ShowItemsTool;
     addToCart: AddToCartTool;
+    showArticles: ShowArticlesTool;
   }
 >;
 
@@ -141,6 +162,7 @@ export type AIMessagePart = UIMessagePart<
     algolia_search_index: AlgoliaSearchIndexTool;
     showItems: ShowItemsTool;
     addToCart: AddToCartTool;
+    showArticles: ShowArticlesTool;
   }
 >;
 
@@ -185,10 +207,14 @@ function escapeHtml(html: string): string {
  * Input: [["inStock:true"], ["categories.lvl1: Vitaminas", "categories.lvl1: Minerales"]]
  * Output: "inStock:true AND (categories.lvl1: Vitaminas OR categories.lvl1: Minerales)"
  */
-function formatFacetFilters(facetFilters: string[][] | undefined): string | null {
+function formatFacetFilters(facetFilters: (string | string[])[] | undefined): string | null {
   if (!facetFilters || facetFilters.length === 0) return null;
 
   const formatted = facetFilters.map((group) => {
+    // A group can be a plain string (single filter) or an array (OR'd filters)
+    if (typeof group === 'string') {
+      return group;
+    }
     if (group.length === 1) {
       return group[0];
     }
@@ -522,6 +548,89 @@ const ShowItemsDisplay = memo(function ShowItemsDisplay({
 });
 
 // ============================================================================
+// Show Articles Component (displays articles from showArticles tool)
+// ============================================================================
+
+interface ShowArticlesDisplayProps {
+  articles: ArticleItem[];
+  title?: string;
+  isLoading?: boolean;
+}
+
+const ShowArticlesDisplay = memo(function ShowArticlesDisplay({
+  articles,
+  title,
+  isLoading,
+}: ShowArticlesDisplayProps) {
+  if (isLoading) {
+    return (
+      <div className="my-3 p-4 rounded-lg border border-blue-200 dark:border-blue-900 bg-blue-50/30 dark:bg-blue-950/20">
+        <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 text-sm">
+          <BookOpen size={14} className="animate-pulse" />
+          <AnimatedShinyText>Loading articles...</AnimatedShinyText>
+        </div>
+      </div>
+    );
+  }
+
+  if (!articles || articles.length === 0) return null;
+
+  return (
+    <div className="my-3">
+      {title && (
+        <div className="flex items-center gap-2 mb-2">
+          <BookOpen size={14} className="text-blue-600 dark:text-blue-400" />
+          <h4 className="font-semibold text-foreground text-sm">{title}</h4>
+          <span className="text-[10px] font-medium text-blue-500/70 dark:text-blue-400/60">
+            articles
+          </span>
+        </div>
+      )}
+      <div className="grid gap-2">
+        {articles.map((article, index) => (
+          <div
+            key={index}
+            className="p-3 rounded-lg border border-blue-200 dark:border-blue-900 bg-blue-50/30 dark:bg-blue-950/20 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition-colors"
+          >
+            <div className="flex items-start gap-2">
+              <div className="shrink-0 w-8 h-8 rounded-md bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center mt-0.5">
+                <BookOpen size={14} className="text-blue-600 dark:text-blue-400" />
+              </div>
+              <div className="flex-1 min-w-0">
+                {article.url ? (
+                  <a
+                    href={article.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-medium text-sm text-foreground hover:text-blue-600 dark:hover:text-blue-400 transition-colors line-clamp-2"
+                  >
+                    {article.title}
+                  </a>
+                ) : (
+                  <p className="font-medium text-sm text-foreground line-clamp-2">
+                    {article.title}
+                  </p>
+                )}
+                {article.summary && (
+                  <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                    {article.summary}
+                  </p>
+                )}
+                {article.category && (
+                  <span className="inline-block text-[10px] font-medium text-blue-600/80 dark:text-blue-400/80 bg-blue-100 dark:bg-blue-900/40 px-1.5 py-0.5 rounded mt-1.5">
+                    {article.category}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+});
+
+// ============================================================================
 // Search Results Preview Component (fetches full product data with images)
 // ============================================================================
 
@@ -603,6 +712,63 @@ const SearchResultsPreview = memo(function SearchResultsPreview({
         </button>
       )}
     </>
+  );
+});
+
+// ============================================================================
+// Article Search Results Preview (displays article hits in hover popover)
+// ============================================================================
+
+interface ArticleSearchResultsPreviewProps {
+  hits: Array<{ objectID?: string; title?: string; summary?: string; url?: string; categories?: string[] }>;
+}
+
+const ArticleSearchResultsPreview = memo(function ArticleSearchResultsPreview({
+  hits,
+}: ArticleSearchResultsPreviewProps) {
+  if (!hits || hits.length === 0) {
+    return (
+      <div className="p-4 text-sm text-muted-foreground">No articles found</div>
+    );
+  }
+
+  return (
+    <div className="grid gap-2">
+      {hits.slice(0, 5).map((hit, index) => (
+        <div
+          key={hit.objectID || index}
+          className="p-3 rounded-md border border-border bg-background hover:bg-blue-50/50 dark:hover:bg-blue-950/20 transition-colors"
+        >
+          <div className="flex items-start gap-2">
+            <div className="shrink-0 w-7 h-7 rounded-md bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center mt-0.5">
+              <BookOpen size={12} className="text-blue-600 dark:text-blue-400" />
+            </div>
+            <div className="flex-1 min-w-0">
+              {hit.url ? (
+                <a
+                  href={hit.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-medium text-sm text-foreground hover:text-blue-600 transition-colors line-clamp-2"
+                >
+                  {hit.title}
+                </a>
+              ) : (
+                <p className="font-medium text-sm text-foreground line-clamp-2">{hit.title}</p>
+              )}
+              {hit.summary && (
+                <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{hit.summary}</p>
+              )}
+              {hit.categories?.[0] && (
+                <span className="inline-block text-[10px] font-medium text-blue-600/80 dark:text-blue-400/80 bg-blue-50 dark:bg-blue-950/40 px-1.5 py-0.5 rounded mt-1">
+                  {hit.categories[0]}
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
   );
 });
 
@@ -872,15 +1038,32 @@ const ChatWidget = memo(function ChatWidget({
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Group messages into exchanges (user + assistant pairs)
-  // Hide exchanges while initial suggestions are loading (hidden greeting in progress)
-  const exchanges = useMemo(() => {
-    if (isFollowUpGenerating) return [];
+  // Hide the hidden greeting user message but keep the assistant's greeting response
+  const HIDDEN_GREETING_TEXT = "__greeting__";
+
+  const { exchanges, greetingMessage } = useMemo(() => {
+    if (isFollowUpGenerating) return { exchanges: [], greetingMessage: null as Message | null };
     const grouped: Exchange[] = [];
+    let greeting: Message | null = null;
+
     for (let i = 0; i < messages.length; i++) {
       const current = messages[i];
       if (current.role === "user") {
         const userMessage = current as Message;
         const nextMessage = messages[i + 1];
+        const isHiddenGreeting = userMessage.parts.some(
+          (p) => p.type === "text" && p.text === HIDDEN_GREETING_TEXT
+        );
+
+        if (isHiddenGreeting) {
+          // Don't show the hidden greeting as an exchange — extract assistant response as greeting
+          if (nextMessage?.role === "assistant") {
+            greeting = nextMessage as Message;
+            i++; // Skip assistant
+          }
+          continue;
+        }
+
         if (nextMessage?.role === "assistant") {
           grouped.push({
             id: userMessage.id,
@@ -898,7 +1081,7 @@ const ChatWidget = memo(function ChatWidget({
         }
       }
     }
-    return grouped;
+    return { exchanges: grouped, greetingMessage: greeting };
   }, [messages, isFollowUpGenerating]);
 
   // Auto-scroll to bottom when new messages arrive
@@ -926,25 +1109,42 @@ const ChatWidget = memo(function ChatWidget({
       <div className="flex flex-col gap-4">
         {exchanges.length === 0 && (
           <div className="flex flex-col gap-4 py-8">
-            <h2 className="text-2xl font-semibold text-foreground">
-              How can I help you today?
-            </h2>
-            <p className="text-muted-foreground">
-              I&apos;m here to help you find the perfect products!
-            </p>
-            {/* Show suggested questions from Algolia if available, otherwise show fallback */}
+            {/* Show the agent's greeting if available, otherwise a static fallback */}
+            {greetingMessage ? (
+              <div className="text-lg text-foreground">
+                {greetingMessage.parts.map((part, i) =>
+                  part.type === "text" ? <span key={i}>{part.text}</span> : null
+                )}
+              </div>
+            ) : isFollowUpGenerating ? (
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <SparklesIcon size={16} className="animate-pulse" />
+                <AnimatedShinyText className="text-lg">
+                  Thinking...
+                </AnimatedShinyText>
+              </div>
+            ) : (
+              <h2 className="text-2xl font-semibold text-foreground">
+                How can I help you today?
+              </h2>
+            )}
 
+            {/* Suggested questions — show loading when fetching new ones */}
             <div className="flex flex-col gap-2">
               <h3 className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
                 <SparklesIcon size={12} />
                 Try saying
               </h3>
-              {isFollowUpGenerating && followUpQuestions.length === 0 ? (
-                <div className="flex items-center gap-2 text-muted-foreground text-sm">
-                  <SparklesIcon size={14} className="animate-pulse" />
-                  <AnimatedShinyText>
-                    Generating suggestions...
-                  </AnimatedShinyText>
+              {isFollowUpGenerating && followUpQuestions.length > 0 ? (
+                /* Skeleton only when refreshing existing suggestions */
+                <div className="flex flex-wrap gap-2">
+                  {[140, 180, 120].map((w, i) => (
+                    <div
+                      key={i}
+                      className="h-9 rounded-md bg-muted animate-pulse"
+                      style={{ width: w }}
+                    />
+                  ))}
                 </div>
               ) : (
                 <div className="flex flex-wrap gap-2">
@@ -1024,14 +1224,16 @@ const ChatWidget = memo(function ChatWidget({
                           } else if (
                             part.type === "tool-algolia_search_index"
                           ) {
+                            const isArticleSearch = part.input?.index?.includes("articles");
                             if (part.state === "input-streaming") {
                               return (
                                 <p
-                                  className="text-[0.95rem] flex my-2 gap-2 items-center text-muted-foreground"
+                                  className={`text-[0.95rem] flex my-2 gap-2 items-center ${isArticleSearch ? "text-blue-600 dark:text-blue-400" : "text-muted-foreground"}`}
                                   key={`${index}`}
                                 >
+                                  {isArticleSearch && <BookOpen size={14} className="shrink-0" />}
                                   <AnimatedShinyText>
-                                    Searching...
+                                    {isArticleSearch ? "Searching articles..." : "Searching..."}
                                   </AnimatedShinyText>
                                 </p>
                               );
@@ -1043,19 +1245,27 @@ const ChatWidget = memo(function ChatWidget({
                               const filtersDisplay = filtersStr || facetFiltersStr;
                               return (
                                 <div
-                                  className="text-[0.95rem] flex flex-col my-2 gap-1 text-muted-foreground"
+                                  className={`text-[0.95rem] flex flex-col my-2 gap-1 ${isArticleSearch ? "text-blue-600 dark:text-blue-400" : "text-muted-foreground"}`}
                                   key={`${index}`}
                                 >
-                                  <AnimatedShinyText>
-                                    Looking for{" "}
-                                    <button
-                                      type="button"
-                                      onClick={() => applySearchWithFilters(query, facetFilters, filtersStr)}
-                                      className="bg-transparent text-muted-foreground underline decoration-2 underline-offset-4 cursor-pointer hover:text-foreground transition-colors"
-                                    >
-                                      &quot;{query}&quot;
-                                    </button>
-                                  </AnimatedShinyText>
+                                  <span className="flex items-center gap-1.5">
+                                    {isArticleSearch && <BookOpen size={14} className="shrink-0" />}
+                                    <AnimatedShinyText>
+                                      Looking for{" "}
+                                      <button
+                                        type="button"
+                                        onClick={() => applySearchWithFilters(query, facetFilters, filtersStr)}
+                                        className={`bg-transparent underline decoration-2 underline-offset-4 cursor-pointer transition-colors ${isArticleSearch ? "text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300" : "text-muted-foreground hover:text-foreground"}`}
+                                      >
+                                        &quot;{query}&quot;
+                                      </button>
+                                    </AnimatedShinyText>
+                                  </span>
+                                  {isArticleSearch && (
+                                    <span className="text-[10px] font-medium text-blue-500/70 dark:text-blue-400/60 ml-5">
+                                      {part.input?.index}
+                                    </span>
+                                  )}
                                   {filtersDisplay && (
                                     <span className="text-xs text-muted-foreground/70 flex items-center gap-1">
                                       <span>Filter:</span>
@@ -1092,13 +1302,13 @@ const ChatWidget = memo(function ChatWidget({
                                 );
                               };
 
-                              // Render product search results
                               return (
                                 <div
                                   key={`${index}`}
-                                  className="text-[0.95rem] flex flex-col my-2 gap-1 text-muted-foreground"
+                                  className={`text-[0.95rem] flex flex-col my-2 gap-1 ${isArticleSearch ? "text-blue-600 dark:text-blue-400" : "text-muted-foreground"}`}
                                 >
-                                  <span className="flex items-center gap-1 flex-wrap">
+                                  <span className="flex items-center gap-1.5 flex-wrap">
+                                    {isArticleSearch && <BookOpen size={14} className="shrink-0" />}
                                     Searched for{" "}
                                     {hits.length > 0 ? (
                                       <Popover
@@ -1112,10 +1322,10 @@ const ChatWidget = memo(function ChatWidget({
                                         <PopoverTrigger asChild>
                                           <button
                                             type="button"
-                                            onClick={() => applySearchWithFilters(query, facetFilters, filtersStr)}
+                                            onClick={() => !isArticleSearch && applySearchWithFilters(query, facetFilters, filtersStr)}
                                             onMouseEnter={handleMouseEnter}
                                             onMouseLeave={handleMouseLeave}
-                                            className="bg-transparent text-muted-foreground underline decoration-1 underline-offset-4 cursor-pointer hover:text-foreground transition-colors"
+                                            className={`bg-transparent underline decoration-1 underline-offset-4 cursor-pointer transition-colors ${isArticleSearch ? "text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300" : "text-muted-foreground hover:text-foreground"}`}
                                           >
                                             &quot;{query}&quot;
                                           </button>
@@ -1127,24 +1337,33 @@ const ChatWidget = memo(function ChatWidget({
                                           align="start"
                                           side="bottom"
                                         >
-                                          <SearchResultsPreview
-                                            hits={hits}
-                                            onViewMore={() => applySearchWithFilters(query, facetFilters, filtersStr)}
-                                          />
+                                          {isArticleSearch ? (
+                                            <ArticleSearchResultsPreview hits={hits as unknown as ArticleSearchResultsPreviewProps["hits"]} />
+                                          ) : (
+                                            <SearchResultsPreview
+                                              hits={hits}
+                                              onViewMore={() => applySearchWithFilters(query, facetFilters, filtersStr)}
+                                            />
+                                          )}
                                         </PopoverContent>
                                       </Popover>
                                     ) : (
                                       <button
                                         type="button"
-                                        onClick={() => applySearchWithFilters(query, facetFilters, filtersStr)}
-                                        className="bg-transparent text-muted-foreground underline decoration-1 underline-offset-4 cursor-pointer hover:text-foreground transition-colors"
+                                        onClick={() => !isArticleSearch && applySearchWithFilters(query, facetFilters, filtersStr)}
+                                        className={`bg-transparent underline decoration-1 underline-offset-4 cursor-pointer transition-colors ${isArticleSearch ? "text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300" : "text-muted-foreground hover:text-foreground"}`}
                                       >
                                         &quot;{query}&quot;
                                       </button>
                                     )}{" "}
-                                    found {hits.length || "no"} results
+                                    found {hits.length || "no"} {isArticleSearch ? "articles" : "results"}
                                   </span>
-                                  {filtersDisplay && (
+                                  {isArticleSearch && (
+                                    <span className="text-[10px] font-medium text-blue-500/70 dark:text-blue-400/60 ml-5">
+                                      {part.input?.index}
+                                    </span>
+                                  )}
+                                  {!isArticleSearch && filtersDisplay && (
                                     <span className="text-xs text-muted-foreground/70 flex items-center gap-1">
                                       <span>Filter:</span>
                                       <code className="px-1.5 py-0.5 rounded bg-muted border border-border font-mono">
@@ -1264,6 +1483,40 @@ const ChatWidget = memo(function ChatWidget({
                                   key={`${index}`}
                                 >
                                   Failed to add items to cart
+                                </p>
+                              );
+                            } else {
+                              return null;
+                            }
+                          } else if (part.type === "tool-showArticles") {
+                            if (
+                              part.state === "input-streaming" ||
+                              part.state === "input-available"
+                            ) {
+                              return (
+                                <ShowArticlesDisplay
+                                  key={`${index}`}
+                                  articles={[]}
+                                  isLoading={true}
+                                />
+                              );
+                            } else if (part.state === "output-available") {
+                              const articles = part.output?.articles || [];
+                              const title = part.output?.title;
+                              return (
+                                <ShowArticlesDisplay
+                                  key={`${index}`}
+                                  articles={articles}
+                                  title={title}
+                                />
+                              );
+                            } else if (part.state === "output-error") {
+                              return (
+                                <p
+                                  className="text-[0.95rem] flex my-2 gap-2 items-center text-red-500"
+                                  key={`${index}`}
+                                >
+                                  Error loading articles
                                 </p>
                               );
                             } else {
@@ -1717,14 +1970,15 @@ const Sidepanel = memo(function Sidepanel({
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
-                  handleSubmit();
+                  if (!isGenerating) {
+                    handleSubmit();
+                  }
                 }
               }}
               onInput={managePromptHeight}
               rows={1}
               placeholder={config.placeholder || "Ask AI anything"}
-              disabled={isGenerating}
-              className="flex-1 pt-1 border-none outline-none bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-0 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed resize-none overflow-y-hidden"
+              className="flex-1 pt-1 border-none outline-none bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-0 focus:border-transparent resize-none overflow-y-hidden"
             />
             {speechSupported && (
               <button
@@ -1785,17 +2039,41 @@ export default function SidepanelExperience(config: AgentStudioConfig) {
     sidepanelContext.notifyOpenChange(isOpen);
   }, [isOpen, sidepanelContext]);
 
-  const { messages, setMessages, error, isGenerating, sendMessage, suggestions, resetConversation } =
+  const { messages, setMessages, error, isGenerating, sendMessage, suggestions, resetConversation, stop } =
     useAgentStudio({
       applicationId: config.applicationId,
       apiKey: config.apiKey,
       agentId: config.agentId,
     });
 
+  // Hidden greeting state — declared early so wrappedSendMessage can reference it
+  const initialGreetingDoneRef = useRef(false);
+  const [initialSuggestionsLoading, setInitialSuggestionsLoading] = useState(false);
+  const [greetingTrigger, setGreetingTrigger] = useState(0);
+
+  // Wrap sendMessage to abort hidden greeting if user sends a real message
+  const wrappedSendMessage = useCallback(
+    (options: { text: string }) => {
+      if (initialSuggestionsLoading) {
+        // User is sending a real message while suggestions are still loading — abort and clear
+        stop();
+        setMessages?.([]);
+        setInitialSuggestionsLoading(false);
+        // Small delay for the abort to settle, then send the real message
+        setTimeout(() => {
+          sendMessage(options);
+        }, 50);
+      } else {
+        sendMessage(options);
+      }
+    },
+    [sendMessage, stop, setMessages, initialSuggestionsLoading]
+  );
+
   // Keep sendMessage ref in sync
   useEffect(() => {
-    sendMessageRef.current = sendMessage;
-  }, [sendMessage]);
+    sendMessageRef.current = wrappedSendMessage;
+  }, [wrappedSendMessage]);
 
   // Register controls with context
   useEffect(() => {
@@ -1864,11 +2142,6 @@ export default function SidepanelExperience(config: AgentStudioConfig) {
     }
   }, [isOpen, sendMessage, setMessages, sidepanelContext]);
 
-  // Hidden greeting: send a greeting to get contextual suggestions, then clear the exchange
-  const initialGreetingDoneRef = useRef(false);
-  const [initialSuggestionsLoading, setInitialSuggestionsLoading] = useState(false);
-  const [greetingTrigger, setGreetingTrigger] = useState(0);
-
   // Sync suggestions and loading state to sidepanel context so other pages can access them
   useEffect(() => {
     sidepanelContext.setAgentSuggestions(suggestions);
@@ -1878,9 +2151,13 @@ export default function SidepanelExperience(config: AgentStudioConfig) {
     sidepanelContext.setAgentSuggestionsLoading(initialSuggestionsLoading);
   }, [initialSuggestionsLoading, sidepanelContext]);
 
+  // The hidden greeting message text — used to filter it out of the UI
+  const HIDDEN_GREETING_TEXT = "__greeting__";
+
   useEffect(() => {
-    // Trigger when sidepanel is open, chat is empty, and greeting hasn't been done yet
-    if (!isOpen || messages.length > 0 || initialGreetingDoneRef.current || initialSuggestionsLoading) return;
+    // Trigger on mount (or URL change via greetingTrigger), regardless of sidepanel open state.
+    // This ensures suggestions are ready before the user opens the chat.
+    if (messages.length > 0 || initialGreetingDoneRef.current || initialSuggestionsLoading) return;
     if (!sendMessageRef.current) return;
     // Skip greeting if we have pending context from the summary (will be injected separately)
     if (sidepanelContext.initialMessagesRef.current) return;
@@ -1890,20 +2167,19 @@ export default function SidepanelExperience(config: AgentStudioConfig) {
 
     // Small delay to ensure transport is ready
     setTimeout(() => {
-      sendMessageRef.current?.({ text: "What can you help me with?" });
+      sendMessageRef.current?.({ text: HIDDEN_GREETING_TEXT });
     }, 100);
-  }, [isOpen, messages.length, initialSuggestionsLoading, greetingTrigger, sidepanelContext]);
+  }, [messages.length, initialSuggestionsLoading, greetingTrigger, sidepanelContext]);
 
-  // Clear chat after greeting response finishes (suggestions are captured via onData)
+  // Mark suggestions as loaded once the greeting response finishes
   useEffect(() => {
     if (!initialSuggestionsLoading) return;
     if (isGenerating) return; // still streaming
     if (messages.length === 0) return; // not yet received
 
-    // Response finished — clear the greeting exchange
-    setMessages?.([]);
+    // Response finished — suggestions were captured via onData, keep messages for greeting display
     setInitialSuggestionsLoading(false);
-  }, [initialSuggestionsLoading, isGenerating, messages.length, setMessages]);
+  }, [initialSuggestionsLoading, isGenerating, messages.length]);
 
   // Regenerate greeting when URL changes (category/search navigation)
   // Only if conversation is empty (no user messages beyond the initial greeting)
@@ -1912,20 +2188,26 @@ export default function SidepanelExperience(config: AgentStudioConfig) {
   const urlKey = `${pathname}?${searchParams.toString()}`;
   const prevUrlKeyRef = useRef(urlKey);
 
+  // Check if there are real user messages (not the hidden greeting)
+  const hasRealConversation = useMemo(() => {
+    return messages.some(
+      (m) => m.role === "user" && !m.parts.some((p) => p.type === "text" && p.text === HIDDEN_GREETING_TEXT)
+    );
+  }, [messages]);
+
   useEffect(() => {
     if (urlKey === prevUrlKeyRef.current) return;
     prevUrlKeyRef.current = urlKey;
 
-    // Only regenerate if there's no real conversation (messages are empty after greeting clears)
-    // and the greeting has already been done once
+    // Only regenerate if there's no real conversation and the greeting has already been done once
     if (!initialGreetingDoneRef.current) return;
-    if (messages.length > 0) return; // user has an active conversation
+    if (hasRealConversation) return; // user has an active conversation
     if (isGenerating || initialSuggestionsLoading) return;
 
     // Debounce: wait a short period before regenerating
     const timer = setTimeout(() => {
       // Re-check conditions after debounce
-      if (messages.length > 0 || isGenerating || initialSuggestionsLoading) return;
+      if (hasRealConversation || isGenerating || initialSuggestionsLoading) return;
       // Clear stale suggestions and reset the greeting flow
       resetConversation();
       initialGreetingDoneRef.current = false;
@@ -1933,7 +2215,7 @@ export default function SidepanelExperience(config: AgentStudioConfig) {
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [urlKey, messages.length, isGenerating, initialSuggestionsLoading]);
+  }, [urlKey, hasRealConversation, isGenerating, initialSuggestionsLoading]);
 
   // Keyboard shortcut: Command+I (Mac) or Ctrl+I (Windows)
   useEffect(() => {
@@ -1959,8 +2241,9 @@ export default function SidepanelExperience(config: AgentStudioConfig) {
   }, []);
 
   const openNewConversation = () => {
-    setMessages?.([]);
+    resetConversation();
     initialGreetingDoneRef.current = false;
+    setGreetingTrigger((n) => n + 1);
     setIsOpen(true);
   };
 
@@ -2012,8 +2295,8 @@ export default function SidepanelExperience(config: AgentStudioConfig) {
         }}
         messages={messages as unknown as Message[]}
         error={error as Error | null}
-        isGenerating={isGenerating}
-        sendMessage={sendMessage}
+        isGenerating={isGenerating && !initialSuggestionsLoading}
+        sendMessage={wrappedSendMessage}
         inputRef={inputRef}
         onOpenNewConversation={openNewConversation}
         followUpQuestions={suggestions}

@@ -437,15 +437,26 @@ export function LiveSearchBar() {
       POPULAR_CATEGORIES.forEach((c) =>
         items.push({ value: c.value, count: c.count, highlighted: c.label })
       );
+      // Add articles to empty-state selectable items
+      articles.forEach((a) => items.push(a));
       return items;
     }
+    if (isMobile) {
+      // Mobile with-query: suggestions → products → articles (no categories)
+      const items: SelectableItem[] = [];
+      suggestions.forEach((s) => items.push(s));
+      products.forEach((p) => items.push(p));
+      articles.forEach((a) => items.push(a));
+      return items;
+    }
+    // Desktop with-query: suggestions → categories → articles → products
     const items: SelectableItem[] = [];
     suggestions.forEach((s) => items.push(s));
     categories.forEach((c) => items.push(c));
     articles.forEach((a) => items.push(a));
     products.forEach((p) => items.push(p));
     return items;
-  }, [suggestions, categories, articles, products, isEmptyQuery]);
+  }, [suggestions, categories, articles, products, isEmptyQuery, isMobile]);
 
   const navigateWithQuery = useCallback(
     (query: string) => {
@@ -518,7 +529,7 @@ export function LiveSearchBar() {
               {
                 indexName: ALGOLIA_CONFIG.INDEX_NAME,
                 query: queryToSearch,
-                hitsPerPage: 6,
+                hitsPerPage: 4,
                 optionalFilters: personalizationFilters,
               },
               {
@@ -795,52 +806,70 @@ export function LiveSearchBar() {
                         onHover={handleHoverWrapper}
                       />
                     </CommandGroup>
-                  </>
-                ) : (
-                  <>
-                    <CommandGroup className="px-2">
-                      <SuggestionsResults
-                        suggestions={suggestions}
-                        selectedIndex={selectedIndex}
-                        indexOffset={0}
-                        onSelect={handleSuggestionSelect}
-                        onHover={handleHoverWrapper}
-                      />
-                    </CommandGroup>
-
-                    {categories.length > 0 && (
-                      <CommandGroup className="px-2" heading="Categorie">
-                        <CategoryResults
-                          categories={categories}
-                          selectedIndex={selectedIndex}
-                          indexOffset={suggestions.length}
-                          onSelect={handleCategorySelect}
-                          onHover={handleHoverWrapper}
-                        />
-                      </CommandGroup>
-                    )}
-
                     {articles.length > 0 && (
                       <CommandGroup className="px-2">
                         <ArticleResults
                           articles={articles}
                           selectedIndex={selectedIndex}
-                          indexOffset={suggestions.length + categories.length}
+                          indexOffset={POPULAR_QUERIES.length + POPULAR_CATEGORIES.length}
                           onSelect={handleArticleSelect}
                           onHover={handleHoverWrapper}
                         />
                       </CommandGroup>
                     )}
+                  </>
+                ) : (
+                  <>
+                    {/* Horizontal scrolling suggestion pills */}
+                    {suggestions.length > 0 && (
+                      <div className="px-3 py-2 flex items-center gap-2 overflow-x-auto scrollbar-hide border-b border-border">
+                        {suggestions.map((hit, i) => {
+                          const itemIndex = i;
+                          const isSelected = selectedIndex === itemIndex;
+                          return (
+                            <button
+                              key={hit.objectID}
+                              type="button"
+                              onClick={() => handleSuggestionSelect(hit.objectID)}
+                              className={cn(
+                                "shrink-0 px-3 py-1.5 text-sm font-medium border rounded-full whitespace-nowrap transition-colors",
+                                isSelected
+                                  ? "bg-primary text-primary-foreground border-primary"
+                                  : "bg-background border-border text-foreground hover:bg-muted"
+                              )}
+                            >
+                              {hit._highlightResult?.query?.value ? (
+                                <HighlightedText value={hit._highlightResult.query.value} />
+                              ) : (
+                                hit.objectID
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
 
-                    <CommandGroup className="px-2 pb-4">
+                    <CommandGroup className="px-2 pb-2">
                       <ProductResults
                         products={products}
                         selectedIndex={selectedIndex}
-                        indexOffset={suggestions.length + categories.length + articles.length}
+                        indexOffset={suggestions.length}
                         onSelect={handleProductSelect}
                         onHover={handleHoverWrapper}
                       />
                     </CommandGroup>
+
+                    {articles.length > 0 && (
+                      <CommandGroup className="px-2 pb-4">
+                        <ArticleResults
+                          articles={articles}
+                          selectedIndex={selectedIndex}
+                          indexOffset={suggestions.length + products.length}
+                          onSelect={handleArticleSelect}
+                          onHover={handleHoverWrapper}
+                        />
+                      </CommandGroup>
+                    )}
                   </>
                 )}
               </CommandList>
@@ -906,7 +935,7 @@ export function LiveSearchBar() {
             >
               <CommandList className="max-h-[70vh]">
                 {isEmptyQuery ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 divide-x">
+                  <div className="grid grid-cols-1 md:grid-cols-3 divide-x">
                     <div className="p-2">
                       <CommandGroup>
                         <PopularQueries
@@ -927,6 +956,19 @@ export function LiveSearchBar() {
                         />
                       </CommandGroup>
                     </div>
+                    {articles.length > 0 && (
+                      <div className="p-2">
+                        <CommandGroup>
+                          <ArticleResults
+                            articles={articles}
+                            selectedIndex={selectedIndex}
+                            indexOffset={POPULAR_QUERIES.length + POPULAR_CATEGORIES.length}
+                            onSelect={handleArticleSelect}
+                            onHover={handleHoverWrapper}
+                          />
+                        </CommandGroup>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 divide-x">

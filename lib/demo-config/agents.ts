@@ -34,7 +34,8 @@ export const AGENT_CONFIG = {
 Sei il Personal Shopper di ${DEMO_CONFIG.brand.name}. Guidi i clienti in un'esperienza di acquisto personalizzata per i loro animali domestici — come un commesso esperto in negozio.
 
 **RESPONSE STYLE**
-- When context has "isFirstMessage": true, respond with a single short sentence (max 15 words) — no product searches, no lists, just a warm greeting
+- When context has "isFirstMessage": true, give a warm one-liner greeting (max 15 words) based on the current page context. No product searches, no lists — just a friendly welcome that shows you understand what they're browsing.
+- From the second message onwards, jump straight into helping — no greetings, no pleasantries, just action.
 - Risposte brevi e conversazionali (2-3 frasi max per messaggio)
 - Usa emoji degli animali con moderazione (🐕 🐈 🐰) per dare personalità
 - Mai elenchi lunghi o muri di testo — preferisci showItems per mostrare prodotti
@@ -44,12 +45,21 @@ Sei il Personal Shopper di ${DEMO_CONFIG.brand.name}. Guidi i clienti in un'espe
 - recommend_related_products — Prodotti correlati (dato un objectID)
 - addToCart — Aggiungi prodotti al carrello
 - showItems — Mostra prodotti consigliati con titolo e motivazione
+- showArticles — Mostra articoli educativi con titolo e link
+
+**CRITICAL: MULTI-SEARCH RULE**
+When the user asks for multiple product types in one message, you MUST run separate searches for each type. Never combine different categories into a single query.
+Example: "ho bisogno di crocchette e giochi per il mio cane"
+→ Search 1: "crocchette cane" (category: Cane > Cibo Secco)
+→ Search 2: "giochi cane" (category: Cane > Giochi)
+→ Present results from each search separately using showItems
 
 **EDUCATIONAL CONTENT**
 - Hai accesso agli articoli del magazine Arcaplanet tramite algolia_search_index (indice arcaplanet_articles)
 - Quando un cliente chiede consigli su salute, comportamento, alimentazione → cerca articoli pertinenti
-- Dopo una raccomandazione di prodotto, se esiste un articolo correlato, condividilo: "Ho anche un articolo utile: [titolo]"
+- Dopo una raccomandazione di prodotto, se esiste un articolo correlato, condividilo usando showArticles
 - Per nuovi proprietari di cuccioli/gattini, suggerisci proattivamente articoli come "I primi 30 giorni con il tuo cucciolo"
+- SEMPRE usa showArticles per mostrare gli articoli — non inserirli come testo nel messaggio
 - Non limitarti ai prodotti — il valore è anche nella consulenza
 
 **GUIDED PURCHASE FLOW**
@@ -206,6 +216,36 @@ Filterable fields for search:
             },
           },
           required: ["objectIDs", "title", "explanation"],
+        },
+      },
+      {
+        name: "showArticles",
+        type: "client_side",
+        description:
+          "Display educational articles to the customer with titles and links. Use this when you find relevant articles from the arcaplanet_articles index.",
+        inputSchema: {
+          type: "object",
+          properties: {
+            articles: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  title: { type: "string", description: "Article title" },
+                  summary: { type: "string", description: "Brief summary of the article" },
+                  url: { type: "string", description: "URL to the full article" },
+                  category: { type: "string", description: "Article category (e.g. Cane, Gatto, Alimentazione)" },
+                },
+                required: ["title", "summary"],
+              },
+              description: "Array of articles to display",
+            },
+            title: {
+              type: "string",
+              description: "A short title for the articles section",
+            },
+          },
+          required: ["articles", "title"],
         },
       },
     ],
