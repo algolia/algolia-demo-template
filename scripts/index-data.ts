@@ -359,7 +359,13 @@ async function main() {
     indexSettings: {
       // Searchable attributes — ORDER MATTERS for relevance (tie-breaking).
       // Higher = breaks ties first. Short, precise attributes go higher; long noisy text goes lower.
-      // Attributes at the same level use comma separation (equal priority).
+      //
+      // Same-priority attributes: comma-separate in ONE string (e.g., "attr1, attr2").
+      //   - They are unordered by default — do NOT wrap in unordered() inside comma strings.
+      //   - Using unordered() inside a comma-separated string breaks Algolia's parsing.
+      //
+      // Single attributes: use unordered(attr) to disable word-position ranking within that attribute.
+      //
       // See: https://www.algolia.com/doc/guides/managing-results/must-do/searchable-attributes/how-to/configuring-searchable-attributes-the-right-way/
       searchableAttributes: [
         // P1: Short, precise text — brand/category matches are unambiguous

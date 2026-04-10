@@ -98,6 +98,22 @@ This script will:
 2. Configure searchable attributes, facets, and ranking
 3. Create/update the Composition (uses `COMPOSITION_ID` from config, or derives one from the index name)
 
+### Searchable Attributes Format
+
+When configuring `searchableAttributes` in `scripts/index-data.ts`:
+
+- **Same-priority attributes**: comma-separate in ONE string (e.g., `"attr1, attr2, attr3"`). They are unordered by default — do NOT wrap each in `unordered()` inside a comma-separated string, as this breaks Algolia's parsing.
+- **Single attributes**: use `unordered(attr)` to disable word-position ranking within that attribute.
+
+```typescript
+// ✅ Correct
+"searchable_categories.lvl0, searchable_categories.lvl1, searchable_categories.lvl2",
+"unordered(brand)",
+
+// ❌ Wrong — breaks Algolia parsing
+"unordered(attr1), unordered(attr2), unordered(attr3)",
+```
+
 ## 9. Set Up Recommendations
 
 ```bash
