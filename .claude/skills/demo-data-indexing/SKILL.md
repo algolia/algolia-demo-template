@@ -101,6 +101,7 @@ Same format for fields that enhance specific features:
 - `variants` (array) — needed for color variant swatches
 - `slug` (string) — URL-safe identifier
 - `sku` (string) — product SKU display
+- `availableInStores` (array of `{ objectID, inStock }`) — needed for click & collect store availability badges
 
 If a discovery brief exists, **prioritize fields flagged in its data requirements**.
 
@@ -292,7 +293,7 @@ The base script has sensible defaults, but **review and adapt the order for each
 searchableAttributes: [
   // P1: Short, precise text — brand/category/color matches are unambiguous
   "unordered(brand)",
-  "unordered(searchable_categories.lvl0), unordered(searchable_categories.lvl1), unordered(searchable_categories.lvl2)",
+  "searchable_categories.lvl0, searchable_categories.lvl1, searchable_categories.lvl2",
   "unordered(color.original_name), unordered(gender)",
   // P2: Product name — ordered so matches at the start rank higher
   "name",
@@ -381,6 +382,39 @@ Configures Query Suggestions from index facet data (no event tracking required).
 
 Creates index: `<INDEX_NAME>_query_suggestions`.
 
+## Step 6: Index Articles (if applicable)
+
+If the demo includes educational content, blog posts, or guides alongside products:
+
+```bash
+pnpm tsx scripts/index-articles.ts
+```
+
+This indexes content from `data/articles.json` into the `ARTICLES_INDEX` (configured in `lib/algolia-config.ts`). Key settings:
+- `attributeForDistinct: "url"` + `distinct: true` — deduplicates content appearing at multiple paths
+- Separate index from products for clean content separation
+- Articles are searchable by the AI agent via the `showArticles` tool
+
+The article data format is flexible — the script accepts any JSON with at least a `title` field. Optional fields: `url`, `summary`, `description`, `body_text`, `categories`, `tags`, `author`, `image_url`.
+
+## Step 7: Index Store Locations (if Click & Collect is needed)
+
+If the demo includes store finder or click & collect:
+
+```bash
+pnpm tsx scripts/index-stores.ts
+```
+
+This indexes store locations from `data/stores.json` into the `LOCATIONS_INDEX`. Each store needs at minimum:
+- `objectID` and `id` — unique identifier
+- `name` — store name
+- `city` — city name
+- `_geoloc` — `{ lat, lng }` for geo search
+
+Optional: `address`, `region`, `phone`, `openingHours`, `services` array.
+
+Store availability on products is handled via the `availableInStores` array on each product record (format: `[{ objectID: "store-id", inStock: true }]`).
+
 ## Does NOT Run
 
 This skill does NOT run `scripts/setup-agent.ts`. Agent setup is a separate concern — use `/demo-agent-setup` for that.
@@ -405,6 +439,8 @@ Data indexing complete!
   Validation:    ✓ name clean (100%), ✓ images resolve, ⚠️ gender 32% populated
   Recommend:     Related Products + Looking Similar trained
   QS:            <INDEX_NAME>_query_suggestions created
+  Articles:      <N> articles indexed into ARTICLES_INDEX (if applicable)
+  Stores:        <N> store locations indexed into LOCATIONS_INDEX (if applicable)
 ```
 
 Include specifically:
