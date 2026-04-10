@@ -7,6 +7,7 @@ import { SidepanelProvider } from "@/components/sidepanel-agent-studio/context/s
 import { SelectionProvider } from "@/components/selection/selection-context";
 import { UserProvider, useUser } from "@/components/user/user-context";
 import { CartProvider } from "@/components/cart/cart-context";
+import { ClickCollectProvider } from "@/components/click-collect/click-collect-context";
 import { compositionClient } from "@algolia/composition";
 import { ALGOLIA_CONFIG } from "@/lib/algolia-config";
 
@@ -47,6 +48,7 @@ function PersonalizedConfigure() {
 export function Providers({ children }: { children: ReactNode }) {
   return (
     <CartProvider>
+      <ClickCollectProvider>
       <UserProvider>
         <SelectionProvider>
           <SidepanelProvider>
@@ -67,6 +69,7 @@ export function Providers({ children }: { children: ReactNode }) {
           </SidepanelProvider>
         </SelectionProvider>
       </UserProvider>
+      </ClickCollectProvider>
     </CartProvider>
   );
 }
