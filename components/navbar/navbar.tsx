@@ -77,26 +77,17 @@ export function NavBar() {
           </div>
         </div>
 
-        {/* Mobile layout */}
+        {/* Mobile layout — 2 rows */}
         <div className="md:hidden flex flex-col gap-2 w-full">
-          <div className="flex items-center justify-between w-full">
-            <CategoriesSheet />
+          {/* Row 1: Logo + Search + AI */}
+          <div className="flex items-center gap-2 w-full">
             <Link
               href="/"
-              className="font-bold text-xl text-primary shrink-0"
-              onClick={() => {
-                refine("");
-              }}
+              className="shrink-0"
+              onClick={() => { refine(""); }}
             >
               <Logo />
             </Link>
-            <div className="flex items-center gap-1">
-              <UserSelector />
-              <ClickCollectSelector />
-              <CartSheet />
-            </div>
-          </div>
-          <div className="w-full flex items-center gap-2">
             <div className="flex-1">
               <LiveSearchBar />
             </div>
@@ -114,6 +105,15 @@ export function NavBar() {
                 </span>
               )}
             </Button>
+          </div>
+          {/* Row 2: Categories + User/Cart */}
+          <div className="flex items-center justify-between w-full">
+            <CategoriesSheet />
+            <div className="flex items-center gap-1">
+              <UserSelector />
+              <ClickCollectSelector />
+              <CartSheet />
+            </div>
           </div>
         </div>
       </div>
