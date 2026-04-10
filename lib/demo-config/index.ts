@@ -9,8 +9,8 @@ export const DEMO_CONFIG = {
     name: "Demo Store",
     tagline: "Your one-stop shop",
     logoUrl: "/logo.svg",
-    logoWidth: 160,
-    logoHeight: 40,
+    logoWidth: 140,
+    logoHeight: 32,
     agentName: "Shopping Assistant",
   },
   locale: {
