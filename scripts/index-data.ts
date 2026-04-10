@@ -218,22 +218,39 @@ function transformRecords(
  *
  * @see https://developers.openai.com/api/docs/guides/structured-outputs
  */
+function extractAgeBucket(name: string, etaValue?: string): string | null {
+  // Priority 1: explicit "N+" pattern in product name (e.g., "Ageing 8+", "Mature 7+")
+  const match = name.match(/(\d{1,2})\s*\+/);
+  if (match) return `${match[1]}+`;
+
+  // Priority 2: defaults from categorical età
+  const defaults: Record<string, string> = {
+    PUPPY: "0+", KITTEN: "0+", ADULTO: "1+", ANZIANO: "7+", STERILIZZATO: "1+",
+  };
+  if (etaValue && etaValue in defaults) return defaults[etaValue];
+  return null; // TUTTE LE ETÀ or missing
+}
+
 async function enrichRecords(
   records: Record<string, unknown>[]
 ): Promise<Record<string, unknown>[]> {
-  // No-op — replace with enrichment logic per demo
-  // Example with OpenAI structured outputs:
-  //   import OpenAI from "openai";
-  //   import { zodResponseFormat } from "openai/helpers/zod";
-  //   const EnrichedFields = z.object({
-  //     keywords: z.array(z.string()),
-  //     semantic_attributes: z.string(),
-  //   });
-  //   for (const record of records) {
-  //     const result = await openai.beta.chat.completions.parse({ ... });
-  //     record._enriched = result.choices[0].message.parsed;
-  //     Object.assign(record, record._enriched);
-  //   }
+  let bucketCount = 0;
+  for (const record of records) {
+    const name = (record.name as string) || "";
+    const eta = record.età as { value: string } | undefined;
+    const bucket = extractAgeBucket(name, eta?.value);
+    if (bucket) {
+      record.age_bucket = bucket;
+      bucketCount++;
+      // Track as synthetic field
+      const synth = (record._synthetic_fields as string[]) || [];
+      if (!synth.includes("age_bucket")) {
+        synth.push("age_bucket");
+        record._synthetic_fields = synth;
+      }
+    }
+  }
+  console.log(`  → Assigned age_bucket to ${bucketCount}/${records.length} records`);
   return records;
 }
 
@@ -351,6 +368,7 @@ async function main() {
         "searchable(conservazione.value)",
         "searchable(consistenza.value)",
         "searchable(tipo.value)",
+        "searchable(age_bucket)",
         "filterOnly(discount_rate)",
       ],
       customRanking: ["desc(reviews.bayesian_avg)", "desc(sales_last_24h)"],
@@ -411,6 +429,7 @@ async function main() {
         "conservazione",
         "consistenza",
         "funzione",
+        "age_bucket",
       ],
       attributesToHighlight: ["name", "brand", "description"],
       attributesToSnippet: ["description:50"],

@@ -39,6 +39,7 @@ export const users: User[] = [
         "Cane > Giochi": 16,
       },
       "età.value": { ANZIANO: 20 },
+      age_bucket: { "8+": 20, "7+": 18 },
       brand: { "ROYAL CANIN": 17 },
       "funzione.value": { DIGESTIONE: 15, "SENSIBILITA'": 12 },
     },
@@ -73,6 +74,7 @@ export const users: User[] = [
         "Cane > Antiparassitari e Curativi": 16,
       },
       "età.value": { PUPPY: 18, ANZIANO: 18 },
+      age_bucket: { "8+": 18, "7+": 16, "0+": 18 },
       brand: { "ROYAL CANIN": 15, "HILL'S": 16 },
       "funzione.value": { CRESCITA: 14, "CONTROLLO DEL PESO": 16 },
     },
@@ -143,5 +145,9 @@ export const PREFERENCE_METADATA: Record<PreferenceKey, PreferenceMetadata> = {
   "formato.value": {
     title: "Formato prodotto",
     icon: "package",
+  },
+  age_bucket: {
+    title: "Fascia d'età",
+    icon: "calendar",
   },
 };

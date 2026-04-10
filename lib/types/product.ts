@@ -76,6 +76,9 @@ export interface Product {
   sales_last_30d: number;
   sales_last_90d: number;
 
+  // Age bucket — textual age minimum extracted from product name (e.g., "8+", "7+", "1+")
+  age_bucket?: string | null;
+
   // Synthetic data marker — lists field names that were fabricated for demo purposes
   // (e.g., ["reviews", "sales_last_24h", "margin"])
   _synthetic_fields?: string[];

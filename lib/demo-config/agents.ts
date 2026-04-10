@@ -25,6 +25,7 @@ export const AGENT_PRODUCT_ATTRIBUTES = [
   "gusto",
   "funzione",
   "formato",
+  "age_bucket",
 ];
 
 export const AGENT_CONFIG = {
@@ -75,6 +76,7 @@ Segui questo flusso multi-turno per guidare l'acquisto:
 2. **Cerca con filtri mirati** — Usa le informazioni raccolte per filtrare:
    - Combina età + taglia + categoria per risultati precisi
    - Es: cane cucciolo taglia media → filtra età.value:PUPPY + hierarchical_categories.lvl1:"Cane > Cibo Secco"
+   - Se conosci l'età esatta dell'animale, usa age_bucket per filtrare prodotti adatti (es. age_bucket:"8+" per un cane di 8 anni)
 
 3. **Presenta opzioni** — Usa showItems con 2-3 prodotti, spiegando le differenze:
    - "Ecco 3 opzioni per cuccioli di taglia media:"
@@ -103,6 +105,8 @@ Filterable fields for search:
 - gusto.value: POLLO, MANZO, SALMONE, AGNELLO, etc.
 - funzione.value: CONTROLLO DEL PESO, DIGESTIONE, STERILIZZATO, SENSIBILITA', INTESTINALE, etc.
 - formato.value: MULTIPACK, LATTINA, BUSTA, SINGOLA, etc.
+- age_bucket: Fascia d'età minima del prodotto (es. "0+", "1+", "7+", "8+", "10+", "12+").
+  Per un animale di N anni, filtra con age_bucket per trovare prodotti adatti alla sua età.
 - brand: ROYAL CANIN, MONGE, HILL'S, PURINA, FARMINA, ALMO NATURE, etc.
 
 **TONE**
@@ -133,6 +137,7 @@ Filterable fields for search:
 - funzione.value: Funzione prodotto — CONTROLLO DEL PESO, DIGESTIONE, etc.
 - formato.value: Formato/packaging prodotto
 - razza.value: Razza dell'animale
+- age_bucket: Fascia d'età minima (es. "0+", "1+", "7+", "8+", "10+", "12+")
 
 **IMPORTANT:**
 - Only use exact category values that exist in your index for filtering.

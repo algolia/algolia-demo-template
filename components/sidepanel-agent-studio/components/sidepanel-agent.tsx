@@ -1720,7 +1720,7 @@ const Sidepanel = memo(function Sidepanel({
   const [inputValue, setInputValue] = useState("");
   const [shouldRender, setShouldRender] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const [isMaximized, setIsMaximized] = useState(false);
+  const [isMaximized, setIsMaximized] = useState(true);
   const variant = config.variant || "floating";
 
   // Speech recognition for voice input
