@@ -13,13 +13,13 @@ export const ALGOLIA_CONFIG = {
   SEARCH_API_KEY: "cf3b54fbfea633fb12808c8b2f59b990",
 
   // Indices
-  INDEX_NAME: "products",
+  INDEX_NAME: "fashion_ns",
   ARTICLES_INDEX: "articles",
-  QUERY_SUGGESTIONS_INDEX: "products_query_suggestions",
+  QUERY_SUGGESTIONS_INDEX: "fashion_ns_query_suggestions",
   LOCATIONS_INDEX: "locations",
 
   // Composition
-  COMPOSITION_ID: "products_composition",
+  COMPOSITION_ID: "fashion_ns_composition",
 
   // Agent Studio configuration
   AGENT_ID: "",
