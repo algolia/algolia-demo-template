@@ -30,11 +30,11 @@ export function NavBar() {
             <CategoriesSheet />
           </div>
 
-          {/* Center section: Logo, Search, and AI button */}
-          <div className="flex-1 flex items-center justify-center gap-4">
+          {/* Center section: Logo + Search + AI button */}
+          <div className="flex-1 flex items-center gap-3">
             <Link
               href="/"
-              className="font-bold text-xl text-primary shrink-0"
+              className="shrink-0"
               onClick={() => {
                 refine("");
               }}
