@@ -469,6 +469,7 @@ export function FiltersSidebar() {
             searchable
             limit={10}
             showMoreLimit={30}
+            defaultExpanded={false}
           />
         )}
       />

@@ -265,6 +265,25 @@ async function enrichRecords(
   }
   console.log(`  → Assigned age_bucket to ${bucketCount}/${records.length} records`);
 
+  // Tag accessories based on category hierarchy
+  let accessoriCount = 0;
+  for (const record of records) {
+    const hc = record.hierarchical_categories as Record<string, string> | undefined;
+    let isAccessori = false;
+    if (hc) {
+      for (const lvl of ["lvl0", "lvl1", "lvl2", "lvl3"]) {
+        const val = hc[lvl];
+        if (typeof val === "string" && val.includes("Accessori")) {
+          isAccessori = true;
+          break;
+        }
+      }
+    }
+    record.isAccessori = isAccessori;
+    if (isAccessori) accessoriCount++;
+  }
+  console.log(`  → Tagged ${accessoriCount}/${records.length} records as accessories`);
+
   // Fill missing taglia from product name
   let tagliaCount = 0;
   for (const record of records) {
@@ -407,7 +426,7 @@ async function main() {
         "searchable(age_bucket)",
         "filterOnly(discount_rate)",
       ],
-      customRanking: ["desc(reviews.bayesian_avg)", "desc(sales_last_24h)"],
+      customRanking: ["asc(isAccessori)", "desc(reviews.bayesian_avg)", "desc(sales_last_24h)"],
       ranking: [
         "typo",
         "geo",
@@ -466,6 +485,7 @@ async function main() {
         "consistenza",
         "funzione",
         "age_bucket",
+        "isAccessori",
       ],
       attributesToHighlight: ["name", "brand", "description"],
       attributesToSnippet: ["description:50"],
@@ -503,6 +523,46 @@ async function main() {
       },
     },
   });
+
+  // Configure NeuralSearch (semantic search) settings
+  console.log("Configuring NeuralSearch settings...");
+  {
+    const nsResponse = await fetch(
+      `https://${ALGOLIA_APP_ID}.algolia.net/1/indexes/${INDEX_NAME}/semanticSearch/settings`,
+      {
+        method: "PUT",
+        headers: {
+          "x-algolia-application-id": ALGOLIA_APP_ID,
+          "x-algolia-api-key": ALGOLIA_ADMIN_KEY,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          neuralSearchMode: "active",
+          eventSources: [],
+          neuralExpression: {
+            description: 0.797983,
+            name: 1,
+          },
+          vectorModelId: "external://algolia-large-multilang-generic-v2410",
+          neuralSearchPreset: "custom",
+          semanticBlendWeight: 0.6,
+          enableNeuralSearchSortBy: true,
+          minHitsForSemantic: null,
+          dynamicThreshold: {
+            enabled: true,
+            lowerLimit: 0.663,
+          },
+        }),
+      }
+    );
+
+    if (!nsResponse.ok) {
+      const error = await nsResponse.text();
+      console.error("Failed to configure NeuralSearch:", error);
+    } else {
+      console.log("NeuralSearch configured successfully.");
+    }
+  }
 
   console.log("Done! Indexed", enriched.length, "products to", INDEX_NAME);
 
