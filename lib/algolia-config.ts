@@ -9,8 +9,8 @@
  */
 export const ALGOLIA_CONFIG = {
   // Core — safe to expose (search-only key, no write access)
-  APP_ID: "YOUR_APP_ID",
-  SEARCH_API_KEY: "YOUR_SEARCH_API_KEY",
+  APP_ID: "3FKQCCIUWO",
+  SEARCH_API_KEY: "cf3b54fbfea633fb12808c8b2f59b990",
 
   // Indices
   INDEX_NAME: "products",
