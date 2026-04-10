@@ -11,7 +11,7 @@ import { writeFileSync } from "fs";
 import { join } from "path";
 import { ALGOLIA_CONFIG } from "../lib/algolia-config";
 
-const SERVICES = ["toelettatura", "veterinario", "adozioni", "parking"] as const;
+const SERVICES = ["fitting_room", "personal_shopper", "alterations", "parking", "click_collect"] as const;
 type Service = (typeof SERVICES)[number];
 
 interface EnrichedStore {
@@ -48,17 +48,19 @@ function assignServices(store: { objectID: string; city: string; name: string })
   const h = hashCode(store.objectID);
   const services: Service[] = [];
 
-  // ~60% of stores have grooming
-  if (h % 10 < 6) services.push("toelettatura");
-  // ~30% have vet
-  if (h % 10 < 3) services.push("veterinario");
-  // ~25% have adoption events
-  if ((h >> 4) % 4 === 0) services.push("adozioni");
+  // ~60% of stores have fitting rooms
+  if (h % 10 < 6) services.push("fitting_room");
+  // ~30% have personal shopper
+  if (h % 10 < 3) services.push("personal_shopper");
+  // ~25% have alterations
+  if ((h >> 4) % 4 === 0) services.push("alterations");
   // ~50% have parking
   if (h % 2 === 0) services.push("parking");
+  // ~70% have click & collect
+  if (h % 10 < 7) services.push("click_collect");
 
   // Ensure at least one service
-  if (services.length === 0) services.push("toelettatura");
+  if (services.length === 0) services.push("click_collect");
 
   return services;
 }

@@ -1,15 +1,16 @@
 "use client";
 
-import { MapPin, Zap, Clock, Phone, Scissors, Stethoscope, Heart, Car, Check } from "lucide-react";
+import { MapPin, Zap, Clock, Phone, Scissors, UserCheck, Ruler, Car, Package, Check } from "lucide-react";
 import { ShopWithDistance, StoreService } from "@/lib/types/shop";
 import { formatDistance } from "@/lib/click-collect-utils";
 import { cn } from "@/lib/utils";
 
 const SERVICE_CONFIG: Record<StoreService, { label: string; icon: typeof Scissors; color: string }> = {
-  toelettatura: { label: "Grooming", icon: Scissors, color: "text-purple-600 bg-purple-50" },
-  veterinario: { label: "Veterinary", icon: Stethoscope, color: "text-blue-600 bg-blue-50" },
-  adozioni: { label: "Adoptions", icon: Heart, color: "text-rose-600 bg-rose-50" },
+  fitting_room: { label: "Fitting Room", icon: Ruler, color: "text-purple-600 bg-purple-50" },
+  personal_shopper: { label: "Personal Shopper", icon: UserCheck, color: "text-blue-600 bg-blue-50" },
+  alterations: { label: "Alterations", icon: Scissors, color: "text-rose-600 bg-rose-50" },
   parking: { label: "Parking", icon: Car, color: "text-gray-600 bg-gray-100" },
+  click_collect: { label: "Click & Collect", icon: Package, color: "text-green-600 bg-green-50" },
 };
 
 export { SERVICE_CONFIG };
