@@ -1,86 +1,69 @@
 export interface Product {
-  // Identifiers
   objectID: string;
   name: string;
   slug: string;
   sku: string;
-  parentID: string;
+  parentID?: string;
   description: string;
   brand: string;
-  gender: string;
 
   // Status
-  isNew: boolean;
-  url: string;
-  stock: number;
+  isNew?: boolean;
+  url?: string;
+  stock?: number;
 
   // Pricing
   price: { value: number };
-  color: { filter_group: string; original_name: string };
+  discount_rate?: number;
 
   // Images
   primary_image: string;
-  image_urls: string[];
-  image_blurred: string;
-  image_description: string;
-
-  // Sizes
-  available_sizes: string[];
+  image_urls?: string[];
 
   // Categories
   hierarchical_categories: {
-    lvl0: string;
-    lvl1: string;
-    lvl2: string;
+    lvl0?: string;
+    lvl1?: string;
+    lvl2?: string;
+    lvl3?: string;
   };
-  // Leaf-only category values for search (e.g., "Jet Helmets" instead of "Helmets > Jet Helmets")
-  searchable_categories: {
-    lvl0: string;
-    lvl1: string;
-    lvl2: string;
-  };
-  list_categories: string[];
-  categoryPageId: string[];
+  list_categories?: string[];
+  searchable_categories?: Record<string, string>;
+  categoryPageId?: string[];
 
-  // Variants
-  variants: Array<{
-    color: { filter_group: string; original_name: string };
-    image_urls: string[];
-    objectID: string;
-    price: { value: number };
-  }>;
-
-  // Search & Discovery
-  keywords: string[];
-  semantic_attributes: string;
+  // Search enrichment
+  keywords?: string;
+  semantic_attributes?: string;
 
   // Reviews
-  reviews: {
+  reviews?: {
     bayesian_avg: number;
     count: number;
     rating: number;
   };
 
-  // Store availability
-  availableInStores: Array<{
-    inStock: boolean;
+  // Business metrics
+  sales_last_24h?: number;
+  sales_last_7d?: number;
+  sales_last_30d?: number;
+  sales_last_90d?: number;
+  margin?: number;
+  product_aov?: number;
+
+  // Store availability (for click & collect)
+  availableInStores?: Array<{
     objectID: string;
+    inStock: boolean;
   }>;
 
-  // Business metrics
-  margin: number;
-  discount_rate: number;
-  product_aov: number;
-  sales_last_24h: number;
-  sales_last_7d: number;
-  sales_last_30d: number;
-  sales_last_90d: number;
-
-  // Synthetic data marker — lists field names that were fabricated for demo purposes
-  // (e.g., ["price", "reviews", "sales_last_24h", "margin"])
+  // Synthetic marker
   _synthetic_fields?: string[];
 
-  // Algolia-specific fields (populated by search response)
+  // Algolia search response fields
   _highlightResult?: Record<string, unknown>;
   _snippetResult?: Record<string, unknown>;
+  _rankingInfo?: Record<string, unknown>;
+
+  // Allow demo-specific extra fields
+  [key: string]: unknown;
 }

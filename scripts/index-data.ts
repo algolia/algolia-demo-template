@@ -8,52 +8,116 @@ const ALGOLIA_ADMIN_KEY = process.env.ALGOLIA_ADMIN_API_KEY!;
 const INDEX_NAME = ALGOLIA_CONFIG.INDEX_NAME;
 const COMPOSITION_ID = ALGOLIA_CONFIG.COMPOSITION_ID || `${INDEX_NAME}_composition`;
 
+// ============================================================================
+// NeuralSearch configuration
+// ============================================================================
+
+const NEURAL_SEARCH_CONFIG = {
+  neuralSearchMode: "active" as const,
+  eventSources: [],
+  neuralExpression: { description: 0.8, name: 1 },
+  vectorModelId: "external://algolia-large-multilang-generic-v2410",
+  neuralSearchPreset: "custom" as const,
+  semanticBlendWeight: 0.6,
+  enableNeuralSearchSortBy: true,
+  minHitsForSemantic: null,
+  dynamicThreshold: { enabled: true, lowerLimit: 0.66 },
+};
+
+// ============================================================================
+// Utilities
+// ============================================================================
+
 /**
- * Transform: reshape raw source data to match the Product interface.
- * Field mappings, restructuring, and synthetic data generation go here.
+ * Deterministic pseudo-random from objectID for reproducible demo data
+ */
+function seedRandom(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash) / 2147483647;
+}
+
+/**
+ * Strip HTML tags and decode common HTML entities
+ */
+function stripHtml(html: string): string {
+  return html
+    .replace(/<[^>]*>/g, "")
+    .replace(/&egrave;/g, "è")
+    .replace(/&agrave;/g, "à")
+    .replace(/&eacute;/g, "é")
+    .replace(/&ograve;/g, "ò")
+    .replace(/&ugrave;/g, "ù")
+    .replace(/&igrave;/g, "ì")
+    .replace(/&rsquo;/g, "'")
+    .replace(/&lsquo;/g, "'")
+    .replace(/&rdquo;/g, '"')
+    .replace(/&ldquo;/g, '"')
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&#\d+;/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/**
+ * Generate URL-safe slug from a product name
+ */
+function generateSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[àáâã]/g, "a")
+    .replace(/[èéêë]/g, "e")
+    .replace(/[ìíîï]/g, "i")
+    .replace(/[òóôõ]/g, "o")
+    .replace(/[ùúûü]/g, "u")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+// ============================================================================
+// Transform
+// ============================================================================
+
+/**
+ * Transform: reshape raw data to match the Product interface.
  * Populated by /demo-data-indexing skill per demo.
  */
 function transformRecords(
   records: Record<string, unknown>[]
 ): Record<string, unknown>[] {
-  // Identity transform — replace with field mappings per demo
-  // Example:
-  //   return records.map((r) => ({
-  //     ...r,
-  //     name: r.title,
-  //     primary_image: r.image,
-  //     price: { value: Number(r.price) },
-  //   }));
+  // Pass-through — /demo-data-indexing populates this per demo
   return records;
 }
 
+// ============================================================================
+// Enrich
+// ============================================================================
+
 /**
- * Enrich: add computed or AI-generated fields.
- * Enriched fields use the _enriched namespace, then get promoted
- * to top-level record fields for indexing.
- * Can use OpenAI structured outputs, other APIs, scraping, etc.
+ * Enrich: add computed fields.
  * Populated by /demo-data-indexing skill per demo.
  *
- * @see https://developers.openai.com/api/docs/guides/structured-outputs
+ * Example enrichments (from Arcaplanet pet store demo):
+ *   - extractAgeBucket(): parse "8+" from product names for age-based personalization
+ *   - extractTaglia(): fill missing size from name patterns (mini→PICCOLA, maxi→GRANDE)
+ *   - isAccessori: tag accessories from category hierarchy for custom ranking demotion
  */
 async function enrichRecords(
   records: Record<string, unknown>[]
 ): Promise<Record<string, unknown>[]> {
-  // No-op — replace with enrichment logic per demo
-  // Example with OpenAI structured outputs:
-  //   import OpenAI from "openai";
-  //   import { zodResponseFormat } from "openai/helpers/zod";
-  //   const EnrichedFields = z.object({
-  //     keywords: z.array(z.string()),
-  //     semantic_attributes: z.string(),
-  //   });
-  //   for (const record of records) {
-  //     const result = await openai.beta.chat.completions.parse({ ... });
-  //     record._enriched = result.choices[0].message.parsed;
-  //     Object.assign(record, record._enriched);
-  //   }
+  // No enrichments in template — /demo-data-indexing adds them per demo
   return records;
 }
+
+// ============================================================================
+// Main
+// ============================================================================
 
 async function main() {
   const feedPath = process.argv[2] || "data/products.json";
@@ -103,7 +167,14 @@ async function main() {
     }
   }
 
-  console.log("Indexing products in batches...");
+  console.log("Clearing index and re-indexing products...");
+  const clearResult = await client.clearObjects({ indexName: INDEX_NAME });
+  await client.waitForTask({
+    indexName: INDEX_NAME,
+    taskID: clearResult.taskID,
+  });
+  console.log("Index cleared.");
+
   const BATCH_SIZE = 1000;
   let indexed = 0;
 
@@ -123,13 +194,18 @@ async function main() {
     indexSettings: {
       // Searchable attributes — ORDER MATTERS for relevance (tie-breaking).
       // Higher = breaks ties first. Short, precise attributes go higher; long noisy text goes lower.
-      // Attributes at the same level use comma separation (equal priority).
+      //
+      // Same-priority attributes: comma-separate in ONE string (e.g., "attr1, attr2").
+      //   - They are unordered by default — do NOT wrap in unordered() inside comma strings.
+      //   - Using unordered() inside a comma-separated string breaks Algolia's parsing.
+      //
+      // Single attributes: use unordered(attr) to disable word-position ranking within that attribute.
+      //
       // See: https://www.algolia.com/doc/guides/managing-results/must-do/searchable-attributes/how-to/configuring-searchable-attributes-the-right-way/
       searchableAttributes: [
-        // P1: Short, precise text — brand/category/color matches are unambiguous
+        // P1: Short, precise text — brand/category matches are unambiguous
         "unordered(brand)",
-        "unordered(searchable_categories.lvl0), unordered(searchable_categories.lvl1), unordered(searchable_categories.lvl2)",
-        "unordered(color.original_name), unordered(gender)",
+        "searchable_categories.lvl0, searchable_categories.lvl1, searchable_categories.lvl2",
         // P2: Product name — ordered so matches at the start rank higher
         "name",
         // P3: Exact lookups
@@ -142,9 +218,6 @@ async function main() {
       ],
       attributesForFaceting: [
         "searchable(brand)",
-        "searchable(gender)",
-        "searchable(color.filter_group)",
-        "searchable(available_sizes)",
         "hierarchical_categories.lvl0",
         "hierarchical_categories.lvl1",
         "hierarchical_categories.lvl2",
@@ -152,6 +225,7 @@ async function main() {
         "searchable(categoryPageId)",
         "filterOnly(price.value)",
         "filterOnly(reviews.rating)",
+        "filterOnly(discount_rate)",
       ],
       customRanking: ["desc(reviews.bayesian_avg)", "desc(sales_last_24h)"],
       ranking: [
@@ -164,10 +238,7 @@ async function main() {
         "exact",
         "custom",
       ],
-      ignorePlurals: ["en"],
-      indexLanguages: ["en"],
-      queryLanguages: ["en"],
-      removeStopWords: ["en"],
+      ignorePlurals: true,
       removeWordsIfNoResults: "allOptional",
       attributesToRetrieve: [
         "objectID",
@@ -177,22 +248,16 @@ async function main() {
         "parentID",
         "description",
         "brand",
-        "gender",
         "isNew",
         "url",
         "stock",
         "price",
-        "color",
         "primary_image",
         "image_urls",
-        "image_blurred",
-        "image_description",
-        "available_sizes",
         "hierarchical_categories",
         "searchable_categories",
         "list_categories",
         "categoryPageId",
-        "variants",
         "keywords",
         "semantic_attributes",
         "reviews",
@@ -210,6 +275,30 @@ async function main() {
       attributesToSnippet: ["description:50"],
     },
   });
+
+  // Configure NeuralSearch (semantic search) settings
+  console.log("Configuring NeuralSearch settings...");
+  {
+    const nsResponse = await fetch(
+      `https://${ALGOLIA_APP_ID}.algolia.net/1/indexes/${INDEX_NAME}/semanticSearch/settings`,
+      {
+        method: "PUT",
+        headers: {
+          "x-algolia-application-id": ALGOLIA_APP_ID,
+          "x-algolia-api-key": ALGOLIA_ADMIN_KEY,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(NEURAL_SEARCH_CONFIG),
+      }
+    );
+
+    if (!nsResponse.ok) {
+      const error = await nsResponse.text();
+      console.error("Failed to configure NeuralSearch:", error);
+    } else {
+      console.log("NeuralSearch configured successfully.");
+    }
+  }
 
   console.log("Done! Indexed", enriched.length, "products to", INDEX_NAME);
 

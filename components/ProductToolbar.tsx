@@ -1,7 +1,7 @@
 "use client";
 
 import { Grid3X3, LayoutList, SlidersHorizontal } from "lucide-react";
-import { useStats, useSortBy } from "react-instantsearch";
+import { useStats } from "react-instantsearch";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -10,52 +10,17 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { ALGOLIA_CONFIG } from "@/lib/algolia-config";
-
-// Sort options - adjust index names to match your Algolia replicas
-const SORT_OPTIONS = [
-  { value: ALGOLIA_CONFIG.INDEX_NAME, label: "Relevance" },
-  { value: `${ALGOLIA_CONFIG.INDEX_NAME}_price_asc`, label: "Price: Low to High" },
-  { value: `${ALGOLIA_CONFIG.INDEX_NAME}_price_desc`, label: "Price: High to Low" },
-  { value: `${ALGOLIA_CONFIG.INDEX_NAME}_newest`, label: "Newest First" },
-];
+import { useLanguage } from "@/components/language/language-context";
 
 export function SearchStats() {
   const { nbHits, processingTimeMS } = useStats();
+  const { t } = useLanguage();
 
   return (
     <p className="text-sm text-muted-foreground">
-      {nbHits.toLocaleString()} results
+      {nbHits.toLocaleString()} {t("toolbar.results")}
       <span className="hidden sm:inline"> ({processingTimeMS}ms)</span>
     </p>
-  );
-}
-
-export function SortSelector() {
-  const { currentRefinement, refine, options } = useSortBy({
-    items: SORT_OPTIONS,
-  });
-
-  return (
-    <Select value={currentRefinement} onValueChange={refine}>
-      <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder="Sort by" />
-      </SelectTrigger>
-      <SelectContent>
-        {options.map((option) => (
-          <SelectItem key={option.value} value={option.value}>
-            {option.label}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
   );
 }
 
@@ -70,29 +35,27 @@ export function ProductToolbar({
   setViewMode,
   sidebar,
 }: ProductToolbarProps) {
+  const { t } = useLanguage();
+
   return (
     <div className="flex items-center gap-4">
-        {/* Mobile Filter Trigger */}
         {sidebar && (
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="outline" size="sm" className="lg:hidden">
                 <SlidersHorizontal className="w-4 h-4 mr-2" />
-                Filters
+                {t("filters.filters")}
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-80 overflow-y-auto">
               <SheetHeader>
-                <SheetTitle>Filters</SheetTitle>
+                <SheetTitle>{t("filters.filters")}</SheetTitle>
               </SheetHeader>
               <div className="mt-6">{sidebar}</div>
             </SheetContent>
           </Sheet>
         )}
 
-        {/* <SortSelector /> */}
-
-        {/* View Mode Toggle */}
         <div className="hidden sm:flex items-center border border-border rounded-md">
           <button
             onClick={() => setViewMode("grid")}
@@ -101,7 +64,7 @@ export function ProductToolbar({
                 ? "bg-muted text-foreground"
                 : "text-muted-foreground hover:text-foreground"
             }`}
-            aria-label="Grid view"
+            aria-label={t("toolbar.gridView")}
           >
             <Grid3X3 className="w-4 h-4" />
           </button>
@@ -112,7 +75,7 @@ export function ProductToolbar({
                 ? "bg-muted text-foreground"
                 : "text-muted-foreground hover:text-foreground"
             }`}
-            aria-label="List view"
+            aria-label={t("toolbar.listView")}
           >
             <LayoutList className="w-4 h-4" />
           </button>
@@ -120,4 +83,3 @@ export function ProductToolbar({
     </div>
   );
 }
-

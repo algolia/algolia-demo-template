@@ -7,8 +7,9 @@ import {
   useRange,
   useCurrentRefinements,
   useClearRefinements,
+  DynamicWidgets,
 } from "react-instantsearch";
-import { ChevronDown, X } from "lucide-react";
+import { ChevronDown, X, Sparkles, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -17,41 +18,24 @@ import { type PreferenceKey } from "@/lib/types/user";
 import { PREFERENCE_METADATA } from "@/lib/demo-config/users";
 import { CATEGORY_ICONS } from "@/lib/demo-config/categories";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/components/language/language-context";
 
 // ============================================================================
 // Helper Types and Functions
 // ============================================================================
 
-/**
- * Get icon component for a category name
- */
 function getCategoryIcon(
   categoryName: string
 ): React.ComponentType<{ className?: string }> | null {
   return CATEGORY_ICONS[categoryName] || null;
 }
 
-/**
- * Parsed user preference with facet, value, and score
- */
 interface ParsedPreference {
   facet: string;
   value: string;
   score: number;
 }
 
-/**
- * Parses personalization filters from UserContext format into structured preferences
- *
- * Input format: "facetName:value<score=N>"
- * Examples:
- *   - "categories.lvl0:Nutrición deportiva<score=20>"
- *   - "brand:Sport Series<score=17>"
- *   - "categories.lvl1:Proteínas<score=18>"
- *
- * @param filters - Array of personalization filter strings from UserContext
- * @returns Parsed preferences sorted by score (descending)
- */
 function parsePersonalizationFilters(
   filters: string[] | undefined
 ): ParsedPreference[] {
@@ -59,37 +43,19 @@ function parsePersonalizationFilters(
 
   return filters
     .map((filter) => {
-      // Format: "facetName:value<score=N>"
       const match = filter.match(/^(.+?):(.+)<score=(\d+)>$/);
       if (!match) return null;
-
       const [, facet, value, scoreStr] = match;
-      return {
-        facet,
-        value,
-        score: parseInt(scoreStr, 10),
-      };
+      return { facet, value, score: parseInt(scoreStr, 10) };
     })
     .filter((pref): pref is ParsedPreference => pref !== null)
-    .sort((a, b) => b.score - a.score); // Sort by score descending
+    .sort((a, b) => b.score - a.score);
 }
 
 // ============================================================================
 // Filter Components
 // ============================================================================
 
-/**
- * Renders personalized filter options for a single facet
- *
- * This component:
- * - Uses Algolia's useRefinementList to manage filter state
- * - Only shows preferences that have available results (count > 0)
- * - Displays facet title from PREFERENCE_METADATA
- * - Allows users to toggle individual preferences on/off
- *
- * @param facet - The Algolia facet attribute name (e.g., "età.value", "brand")
- * @param preferences - User preferences for this facet, sorted by score
- */
 function ForYouFacetFilter({
   facet,
   preferences,
@@ -97,15 +63,11 @@ function ForYouFacetFilter({
   facet: string;
   preferences: ParsedPreference[];
 }) {
-  const { items, refine } = useRefinementList({
-    attribute: facet,
-  });
+  const { items, refine } = useRefinementList({ attribute: facet });
 
-  // Get the title from metadata
   const facetTitle =
     PREFERENCE_METADATA[facet as PreferenceKey]?.title || facet;
 
-  // Map preferences to items to check if they're refined
   const preferenceItems = preferences.map((pref) => {
     const item = items.find((i) => i.value === pref.value);
     return {
@@ -115,7 +77,6 @@ function ForYouFacetFilter({
     };
   });
 
-  // Filter to only show preferences that have results
   const availableItems = preferenceItems.filter(
     (item) => item.count && item.count > 0
   );
@@ -123,47 +84,34 @@ function ForYouFacetFilter({
   if (availableItems.length === 0) return null;
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-1">
+      <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground/70">
+        {facetTitle}
+      </span>
       {availableItems.map((item) => (
         <label
           key={`${facet}-${item.value}`}
-          className="flex items-center gap-2 cursor-pointer group"
+          className="flex items-center gap-2.5 cursor-pointer group py-1 px-2 -mx-2 hover:bg-muted/50 transition-colors"
         >
           <Checkbox
             checked={item.isRefined}
             onCheckedChange={() => refine(item.value)}
           />
-          <span className="text-sm flex-1 group-hover:text-primary transition-colors">
-            <span className="text-xs text-muted-foreground">{facetTitle}:</span>{" "}
+          <span className="text-[13px] flex-1 group-hover:text-foreground transition-colors text-foreground/80">
             {item.value}
           </span>
-          <span className="text-xs text-muted-foreground">({item.count})</span>
+          <span className="text-[11px] tabular-nums text-muted-foreground/60 font-medium">
+            {item.count}
+          </span>
         </label>
       ))}
     </div>
   );
 }
 
-/**
- * "For You" personalized filter section
- *
- * Displays user-specific filter suggestions based on their profile preferences.
- *
- * Behavior:
- * - Reads personalizationFilters from UserContext
- * - Parses and groups preferences by facet
- * - Sorts preferences within each facet by score (highest first)
- * - Only renders when a user is selected and has preferences
- * - Preferences act as standard Algolia refinements
- *
- * The filter appears at the top of the sidebar and helps users quickly
- * apply filters matching their profile (e.g., age, brand, category preferences).
- *
- * Format: "Facet Name: Value (count)"
- * Example: "Main Categories: Nutrición deportiva (42)"
- */
 export function ForYouFilter() {
   const { personalizationFilters, currentUser } = useUser();
+  const { t } = useLanguage();
   const [isExpanded, setIsExpanded] = useState(true);
 
   const parsedPreferences = useMemo(
@@ -171,36 +119,28 @@ export function ForYouFilter() {
     [personalizationFilters]
   );
 
-  // Group preferences by facet
   const groupedPreferences = useMemo(() => {
     const groups: Record<string, ParsedPreference[]> = {};
     parsedPreferences.forEach((pref) => {
-      if (!groups[pref.facet]) {
-        groups[pref.facet] = [];
-      }
+      if (!groups[pref.facet]) groups[pref.facet] = [];
       groups[pref.facet].push(pref);
     });
     return groups;
   }, [parsedPreferences]);
 
-  // Don't show if no user selected or no preferences
-  if (!currentUser || parsedPreferences.length === 0) {
-    return null;
-  }
+  if (!currentUser || parsedPreferences.length === 0) return null;
 
   return (
     <FilterSection
-      title="For You"
+      title={t("filters.forYou")}
+      icon={<Sparkles className="w-3.5 h-3.5 text-primary" />}
       isExpanded={isExpanded}
       onToggle={() => setIsExpanded(!isExpanded)}
+      accent
     >
-      <div className="space-y-4 max-h-80 overflow-y-auto">
+      <div className="space-y-3 max-h-80 overflow-y-auto">
         {Object.entries(groupedPreferences).map(([facet, preferences]) => (
-          <ForYouFacetFilter
-            key={facet}
-            facet={facet}
-            preferences={preferences}
-          />
+          <ForYouFacetFilter key={facet} facet={facet} preferences={preferences} />
         ))}
       </div>
     </FilterSection>
@@ -212,42 +152,24 @@ export function ForYouFilter() {
 // ============================================================================
 
 interface RefinementListFilterProps {
-  /** Algolia attribute to filter on */
   attribute: string;
-  /** Display title for the filter section */
   title: string;
-  /** Whether to show a search input for filtering items */
   searchable?: boolean;
-  /** Placeholder text for the search input */
   searchPlaceholder?: string;
-  /** Initial number of items to show */
   limit?: number;
-  /** Number of items to show when "show more" is clicked */
   showMoreLimit?: number;
-  /** Whether the filter section is initially expanded */
   defaultExpanded?: boolean;
-  /** Maximum height for the scrollable list */
   maxHeight?: string;
 }
 
-/**
- * A reusable refinement list filter component
- *
- * This component wraps Algolia's useRefinementList hook and provides:
- * - Collapsible filter section
- * - Optional search input for filtering items
- * - Checkbox-based selection with counts
- * - Scrollable list for many items
- */
 export function RefinementListFilter({
   attribute,
   title,
   searchable = false,
-  searchPlaceholder = "Search...",
+  searchPlaceholder = "",
   limit = 10,
   showMoreLimit = 50,
   defaultExpanded = true,
-  maxHeight = "max-h-60",
 }: RefinementListFilterProps) {
   const { items, refine } = useRefinementList({
     attribute,
@@ -258,8 +180,6 @@ export function RefinementListFilter({
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Client-side filtering instead of searchForItems (which calls
-  // searchForFacetValues and fails with the Composition API)
   const filteredItems = searchQuery
     ? items.filter((item) =>
         item.label.toLowerCase().includes(searchQuery.toLowerCase())
@@ -273,49 +193,48 @@ export function RefinementListFilter({
       onToggle={() => setIsExpanded(!isExpanded)}
     >
       {searchable && (
-        <Input
-          type="search"
-          placeholder={searchPlaceholder}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="mb-3 h-9 text-sm"
-        />
+        <div className="relative mb-3">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/50" />
+          <Input
+            type="search"
+            placeholder={searchPlaceholder}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="h-8 text-[13px] pl-8 bg-muted/30 border-transparent focus:border-border focus:bg-background transition-colors"
+          />
+        </div>
       )}
-      <div className={`space-y-2 ${maxHeight} overflow-y-auto`}>
+      <div className="space-y-0.5 max-h-60 overflow-y-auto">
         {filteredItems.map((item) => (
           <label
             key={item.value}
-            className="flex items-center gap-2 cursor-pointer group"
+            className="flex items-center gap-2.5 cursor-pointer group py-1.5 px-2 -mx-2 hover:bg-muted/50 transition-colors"
           >
             <Checkbox
               checked={item.isRefined}
               onCheckedChange={() => refine(item.value)}
             />
-            <span className="text-sm flex-1 group-hover:text-primary transition-colors truncate">
+            <span className="text-[13px] flex-1 group-hover:text-foreground transition-colors truncate text-foreground/80">
               {item.label}
             </span>
-            <span className="text-xs text-muted-foreground">
-              ({item.count})
+            <span className="text-[11px] tabular-nums text-muted-foreground/60 font-medium">
+              {item.count}
             </span>
           </label>
         ))}
+        {filteredItems.length === 0 && (
+          <p className="text-[12px] text-muted-foreground/50 py-2 px-2">
+            No results
+          </p>
+        )}
       </div>
     </FilterSection>
   );
 }
 
-export function BrandFilter() {
-  return (
-    <RefinementListFilter
-      attribute="brand"
-      title="Brand"
-      searchable
-      searchPlaceholder="Search brands..."
-      limit={10}
-      showMoreLimit={50}
-    />
-  );
-}
+// ============================================================================
+// Hierarchical Menu
+// ============================================================================
 
 interface HierarchicalMenuItemProps {
   item: {
@@ -329,9 +248,6 @@ interface HierarchicalMenuItemProps {
   level?: number;
 }
 
-/**
- * Recursive component to render hierarchical menu items
- */
 function HierarchicalMenuItem({ item, refine, level = 0 }: HierarchicalMenuItemProps) {
   const IconComponent = level === 0 ? getCategoryIcon(item.label) : null;
   const isTopLevel = level === 0;
@@ -340,50 +256,55 @@ function HierarchicalMenuItem({ item, refine, level = 0 }: HierarchicalMenuItemP
     <div>
       <button
         onClick={() => refine(item.value)}
-        className={`flex items-center gap-3 w-full transition-all ${
+        className={cn(
+          "flex items-center gap-2.5 w-full transition-all",
           isTopLevel
-            ? `p-3 rounded-lg border ${
+            ? cn(
+                "py-2.5 px-3 border",
                 item.isRefined
-                  ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                  : "bg-background border-border hover:border-primary hover:bg-muted"
-              }`
-            : `py-2 px-3 rounded-md ${
+                  ? "bg-foreground text-background border-foreground"
+                  : "bg-background border-border hover:border-foreground/30 hover:bg-muted/50"
+              )
+            : cn(
+                "py-1.5 px-2.5 text-[13px]",
                 item.isRefined
-                  ? "bg-primary/10 text-primary font-medium"
-                  : "hover:bg-muted"
-              }`
-        }`}
-        style={!isTopLevel ? { marginLeft: `${level * 12}px` } : undefined}
+                  ? "text-foreground font-medium bg-primary/10"
+                  : "text-foreground/70 hover:text-foreground hover:bg-muted/50"
+              )
+        )}
+        style={!isTopLevel ? { marginLeft: `${level * 10}px` } : undefined}
       >
         {IconComponent && (
           <IconComponent
-            className={`h-5 w-5 shrink-0 ${
-              item.isRefined ? "text-primary-foreground" : "text-primary"
-            }`}
+            className={cn(
+              "h-4 w-4 shrink-0",
+              item.isRefined ? "text-background" : "text-foreground/60"
+            )}
           />
         )}
         <span
-          className={`text-sm truncate flex-1 text-left ${
-            isTopLevel ? "font-medium" : ""
-          }`}
+          className={cn(
+            "truncate flex-1 text-left",
+            isTopLevel ? "text-[13px] font-semibold tracking-tight" : ""
+          )}
         >
           {item.label}
         </span>
         <span
-          className={`text-xs font-medium px-2 py-0.5 rounded-full shrink-0 ${
+          className={cn(
+            "text-[11px] tabular-nums font-medium shrink-0",
             isTopLevel
               ? item.isRefined
-                ? "bg-primary-foreground/20 text-primary-foreground"
-                : "bg-muted text-muted-foreground"
-              : "text-muted-foreground"
-          }`}
+                ? "text-background/60"
+                : "text-muted-foreground/50"
+              : "text-muted-foreground/50"
+          )}
         >
           {item.count}
         </span>
       </button>
-      {/* Render child items if they exist */}
       {item.data && item.data.length > 0 && (
-        <div className="mt-1 space-y-1">
+        <div className="mt-0.5 space-y-0.5">
           {item.data.map((childItem) => (
             <HierarchicalMenuItem
               key={childItem.value}
@@ -399,9 +320,7 @@ function HierarchicalMenuItem({ item, refine, level = 0 }: HierarchicalMenuItemP
 }
 
 interface HierarchicalCategoryFilterProps {
-  /** Array of hierarchical category attributes (e.g., ['hierarchicalCategories.lvl0', 'hierarchicalCategories.lvl1']) */
   attributes: string[];
-  /** Display title for the filter section */
   title?: string;
 }
 
@@ -411,7 +330,7 @@ export function HierarchicalCategoryFilter({
 }: HierarchicalCategoryFilterProps) {
   const { items, refine } = useHierarchicalMenu({
     attributes,
-    limit: 4,
+    limit: 10,
     sortBy: ["count:desc"],
   });
   const [isExpanded, setIsExpanded] = useState(true);
@@ -422,64 +341,27 @@ export function HierarchicalCategoryFilter({
       isExpanded={isExpanded}
       onToggle={() => setIsExpanded(!isExpanded)}
     >
-      <div className="space-y-2">
+      <div className="space-y-1">
         {items.map((item) => (
-          <HierarchicalMenuItem
-            key={item.value}
-            item={item}
-            refine={refine}
-          />
+          <HierarchicalMenuItem key={item.value} item={item} refine={refine} />
         ))}
       </div>
     </FilterSection>
   );
 }
 
-export function CategoryFilter() {
-  return (
-    <RefinementListFilter
-      attribute="categories"
-      title="Category"
-      limit={10}
-      showMoreLimit={30}
-    />
-  );
-}
-
-export function SubcategoryFilter() {
-  return (
-    <RefinementListFilter
-      attribute="hierarchical_categories.lvl1"
-      title="Subcategory"
-      searchable
-      searchPlaceholder="Search subcategories..."
-      limit={10}
-      showMoreLimit={50}
-    />
-  );
-}
+// ============================================================================
+// Range Filter
+// ============================================================================
 
 interface RangeFilterProps {
-  /** Algolia attribute to filter on */
   attribute: string;
-  /** Display title for the filter section */
   title: string;
-  /** Placeholder prefix for min input (e.g., "Min") */
   minPlaceholder?: string;
-  /** Placeholder prefix for max input (e.g., "Max") */
   maxPlaceholder?: string;
-  /** Whether the filter section is initially expanded */
   defaultExpanded?: boolean;
 }
 
-/**
- * A reusable range filter component
- *
- * This component wraps Algolia's useRange hook and provides:
- * - Collapsible filter section
- * - Min/max number inputs
- * - Apply button to submit range
- */
 export function RangeFilter({
   attribute,
   title,
@@ -506,270 +388,133 @@ export function RangeFilter({
     >
       <div className="space-y-3">
         <div className="flex items-center gap-2">
-          <Input
-            type="number"
-            placeholder={`${minPlaceholder} (${range.min ?? 0})`}
-            value={localMin}
-            onChange={(e) => setLocalMin(e.target.value)}
-            className="h-9 text-sm"
-          />
-          <span className="text-muted-foreground">-</span>
-          <Input
-            type="number"
-            placeholder={`${maxPlaceholder} (${range.max ?? 0})`}
-            value={localMax}
-            onChange={(e) => setLocalMax(e.target.value)}
-            className="h-9 text-sm"
-          />
+          <Input type="number" placeholder={`${minPlaceholder} (${range.min ?? 0})`} value={localMin} onChange={(e) => setLocalMin(e.target.value)} className="h-8 text-[13px] bg-muted/30 border-transparent focus:border-border focus:bg-background" />
+          <span className="text-muted-foreground/40 text-xs">&mdash;</span>
+          <Input type="number" placeholder={`${maxPlaceholder} (${range.max ?? 0})`} value={localMax} onChange={(e) => setLocalMax(e.target.value)} className="h-8 text-[13px] bg-muted/30 border-transparent focus:border-border focus:bg-background" />
         </div>
-        <Button
-          onClick={handleApply}
-          variant="outline"
-          size="sm"
-          className="w-full"
-        >
-          Apply
-        </Button>
+        <Button onClick={handleApply} variant="outline" size="sm" className="w-full h-8 text-[13px]">Apply</Button>
       </div>
     </FilterSection>
   );
 }
 
-export function PriceRangeFilter() {
-  return (
-    <RangeFilter
-      attribute="price"
-      title="Price"
-      minPlaceholder="Min"
-      maxPlaceholder="Max"
-    />
-  );
-}
-
-export function CharacteristicsFilter() {
-  return (
-    <RefinementListFilter
-      attribute="characteristics"
-      title="Characteristics"
-      searchable
-      searchPlaceholder="Search characteristics..."
-      limit={10}
-      showMoreLimit={30}
-    />
-  );
-}
-
-export function IngredientsFilter() {
-  return (
-    <RefinementListFilter
-      attribute="ingredients"
-      title="Ingredients"
-      searchable
-      searchPlaceholder="Search ingredients..."
-      limit={10}
-      showMoreLimit={50}
-    />
-  );
-}
-
-/**
- * Parses a color.filter_group value like "black;#333" into { name, hex }.
- */
-export function parseColorValue(value: string): { name: string; hex: string | null } {
-  const semicolonIndex = value.indexOf(";");
-  if (semicolonIndex === -1) return { name: value, hex: null };
-  return {
-    name: value.slice(0, semicolonIndex),
-    hex: value.slice(semicolonIndex + 1),
-  };
-}
-
-function ColorSwatch({ hex, className = "" }: { hex: string | null; className?: string }) {
-  if (!hex) return null;
-  return (
-    <span
-      className={cn("inline-block rounded-full border border-border shrink-0", className)}
-      style={{ backgroundColor: hex }}
-    />
-  );
-}
-
-export function ColorFilter() {
-  const { items, refine } = useRefinementList({
-    attribute: "color.filter_group",
-    limit: 10,
-    showMore: true,
-    showMoreLimit: 30,
-  });
-  const [isExpanded, setIsExpanded] = useState(true);
-
-  return (
-    <FilterSection
-      title="Color"
-      isExpanded={isExpanded}
-      onToggle={() => setIsExpanded(!isExpanded)}
-    >
-      <div className="space-y-2 max-h-60 overflow-y-auto">
-        {items.map((item) => {
-          const { name, hex } = parseColorValue(item.value);
-          return (
-            <label
-              key={item.value}
-              className="flex items-center gap-2 cursor-pointer group"
-            >
-              <Checkbox
-                checked={item.isRefined}
-                onCheckedChange={() => refine(item.value)}
-              />
-              <ColorSwatch hex={hex} className="w-4 h-4" />
-              <span className="text-sm flex-1 group-hover:text-primary transition-colors capitalize">
-                {name}
-              </span>
-              <span className="text-xs text-muted-foreground">
-                ({item.count})
-              </span>
-            </label>
-          );
-        })}
-      </div>
-    </FilterSection>
-  );
-}
-
-export function FormatFilter() {
-  return (
-    <RefinementListFilter
-      attribute="format"
-      title="Format"
-      limit={10}
-      showMoreLimit={20}
-    />
-  );
-}
-
-export function InStockFilter() {
-  const { items, refine } = useRefinementList({
-    attribute: "inStock",
-  });
-  const [isExpanded, setIsExpanded] = useState(true);
-
-  const inStockItem = items.find((item) => item.value === "true");
-
-  if (!inStockItem) return null;
-
-  return (
-    <FilterSection
-      title="Availability"
-      isExpanded={isExpanded}
-      onToggle={() => setIsExpanded(!isExpanded)}
-    >
-      <label className="flex items-center gap-2 cursor-pointer group">
-        <Checkbox
-          checked={inStockItem.isRefined}
-          onCheckedChange={() => refine("true")}
-        />
-        <span className="text-sm flex-1 group-hover:text-primary transition-colors">
-          In Stock Only
-        </span>
-        <span className="text-xs text-muted-foreground">
-          ({inStockItem.count})
-        </span>
-      </label>
-    </FilterSection>
-  );
-}
+// ============================================================================
+// Filter Section (shared layout)
+// ============================================================================
 
 export function FilterSection({
   title,
+  icon,
   isExpanded,
   onToggle,
   children,
+  accent,
 }: {
   title: string;
+  icon?: React.ReactNode;
   isExpanded: boolean;
   onToggle: () => void;
   children: React.ReactNode;
+  accent?: boolean;
 }) {
   return (
-    <div className="border-b border-border pb-4">
+    <div className={cn(
+      "pb-5",
+      accent ? "bg-primary/[0.04] -mx-3 px-3 pt-3 border-l-2 border-primary" : "border-b border-border/60"
+    )}>
       <button
         onClick={onToggle}
-        className="flex items-center justify-between w-full py-2 text-left font-medium"
+        className="flex items-center justify-between w-full py-1 text-left group"
       >
-        {title}
+        <div className="flex items-center gap-2">
+          {icon}
+          <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-foreground/70 group-hover:text-foreground transition-colors">
+            {title}
+          </span>
+        </div>
         <ChevronDown
-          className={`w-4 h-4 transition-transform ${
+          className={cn(
+            "w-3.5 h-3.5 text-muted-foreground/40 transition-transform duration-200",
             isExpanded ? "rotate-180" : ""
-          }`}
+          )}
         />
       </button>
-      {isExpanded && <div className="pt-2">{children}</div>}
+      {isExpanded && <div className="pt-3">{children}</div>}
     </div>
   );
 }
 
+// ============================================================================
+// Assembled Sidebar
+// ============================================================================
+
 export function FiltersSidebar() {
+  const { t } = useLanguage();
+
   return (
-    <aside className="space-y-4">
+    <aside className="space-y-1">
       <ForYouFilter />
-      <InStockFilter />
       <HierarchicalCategoryFilter
         attributes={[
           "hierarchical_categories.lvl0",
           "hierarchical_categories.lvl1",
-          "hierarchical_categories.lvl2",
-          "hierarchical_categories.lvl3",
         ]}
-        title="Category"
+        title={t("filters.topic")}
       />
-      <BrandFilter />
-      <ColorFilter />
-      <FormatFilter />
-      <PriceRangeFilter />
-      <CharacteristicsFilter />
-      <IngredientsFilter />
+      <DynamicWidgets
+        fallbackComponent={({ attribute }: { attribute: string }) => (
+          <RefinementListFilter
+            attribute={attribute}
+            title={attribute.replace('.value', '').replace(/_/g, ' ').replace(/^\w/, (c: string) => c.toUpperCase())}
+            searchable
+            limit={10}
+            showMoreLimit={30}
+            defaultExpanded={false}
+          />
+        )}
+      />
     </aside>
   );
 }
 
+// ============================================================================
+// Active Filters
+// ============================================================================
+
 export function ActiveFilters() {
   const { items, refine } = useCurrentRefinements();
   const { refine: clearAll, canRefine } = useClearRefinements();
+  const { t } = useLanguage();
 
   if (!canRefine) return null;
 
   return (
-    <div className="flex flex-wrap items-center gap-2 mb-6">
+    <div className="flex flex-wrap items-center gap-1.5 mb-6">
       {items.map((item) =>
-        item.refinements.map((refinement) => {
-          const isColor = item.attribute === "color.filter_group";
-          const colorInfo = isColor ? parseColorValue(refinement.label) : null;
-          return (
-            <button
-              key={`${item.attribute}-${refinement.label}`}
-              onClick={() => refine(refinement)}
-              className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium bg-primary/10 text-primary rounded-full hover:bg-primary/20 transition-all hover:scale-105"
-            >
-              {colorInfo?.hex && (
-                <span
-                  className="w-3.5 h-3.5 rounded-full border border-primary/30 shrink-0"
-                  style={{ backgroundColor: colorInfo.hex }}
-                />
-              )}
-              <span className="capitalize">
-                {isColor && colorInfo ? colorInfo.name : `${item.label}: ${refinement.label}`}
-              </span>
-              <X className="w-3.5 h-3.5" />
-            </button>
-          );
-        })
+        item.refinements.map((refinement) => (
+          <button
+            key={`${item.attribute}-${refinement.label}`}
+            onClick={() => refine(refinement)}
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[12px] font-semibold bg-foreground text-background hover:bg-foreground/80 transition-colors"
+          >
+            <span>{refinement.label}</span>
+            <X className="w-3 h-3 opacity-60" />
+          </button>
+        ))
       )}
       <button
         onClick={() => clearAll()}
-        className="text-sm font-medium text-muted-foreground hover:text-foreground underline underline-offset-2 transition-colors"
+        className="text-[12px] font-medium text-muted-foreground hover:text-foreground transition-colors ml-1"
       >
-        Clear all
+        {t("filters.clearAll")}
       </button>
     </div>
   );
+}
+
+// Keep parseColorValue export for any remaining references
+export function parseColorValue(value: string): { name: string; hex: string | null } {
+  const semicolonIndex = value.indexOf(";");
+  if (semicolonIndex === -1) return { name: value, hex: null };
+  return { name: value.slice(0, semicolonIndex), hex: value.slice(semicolonIndex + 1) };
 }

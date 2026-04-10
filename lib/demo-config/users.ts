@@ -1,89 +1,34 @@
 /**
- * Demo user profiles and preference metadata
- *
- * Edit this file to define personas for demonstrating personalization.
- * Each user has preference weights (0-20) for various product attributes.
+ * Demo user profiles — e-commerce shopper personas
  */
-import type { User, PreferenceKey, PreferenceMetadata } from "@/lib/types/user";
+import type { User, PreferenceMetadata } from "@/lib/types/user";
 
-// ============================================================================
-// Demo User Profiles
-// ============================================================================
-
-/**
- * Demo users for showcasing personalization features.
- *
- * Each user's preferences map to Algolia facet attributes.
- * Higher scores (0-20) indicate stronger preference.
- *
- * Replace these with profiles relevant to your demo.
- */
 export const users: User[] = [
   {
     id: "1",
-    description: "Returning customer",
-    slug: "returning-customer",
+    description: "Sarah — Fashion enthusiast",
+    slug: "sarah-fashion",
+    segments: ["fashion_lover"],
     preferences: {
-      // Add preference weights matching your Algolia facets:
-      // "categories.lvl0": { "Category Name": 20 },
-      // brand: { "Brand Name": 17 },
+      "hierarchical_categories.lvl0": { Women: 18 },
+      brand: { Nike: 12, Adidas: 10 },
     },
   },
   {
     id: "2",
-    description: "New visitor",
-    slug: "new-visitor",
-    preferences: {},
+    description: "Mike — Tech buyer",
+    slug: "mike-tech",
+    segments: ["tech_enthusiast"],
+    preferences: {
+      "hierarchical_categories.lvl0": { Electronics: 18 },
+      brand: { Apple: 14, Samsung: 12 },
+    },
   },
 ];
 
-// ============================================================================
-// Preference Metadata
-// ============================================================================
-
-/**
- * Maps preference keys to human-readable titles and icons.
- * Used in the "For You" filter section and personalization badges.
- */
-export const PREFERENCE_METADATA: Record<PreferenceKey, PreferenceMetadata> = {
-  "categories.lvl0": {
-    title: "Main Categories",
-    icon: "layers",
-  },
-  "categories.lvl1": {
-    title: "Subcategories",
-    icon: "tag",
-  },
-  "categories.lvl2": {
-    title: "Specific Categories",
-    icon: "tag",
-  },
-  "hierarchical_categories.lvl0": {
-    title: "Main Categories (Lvl 0)",
-    icon: "layers",
-  },
-  "hierarchical_categories.lvl1": {
-    title: "Sub Categories (Lvl 1)",
-    icon: "layers",
-  },
-  "hierarchical_categories.lvl2": {
-    title: "Sub Categories (Lvl 2)",
-    icon: "layers",
-  },
-  "hierarchical_categories.lvl3": {
-    title: "Sub Categories (Lvl 3)",
-    icon: "layers",
-  },
-  brand: {
-    title: "Brands",
-    icon: "tag",
-  },
-  characteristics: {
-    title: "Characteristics",
-    icon: "target",
-  },
-  format: {
-    title: "Format",
-    icon: "package",
-  },
+export const PREFERENCE_METADATA: Record<string, PreferenceMetadata> = {
+  "hierarchical_categories.lvl0": { title: "Categories", icon: "layers" },
+  "hierarchical_categories.lvl1": { title: "Subcategories", icon: "layers" },
+  categoryPageId: { title: "Categories", icon: "layers" },
+  brand: { title: "Brands", icon: "tag" },
 };

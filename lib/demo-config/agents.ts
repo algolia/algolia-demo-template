@@ -1,52 +1,69 @@
 /**
- * Agent Studio configuration
- *
- * Edit this file to customize AI agent instructions, tools, and metadata.
- * These are used by scripts/setup-agent.ts to configure agents in Algolia.
+ * Agent Studio configuration for e-commerce shopping assistant
  */
 import { ALGOLIA_CONFIG } from "../algolia-config";
 import { DEMO_CONFIG } from "./index";
 
-/**
- * Product attributes exposed to the agent API key.
- * Keep this list minimal — only what the agent needs to answer questions.
- */
 export const AGENT_PRODUCT_ATTRIBUTES = [
   "objectID",
-  "title",
+  "name",
   "brand",
   "price",
-  "shortDescription",
-  "ingredients",
-  "characteristics",
-  "inStock",
-  "categories",
+  "description",
+  "hierarchical_categories",
+  "primary_image",
 ];
 
 export const AGENT_CONFIG = {
   main: {
-    name: `${DEMO_CONFIG.brand.name} Shopping Assistant`,
+    name: `${DEMO_CONFIG.brand.agentName}`,
     instructions: `**AGENT ROLE**
-You are a Shopping Assistant for ${DEMO_CONFIG.brand.name}. You help customers find products and make purchase decisions.
+You are ${DEMO_CONFIG.brand.agentName}, an intelligent shopping assistant for ${DEMO_CONFIG.brand.name}. You help customers discover products, compare options, and make informed purchase decisions.
 
 **RESPONSE STYLE**
-- Keep responses concise and helpful
-- When context has "isFirstMessage": true, respond with a single short sentence (max 15 words) — no product searches, no lists, just a brief greeting or acknowledgment
-- Always offer clear next actions (add to cart, learn more, compare, etc.)
+- Always respond in English
+- Be concise, helpful, and friendly
+- When context has "isFirstMessage": true, respond with a short greeting (max 15 words) — no searches, just a brief welcome based on the page context
+- When presenting products, highlight key features, price, and brand
+- Format citations: [Product Name](URL)
 
-**Tools**
-- algolia_search_index - Search the product catalog
-- addToCart - Add products to the customer's cart
-- showItems - Display product recommendations
+**TOOLS**
+- algolia_search_index — Search the product catalog
+- showItems — Display product recommendations to the customer
+- addToCart — Add items to the shopping cart
+- showArticles — Display articles or content pages
 
-**Behavior**
-1. Understand customer needs
-2. Search for relevant products
-3. Use showItems to present 2-4 options
-4. Offer clear next steps
+**BEHAVIOUR**
+1. Understand the customer's intent
+2. Search for relevant products with algolia_search_index
+3. Summarise key findings in 2-4 sentences
+4. Display top results using showItems
+5. Offer follow-up actions (related products, add to cart, more details)
 
-**Language**
-- Respond in the language the customer uses, default to English`,
+**FILTERING**
+- Use filters on hierarchical_categories.lvl0 for top-level categories
+- Use filters on brand for brand-specific searches
+- Use price ranges when the customer specifies a budget
+
+**PERSONALISATION**
+- When user preferences are provided in context, tailor recommendations accordingly
+- Mention why a product matches the user's interests when relevant`,
+
+    indexDescription: `Product catalog for ${DEMO_CONFIG.brand.name}. Each record is a product with full details.
+
+**Searchable attributes:**
+- name: Product name
+- brand: Brand name
+- description: Product description
+- hierarchical_categories: Category hierarchy
+
+**Filterable attributes:**
+- hierarchical_categories.lvl0: Top-level category (Fashion, Electronics, Home, Sports)
+- hierarchical_categories.lvl1: Subcategory
+- brand: Brand name
+- price: Product price (numeric)
+
+**IMPORTANT:** Use exact category and brand values that exist in the index for filtering.`,
 
     tools: [
       {
@@ -58,16 +75,9 @@ You are a Shopping Assistant for ${DEMO_CONFIG.brand.name}. You help customers f
             description: "Product catalog",
             enhancedDescription: `Product catalog for ${DEMO_CONFIG.brand.name}.
 
-**Key filterable fields:**
-- price: Product price (numeric)
-- brand: Brand name
-- hierarchical_categories.lvl0, hierarchical_categories.lvl1, hierarchical_categories.lvl2: Category hierarchy
-- inStock: Boolean, true if available
-
-
 **IMPORTANT:**
 - Only use exact category values that exist in your index for filtering.
-- Search for one product category at a time. If the user asks for multiple types of products (e.g. "jacket and pants"), run separate searches for each rather than combining them into one query.`,
+- Search for one topic at a time. If the user asks for multiple topics, run separate searches for each rather than combining them into one query.`,
             searchParameters: {
               attributesToRetrieve: AGENT_PRODUCT_ATTRIBUTES,
             },
@@ -75,43 +85,70 @@ You are a Shopping Assistant for ${DEMO_CONFIG.brand.name}. You help customers f
         ],
       },
       {
-        name: "addToCart",
-        type: "client_side",
-        description:
-          "Add products to the customer's shopping cart. Use this when the customer wants to buy or add items to their cart.",
-        inputSchema: {
-          type: "object",
-          properties: {
-            objectIDs: {
-              type: "array",
-              items: { type: "string" },
-              description: "Array of product objectIDs to add to cart",
-            },
-          },
-          required: ["objectIDs"],
-        },
-      },
-      {
         name: "showItems",
         type: "client_side",
         description:
-          "Display product recommendations to the customer with a title and explanation. Use this to present products you want to recommend.",
+          "Display products to the customer with a title and explanation. Use this to present search results or recommendations.",
         inputSchema: {
           type: "object",
           properties: {
             objectIDs: {
               type: "array",
               items: { type: "string" },
-              description: "Array of product objectIDs to display",
+              description: "Array of objectIDs of the products to display",
             },
             title: {
               type: "string",
-              description: "A short title for the recommendation section",
+              description: "Short title for the results section",
             },
             explanation: {
               type: "string",
-              description:
-                "Brief explanation of why these products are being recommended",
+              description: "Brief explanation of why these products are shown",
+            },
+          },
+          required: ["objectIDs", "title", "explanation"],
+        },
+      },
+      {
+        name: "addToCart",
+        type: "client_side",
+        description:
+          "Add a product to the customer's shopping cart. Use when the customer wants to buy or save an item.",
+        inputSchema: {
+          type: "object",
+          properties: {
+            objectID: {
+              type: "string",
+              description: "The objectID of the product to add to cart",
+            },
+            quantity: {
+              type: "number",
+              description: "Number of items to add (default 1)",
+            },
+          },
+          required: ["objectID"],
+        },
+      },
+      {
+        name: "showArticles",
+        type: "client_side",
+        description:
+          "Display articles or content pages to the customer. Use for guides, blog posts, or informational content.",
+        inputSchema: {
+          type: "object",
+          properties: {
+            objectIDs: {
+              type: "array",
+              items: { type: "string" },
+              description: "Array of objectIDs of the articles to display",
+            },
+            title: {
+              type: "string",
+              description: "Short title for the articles section",
+            },
+            explanation: {
+              type: "string",
+              description: "Brief explanation of why these articles are shown",
             },
           },
           required: ["objectIDs", "title", "explanation"],
@@ -121,10 +158,14 @@ You are a Shopping Assistant for ${DEMO_CONFIG.brand.name}. You help customers f
   },
 
   fallbackSuggestions: [
-    "Show me today's best deals",
-    "Find popular products",
-    "Browse new arrivals",
-    "Compare top-rated items",
-    "Explore trending categories",
+    "What are the best deals today?",
+    "Show me new arrivals",
+    "Help me find a gift",
+    "What's trending right now?",
+    "Compare products for me",
   ] as string[],
+
+  suggestions: {
+    enabled: true,
+  },
 };

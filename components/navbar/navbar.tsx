@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { useSearchBox } from "react-instantsearch";
-import { BrainIcon } from "lucide-react";
+import { Sparkles, MapPin } from "lucide-react";
 import { CategoriesSheet } from "./categories-sheet";
+import { ClickCollectSelector } from "@/components/click-collect/click-collect-selector";
 import { CartSheet } from "./cart-sheet";
 import { Logo } from "./logo";
 import { Button } from "@/components/ui/button";
@@ -29,71 +30,90 @@ export function NavBar() {
             <CategoriesSheet />
           </div>
 
-          {/* Center section: Logo and Search */}
-          <div className="flex-1 flex items-center justify-center gap-4">
+          {/* Center section: Logo + Search + AI button */}
+          <div className="flex-1 flex items-center gap-3">
             <Link
               href="/"
-              className="font-bold text-xl text-primary shrink-0"
+              className="shrink-0"
               onClick={() => {
                 refine("");
               }}
             >
               <Logo />
             </Link>
-            <div className="flex-1 max-w-2xl">
-              <LiveSearchBar />
-            </div>
-          </div>
-
-          {/* Right section: User, AI, Cart */}
-          <div className="shrink-0 flex items-center gap-6">
-            <UserSelector />
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => openSidepanel()}
-              className="hover:bg-muted [&>svg]:hover:stroke-[2.5] relative"
-              aria-label="Open AI Assistant"
-            >
-              <BrainIcon className="size-8" />
-              {selectionCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full min-w-5 h-5 flex items-center justify-center font-medium">
-                  {selectionCount}
-                </span>
-              )}
-            </Button>
-            <CartSheet />
-          </div>
-        </div>
-
-        {/* Mobile layout */}
-        <div className="md:hidden flex flex-col gap-2 w-full">
-          <div className="flex items-center justify-between w-full">
-            <CategoriesSheet />
-            <Link href="/" className="font-bold text-xl text-primary shrink-0">
-              <Logo />
-            </Link>
-            <div className="flex items-center gap-1">
-              <UserSelector />
+            <div className="flex-1 max-w-2xl flex items-center gap-2">
+              <div className="flex-1">
+                <LiveSearchBar />
+              </div>
               <Button
-                variant="ghost"
+                variant="default"
                 size="icon"
                 onClick={() => openSidepanel()}
-                className="hover:bg-muted [&>svg]:hover:stroke-[2.5] relative"
+                className="shrink-0 relative rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white shadow-sm"
                 aria-label="Open AI Assistant"
               >
-                <BrainIcon className="size-8" />
+                <Sparkles className="size-4" />
                 {selectionCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full min-w-5 h-5 flex items-center justify-center font-medium">
                     {selectionCount}
                   </span>
                 )}
               </Button>
+            </div>
+          </div>
+
+          {/* Right section: User, Click & Collect, Cart */}
+          <div className="shrink-0 flex items-center gap-6">
+            <UserSelector />
+            <Link
+              href="/stores"
+              className="hidden sm:flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <MapPin className="h-4 w-4" />
+              Stores
+            </Link>
+            <ClickCollectSelector />
+            <CartSheet />
+          </div>
+        </div>
+
+        {/* Mobile layout — 2 rows */}
+        <div className="md:hidden flex flex-col gap-2 w-full">
+          {/* Row 1: Categories + User/Cart */}
+          <div className="flex items-center justify-between w-full">
+            <CategoriesSheet />
+            <div className="flex items-center gap-1">
+              <UserSelector />
+              <ClickCollectSelector />
               <CartSheet />
             </div>
           </div>
-          <div className="w-full">
-            <LiveSearchBar />
+          {/* Row 2: Logo + Search + AI */}
+          <div className="flex items-center gap-2 w-full">
+            <Link
+              href="/"
+              className="shrink-0"
+              onClick={() => { refine(""); }}
+            >
+              <Logo />
+            </Link>
+            <div className="flex-1">
+              <LiveSearchBar />
+            </div>
+            <Button
+              variant="default"
+              size="icon"
+              onClick={() => openSidepanel()}
+              className="shrink-0 relative rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white shadow-sm"
+              aria-label="Open AI Assistant"
+            >
+              <Sparkles className="size-4" />
+              {selectionCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full min-w-5 h-5 flex items-center justify-center font-medium">
+                  {selectionCount}
+                </span>
+              )}
+            </Button>
           </div>
         </div>
       </div>

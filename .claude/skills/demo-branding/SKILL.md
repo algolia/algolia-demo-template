@@ -10,6 +10,7 @@ Configure the demo's visual identity, locale settings, and Algolia connection de
 ## Prerequisites
 
 Before starting, verify:
+- **Not on main branch.** If on main, create a demo branch first: `git checkout -b demo/<customer-slug>`
 - Dependencies installed (`node_modules/` exists — run `pnpm install` if not)
 - `.env` file exists with `ALGOLIA_ADMIN_API_KEY`
 

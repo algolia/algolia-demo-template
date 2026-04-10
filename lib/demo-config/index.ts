@@ -6,20 +6,19 @@
  */
 export const DEMO_CONFIG = {
   brand: {
-    name: "Acme Store",
-    tagline: "Your trusted online store",
+    name: "Demo Store",
+    tagline: "Your one-stop shop",
     logoUrl: "/logo.svg",
-    logoWidth: 120,
-    logoHeight: 40,
-    agentName: "Acme AI",
+    logoWidth: 140,
+    logoHeight: 32,
+    agentName: "Shopping Assistant",
   },
   locale: {
     language: "en",
-    currency: "USD",
-    currencySymbol: "$",
+    currency: "EUR",
+    currencySymbol: "\u20ac",
   },
   imageDomains: [
     { protocol: "https" as const, hostname: "fxqklbpngldowtbkqezm.supabase.co" },
-    { protocol: "https" as const, hostname: "img.theproteinworks.com" },
   ],
 };

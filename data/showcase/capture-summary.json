@@ -1,0 +1,20 @@
+[
+  {
+    "screenshot": "data/showcase/homepage.png",
+    "screenshot_lowres": "data/showcase/homepage.lowres.png",
+    "url": "http://localhost:3000",
+    "name": "homepage"
+  },
+  {
+    "screenshot": "data/showcase/search-results.png",
+    "screenshot_lowres": "data/showcase/search-results.lowres.png",
+    "url": "http://localhost:3000?gencat_pages_composition%5Bquery%5D=ajuts+per+pagar+el+lloguer",
+    "name": "search-results"
+  },
+  {
+    "screenshot": "data/showcase/category-page.png",
+    "screenshot_lowres": "data/showcase/category-page.lowres.png",
+    "url": "http://localhost:3000/category/Ensenyament",
+    "name": "category-page"
+  }
+]

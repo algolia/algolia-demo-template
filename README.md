@@ -1,130 +1,6 @@
-# Algolia E-Commerce Demo Template
+# Algolia Demo Template
 
-A configurable e-commerce demo built with Next.js 16, React 19, and Algolia's Composition API with Agent Studio integration. Features AI-powered product discovery, personalized user profiles, and an intelligent shopping assistant.
-
-## Demo Creation Flow
-
-The fastest way to set up a new demo is with `/demo-setup`, which orchestrates all steps automatically. Here's the full pipeline:
-
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                        /demo-setup                                  │
-│                     (orchestrator)                                  │
-└────────────────────────────┬────────────────────────────────────────┘
-                             │
-                             ▼
-┌─────────────────────────────────────────────────────────────────────┐
-│  Phase 1: Discovery                                                 │
-│  /demo-discovery                                                    │
-│                                                                     │
-│  ┌───────────────┐  ┌──────────────────┐  ┌──────────────────────┐  │
-│  │ Gather context│→ │ Screenshot site  │→ │ Review similar demos │  │
-│  │ from user     │  │ or references    │  │ in git branches      │  │
-│  └───────────────┘  │ → data/discovery/│  └──────────────────────┘  │
-│                     └──────────────────┘                            │
-│                              │                                      │
-│                              ▼                                      │
-│                   ┌─────────────────────┐                           │
-│                   │ Suggest demo vision │                           │
-│                   │ → Discovery Brief   │                           │
-│                   └─────────────────────┘                           │
-└────────────────────────────┬────────────────────────────────────────┘
-                             │
-                             ▼
-┌─────────────────────────────────────────────────────────────────────┐
-│  Phase 2: Branding (must run first — other scripts depend on it)    │
-│  /demo-branding                                                     │
-│                                                                     │
-│  • lib/demo-config/index.ts  → brand name, tagline, logo, locale    │
-│  • lib/algolia-config.ts     → APP_ID, INDEX_NAME, COMPOSITION_ID   │
-│  • app/favicon.ico           → downloaded from customer site        │
-│  • public/logo.svg           → downloaded from customer site        │
-│  • app/globals.css           → brand colors (--primary)             │
-└────────────────────────────┬────────────────────────────────────────┘
-                             │
-              ┌──────────────┴──────────────┐
-              │                             │
-              ▼                             ▼
-┌──────────────────────────┐  ┌──────────────────────────────────────┐
-│  Data Pipeline           │  │  User Profiles (parallel)            │
-│                          │  │  /demo-user-profiles                 │
-│  ┌─────────────────────┐ │  │                                      │
-│  │ /demo-scrape        │ │  │  • lib/demo-config/users.ts          │
-│  │ (optional)          │ │  │  • Persona definitions               │
-│  │ → data/products.json│ │  │  • Preference weights for            │
-│  └──────────┬──────────┘ │  │    personalization & "For You"       │
-│             │            │  └──────────────────────────────────────┘
-│             ▼            │
-│  ┌─────────────────────┐ │
-│  │ /demo-data-indexing │ │
-│  │                     │ │
-│  │ Analyze raw data    │ │
-│  │ against Product type│ │
-│  │ → transform/enrich  │ │
-│  │   in index-data.ts  │ │
-│  │                     │ │
-│  │ Index products      │ │
-│  │ Train Recommend     │ │
-│  │ Set up Query        │ │
-│  │ Suggestions         │ │
-│  │                     │ │
-│  │ Reports:            │ │
-│  │ • image domains     │ │
-│  │ • category values   │ │
-│  │ • facet attributes  │ │
-│  └──────────┬──────────┘ │
-└─────────────┼────────────┘
-              │
-              ▼
-┌─────────────────────────────────────────────────────────────────────┐
-│  Phase 4: Post-Indexing Setup (after data pipeline completes)       │
-│                                                                     │
-│  ┌─────────────────────┐  ┌───────────────┐  ┌──────────────────┐   │
-│  │ Update imageDomains │  │ /demo-        │  │ /demo-agent-     │   │
-│  │ in demo-config      │  │ categories    │  │ setup            │   │
-│  │                     │  │               │  │                  │   │
-│  │                     │  │ Category tree │  │ Agent Studio     │   │
-│  │                     │  │ from facet    │  │ instructions,    │   │
-│  │                     │  │ values        │  │ tools, deploy    │   │
-│  └─────────────────────┘  └───────────────┘  │ → AGENT_ID       │   │ 
-│                                              └──────────────────┘   │
-└────────────────────────────┬────────────────────────────────────────┘
-                             │
-                             ▼
-                    ┌─────────────────┐
-                    │   pnpm dev      │
-                    │   localhost:3000│
-                    └────────┬────────┘
-                             │
-                             ▼
-┌─────────────────────────────────────────────────────────┐
-│  Phase 5: Showcase (after demo is working)              │
-│  /demo-showcase                                         │
-│                                                         │
-│  • Screenshot live demo → data/showcase/*.png           │
-│  • Analyze customizations vs template                   │
-│  • Rewrite README.md as structured demo card            │
-│  • Future /demo-discovery reads this for branch context │
-└─────────────────────────────────────────────────────────┘
-```
-
-### Skills Reference
-
-
-| Skill                 | Purpose                                               | Key outputs                                         |
-| --------------------- | ----------------------------------------------------- | --------------------------------------------------- |
-| `/demo-setup`         | Orchestrate the full pipeline                         | Runs everything in order                            |
-| `/demo-discovery`     | Explore use cases, screenshot site, review past demos | Discovery Brief, `data/discovery/*.png`             |
-| `/demo-branding`      | Visual identity, locale, Algolia connection           | `lib/demo-config/index.ts`, `lib/algolia-config.ts` |
-| `/demo-scrape`        | Scrape product data from a website                    | `data/products.json`                                |
-| `/demo-data-indexing` | Analyze data, transform/enrich, index, Recommend, QS  | `scripts/index-data.ts`, Algolia index, Composition |
-| `/demo-categories`    | Category navigation from indexed data                 | `lib/demo-config/categories.ts`                     |
-| `/demo-user-profiles` | User personas with preference weights                 | `lib/demo-config/users.ts`                          |
-| `/demo-agent-setup`   | AI shopping assistant config and deploy               | `lib/demo-config/agents.ts`, AGENT_ID               |
-| `/demo-showcase`      | Document the finished demo as a README demo card      | `README.md`, `data/showcase/*.png`                  |
-
-
-Each skill can be run independently (e.g. `/demo-categories` to update just the category nav after re-indexing).
+E-commerce demo template for Algolia Solutions Engineering. Fork this into a demo branch per customer.
 
 ## Quick Start
 
@@ -133,27 +9,27 @@ pnpm install
 pnpm dev
 ```
 
-See [SETUP.md](SETUP.md) for detailed manual setup instructions.
+See [SETUP.md](SETUP.md) for full configuration guide.
+
+## Creating a Demo
+
+Use `/demo-setup` to configure a new demo. This creates a branch (`demo/<customer-slug>`) and runs all setup skills automatically.
+
+## Features
+
+- **Product search** with Algolia Composition API and NeuralSearch
+- **AI shopping assistant** (Agent Studio) with guided purchase flow
+- **Retail media pipeline** — sponsored carousels, inline ads, cross-sell banners via composition rules
+- **Click & Collect** — store finder, per-product availability, cart-aware proximity boost
+- **Personalization** with user profiles and preference-weighted boosting
+- **Rich autocomplete** with product previews, query suggestions, and recent searches
+- **Category navigation** with hierarchical facets and dynamic facet ordering
+- **Article/content indexing** with dedup for educational content alongside products
+
+## Architecture
+
+See [CLAUDE.md](CLAUDE.md) for full architecture documentation.
 
 ## Tech Stack
 
-- **Next.js 16** — App Router, Server Components, React 19
-- **Algolia** — Composition API, Agent Studio, InstantSearch, Recommend
-- **AI SDK v5** — Vercel's AI SDK for agent chat
-- **Tailwind CSS 4** + shadcn/ui + Radix UI
-- **pnpm** — Package manager
-
-## Project Structure
-
-```
-app/                    Pages and layouts (Next.js App Router)
-components/             React components by feature
-lib/
-  demo-config/          All demo-specific config (brand, categories, users, agents)
-  algolia-config.ts     Algolia connection (APP_ID, keys, index name)
-  types/                TypeScript interfaces (Product, User, etc.)
-  utils/                Utilities (price formatting, etc.)
-scripts/                Indexing, agent setup, relevance tests
-data/                   Product data and discovery screenshots
-```
-
+Next.js 16, React 19, Algolia Composition API, Agent Studio, AI SDK v5, Tailwind CSS 4, shadcn/ui.

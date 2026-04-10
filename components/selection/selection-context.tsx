@@ -10,6 +10,9 @@ export interface SelectedProduct {
   brand?: string;
   price?: number;
   imageUrl?: string;
+  // Content fields
+  title?: string;
+  url?: string;
 }
 
 interface SelectionContextType {

@@ -37,11 +37,11 @@
  * PRICING LOGIC:
  * - Uses Product.price as the current/selling price
  * - Uses Product.normalPrice as the original price (before discount)
- * - Uses Product.discountPercentage if available, otherwise calculates: ((normalPrice - price) / normalPrice) × 100
+ * - Uses Product.discountPercentage if available, otherwise calculates: ((normalPrice - price) / normalPrice) x 100
  * - Shows discount badge and strikethrough original price when hasDiscount = true
  *
  * PERSONALIZATION:
- * - PersonalizationIcon component shows sparkle badge when product matches user preferences
+ * - ProductBadges component shows sparkle badge when product matches user preferences
  * - Tooltip displays matched facets (e.g., "Age: PUPPY (20/20)", "Brand: ROYAL CANIN (17/20)")
  * - Uses extractProductFieldValues() to match product attributes against user.preferences
  *
@@ -51,30 +51,6 @@
  * - Shows "-/quantity/+" controls when item is in cart
  * - Includes visual confirmation animation on add
  * - Can be hidden via showCartControls={false} prop (defaults to true)
- *
- * MAINTAINABILITY:
- * - All product display logic is centralized here
- * - Changes to pricing, discounts, or product display only need to be made once
- * - Autocomplete component uses CompactProductListItem to avoid duplication
- * - Consistent styling and behavior across all views
- *
- * USAGE EXAMPLES:
- *
- * // Default usage - shows cart controls
- * <ProductCard product={product} />
- *
- * // Hide cart controls (read-only view)
- * <ProductCard product={product} showCartControls={false} />
- *
- * // In autocomplete dropdown with custom styling (no border, no padding)
- * <CompactProductListItem
- *   product={product}
- *   showCartControls={false}
- *   className="border-0 rounded-none p-0"
- * />
- *
- * // In read-only contexts (email, print, etc.)
- * <CompactProductCard product={product} showCartControls={false} />
  */
 
 import React, { memo, useState, useMemo } from "react";
@@ -84,6 +60,10 @@ import { Product } from "@/lib/types/product";
 import { useCart } from "@/components/cart/cart-context";
 import { useUser } from "@/components/user/user-context";
 import { useSelection } from "@/components/selection/selection-context";
+import { useSidepanel } from "@/components/sidepanel-agent-studio/context/sidepanel-context";
+import { useClickCollect } from "@/components/click-collect/click-collect-context";
+import { resolveStoreForProduct } from "@/lib/click-collect-utils";
+import { AvailabilityBadge } from "@/components/click-collect/availability-badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { PreferenceKey, extractProductFieldValues } from "@/lib/types/user";
 import { PREFERENCE_METADATA } from "@/lib/demo-config/users";
@@ -95,11 +75,63 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
 import { formatPrice } from "@/lib/utils/format";
 import { getPriceInfo, getPreferredCategory } from "@/lib/utils/product";
 import { ALGOLIA_CONFIG } from "@/lib/algolia-config";
 import { parseColorValue } from "@/components/filters-sidebar";
+
+/**
+ * Image component with onError fallback — shows placeholder when image fails to load.
+ */
+function ProductImage({
+  src,
+  alt,
+  fill,
+  className,
+  sizes,
+  fallbackText = "No image",
+  fallbackClassName,
+}: {
+  src: string;
+  alt: string;
+  fill?: boolean;
+  className?: string;
+  sizes?: string;
+  fallbackText?: string;
+  fallbackClassName?: string;
+}) {
+  const [error, setError] = useState(false);
+
+  if (error) {
+    return (
+      <div className={cn("w-full h-full flex items-center justify-center text-muted-foreground text-xs bg-muted", fallbackClassName)}>
+        {fallbackText}
+      </div>
+    );
+  }
+
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      fill={fill}
+      className={className}
+      sizes={sizes}
+      onError={() => setError(true)}
+    />
+  );
+}
 
 function getHighestCategoryLevel(
   hierarchicalCategories: Product["hierarchical_categories"]
@@ -127,17 +159,32 @@ function getSmartGroupKey(product: Product): string | null {
 
 interface SmartGroupBadgeProps {
   product: Product;
+  /** If set, shows a "Sponsored" badge with this label instead of the raw key */
+  sponsoredLabel?: string;
   className?: string;
 }
 
 /**
- * Displays a badge for products injected by smart groups
- * Shows the injectedItemKey value as the badge label
- * Positioned at top-left with a border accent
+ * Displays a badge for products injected by smart groups.
+ * - If sponsoredLabel is provided: blue "Sponsored" badge (retail media inline placement)
+ * - If legacy injectedItemKey exists: amber badge with raw key (backward compatible)
+ * - Otherwise: nothing
  */
-function SmartGroupBadge({ product, className = "" }: SmartGroupBadgeProps) {
-  const smartGroupKey = getSmartGroupKey(product);
+function SmartGroupBadge({ product, sponsoredLabel, className = "" }: SmartGroupBadgeProps) {
+  if (sponsoredLabel) {
+    return (
+      <span
+        className={cn(
+          "absolute top-0 left-0 z-10 text-[10px] font-medium bg-blue-50 text-blue-700 px-2 py-0.5 rounded-br-lg border-r-2 border-b-2 border-blue-300",
+          className
+        )}
+      >
+        Sponsored
+      </span>
+    );
+  }
 
+  const smartGroupKey = getSmartGroupKey(product);
   if (!smartGroupKey) return null;
 
   return (
@@ -203,8 +250,7 @@ function ProductBadges({ product, compact = false }: ProductBadgesProps) {
   // Don't render anything if no badges to show
   if (!hasPersonalization) return null;
 
-  const iconSize = compact ? "h-3 w-3" : "h-4 w-4";
-  const badgeSize = compact ? "h-5 w-5" : "h-6 w-6";
+  const badgeLabel = "Recommended for you";
 
   return (
     <div
@@ -214,18 +260,19 @@ function ProductBadges({ product, compact = false }: ProductBadgesProps) {
         e.stopPropagation();
       }}
     >
-      {/* Personalization Badge */}
       <TooltipProvider>
         <Tooltip delayDuration={200}>
           <TooltipTrigger asChild>
-            <div
-              className={cn(
-                "flex items-center justify-center rounded-full bg-purple-100 text-purple-700 cursor-pointer",
-                badgeSize
-              )}
-            >
-              <Sparkles className={iconSize} />
-            </div>
+            {compact ? (
+              <div className="flex items-center justify-center rounded-full bg-purple-100 text-purple-700 h-5 w-5">
+                <Sparkles className="h-3 w-3" />
+              </div>
+            ) : (
+              <div className="flex items-center gap-1 rounded-full bg-purple-100 text-purple-700 px-2 py-0.5 cursor-pointer">
+                <Sparkles className="h-3 w-3" />
+                <span className="text-xs font-medium">{badgeLabel}</span>
+              </div>
+            )}
           </TooltipTrigger>
           <TooltipContent side="right" className="max-w-xs">
             <div className="text-sm">
@@ -260,6 +307,7 @@ interface QuantityControlsProps {
   brand?: string;
   category?: string;
   compact?: boolean;
+  availableInStores?: Array<{ inStock: boolean; objectID: string }>;
 }
 
 function QuantityControls({
@@ -271,17 +319,21 @@ function QuantityControls({
   brand,
   category,
   compact = false,
+  availableInStores,
 }: QuantityControlsProps) {
-  const { items, addItem, updateQuantity } = useCart();
+  const { items, addItem, updateQuantity, primaryCartStore } = useCart();
+  const { currentShop, nearbyShops } = useClickCollect();
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [pendingDifferentStore, setPendingDifferentStore] = useState<{
+    storeId: string;
+    storeName: string;
+    cartStoreName: string;
+  } | null>(null);
 
   const cartItem = items.find((item) => item.id === productId);
   const quantity = cartItem?.quantity || 0;
 
-  const handleAdd = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-
+  const doAdd = (storeId?: string, storeName?: string) => {
     addItem({
       id: productId,
       name: productName,
@@ -290,10 +342,35 @@ function QuantityControls({
       image: imageUrl,
       brand,
       category,
+      ...(storeId && storeName && { storeId, storeName }),
     });
-
     setShowConfirmation(true);
     setTimeout(() => setShowConfirmation(false), 1500);
+  };
+
+  const handleAdd = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const resolution = resolveStoreForProduct(
+      availableInStores,
+      currentShop,
+      nearbyShops,
+      primaryCartStore?.storeId,
+      primaryCartStore?.storeName,
+    );
+
+    if (resolution.type === "resolved") {
+      doAdd(resolution.storeId, resolution.storeName);
+    } else if (resolution.type === "different-store") {
+      setPendingDifferentStore({
+        storeId: resolution.storeId,
+        storeName: resolution.storeName,
+        cartStoreName: resolution.cartStoreName,
+      });
+    } else {
+      doAdd();
+    }
   };
 
   const handleIncrease = (e: React.MouseEvent) => {
@@ -311,58 +388,101 @@ function QuantityControls({
   const buttonSize = compact ? "h-6 w-6" : "h-7 w-7";
   const iconSize = compact ? "h-3 w-3" : "h-4 w-4";
 
-  if (quantity === 0) {
-    return (
-      <Button
-        onClick={handleAdd}
-        size="icon-sm"
-        variant="default"
-        className={`absolute top-2 right-2 z-10 transition-all ${buttonSize} ${
-          showConfirmation ? "bg-green-600 hover:bg-green-600" : ""
-        }`}
-        aria-label="Add to cart"
-      >
-        {showConfirmation ? (
-          <Check className={iconSize} />
-        ) : (
-          <Plus className={iconSize} />
-        )}
-      </Button>
-    );
-  }
-
   return (
-    <div
-      className="absolute top-2 right-2 z-10 flex items-center gap-1 bg-background border rounded-md shadow-sm"
-      onClick={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-      }}
-    >
-      <Button
-        onClick={handleDecrease}
-        size="icon-sm"
-        variant="ghost"
-        className={buttonSize}
-        aria-label="Decrease quantity"
+    <>
+      {quantity === 0 ? (
+        <Button
+          onClick={handleAdd}
+          size="icon-sm"
+          variant="default"
+          className={`absolute top-2 right-2 z-10 transition-all ${buttonSize} ${
+            showConfirmation ? "bg-green-600 hover:bg-green-600" : ""
+          }`}
+          aria-label="Add to cart"
+        >
+          {showConfirmation ? (
+            <Check className={iconSize} />
+          ) : (
+            <Plus className={iconSize} />
+          )}
+        </Button>
+      ) : (
+        <div
+          className="absolute top-2 right-2 z-10 flex items-center gap-1 bg-background border rounded-md shadow-sm"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+        >
+          <Button
+            onClick={handleDecrease}
+            size="icon-sm"
+            variant="ghost"
+            className={buttonSize}
+            aria-label="Decrease quantity"
+          >
+            <Minus className="h-3 w-3" />
+          </Button>
+          <span
+            className={`text-center font-medium ${compact ? "w-5 text-xs" : "w-6 text-sm"}`}
+          >
+            {quantity}
+          </span>
+          <Button
+            onClick={handleIncrease}
+            size="icon-sm"
+            variant="ghost"
+            className={buttonSize}
+            aria-label="Increase quantity"
+          >
+            <Plus className="h-3 w-3" />
+          </Button>
+        </div>
+      )}
+      <AlertDialog
+        open={!!pendingDifferentStore}
+        onOpenChange={(open) => !open && setPendingDifferentStore(null)}
       >
-        <Minus className="h-3 w-3" />
-      </Button>
-      <span
-        className={`text-center font-medium ${compact ? "w-5 text-xs" : "w-6 text-sm"}`}
-      >
-        {quantity}
-      </span>
-      <Button
-        onClick={handleIncrease}
-        size="icon-sm"
-        variant="ghost"
-        className={buttonSize}
-        aria-label="Increase quantity"
-      >
-        <Plus className="h-3 w-3" />
-      </Button>
-    </div>
+        <AlertDialogContent
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+        >
+          <AlertDialogHeader>
+            <AlertDialogTitle>Different store</AlertDialogTitle>
+            <AlertDialogDescription>
+              This product is not available at{" "}
+              {pendingDifferentStore?.cartStoreName}. Would you like to add it from{" "}
+              {pendingDifferentStore?.storeName}?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.stopPropagation();
+                if (pendingDifferentStore) {
+                  doAdd(
+                    pendingDifferentStore.storeId,
+                    pendingDifferentStore.storeName,
+                  );
+                }
+                setPendingDifferentStore(null);
+              }}
+            >
+              Add
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }
 
@@ -377,8 +497,12 @@ interface SelectionCheckboxProps {
 
 function SelectionCheckbox({ product, compact = false }: SelectionCheckboxProps) {
   const { isSelected, toggleSelection } = useSelection();
+  const { isSidepanelOpen } = useSidepanel();
   const productId = product.objectID;
   const selected = isSelected(productId);
+
+  // Only show checkbox when the AI agent sidepanel is actually open
+  if (!isSidepanelOpen) return null;
 
   const handleToggle = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -420,18 +544,19 @@ function ColorSwatches({ product, size = "w-4 h-4" }: { product: Product; size?:
     const seen = new Set<string>();
     const result: { name: string; hex: string }[] = [];
 
-    // Current product color
-    if (product.color?.filter_group) {
-      const { name, hex } = parseColorValue(product.color.filter_group);
+    // Current product color (if available)
+    const p = product as any;
+    if (p.color?.filter_group) {
+      const { name, hex } = parseColorValue(p.color.filter_group);
       if (hex) {
         seen.add(hex);
         result.push({ name, hex });
       }
     }
 
-    // Variant colors
-    if (product.variants) {
-      for (const variant of product.variants) {
+    // Variant colors (if available)
+    if (p.variants) {
+      for (const variant of p.variants) {
         if (variant.color?.filter_group) {
           const { name, hex } = parseColorValue(variant.color.filter_group);
           if (hex && !seen.has(hex)) {
@@ -477,10 +602,14 @@ interface ProductCardProps {
   showCartControls?: boolean;
   showBadges?: boolean;
   selectable?: boolean;
+  /** If set, shows "Sponsored" badge for inline retail media placement */
+  sponsoredLabel?: string;
 }
 
-export function ProductCard({ product, showCartControls = true, showBadges = true, selectable = false }: ProductCardProps) {
+export function ProductCard({ product, showCartControls = true, showBadges = true, selectable = false, sponsoredLabel }: ProductCardProps) {
   const { isSelected } = useSelection();
+  const { currentShop, nearbyShops, setShop } = useClickCollect();
+  const { primaryCartStore } = useCart();
   const imageUrl = product.primary_image || "";
   const productName = product.name || "Untitled Product";
   const productId = product.objectID;
@@ -501,11 +630,12 @@ export function ProductCard({ product, showCartControls = true, showBadges = tru
       href={`/products/${productId}`}
       className={cn(
         "border rounded-lg overflow-hidden hover:shadow-lg transition-shadow cursor-pointer block relative",
-        smartGroupKey && "border-2 border-amber-400",
+        sponsoredLabel && "border-2 border-blue-300",
+        !sponsoredLabel && smartGroupKey && "border-2 border-amber-400",
         selected && "border-2 border-primary"
       )}
     >
-      <SmartGroupBadge product={product} />
+      <SmartGroupBadge product={product} sponsoredLabel={sponsoredLabel} />
       {selectable && <SelectionCheckbox product={product} />}
       {showBadges && <ProductBadges product={product} />}
       {showCartControls && (
@@ -517,12 +647,13 @@ export function ProductCard({ product, showCartControls = true, showBadges = tru
           imageUrl={imageUrl}
           brand={product.brand}
           category={category}
+          availableInStores={product.availableInStores}
         />
       )}
 
       <div className="relative w-full h-56 bg-gray-50">
         {imageUrl ? (
-          <Image
+          <ProductImage
             src={imageUrl}
             alt={productName}
             fill
@@ -572,6 +703,14 @@ export function ProductCard({ product, showCartControls = true, showBadges = tru
             )}
           </div>
         )}
+        <AvailabilityBadge
+          product={product}
+          currentShop={currentShop}
+          nearbyShops={nearbyShops}
+          onShopSelect={setShop}
+          primaryCartStoreId={primaryCartStore?.storeId}
+          primaryCartStoreName={primaryCartStore?.storeName}
+        />
       </div>
     </Link>
   );
@@ -586,10 +725,13 @@ interface ProductListItemProps {
   showCartControls?: boolean;
   showBadges?: boolean;
   selectable?: boolean;
+  sponsoredLabel?: string;
 }
 
-export function ProductListItem({ product, showCartControls = true, showBadges = true, selectable = false }: ProductListItemProps) {
+export function ProductListItem({ product, showCartControls = true, showBadges = true, selectable = false, sponsoredLabel }: ProductListItemProps) {
   const { isSelected } = useSelection();
+  const { currentShop, nearbyShops, setShop } = useClickCollect();
+  const { primaryCartStore } = useCart();
   const imageUrl = product.primary_image || "";
   const productName = product.name || "Untitled Product";
   const productLink = `/products/${product.objectID}`;
@@ -609,11 +751,12 @@ export function ProductListItem({ product, showCartControls = true, showBadges =
       href={productLink}
       className={cn(
         "group flex gap-4 border border-border rounded-lg overflow-hidden bg-background hover:shadow-lg transition-all duration-300 p-4 relative",
-        smartGroupKey && "border-2 border-amber-400",
+        sponsoredLabel && "border-2 border-blue-300",
+        !sponsoredLabel && smartGroupKey && "border-2 border-amber-400",
         selected && "border-2 border-primary"
       )}
     >
-      <SmartGroupBadge product={product} />
+      <SmartGroupBadge product={product} sponsoredLabel={sponsoredLabel} />
       {selectable && <SelectionCheckbox product={product} />}
       {showBadges && <ProductBadges product={product} />}
       {showCartControls && (
@@ -625,12 +768,13 @@ export function ProductListItem({ product, showCartControls = true, showBadges =
           imageUrl={imageUrl}
           brand={product.brand}
           category={category}
+          availableInStores={product.availableInStores}
         />
       )}
 
       <div className="relative w-32 h-32 shrink-0 bg-muted rounded-md overflow-hidden">
         {imageUrl ? (
-          <Image
+          <ProductImage
             src={imageUrl}
             alt={productName}
             fill
@@ -688,6 +832,14 @@ export function ProductListItem({ product, showCartControls = true, showBadges =
             )}
           </div>
         )}
+        <AvailabilityBadge
+          product={product}
+          currentShop={currentShop}
+          nearbyShops={nearbyShops}
+          onShopSelect={setShop}
+          primaryCartStoreId={primaryCartStore?.storeId}
+          primaryCartStoreName={primaryCartStore?.storeName}
+        />
       </div>
     </Link>
   );
@@ -734,17 +886,19 @@ export const CompactProductCard = memo(function CompactProductCard({
           brand={product.brand}
           category={category}
           compact
+          availableInStores={product.availableInStores}
         />
       )}
 
       <div className="relative w-full h-28 bg-muted">
         {imageUrl ? (
-          <Image
+          <ProductImage
             src={imageUrl}
             alt={productName}
             fill
             className="object-contain p-2"
             sizes="160px"
+            fallbackText="No img"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">
@@ -835,17 +989,19 @@ export const CompactProductListItem = memo(function CompactProductListItem({
           brand={product.brand}
           category={category}
           compact
+          availableInStores={product.availableInStores}
         />
       )}
 
       {imageUrl ? (
         <div className="w-16 h-16 shrink-0 rounded-md overflow-hidden bg-muted relative">
-          <Image
+          <ProductImage
             src={imageUrl}
             alt={productName}
             fill
             className="object-contain p-0.5"
             sizes="64px"
+            fallbackText="No img"
           />
         </div>
       ) : (

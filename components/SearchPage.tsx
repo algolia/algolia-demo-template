@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useInfiniteHits, useSearchBox, useInstantSearch } from "react-instantsearch";
 import { algoliasearch } from "algoliasearch";
 import Image from "next/image";
-import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import Link from "next/link";
+import { PanelLeftClose, PanelLeftOpen, Search, ArrowRight } from "lucide-react";
 import { Product } from "@/lib/types/product";
 import { ProductCard, ProductListItem } from "@/components/ProductCard";
 import { ProductToolbar, SearchStats } from "@/components/ProductToolbar";
@@ -14,6 +15,11 @@ import { ALGOLIA_CONFIG } from "@/lib/algolia-config";
 import { useSidepanel } from "@/components/sidepanel-agent-studio/context/sidepanel-context";
 import { useCollapsibleFilters } from "@/components/hooks/use-collapsible-filters";
 import { SparklesIcon } from "lucide-react";
+import { useLanguage } from "@/components/language/language-context";
+import { classifyHits } from "@/lib/retail-media";
+import { SponsoredCarousel } from "@/components/retail-media/SponsoredCarousel";
+import { SponsoredBanner } from "@/components/retail-media/SponsoredBanner";
+import { RetailMediaOverlay } from "@/components/retail-media/RetailMediaOverlay";
 
 // Lazy-initialize search client to avoid issues during SSR/build
 let searchClient: ReturnType<typeof algoliasearch> | null = null;
@@ -66,13 +72,27 @@ function HighlightedText({ value }: { value: string }) {
 
 function AgentSuggestions() {
   const { agentSuggestions, agentSuggestionsLoading, openSidepanel } = useSidepanel();
+  const hadSuggestionsRef = useRef(false);
 
-  if (agentSuggestionsLoading) {
+  // Track whether we've ever shown suggestions
+  if (agentSuggestions.length > 0) {
+    hadSuggestionsRef.current = true;
+  }
+
+  // Show skeleton only when refreshing (had suggestions before, now loading new ones)
+  // On initial load, render nothing until suggestions arrive — avoids a flash
+  if (agentSuggestionsLoading && hadSuggestionsRef.current) {
     return (
       <div className="mb-6">
-        <div className="flex items-center gap-2 text-muted-foreground text-sm">
-          <SparklesIcon size={14} className="animate-pulse" />
-          <span className="animate-pulse">Loading suggestions...</span>
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
+          <SparklesIcon size={14} className="shrink-0 text-muted-foreground animate-pulse" />
+          {[112, 160, 136].map((w, i) => (
+            <div
+              key={i}
+              className="shrink-0 h-[38px] rounded-full bg-muted animate-pulse"
+              style={{ width: w }}
+            />
+          ))}
         </div>
       </div>
     );
@@ -232,9 +252,65 @@ function RuleBanner() {
   );
 }
 
-function CustomHits({ viewMode, compact }: { viewMode: "grid" | "list"; compact?: boolean }) {
+function ZeroResultsFallback() {
+  const { openSidepanel } = useSidepanel();
+  const { query } = useSearchBox();
+
+  const suggestions = [
+    {
+      label: "Ask our expert",
+      message: query
+        ? `I can't find "${query}" in the catalog. Can you help me find an alternative?`
+        : "Hi! I need help finding the right product.",
+    },
+    {
+      label: "Recommend something for me",
+      message: "I'm new here — what do you recommend as a first purchase?",
+    },
+    {
+      label: "Search articles",
+      message: query
+        ? `Do you have articles or guides about "${query}"?`
+        : "What guides do you have for new customers?",
+    },
+  ];
+
+  return (
+    <div className="text-center py-16 max-w-md mx-auto">
+      <Search className="h-12 w-12 text-muted-foreground/40 mx-auto mb-4" />
+      <p className="text-lg font-medium text-foreground mb-1">
+        No products found
+      </p>
+      <p className="text-sm text-muted-foreground mb-6">
+        {query
+          ? `No results for "${query}". Try asking our assistant!`
+          : "Try adjusting your search or ask our assistant for help."}
+      </p>
+      <div className="flex flex-col gap-2">
+        {suggestions.map((s) => (
+          <button
+            key={s.label}
+            onClick={() => openSidepanel(s.message)}
+            className="flex items-center gap-2 px-4 py-3 rounded-lg border border-border bg-background hover:bg-muted/50 hover:border-primary/30 transition-colors text-left"
+          >
+            <SparklesIcon className="h-4 w-4 text-primary shrink-0" />
+            <span className="text-sm font-medium">{s.label}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function CustomHits({ viewMode, compact, selectable }: { viewMode: "grid" | "list"; compact?: boolean; selectable?: boolean }) {
   const { hits, showMore, isLastPage } = useInfiniteHits<Product>();
   const sentinelRef = useRef<HTMLDivElement>(null);
+
+  // Classify hits into retail media placement buckets
+  const classified = useMemo(
+    () => classifyHits(hits, ALGOLIA_CONFIG.COMPOSITION_ID),
+    [hits]
+  );
 
   // Official Algolia pattern for infinite scroll
   useEffect(() => {
@@ -256,64 +332,239 @@ function CustomHits({ viewMode, compact }: { viewMode: "grid" | "list"; compact?
   }, [isLastPage, showMore]);
 
   if (hits.length === 0) {
-    return (
-      <div className="text-center py-16">
-        <p className="text-lg text-muted-foreground">No products found</p>
-        <p className="text-sm text-muted-foreground mt-2">
-          Try adjusting your search terms
-        </p>
-      </div>
-    );
+    return <ZeroResultsFallback />;
   }
+
+  // Split grid at row 1 to insert banner.
+  // Round each section to full rows so no orphan cards appear.
+  const cols = compact ? 3 : 4;
+  const hasBanners = classified.banners.length > 0;
+  const bannerInsertIndex = hasBanners ? cols * 1 : classified.gridHits.length;
+  const beforeBanner = classified.gridHits.slice(0, bannerInsertIndex);
+  const rawAfter = classified.gridHits.slice(bannerInsertIndex);
+  const afterBanner = isLastPage
+    ? rawAfter
+    : rawAfter.slice(0, Math.floor(rawAfter.length / cols) * cols);
+  const gridClasses = `grid grid-cols-2 ${compact ? "lg:grid-cols-3" : "lg:grid-cols-4"} gap-4`;
 
   if (viewMode === "list") {
     return (
       <div className="ais-InfiniteHits">
+        {/* Carousel above list */}
+        {classified.carousel && (
+          <SponsoredCarousel
+            label={classified.carousel.label}
+            products={classified.carousel.hits as Product[]}
+          />
+        )}
+
         <div className="ais-InfiniteHits-list space-y-4">
-          {hits.map((hit, index) => (
-            <ProductListItem key={`${hit.objectID}-${index}`} product={hit} selectable />
+          {beforeBanner.map((hit, index) => (
+            <ProductListItem
+              key={`${hit.objectID}-${index}`}
+              product={hit as Product}
+              sponsoredLabel={classified.inlinePlacements.get(hit.objectID!)}
+              selectable={selectable}
+            />
+          ))}
+
+          {/* Banner between rows */}
+          {classified.banners.map((banner, i) => (
+            <SponsoredBanner key={`banner-${i}`} label={banner.label} products={banner.hits as Product[]} />
+          ))}
+
+          {afterBanner.map((hit, index) => (
+            <ProductListItem
+              key={`${hit.objectID}-after-${index}`}
+              product={hit as Product}
+              sponsoredLabel={classified.inlinePlacements.get(hit.objectID!)}
+              selectable={selectable}
+            />
           ))}
           <div ref={sentinelRef} className="ais-InfiniteHits-sentinel" aria-hidden="true" />
         </div>
+
+        {/* Retail media debug overlay */}
+        <RetailMediaOverlay classified={classified} />
       </div>
     );
   }
 
   return (
     <div className="ais-InfiniteHits">
-      <div className={`ais-InfiniteHits-list grid grid-cols-2 ${compact ? "lg:grid-cols-3" : "lg:grid-cols-4"} gap-4`}>
-        {hits.map((hit, index) => (
-          <ProductCard key={`${hit.objectID}-${index}`} product={hit} selectable />
+      {/* Carousel above grid */}
+      {classified.carousel && (
+        <SponsoredCarousel
+          label={classified.carousel.label}
+          products={classified.carousel.hits as Product[]}
+        />
+      )}
+
+      {/* First chunk of grid (before banner) */}
+      <div className={`ais-InfiniteHits-list ${gridClasses}`}>
+        {beforeBanner.map((hit, index) => (
+          <ProductCard
+            key={`${hit.objectID}-${index}`}
+            product={hit as Product}
+            sponsoredLabel={classified.inlinePlacements.get(hit.objectID!)}
+            selectable
+          />
         ))}
-        <div ref={sentinelRef} className="ais-InfiniteHits-sentinel col-span-full" aria-hidden="true" />
+      </div>
+
+      {/* Banners between rows */}
+      {classified.banners.map((banner, i) => (
+        <SponsoredBanner key={`banner-${i}`} label={banner.label} products={banner.hits as Product[]} />
+      ))}
+
+      {/* Remaining grid (after banner) */}
+      {afterBanner.length > 0 && (
+        <div className={`ais-InfiniteHits-list ${gridClasses}`}>
+          {afterBanner.map((hit, index) => (
+            <ProductCard
+              key={`${hit.objectID}-after-${index}`}
+              product={hit as Product}
+              sponsoredLabel={classified.inlinePlacements.get(hit.objectID!)}
+              selectable={selectable}
+            />
+          ))}
+          <div ref={sentinelRef} className="ais-InfiniteHits-sentinel col-span-full" aria-hidden="true" />
+        </div>
+      )}
+
+      {/* Sentinel fallback if no afterBanner */}
+      {afterBanner.length === 0 && (
+        <div ref={sentinelRef} className="ais-InfiniteHits-sentinel" aria-hidden="true" />
+      )}
+
+      {/* Retail media debug overlay */}
+      <RetailMediaOverlay classified={classified} />
+    </div>
+  );
+}
+
+// ============================================================================
+// Homepage Landing
+// ============================================================================
+
+function HomeLanding({ onQueryClick }: { onQueryClick: (q: string) => void }) {
+  const { t } = useLanguage();
+
+  const quickSearches = [
+    "Michael Kors",
+    "Summer dress",
+    "Leather bags",
+    "Men's shoes",
+    "Polo Ralph Lauren",
+  ];
+
+  const promos = [
+    {
+      href: "/category/Women",
+      title: "Women",
+      subtitle: "Bags, clothing, and shoes from top designers",
+      sponsor: "Michael Kors",
+      accent: "bg-primary",
+    },
+    {
+      href: "/category/Men",
+      title: "Men",
+      subtitle: "Premium menswear and footwear",
+      sponsor: "Polo Ralph Lauren",
+      accent: "bg-foreground",
+    },
+    {
+      href: "/category/Accessories",
+      title: "Accessories",
+      subtitle: "Watches, belts, and more for every occasion",
+      sponsor: "Guess",
+      accent: "bg-muted-foreground",
+    },
+  ];
+
+  return (
+    <div className="mx-auto max-w-7xl px-4 py-10 md:py-16">
+      {/* Hero */}
+      <div className="mb-12 md:mb-16 max-w-2xl">
+        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-foreground leading-[1.1] mb-4">
+          Discover products<br />
+          <span className="text-primary">you&apos;ll love</span>
+        </h1>
+        <p className="text-lg text-muted-foreground leading-relaxed mb-8">
+          {t("brand.tagline")}
+        </p>
+
+        {/* Quick search pills */}
+        <div className="flex flex-wrap gap-2">
+          {quickSearches.map((q) => (
+            <button
+              key={q}
+              onClick={() => onQueryClick(q)}
+              className="group flex items-center gap-1.5 px-4 py-2 text-sm font-medium border border-border bg-background text-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors cursor-pointer"
+              type="button"
+            >
+              <Search className="w-3 h-3 opacity-40 group-hover:opacity-70" />
+              {q}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Sponsored category cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-border border border-border">
+        {promos.map((promo) => (
+          <Link
+            key={promo.href}
+            href={promo.href}
+            className="group relative bg-background p-8 md:p-10 flex flex-col justify-between min-h-[220px] transition-colors hover:bg-muted/50"
+          >
+            {/* Sponsor tag */}
+            <div className="flex items-center justify-between mb-auto">
+              <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">
+                Sponsored &middot; {promo.sponsor}
+              </span>
+            </div>
+
+            {/* Content */}
+            <div className="mt-8">
+              <div className="flex items-center gap-3 mb-3">
+                <h3 className="text-2xl font-bold text-foreground tracking-tight">
+                  {promo.title}
+                </h3>
+              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-5">
+                {promo.subtitle}
+              </p>
+              <span className="inline-flex items-center gap-2 text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+                Explore category
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+              </span>
+            </div>
+          </Link>
+        ))}
       </div>
     </div>
   );
 }
+
+// ============================================================================
+// Main Search Page
+// ============================================================================
 
 export default function SearchPage() {
   const { query, refine } = useSearchBox();
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const { isSidepanelOpen } = useSidepanel();
   const { filtersOpen, toggleFilters } = useCollapsibleFilters();
+  const { t } = useLanguage();
 
   const handleSuggestionClick = (suggestionQuery: string) => {
     refine(suggestionQuery);
   };
 
-  // Show homepage image when no query
+  // Homepage — no query active
   if (!query) {
-    return (
-      <Image
-        src="/homepage.png"
-        alt="Homepage"
-        width={0}
-        height={0}
-        sizes="100vw"
-        className="w-full h-auto pointer-events-none select-none"
-        priority
-      />
-    );
+    return <HomeLanding onQueryClick={(q) => refine(q)} />;
   }
 
   return (
@@ -321,7 +572,7 @@ export default function SearchPage() {
       {/* Display current search query */}
       <div className="mb-6">
         <h1 className="text-2xl font-semibold text-foreground">
-          Results for:{" "}
+          {t("search.resultsFor")}{" "}
           <span className="text-primary">&quot;{query}&quot;</span>
         </h1>
       </div>
@@ -355,14 +606,14 @@ export default function SearchPage() {
             <button
               onClick={toggleFilters}
               className="hidden lg:flex items-center gap-1.5 px-2 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-muted"
-              aria-label={filtersOpen ? "Hide filters" : "Show filters"}
+              aria-label={filtersOpen ? t("search.hideFilters") : t("search.showFilters")}
             >
               {filtersOpen ? (
                 <PanelLeftClose className="w-4 h-4" />
               ) : (
                 <PanelLeftOpen className="w-4 h-4" />
               )}
-              <span>{filtersOpen ? "Hide filters" : "Filters"}</span>
+              <span>{filtersOpen ? t("search.hideFilters") : t("search.showFilters")}</span>
             </button>
             <SearchStats />
             <div className="flex-1" />
@@ -373,7 +624,7 @@ export default function SearchPage() {
             />
           </div>
           <Configure getRankingInfo={true} />
-          <CustomHits viewMode={viewMode} compact={isSidepanelOpen} />
+          <CustomHits viewMode={viewMode} compact={isSidepanelOpen} selectable={isSidepanelOpen} />
         </div>
       </div>
     </div>

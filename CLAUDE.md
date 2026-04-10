@@ -1,236 +1,206 @@
 # CLAUDE.md
 
-Algolia Demo Template — configurable e-commerce demo with AI-powered product discovery. Built with Next.js 16, React 19, Algolia Composition API + Agent Studio.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-All demo-specific values live in `lib/demo-config/`. Changing a demo = editing 4-5 config files + indexing data.
+## Project Overview
 
-## Quick Reference
+Algolia Demo Template — A configurable e-commerce demo built with Next.js 16, React 19, and Algolia's Composition API with Agent Studio integration. The application features AI-powered product discovery, personalized user profiles, retail media, click & collect, and intelligent shopping assistance. All demo-specific values (brand, categories, users, agent instructions, retail media rules) are centralized in `lib/demo-config/`.
 
-```bash
-pnpm install          # Install deps
-pnpm dev              # Dev server (localhost:3000)
-pnpm build            # Production build
-pnpm start            # Start production
-pnpm tsx scripts/index-data.ts           # Index products
-pnpm tsx scripts/setup-agent.ts          # Configure AI agent
-pnpm tsx scripts/setup-recommend.ts      # Train recommendations
-pnpm tsx scripts/setup-query-suggestions.ts  # Query suggestions
-pnpm tsx scripts/test-relevance.ts       # Test search relevance
-```
+See `SETUP.md` for step-by-step new demo setup instructions.
 
-## Demo Setup Flow
+## Key Technologies
 
-Given a customer name and website, here's the full sequence. Works for both local development and bot-driven setup.
+- **Next.js 16**: App Router, Server Components, React 19
+- **Algolia**: Composition API, Agent Studio (AI agents), InstantSearch, NeuralSearch
+- **AI SDK v5**: Vercel's AI SDK for agent chat interfaces
+- **UI**: Tailwind CSS 4, shadcn/ui components, Radix UI primitives
+- **Package Manager**: pnpm
 
-### Phase 1: Gather Info
-
-Before starting, you need:
-1. **Customer name** (e.g. "Arcaplanet")
-2. **Vertical** (e.g. e-commerce petstore)
-3. **Algolia credentials** — use defaults or custom App ID + Admin API Key
-4. **Product data source** — JSON file, existing Algolia index, website to scrape, or skip
-
-### Phase 2: Bootstrap
+## Development Commands
 
 ```bash
-# Create a demo branch (bot/* prefix required for automated deploys)
-git checkout -b bot/demo/<vertical>-<customer-slug>
-
-# Install
-pnpm install
-
-# Set admin key (only secret — everything else is in lib/algolia-config.ts)
-echo "ALGOLIA_ADMIN_API_KEY=<key>" > .env
+pnpm dev          # Development server (http://localhost:3000)
+pnpm build        # Production build
+pnpm start        # Start production server
+pnpm lint         # Lint codebase
 ```
 
-### Phase 3: Configure (can run in parallel with data indexing)
+## Demo Configuration (`lib/demo-config/`)
 
-Edit these files — this is where all demo customization happens:
+All demo-specific values are centralized here. To set up a new demo, edit these files:
 
-| File | What to change |
-|------|---------------|
-| `lib/demo-config/index.ts` | Brand name, tagline, logo path, locale (language, currency), image domains |
-| `lib/algolia-config.ts` | APP_ID, SEARCH_API_KEY, INDEX_NAME, COMPOSITION_ID, AGENT_ID |
-| `lib/demo-config/users.ts` | Demo user profiles with preference weights |
-| `lib/demo-config/agents.ts` | AI agent instructions, index description, filterable fields |
-| `public/logo.svg` or `public/logo.png` | Customer logo (update `brand.logoUrl` to match) |
-| `app/favicon.ico` | Customer favicon |
+| File | Contents |
+|------|----------|
+| `lib/demo-config/index.ts` | Brand name, tagline, logo, locale (language, currency), image domains |
+| `lib/demo-config/categories.ts` | Category tree (`HIERARCHICAL_CATEGORIES`), sidebar icons (`CATEGORY_ICONS`) |
+| `lib/demo-config/users.ts` | Demo user profiles (`users`), preference display metadata (`PREFERENCE_METADATA`) |
+| `lib/demo-config/agents.ts` | AI agent instructions, index descriptions, client-side tools, product attributes for agent API key (`AGENT_CONFIG`, `AGENT_PRODUCT_ATTRIBUTES`) |
+| `lib/demo-config/retail-media.ts` | Retail media rule definitions (`RETAIL_MEDIA_RULES`) — sponsored placements, trigger conditions, product lists |
 
-**Skip `lib/demo-config/categories.ts`** until data is indexed — categories must match actual Algolia facet values exactly.
+### Price Formatting
 
-### Phase 4: Index Data
+All prices go through `lib/utils/format.ts` -> `formatPrice()`, which reads `DEMO_CONFIG.locale.currencySymbol`.
 
-```bash
-# Index products (auto-configures settings + creates Composition)
-pnpm tsx scripts/index-data.ts [path/to/products.json]
+### Image Domains
 
-# Set up AI agent (writes AGENT_ID back to lib/algolia-config.ts)
-pnpm tsx scripts/setup-agent.ts
+`next.config.ts` reads `DEMO_CONFIG.imageDomains` for Next.js `<Image>` remote patterns.
 
-# Optional
-pnpm tsx scripts/setup-recommend.ts
-pnpm tsx scripts/setup-query-suggestions.ts
-```
+## Algolia Configuration
 
-After indexing, configure categories from actual facet values:
-- Read `hierarchical_categories` facet values from the index
-- Build the category tree in `lib/demo-config/categories.ts`
-- Category `name` values must be **exact case-sensitive matches** to Algolia facet values
-- Add image domains to `lib/demo-config/index.ts` → `imageDomains`
-- Update AGENT_ID in `lib/algolia-config.ts` if `setup-agent.ts` wrote a new one
+All non-sensitive Algolia settings live in `lib/algolia-config.ts` (committed to the repo). This includes the APP_ID, search-only API key, index name, composition ID, and agent ID. Values are hardcoded — update the file directly when configuring a new demo.
 
-See `SETUP.md` for detailed step-by-step instructions.
+**Default app:** `3FKQCCIUWO` with search key `cf3b54fbfea633fb12808c8b2f59b990`.
 
-### Phase 5: Verify
-
-```bash
-pnpm dev  # Check at localhost:3000
-```
-
-### Phase 6: Deploy (automated environments only)
-
-For deployments behind the Demo Manager (e.g. via the SE bot or manual API call):
-
-```bash
-# Commit and push
-git add -A && git commit -m "Setup demo for <customer>" && git push origin bot/demo/<branch>
-
-# Deploy via Manager API (from environments with API access)
-curl -X POST http://<manager-host>:3150/demos \
-  -H "Content-Type: application/json" \
-  -H "X-API-Key: <api-key>" \
-  -d '{"name": "<slug>", "branch": "bot/demo/<branch>"}'
-```
-
-The Manager builds a Docker container, assigns a port, generates a token-gated URL, and configures nginx. Response includes the shareable URL.
-
-**Managing deployed demos:**
-- `GET /demos` — list all
-- `GET /demos/<slug>` — status + logs
-- `POST /demos/<slug>/redeploy` — rebuild from branch after pushing changes
-- `DELETE /demos/<slug>` — tear down
-
-Demos are Docker containers with basePath set automatically. Max 8 concurrent.
-
----
+**`.env` (secret only):**
+- `ALGOLIA_ADMIN_API_KEY`: Algolia admin API key (for indexing scripts, never exposed to client)
 
 ## Architecture
 
-### Config Files (what you edit for each demo)
+### App Structure
 
-```
-lib/demo-config/
-├── index.ts        # Brand, locale, image domains
-├── categories.ts   # Category tree + icons
-├── users.ts        # Demo user profiles + preferences
-└── agents.ts       # AI agent instructions + tools
-lib/algolia-config.ts   # App ID, API keys, index/composition/agent IDs
-.env                    # ALGOLIA_ADMIN_API_KEY (secret, gitignored)
-```
+**Pages:**
+- `/` - Home/search page with product listing
+- `/products/[id]` - Product detail page (SSR with Algolia data fetch)
+- `/category/[...slug]` - Category browsing page
+- `/checkout` - Checkout page
+- `/user/[id]` - User profile selection page
 
-### App Routes
+**Key Directories:**
+- `app/` - Next.js App Router pages and layouts
+- `components/` - React components organized by feature
+- `lib/` - Utilities and type definitions
+- `lib/demo-config/` - All demo-specific configuration
+- `lib/types/` - TypeScript interfaces (Product, User, etc.)
+- `lib/utils/` - Utility functions (price formatting, etc.)
+- `scripts/` - Indexing and agent setup scripts
 
-| Route | Page | Component |
-|-------|------|-----------|
-| `/` | Home / search | `components/SearchPage.tsx` |
-| `/products/[id]` | Product detail (SSR) | `components/ProductPage.tsx` |
-| `/category/[...slug]` | Category browsing | `components/category-page.tsx` |
-| `/checkout` | Checkout | `app/checkout/page.tsx` |
-| `/user/[id]` | User profile selection | `components/UserPage.tsx` |
+### Context Providers
 
-### Key Components
+Nested provider structure in `components/providers.tsx`:
 
-```
-components/
-├── providers.tsx              # All context providers + InstantSearch
-├── SearchPage.tsx             # Home/search with product grid
-├── ProductCard.tsx            # Product display variants
-├── ProductPage.tsx            # Product detail page
-├── category-page.tsx          # Category browsing
-├── filters-sidebar.tsx        # Search filters
-├── navbar/                    # Navigation bar + search + cart
-└── sidepanel-agent-studio/    # AI assistant
-    ├── components/
-    │   ├── sidepanel-agent.tsx      # Main sidepanel UI
-    │   └── product-page-agent.tsx   # "Ask about this product" widget
-    ├── hooks/
-    │   └── use-agent-studio.ts      # Chat hook + tool handling
-    ├── context/
-    │   └── sidepanel-context.tsx     # Cross-component communication
-    └── lib/
-        ├── context-snapshot.ts       # Page context for agent
-        └── create-agent-transport.ts # Agent Studio API transport
-```
-
-### Context Providers (in `providers.tsx`)
-
-Nested in this order:
-1. **CartProvider** — shopping cart state
-2. **UserProvider** — current demo user profile + personalization filters
-3. **SelectionProvider** — product multi-select for comparisons
-4. **SidepanelProvider** — AI assistant open/close + suggestions
-5. **InstantSearch** — Algolia search state with URL routing
+1. **CartProvider** - Global shopping cart state (add/remove items, quantities, totals)
+2. **ClickCollectProvider** - Store pickup location and shop selection for click & collect
+3. **UserProvider** - Current user profile selection (for personalization)
+4. **SelectionProvider** - Product selection state for multi-select operations
+5. **SidepanelProvider** - Controls AI assistant sidepanel visibility
+6. **InstantSearch** - Algolia search/composition state with routing
 
 ### AI Agent System
 
-Single agent powered by Algolia Agent Studio. Configured in `lib/demo-config/agents.ts`, deployed via `scripts/setup-agent.ts`.
+One AI agent powered by Algolia Agent Studio. Instructions and tools are configured in `lib/demo-config/agents.ts`, deployed via `scripts/setup-agent.ts`.
 
-**How it works:**
-1. `create-agent-transport.ts` wraps every chat message with `[CONTEXT]{...}[/CONTEXT]`
-2. Context includes: page type, search state, product details (if on product page), user preferences, selected products
-3. `context-snapshot.ts` detects the current page type and builds the context
-4. Agent has client-side tools: `addToCart`, `showItems` (executed in browser, not server)
-5. Suggestions come via `data-suggestions` SSE events from Agent Studio
+**Sidepanel Agent** (`components/sidepanel-agent-studio/`)
+- Context-aware shopping assistant for search and product pages
+- Uses `context-snapshot.ts` to resolve page context before each message
+- Built-in suggestions enabled (`config.suggestions.enabled: true`) — every response includes contextual follow-up suggestions via `data-suggestions` SSE events
+- Fallback suggestions defined in `AGENT_CONFIG.fallbackSuggestions` for when no SSE suggestions are available
+- Tools: `addToCart`, `showItems`, `showArticles` (client-side), `algolia_search_index` (server-side)
 
-**Hidden greeting flow:** When the sidepanel opens with no conversation, it sends a hidden "What can you help me with?" to get contextual suggestions, then clears the messages. User only sees the suggestions.
+**Agent Trigger Button:**
+Gradient sparkle button in the navbar opens the AI assistant sidepanel. Single instance architecture — only ONE `SidepanelExperience` component is rendered in the navbar, with multiple trigger buttons communicating via `SidepanelContext`.
+
+**Context Injection Pattern:**
+The agent uses `[CONTEXT]{...}[/CONTEXT]` message format to inject structured data (page context, user preferences, selected products).
+
+### Retail Media System
+
+Retail media injects sponsored content into search results via Algolia composition rules.
+
+**Pipeline:**
+1. **Rule definitions** (`lib/demo-config/retail-media.ts`) — Define campaigns with trigger conditions (query patterns, categories, user segments) and sponsored product lists
+2. **Composition rules** (`scripts/setup-composition-rules.ts`) — Converts rule definitions into Algolia composition rules with tagged metadata
+3. **Frontend parsing** (`lib/retail-media.ts`) — Parses composition rule tags to determine placement type
+4. **Visualization components** — Three placement types:
+   - **Carousel** — Sponsored product carousel at the top of results
+   - **Inline** — Sponsored products injected into the result grid
+   - **Banner** — Cross-sell or promotional banners between result rows
+
+### Click & Collect System
+
+Click & collect allows users to select a pickup store and see product availability.
+
+**Components:**
+- **ClickCollectProvider** (`components/click-collect/click-collect-context.tsx`) — Manages selected store state
+- **Store finder** — Location-based store search with proximity sorting
+- **Availability badges** — Per-product stock status at the selected store
+- **Proximity boost** — When a store is selected, search results are boosted by geographic proximity via `aroundLatLng`
+
+**Store data** is indexed via `scripts/index-stores.ts` with `_geoloc` coordinates.
+
+### NeuralSearch
+
+NeuralSearch (semantic search) is configured during product indexing by `scripts/index-data.ts`. The script calls the Algolia REST API to set:
+
+- `neuralSearchMode: "active"` — Enables semantic understanding
+- `neuralSearchAttributes` — Attributes used for semantic matching (name, brand, categories, description)
+- `neuralSearchPreset: "custom"` — Custom attribute weights for relevance tuning
+
+No additional configuration needed after indexing. NeuralSearch works automatically through the Composition API.
 
 ### User Personalization
 
-Profiles in `lib/demo-config/users.ts` have preference weights (0-20) per facet value. `UserContext` converts these to `personalizationFilters` format (`"facetName:value<score=N>"`) for Algolia boosting.
+User profiles are defined in `lib/demo-config/users.ts`. Each profile has preference weights (scores 0-20) for product attributes.
+
+**UserContext** (`components/user/user-context.tsx`) generates `personalizationFilters` in format `"facetName:value<score=N>"` for Algolia boosting.
+
+**Usage:**
+1. **"For You" Filter** in sidebar — shows personalized suggestions
+2. **Search Result Boosting** via Composition API
+3. **AI Agent Context** — preferences injected into agent conversations
+4. **Preference Metadata** from `lib/demo-config/users.ts` — maps facets to display labels
+
+### State Management
+
+- **Global State**: React Context (Cart, User, Sidepanel, ClickCollect)
+- **Search State**: Algolia InstantSearch with URL routing
+- **AI Chat State**: AI SDK v5 `useChat` hook
 
 ### Algolia Integration
 
-- **Composition API** — `compositionClient()` in `providers.tsx`, used by InstantSearch
-- **Agent Studio** — external API, `create-agent-transport.ts` handles auth + context injection
-- **Recommend** — Related Products + Looking Similar models, trained via `scripts/setup-recommend.ts`
+**Composition API:**
+- Client initialized in `providers.tsx` using `compositionClient()`
+- InstantSearch components use composition for search
 
-## Deployment
+**Agent Studio:**
+- Single agent configured via `scripts/setup-agent.ts` (reads from `lib/demo-config/agents.ts`)
+- Custom transport layer in `create-agent-transport.ts` injects context via `prepareSendMessagesRequest`
+- Client-side tool execution for cart, product display, and article display operations
+- Suggestions delivered via `data-suggestions` SSE events from Agent Studio
 
-The template supports two deployment modes:
+## Scripts
 
-### Local Development
-```bash
-pnpm dev
-```
-No basePath, runs at `localhost:3000`.
+| Script | Purpose |
+|--------|---------|
+| `scripts/index-data.ts` | Index products, configure settings, enable NeuralSearch, create composition |
+| `scripts/index-articles.ts` | Index article/content records with dedup into a separate articles index |
+| `scripts/index-stores.ts` | Index store locations with `_geoloc` for click & collect |
+| `scripts/enrich-stores.ts` | Geocode store addresses into lat/lng coordinates |
+| `scripts/download-index.ts` | Browse an existing Algolia index and save records to JSON |
+| `scripts/setup-agent.ts` | Configure Agent Studio agent, writes AGENT_ID back to `lib/algolia-config.ts` |
+| `scripts/setup-composition-rules.ts` | Create composition rules for retail media placements |
+| `scripts/setup-recommend.ts` | Train Recommend models (Related Products, Looking Similar) |
+| `scripts/setup-query-suggestions.ts` | Set up Algolia Query Suggestions |
+| `scripts/test-relevance.ts` | Test search relevance — queries with expected objectIDs in order |
 
-### Docker (production / Demo Manager)
-```bash
-docker build --build-arg NEXT_PUBLIC_BASE_PATH=/demos/<slug> -t demo-<slug> .
-docker run -d -p 3201:3000 demo-<slug>
-```
-The `Dockerfile` uses multi-stage build with standalone Next.js output (~30MB runtime). `NEXT_PUBLIC_BASE_PATH` is injected at build time for subpath routing behind nginx.
+## Relevance Tests
 
-`next.config.ts` reads `NEXT_PUBLIC_BASE_PATH` and sets `basePath` accordingly. `context-snapshot.ts` strips basePath before page detection so the agent system works regardless of deployment path.
+`scripts/test-relevance.ts` tests search relevance via the Composition API. The `TEST_CASES` array contains queries with expected objectIDs that must appear in a specific order.
 
-## Branch Model
-
-```
-main                    ← Protected. Template source of truth.
-bot/main                ← Bot's working trunk. Tracks main.
-bot/demo/<name>         ← Per-demo branches, created from bot/main.
-```
-
-- `main` changes are merged into `bot/main` periodically
-- Demos branch from `bot/main` and customize config + data
-- Useful demo improvements can be cherry-picked back to `main`
+**When setting up a new demo**, ask the user if they have specific search queries and expected products they'd like to validate. If so, populate the `TEST_CASES` array in `scripts/test-relevance.ts` with their test cases. Run with `pnpm tsx scripts/test-relevance.ts`.
 
 ## Important Notes
 
-- Always use `pnpm` (not npm/yarn)
-- Image domains must be configured in `lib/demo-config/index.ts` → `imageDomains` for Next.js `<Image>` to work
-- Category names in `categories.ts` must exactly match Algolia facet values
-- Attribute naming: use snake_case (`hierarchical_categories.lvl0`, not camelCase)
-- InstantSearch URL routing: `routing={true}` with default config in `providers.tsx`
-- Agent tool calls execute client-side (no API routes needed)
-- `ALGOLIA_ADMIN_API_KEY` is the only secret — everything else is in committed config files
+- Always use `pnpm` as the package manager (not npm/yarn)
+- Product images: configure domains in `lib/demo-config/index.ts` -> `imageDomains`
+- InstantSearch state persists via URL routing with `preserveSharedStateOnUnmount`
+- Agent tool calls execute client-side for cart and display operations (no API routes needed)
+- Context snapshots cache product data to avoid redundant fetches (500ms timeout)
+
+## Type Safety
+
+Key interfaces:
+- `Product` (`lib/types/product.ts`) - Product record from Algolia (name, price, brand, images, reviews, availability)
+- `User` (`lib/types/user.ts`) - User profile type with preference weights
+- `CartItem` - Shopping cart item structure
+- `ContextSnapshot` - Page context for AI agents
+- `RetailMediaRule` (`lib/demo-config/retail-media.ts`) - Retail media campaign definition
