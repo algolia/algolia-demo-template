@@ -18,5 +18,7 @@ export const DEMO_CONFIG = {
     currency: "EUR",
     currencySymbol: "\u20ac",
   },
-  imageDomains: [] as { protocol: "https" | "http"; hostname: string }[],
+  imageDomains: [
+    { protocol: "https" as const, hostname: "fxqklbpngldowtbkqezm.supabase.co" },
+  ],
 };
