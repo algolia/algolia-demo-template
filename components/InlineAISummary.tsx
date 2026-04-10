@@ -168,7 +168,7 @@ export function InlineAISummary({ query, submitCount }: InlineAISummaryProps) {
   const [triggered, setTriggered] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const { openSidepanel, openSidepanelWithContext, setAgentSuggestions } = useSidepanel();
-  const { language, t } = useLanguage();
+  const { t } = useLanguage();
 
   /** Build initial context messages from the summary for the sidepanel */
   const buildContextMessages = () => {
@@ -308,7 +308,7 @@ export function InlineAISummary({ query, submitCount }: InlineAISummaryProps) {
     setLastQuery(query);
 
     chat.sendMessage({
-      text: getInlineSummaryPrompt(language, query),
+      text: getInlineSummaryPrompt(query),
     });
   }, [submitCount]); // eslint-disable-line react-hooks/exhaustive-deps
 

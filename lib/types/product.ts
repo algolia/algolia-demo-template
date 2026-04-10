@@ -27,6 +27,7 @@ export interface Product {
     lvl2?: string;
     lvl3?: string;
   };
+  list_categories?: string[];
   searchable_categories?: Record<string, string>;
   categoryPageId?: string[];
 

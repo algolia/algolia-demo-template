@@ -44,7 +44,7 @@ export function UserSelector() {
               <span className="hidden sm:inline">{currentUser.description}</span>
             </span>
           ) : (
-            <UserIcon className="size-8" />
+            <UserIcon className="size-5" />
           )}
         </Button>
       </DropdownMenuTrigger>

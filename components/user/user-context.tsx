@@ -9,6 +9,7 @@ interface UserContextType {
   setUser: (user: User | null) => void;
   selectUserById: (userId: string) => void;
   personalizationFilters: string[] | undefined;
+  segments: string[];
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -38,9 +39,9 @@ export function UserProvider({ children }: { children: ReactNode }) {
    *
    * Example output:
    * [
-   *   "categories.lvl0:Nutrición deportiva<score=20>",
-   *   "brand:Sport Series<score=17>",
-   *   "categories.lvl1:Proteínas<score=18>"
+   *   "categories.lvl0:Dog Food<score=20>",
+   *   "brand:Royal Canin<score=17>",
+   *   "categories.lvl1:Dry Food<score=18>"
    * ]
    */
   const personalizationFilters = useMemo(() => {
@@ -64,14 +65,19 @@ export function UserProvider({ children }: { children: ReactNode }) {
     return filters.length > 0 ? filters : undefined;
   }, [currentUser]);
 
+  const segments = useMemo(() => {
+    return currentUser?.segments ?? [];
+  }, [currentUser]);
+
   const value = useMemo(
     () => ({
       currentUser,
       setUser,
       selectUserById,
       personalizationFilters,
+      segments,
     }),
-    [currentUser, setUser, selectUserById, personalizationFilters]
+    [currentUser, setUser, selectUserById, personalizationFilters, segments]
   );
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
@@ -79,11 +85,10 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
 export function useUser() {
   const context = useContext(UserContext);
-  
+
   if (context === undefined) {
     throw new Error("useUser must be used within a UserProvider");
   }
-  
+
   return context;
 }
-

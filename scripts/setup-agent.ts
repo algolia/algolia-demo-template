@@ -191,39 +191,6 @@ async function main() {
     apiKey
   );
 
-  // Summary agent — dedicated to inline summaries with showSummary tool
-  const summaryTools: AgentTool[] = [
-    {
-      name: "algolia_search_index",
-      type: "algolia_search_index",
-      indices: [
-        {
-          index: INDEX_NAME,
-          description: "Government content portal",
-          enhancedDescription: AGENT_CONFIG.summary.indexDescription,
-          searchParameters: {
-            attributesToRetrieve: AGENT_PRODUCT_ATTRIBUTES,
-          },
-        },
-      ],
-    },
-    ...AGENT_CONFIG.summary.tools,
-  ];
-
-  await upsertAndPublishAgent(
-    {
-      name: AGENT_CONFIG.summary.name,
-      instructions: AGENT_CONFIG.summary.instructions,
-      model: DEFAULT_MODEL,
-      providerId,
-      tools: summaryTools,
-      config: { suggestions: { enabled: true } },
-    },
-    ALGOLIA_CONFIG.SUMMARY_AGENT_ID,
-    "SUMMARY_AGENT_ID",
-    apiKey
-  );
-
   console.log(`\n${"=".repeat(60)}`);
   console.log("Agent setup complete!");
 }

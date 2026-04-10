@@ -1,34 +1,27 @@
 "use client";
 
-import { createContext, useContext, useState, useCallback, useMemo, ReactNode } from "react";
-import { translations, type Language } from "@/lib/demo-config/translations";
+import { createContext, useContext, useMemo, ReactNode } from "react";
+import { t as translate } from "@/lib/demo-config/translations";
 
 interface LanguageContextType {
-  language: Language;
-  setLanguage: (lang: Language) => void;
+  language: "en";
   t: (key: string) => string;
 }
 
-const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+const defaultValue: LanguageContextType = {
+  language: "en",
+  t: translate,
+};
+
+const LanguageContext = createContext<LanguageContextType>(defaultValue);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguageState] = useState<Language>("ca");
-
-  const setLanguage = useCallback((lang: Language) => {
-    setLanguageState(lang);
-    document.documentElement.lang = lang;
-  }, []);
-
-  const t = useCallback(
-    (key: string): string => {
-      return translations[language][key] ?? key;
-    },
-    [language]
-  );
-
   const value = useMemo(
-    () => ({ language, setLanguage, t }),
-    [language, setLanguage, t]
+    () => ({
+      language: "en" as const,
+      t: translate,
+    }),
+    []
   );
 
   return (
@@ -39,9 +32,5 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 }
 
 export function useLanguage() {
-  const context = useContext(LanguageContext);
-  if (!context) {
-    throw new Error("useLanguage must be used within a LanguageProvider");
-  }
-  return context;
+  return useContext(LanguageContext);
 }
