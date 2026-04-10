@@ -39,7 +39,7 @@ export const users: User[] = [
         "Cane > Giochi": 16,
       },
       "età.value": { ANZIANO: 10 },
-      "taglia.value": { GRANDE: 18, "TUTTE LE TAGLIE": 8 },
+      "taglia.value": { GRANDE: 18 },
       age_bucket: { "8+": 20, "7+": 18 },
       brand: { "ROYAL CANIN": 8 },
       "funzione.value": { DIGESTIONE: 15, "SENSIBILITA'": 12 },
