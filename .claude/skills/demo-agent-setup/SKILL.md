@@ -31,10 +31,10 @@ Array of attribute names exposed to the agent's API key. Keep minimal — only w
 ```typescript
 export const AGENT_PRODUCT_ATTRIBUTES = [
   "objectID",
-  "title",
+  "name",
   "brand",
   "price",
-  "shortDescription",
+  "description",
   // Add attributes relevant to the vertical
 ];
 ```
@@ -73,8 +73,10 @@ Product catalog for {Brand}.
 **Key filterable fields:**
 - price: Product price (numeric)
 - brand: Brand name
-- hierarchical_categories.lvl0, hierarchical_categories.lvl1: Category hierarchy
+- hierarchical_categories.lvl0 through hierarchical_categories.lvl3: Full category hierarchy (all levels available for filtering)
 - inStock: Boolean, true if available
+
+A separate articles index is also searchable — use it for advice, guides, and informational content.
 ```
 
 **Attribute naming:** Always use snake_case (e.g. `hierarchical_categories.lvl0`, NOT `hierarchicalCategories.lvl0`). This matches the Product type and index settings.
@@ -85,6 +87,7 @@ Two client-side tools are pre-configured and rarely need changes:
 
 - **addToCart** — `{ objectIDs: string[] }` — adds products to cart
 - **showItems** — `{ objectIDs: string[], title: string, explanation: string }` — displays product recommendations with context
+- **showArticles** — Display articles/educational content from the articles index. Use when the customer asks for advice, guides, how-tos, or informational content. Input: `{ articles: [{ title, summary, url?, category? }], title? }`. The agent searches the ARTICLES_INDEX via `algolia_search_index` and presents results using this tool.
 
 ### `fallbackSuggestions`
 
