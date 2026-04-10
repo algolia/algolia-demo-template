@@ -1,7 +1,7 @@
 import { DefaultChatTransport, type UIMessage } from 'ai';
 import { MutableRefObject } from 'react';
 import {
-  resolveContextWithUiState,
+  resolveContext,
   hydrateContext,
   makeContextSystemMessage,
   ContextSnapshot,
@@ -81,7 +81,7 @@ export function createAgentTransport(
     },
     prepareSendMessagesRequest: async ({ messages, trigger, messageId }) => {
       try {
-        const baseCtx = resolveContextWithUiState(indexUiStateRef.current);
+        const baseCtx = resolveContext(indexUiStateRef.current);
         let ctx = await hydrateContext(baseCtx);
 
         if (options?.enrichContext) {
