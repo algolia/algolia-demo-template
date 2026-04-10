@@ -14,6 +14,7 @@ import {
   ShopGeoloc,
   ShopWithDistance,
   SHOP_BOOST_SCORE,
+  EXPRESS_PICKUP_RADIUS_KM,
 } from "@/lib/types/shop";
 import {
   fetchShops,
@@ -244,14 +245,14 @@ export function ClickCollectProvider({ children }: { children: ReactNode }) {
   }, [allShops.length]);
 
   // Compute multi-shop boost filters
-  // Boost products available at nearby shops (weighted by distance)
+  // Equal boost for all stores within express pickup radius (10km)
+  // Products available at more nearby stores naturally rank higher
   const shopBoostFilters = useMemo(() => {
     if (nearbyShops.length > 0) {
-      return nearbyShops.map((shop, index) => {
-        // Decay score by distance ranking: 25, 22, 19, 16, 13, 10, 7, 5, 5, 5...
-        const score = Math.max(5, SHOP_BOOST_SCORE - index * 3);
-        return `availableInStores.objectID:${shop.id}<score=${score}>`;
-      });
+      const EQUAL_BOOST_SCORE = 10;
+      return nearbyShops
+        .filter((shop) => shop.distance <= EXPRESS_PICKUP_RADIUS_KM)
+        .map((shop) => `availableInStores.objectID:${shop.id}<score=${EQUAL_BOOST_SCORE}>`);
     }
 
     return [];

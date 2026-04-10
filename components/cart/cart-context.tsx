@@ -107,7 +107,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }
     }
     return Array.from(storeCounts.entries()).map(([storeId, count]) => {
-      const score = Math.min(50, 5 + count * 5); // 10 for 1 item, 15 for 2, ..., capped at 50
+      const score = Math.min(50, 10 + count * 5); // 15 for 1 item, 20 for 2, ..., capped at 50 — always above radius boost (10)
       return `availableInStores.objectID:${storeId}<score=${score}>`;
     });
   }, [items]);

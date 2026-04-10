@@ -115,6 +115,48 @@ import { getPriceInfo, getPreferredCategory } from "@/lib/utils/product";
 import { ALGOLIA_CONFIG } from "@/lib/algolia-config";
 import { parseColorValue } from "@/components/filters-sidebar";
 
+/**
+ * Image component with onError fallback — shows placeholder when image fails to load.
+ */
+function ProductImage({
+  src,
+  alt,
+  fill,
+  className,
+  sizes,
+  fallbackText = "No image",
+  fallbackClassName,
+}: {
+  src: string;
+  alt: string;
+  fill?: boolean;
+  className?: string;
+  sizes?: string;
+  fallbackText?: string;
+  fallbackClassName?: string;
+}) {
+  const [error, setError] = useState(false);
+
+  if (error) {
+    return (
+      <div className={cn("w-full h-full flex items-center justify-center text-muted-foreground text-xs bg-muted", fallbackClassName)}>
+        {fallbackText}
+      </div>
+    );
+  }
+
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      fill={fill}
+      className={className}
+      sizes={sizes}
+      onError={() => setError(true)}
+    />
+  );
+}
+
 function getHighestCategoryLevel(
   hierarchicalCategories: Product["hierarchical_categories"]
 ): string | null {
@@ -638,7 +680,7 @@ export function ProductCard({ product, showCartControls = true, showBadges = tru
 
       <div className="relative w-full h-56 bg-gray-50">
         {imageUrl ? (
-          <Image
+          <ProductImage
             src={imageUrl}
             alt={productName}
             fill
@@ -759,7 +801,7 @@ export function ProductListItem({ product, showCartControls = true, showBadges =
 
       <div className="relative w-32 h-32 shrink-0 bg-muted rounded-md overflow-hidden">
         {imageUrl ? (
-          <Image
+          <ProductImage
             src={imageUrl}
             alt={productName}
             fill
@@ -877,12 +919,13 @@ export const CompactProductCard = memo(function CompactProductCard({
 
       <div className="relative w-full h-28 bg-muted">
         {imageUrl ? (
-          <Image
+          <ProductImage
             src={imageUrl}
             alt={productName}
             fill
             className="object-contain p-2"
             sizes="160px"
+            fallbackText="No img"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">
@@ -979,12 +1022,13 @@ export const CompactProductListItem = memo(function CompactProductListItem({
 
       {imageUrl ? (
         <div className="w-16 h-16 shrink-0 rounded-md overflow-hidden bg-muted relative">
-          <Image
+          <ProductImage
             src={imageUrl}
             alt={productName}
             fill
             className="object-contain p-0.5"
             sizes="64px"
+            fallbackText="No img"
           />
         </div>
       ) : (
