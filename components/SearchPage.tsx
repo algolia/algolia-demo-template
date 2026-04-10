@@ -451,33 +451,33 @@ function HomeLanding({ onQueryClick }: { onQueryClick: (q: string) => void }) {
   const { t } = useLanguage();
 
   const quickSearches = [
-    "Best sellers",
-    "New arrivals",
-    "On sale",
-    "Gift ideas",
-    "Top rated",
+    "Michael Kors",
+    "Summer dress",
+    "Leather bags",
+    "Men's shoes",
+    "Polo Ralph Lauren",
   ];
 
   const promos = [
     {
-      href: "/category/Featured",
-      title: "Featured",
-      subtitle: "Hand-picked selections and top recommendations",
-      sponsor: "Featured Brand",
+      href: "/category/Women",
+      title: "Women",
+      subtitle: "Bags, clothing, and shoes from top designers",
+      sponsor: "Michael Kors",
       accent: "bg-primary",
     },
     {
-      href: "/category/Popular",
-      title: "Popular",
-      subtitle: "Trending products loved by our customers",
-      sponsor: "Popular Brand",
+      href: "/category/Men",
+      title: "Men",
+      subtitle: "Premium menswear and footwear",
+      sponsor: "Polo Ralph Lauren",
       accent: "bg-foreground",
     },
     {
-      href: "/category/New",
-      title: "New Arrivals",
-      subtitle: "The latest additions to our catalog",
-      sponsor: "New Brand",
+      href: "/category/Accessories",
+      title: "Accessories",
+      subtitle: "Watches, belts, and more for every occasion",
+      sponsor: "Guess",
       accent: "bg-muted-foreground",
     },
   ];

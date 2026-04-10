@@ -1,7 +1,7 @@
 /**
  * Category tree and icon mapping for e-commerce store
  */
-import { Shirt, Laptop, Home, Dumbbell, ShoppingBag } from "lucide-react";
+import { ShoppingBag, Shirt, Footprints, Watch } from "lucide-react";
 
 export type CategoryNode = {
   name: string;
@@ -15,36 +15,33 @@ export type RootCategory = CategoryNode & {
 };
 
 export const HIERARCHICAL_CATEGORIES: Record<string, RootCategory> = {
-  fashion: {
-    name: "Fashion",
-    slug: "fashion",
-    icon: Shirt,
+  women: {
+    name: "Women",
+    slug: "women",
+    icon: ShoppingBag,
     children: {
-      tops: { name: "Tops", slug: "tops" },
-      bottoms: { name: "Bottoms", slug: "bottoms" },
+      bags: { name: "Bags", slug: "bags" },
+      clothing: { name: "Clothing", slug: "clothing" },
       shoes: { name: "Shoes", slug: "shoes" },
     },
   },
-  electronics: {
-    name: "Electronics",
-    slug: "electronics",
-    icon: Laptop,
+  men: {
+    name: "Men",
+    slug: "men",
+    icon: Shirt,
     children: {
-      phones: { name: "Phones", slug: "phones" },
-      laptops: { name: "Laptops", slug: "laptops" },
+      clothing: { name: "Clothing", slug: "clothing" },
+      shoes: { name: "Shoes", slug: "shoes" },
     },
   },
-  home: {
-    name: "Home",
-    slug: "home",
-    icon: Home,
-    children: {},
-  },
-  sports: {
-    name: "Sports",
-    slug: "sports",
-    icon: Dumbbell,
-    children: {},
+  accessories: {
+    name: "Accessories",
+    slug: "accessories",
+    icon: Watch,
+    children: {
+      women: { name: "Women", slug: "women" },
+      men: { name: "Men", slug: "men" },
+    },
   },
 };
 
@@ -52,9 +49,7 @@ export const CATEGORY_ICONS: Record<
   string,
   React.ComponentType<{ className?: string }>
 > = {
-  Fashion: Shirt,
-  Electronics: Laptop,
-  Home: Home,
-  Sports: Dumbbell,
-  Accessories: ShoppingBag,
+  Women: ShoppingBag,
+  Men: Shirt,
+  Accessories: Watch,
 };

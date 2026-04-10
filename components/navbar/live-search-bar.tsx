@@ -38,11 +38,11 @@ import { HIERARCHICAL_CATEGORIES } from "@/lib/demo-config/categories";
 
 /** Popular queries shown when the search bar is empty / first focused */
 const POPULAR_QUERIES = [
-  "dog food",
-  "royal canin",
-  "kibble",
-  "flea treatment",
-  "cat snacks",
+  "Michael Kors bags",
+  "summer dress",
+  "men's shoes",
+  "Polo Ralph Lauren",
+  "leather handbag",
 ];
 
 const searchClient = algoliasearch(

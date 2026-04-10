@@ -54,11 +54,11 @@ export function t(key: string): string {
 
 export function getExampleQueries(): string[] {
   return [
-    "Running shoes for men",
-    "Wireless headphones under 100",
-    "Best laptop for students",
-    "Summer dresses on sale",
-    "Gift ideas for her",
+    "Michael Kors bag",
+    "Summer dress",
+    "Men's leather shoes",
+    "Polo Ralph Lauren",
+    "Guess accessories",
   ];
 }
 
