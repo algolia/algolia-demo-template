@@ -1,59 +1,206 @@
 /**
- * ContentCard.tsx - Content Display Components for GenCat
+ * ProductCard.tsx - Product Display Components
  *
- * Government content card variants for search results display.
- * Replaces e-commerce ProductCard with content-focused cards showing
- * title, snippet, source site, topic badge, and external links.
+ * This file contains all product card variants used throughout the application.
+ * It's the single source of truth for product display logic, including:
+ * - Price calculations (fullSellingPrice, listPrice, discounts)
+ * - Personalization icons (sparkle badges for user preference matches)
+ * - Cart controls (add to cart, quantity management)
+ * - Discount badges (percentage off, savings amount)
  *
  * COMPONENTS EXPORTED:
- * 1. ProductCard (ContentCard) - Grid view for search results
- * 2. ProductListItem (ContentListItem) - List view for search results
- * 3. CompactProductCard - Compact grid for chat display
- * 4. CompactProductListItem - Compact list for autocomplete
+ *
+ * 1. ProductCard (Full Size - Grid View)
+ *    - Used in: app/page.tsx (SearchPage main grid)
+ *    - Display: Full product info with image, title, brand, description, category, price
+ *    - Features: Discount badge, personalization icon, add to cart button
+ *    - Props: { product: Product, showCartControls?: boolean }
+ *
+ * 2. ProductListItem (Full Size - List View)
+ *    - Used in: app/page.tsx (SearchPage list view)
+ *    - Display: Horizontal layout with image, details, and price column
+ *    - Features: Same as ProductCard but optimized for list layout
+ *    - Props: { product: Product, showCartControls?: boolean }
+ *
+ * 3. CompactProductCard (Compact - Grid View)
+ *    - Used in: AI agent chat interfaces (sidepanel, product page agent)
+ *    - Display: Narrow 160px cards for chat product recommendations
+ *    - Features: Smaller fonts, compact spacing, mini discount badges
+ *    - Props: { product: Product, showCartControls?: boolean }
+ *
+ * 4. CompactProductListItem (Compact - List View)
+ *    - Used in: components/navbar/search-autocomplete.tsx (autocomplete dropdown)
+ *    - Display: Horizontal compact layout for search results
+ *    - Features: Small image, truncated text, inline pricing with discounts
+ *    - Props: { product: Product, showCartControls?: boolean, className?: string }
+ *
+ * PRICING LOGIC:
+ * - Uses Product.price as the current/selling price
+ * - Uses Product.normalPrice as the original price (before discount)
+ * - Uses Product.discountPercentage if available, otherwise calculates: ((normalPrice - price) / normalPrice) x 100
+ * - Shows discount badge and strikethrough original price when hasDiscount = true
+ *
+ * PERSONALIZATION:
+ * - ProductBadges component shows sparkle badge when product matches user preferences
+ * - Tooltip displays matched facets (e.g., "Age: PUPPY (20/20)", "Brand: ROYAL CANIN (17/20)")
+ * - Uses extractProductFieldValues() to match product attributes against user.preferences
+ *
+ * CART INTEGRATION:
+ * - QuantityControls component handles add to cart functionality
+ * - Shows "+" button when quantity = 0
+ * - Shows "-/quantity/+" controls when item is in cart
+ * - Includes visual confirmation animation on add
+ * - Can be hidden via showCartControls={false} prop (defaults to true)
  */
 
-import React, { memo, useMemo } from "react";
+import React, { memo, useState, useMemo } from "react";
+import Link from "next/link";
+import Image from "next/image";
 import { Product } from "@/lib/types/product";
+import { useCart } from "@/components/cart/cart-context";
 import { useUser } from "@/components/user/user-context";
 import { useSelection } from "@/components/selection/selection-context";
+import { useSidepanel } from "@/components/sidepanel-agent-studio/context/sidepanel-context";
+import { useClickCollect } from "@/components/click-collect/click-collect-context";
+import { resolveStoreForProduct } from "@/lib/click-collect-utils";
+import { AvailabilityBadge } from "@/components/click-collect/availability-badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { PreferenceKey, extractProductFieldValues } from "@/lib/types/user";
 import { PREFERENCE_METADATA } from "@/lib/demo-config/users";
-import { Sparkles, FileText, FileArchive, ExternalLink, Globe } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Plus, Minus, Check, Sparkles } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
-import { formatDate } from "@/lib/utils/format";
-import { useLanguage } from "@/components/language/language-context";
+import { formatPrice } from "@/lib/utils/format";
+import { getPriceInfo, getPreferredCategory } from "@/lib/utils/product";
+import { ALGOLIA_CONFIG } from "@/lib/algolia-config";
+import { parseColorValue } from "@/components/filters-sidebar";
 
-// ============================================================================
-// Helpers
-// ============================================================================
+/**
+ * Image component with onError fallback — shows placeholder when image fails to load.
+ */
+function ProductImage({
+  src,
+  alt,
+  fill,
+  className,
+  sizes,
+  fallbackText = "No image",
+  fallbackClassName,
+}: {
+  src: string;
+  alt: string;
+  fill?: boolean;
+  className?: string;
+  sizes?: string;
+  fallbackText?: string;
+  fallbackClassName?: string;
+}) {
+  const [error, setError] = useState(false);
 
-function getMimeIcon(mimeType: string) {
-  if (mimeType?.includes("pdf")) return FileArchive;
-  return FileText;
+  if (error) {
+    return (
+      <div className={cn("w-full h-full flex items-center justify-center text-muted-foreground text-xs bg-muted", fallbackClassName)}>
+        {fallbackText}
+      </div>
+    );
+  }
+
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      fill={fill}
+      className={className}
+      sizes={sizes}
+      onError={() => setError(true)}
+    />
+  );
 }
 
-function getHighlightedTitle(page: Product): string {
-  const hl = page._highlightResult as any;
-  const raw = hl?.title?.value || page.title || "";
-  // Ensure <em> tags aren't double-escaped
-  return raw.replace(/&lt;em&gt;/g, "<em>").replace(/&lt;\/em&gt;/g, "</em>");
-}
-
-function getHighlightedSnippet(page: Product): string {
-  const sn = page._snippetResult as any;
-  const raw = sn?.snippet?.value || sn?.body?.value || page.snippet || "";
-  return raw.replace(/&lt;em&gt;/g, "<em>").replace(/&lt;\/em&gt;/g, "</em>");
+function getHighestCategoryLevel(
+  hierarchicalCategories: Product["hierarchical_categories"]
+): string | null {
+  if (hierarchicalCategories?.lvl2) return hierarchicalCategories.lvl2;
+  if (hierarchicalCategories?.lvl1) return hierarchicalCategories.lvl1;
+  return hierarchicalCategories?.lvl0 || null;
 }
 
 // ============================================================================
-// Personalization Badge
+// Smart Group Badge Component
+// ============================================================================
+
+/**
+ * Extracts the injectedItemKey from the Composition API's _rankingInfo
+ * This indicates the item was injected by a smart group
+ */
+function getSmartGroupKey(product: Product): string | null {
+  const rankingInfo = (product as Product & { _rankingInfo?: {
+    composed?: Record<string, { injectedItemKey?: string }>;
+  } })._rankingInfo;
+
+  return rankingInfo?.composed?.[ALGOLIA_CONFIG.COMPOSITION_ID]?.injectedItemKey || null;
+}
+
+interface SmartGroupBadgeProps {
+  product: Product;
+  /** If set, shows a "Sponsored" badge with this label instead of the raw key */
+  sponsoredLabel?: string;
+  className?: string;
+}
+
+/**
+ * Displays a badge for products injected by smart groups.
+ * - If sponsoredLabel is provided: blue "Sponsored" badge (retail media inline placement)
+ * - If legacy injectedItemKey exists: amber badge with raw key (backward compatible)
+ * - Otherwise: nothing
+ */
+function SmartGroupBadge({ product, sponsoredLabel, className = "" }: SmartGroupBadgeProps) {
+  if (sponsoredLabel) {
+    return (
+      <span
+        className={cn(
+          "absolute top-0 left-0 z-10 text-[10px] font-medium bg-blue-50 text-blue-700 px-2 py-0.5 rounded-br-lg border-r-2 border-b-2 border-blue-300",
+          className
+        )}
+      >
+        Sponsored
+      </span>
+    );
+  }
+
+  const smartGroupKey = getSmartGroupKey(product);
+  if (!smartGroupKey) return null;
+
+  return (
+    <span
+      className={cn(
+        "absolute top-0 left-0 z-10 text-xs font-medium bg-amber-100 text-amber-800 px-2 py-0.5 rounded-br-lg border-r-2 border-b-2 border-amber-400 capitalize",
+        className
+      )}
+    >
+      {smartGroupKey}
+    </span>
+  );
+}
+
+// ============================================================================
+// Product Badges Component (Personalization)
 // ============================================================================
 
 interface PersonalizationMatch {
@@ -62,82 +209,325 @@ interface PersonalizationMatch {
   score: number;
 }
 
-function PersonalizationBadge({ page, compact = false }: { page: Product; compact?: boolean }) {
-  const { currentUser } = useUser();
-  const { t } = useLanguage();
+interface ProductBadgesProps {
+  product: Product;
+  compact?: boolean;
+}
 
-  const matches = useMemo(() => {
+function ProductBadges({ product, compact = false }: ProductBadgesProps) {
+  const { currentUser } = useUser();
+
+  // Calculate personalization matches
+  const personalizationMatches = useMemo(() => {
     if (!currentUser?.preferences) return [];
-    const found: PersonalizationMatch[] = [];
-    (Object.keys(currentUser.preferences) as PreferenceKey[]).forEach((key) => {
-      const prefs = currentUser.preferences[key];
-      if (!prefs) return;
-      const values = extractProductFieldValues(page, key);
-      values.forEach((value) => {
-        const score = prefs[value];
+
+    const foundMatches: PersonalizationMatch[] = [];
+
+    (Object.keys(currentUser.preferences) as PreferenceKey[]).forEach((preferenceKey) => {
+      const userPrefs = currentUser.preferences[preferenceKey];
+      if (!userPrefs || Object.keys(userPrefs).length === 0) return;
+
+      const productValues = extractProductFieldValues(product, preferenceKey);
+
+      productValues.forEach((value) => {
+        const score = userPrefs[value];
         if (score !== undefined) {
-          found.push({
-            facetTitle: PREFERENCE_METADATA[key]?.title || key,
+          const metadata = PREFERENCE_METADATA[preferenceKey];
+          foundMatches.push({
+            facetTitle: metadata?.title || preferenceKey,
             value,
             score,
           });
         }
       });
     });
-    return found;
-  }, [currentUser, page]);
 
-  if (matches.length === 0) return null;
+    return foundMatches;
+  }, [currentUser, product]);
+
+  const hasPersonalization = personalizationMatches.length > 0;
+
+  // Don't render anything if no badges to show
+  if (!hasPersonalization) return null;
+
+  const badgeLabel = "Recommended for you";
 
   return (
-    <TooltipProvider>
-      <Tooltip delayDuration={200}>
-        <TooltipTrigger asChild>
-          <div className={cn(
-            "flex items-center justify-center rounded-full bg-purple-100 text-purple-700",
-            compact ? "h-5 w-5" : "h-6 w-6"
-          )}>
-            <Sparkles className={compact ? "h-3 w-3" : "h-4 w-4"} />
-          </div>
-        </TooltipTrigger>
-        <TooltipContent side="right" className="max-w-xs">
-          <p className="font-semibold mb-1 text-sm">{t("card.personalizedForYou")}</p>
-          {matches.map((m, i) => (
-            <div key={i} className="text-xs">
-              <span className="text-muted-foreground">{m.facetTitle}:</span>{" "}
-              <span className="font-medium">{m.value}</span>
-              <span className="text-muted-foreground ml-1">({m.score}/20)</span>
+    <div
+      className="absolute bottom-2 left-2 z-10 flex items-center gap-1"
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      }}
+    >
+      <TooltipProvider>
+        <Tooltip delayDuration={200}>
+          <TooltipTrigger asChild>
+            {compact ? (
+              <div className="flex items-center justify-center rounded-full bg-purple-100 text-purple-700 h-5 w-5">
+                <Sparkles className="h-3 w-3" />
+              </div>
+            ) : (
+              <div className="flex items-center gap-1 rounded-full bg-purple-100 text-purple-700 px-2 py-0.5 cursor-pointer">
+                <Sparkles className="h-3 w-3" />
+                <span className="text-xs font-medium">{badgeLabel}</span>
+              </div>
+            )}
+          </TooltipTrigger>
+          <TooltipContent side="right" className="max-w-xs">
+            <div className="text-sm">
+              <p className="font-semibold mb-2">Personalized for you</p>
+              <div className="space-y-1">
+                {personalizationMatches.map((match, index) => (
+                  <div key={index} className="text-xs">
+                    <span className="text-muted-foreground">{match.facetTitle}:</span>{" "}
+                    <span className="font-medium">{match.value}</span>
+                    <span className="text-muted-foreground ml-1">({match.score}/20)</span>
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </div>
   );
 }
 
 // ============================================================================
-// Selection Checkbox
+// Quantity Controls Component
 // ============================================================================
 
-function SelectionCheckbox({ page }: { page: Product }) {
+interface QuantityControlsProps {
+  productId: string;
+  productName: string;
+  price: number;
+  originalPrice?: number;
+  imageUrl: string;
+  brand?: string;
+  category?: string;
+  compact?: boolean;
+  availableInStores?: Array<{ inStock: boolean; objectID: string }>;
+}
+
+function QuantityControls({
+  productId,
+  productName,
+  price,
+  originalPrice,
+  imageUrl,
+  brand,
+  category,
+  compact = false,
+  availableInStores,
+}: QuantityControlsProps) {
+  const { items, addItem, updateQuantity, primaryCartStore } = useCart();
+  const { currentShop, nearbyShops } = useClickCollect();
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [pendingDifferentStore, setPendingDifferentStore] = useState<{
+    storeId: string;
+    storeName: string;
+    cartStoreName: string;
+  } | null>(null);
+
+  const cartItem = items.find((item) => item.id === productId);
+  const quantity = cartItem?.quantity || 0;
+
+  const doAdd = (storeId?: string, storeName?: string) => {
+    addItem({
+      id: productId,
+      name: productName,
+      price,
+      originalPrice,
+      image: imageUrl,
+      brand,
+      category,
+      ...(storeId && storeName && { storeId, storeName }),
+    });
+    setShowConfirmation(true);
+    setTimeout(() => setShowConfirmation(false), 1500);
+  };
+
+  const handleAdd = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const resolution = resolveStoreForProduct(
+      availableInStores,
+      currentShop,
+      nearbyShops,
+      primaryCartStore?.storeId,
+      primaryCartStore?.storeName,
+    );
+
+    if (resolution.type === "resolved") {
+      doAdd(resolution.storeId, resolution.storeName);
+    } else if (resolution.type === "different-store") {
+      setPendingDifferentStore({
+        storeId: resolution.storeId,
+        storeName: resolution.storeName,
+        cartStoreName: resolution.cartStoreName,
+      });
+    } else {
+      doAdd();
+    }
+  };
+
+  const handleIncrease = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    updateQuantity(productId, quantity + 1);
+  };
+
+  const handleDecrease = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    updateQuantity(productId, quantity - 1);
+  };
+
+  const buttonSize = compact ? "h-6 w-6" : "h-7 w-7";
+  const iconSize = compact ? "h-3 w-3" : "h-4 w-4";
+
+  return (
+    <>
+      {quantity === 0 ? (
+        <Button
+          onClick={handleAdd}
+          size="icon-sm"
+          variant="default"
+          className={`absolute top-2 right-2 z-10 transition-all ${buttonSize} ${
+            showConfirmation ? "bg-green-600 hover:bg-green-600" : ""
+          }`}
+          aria-label="Add to cart"
+        >
+          {showConfirmation ? (
+            <Check className={iconSize} />
+          ) : (
+            <Plus className={iconSize} />
+          )}
+        </Button>
+      ) : (
+        <div
+          className="absolute top-2 right-2 z-10 flex items-center gap-1 bg-background border rounded-md shadow-sm"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+        >
+          <Button
+            onClick={handleDecrease}
+            size="icon-sm"
+            variant="ghost"
+            className={buttonSize}
+            aria-label="Decrease quantity"
+          >
+            <Minus className="h-3 w-3" />
+          </Button>
+          <span
+            className={`text-center font-medium ${compact ? "w-5 text-xs" : "w-6 text-sm"}`}
+          >
+            {quantity}
+          </span>
+          <Button
+            onClick={handleIncrease}
+            size="icon-sm"
+            variant="ghost"
+            className={buttonSize}
+            aria-label="Increase quantity"
+          >
+            <Plus className="h-3 w-3" />
+          </Button>
+        </div>
+      )}
+      <AlertDialog
+        open={!!pendingDifferentStore}
+        onOpenChange={(open) => !open && setPendingDifferentStore(null)}
+      >
+        <AlertDialogContent
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+        >
+          <AlertDialogHeader>
+            <AlertDialogTitle>Different store</AlertDialogTitle>
+            <AlertDialogDescription>
+              This product is not available at{" "}
+              {pendingDifferentStore?.cartStoreName}. Would you like to add it from{" "}
+              {pendingDifferentStore?.storeName}?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.stopPropagation();
+                if (pendingDifferentStore) {
+                  doAdd(
+                    pendingDifferentStore.storeId,
+                    pendingDifferentStore.storeName,
+                  );
+                }
+                setPendingDifferentStore(null);
+              }}
+            >
+              Add
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  );
+}
+
+// ============================================================================
+// Selection Checkbox Component
+// ============================================================================
+
+interface SelectionCheckboxProps {
+  product: Product;
+  compact?: boolean;
+}
+
+function SelectionCheckbox({ product, compact = false }: SelectionCheckboxProps) {
   const { isSelected, toggleSelection } = useSelection();
-  const selected = isSelected(page.objectID);
+  const { isSidepanelOpen } = useSidepanel();
+  const productId = product.objectID;
+  const selected = isSelected(productId);
+
+  // Only show checkbox when the AI agent sidepanel is actually open
+  if (!isSidepanelOpen) return null;
 
   const handleToggle = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     toggleSelection({
-      objectID: page.objectID,
-      name: page.title || "Untitled",
+      objectID: productId,
+      name: product.name || "Untitled Product",
+      brand: product.brand,
+      price: product.price?.value,
+      imageUrl: product.primary_image,
     });
   };
 
+  const size = compact ? "h-4 w-4" : "h-5 w-5";
+
   return (
-    <div className="absolute top-2 left-2 z-10" onClick={handleToggle}>
+    <div
+      className="absolute top-2 left-2 z-10"
+      onClick={handleToggle}
+    >
       <Checkbox
         checked={selected}
         className={cn(
-          "h-5 w-5 bg-background/90 backdrop-blur-sm border-2",
+          size,
+          "bg-background/90 backdrop-blur-sm border-2",
           selected && "border-primary"
         )}
       />
@@ -146,35 +536,65 @@ function SelectionCheckbox({ page }: { page: Product }) {
 }
 
 // ============================================================================
-// Topic & Site Badges
+// Color Swatches Component
 // ============================================================================
 
-function ContentBadges({ page, compact = false }: { page: Product; compact?: boolean }) {
-  const textSize = compact ? "text-[10px]" : "text-xs";
+function ColorSwatches({ product, size = "w-4 h-4" }: { product: Product; size?: string }) {
+  const colors = useMemo(() => {
+    const seen = new Set<string>();
+    const result: { name: string; hex: string }[] = [];
+
+    // Current product color (if available)
+    const p = product as any;
+    if (p.color?.filter_group) {
+      const { name, hex } = parseColorValue(p.color.filter_group);
+      if (hex) {
+        seen.add(hex);
+        result.push({ name, hex });
+      }
+    }
+
+    // Variant colors (if available)
+    if (p.variants) {
+      for (const variant of p.variants) {
+        if (variant.color?.filter_group) {
+          const { name, hex } = parseColorValue(variant.color.filter_group);
+          if (hex && !seen.has(hex)) {
+            seen.add(hex);
+            result.push({ name, hex });
+          }
+        }
+      }
+    }
+
+    return result;
+  }, [product]);
+
+  if (colors.length === 0) return null;
+
   return (
-    <div className="flex flex-wrap items-center gap-1.5">
-      {page.ambitoLabel && (
-        <span className={cn("bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium", textSize)}>
-          {page.ambitoLabel}
-        </span>
-      )}
-      {page.siteLabel && (
-        <span className={cn("bg-muted text-muted-foreground px-2 py-0.5 rounded-full flex items-center gap-1", textSize)}>
-          <Globe className="h-3 w-3" />
-          {page.siteLabel}
-        </span>
-      )}
-      {page.mimeType?.includes("pdf") && (
-        <span className={cn("bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-medium", textSize)}>
-          PDF
-        </span>
-      )}
-    </div>
+    <TooltipProvider>
+      <div className="flex items-center gap-1">
+        {colors.map(({ name, hex }) => (
+          <Tooltip key={hex} delayDuration={200}>
+            <TooltipTrigger asChild>
+              <span
+                className={cn("rounded-full border border-border shrink-0", size)}
+                style={{ backgroundColor: hex }}
+              />
+            </TooltipTrigger>
+            <TooltipContent side="top" className="text-xs capitalize">
+              {name}
+            </TooltipContent>
+          </Tooltip>
+        ))}
+      </div>
+    </TooltipProvider>
   );
 }
 
 // ============================================================================
-// ContentCard (Grid View) — exported as ProductCard for compatibility
+// Product Card Component (Full Size)
 // ============================================================================
 
 interface ProductCardProps {
@@ -182,62 +602,122 @@ interface ProductCardProps {
   showCartControls?: boolean;
   showBadges?: boolean;
   selectable?: boolean;
+  /** If set, shows "Sponsored" badge for inline retail media placement */
+  sponsoredLabel?: string;
 }
 
-export function ProductCard({ product: page, showBadges = true, selectable = false }: ProductCardProps) {
+export function ProductCard({ product, showCartControls = true, showBadges = true, selectable = false, sponsoredLabel }: ProductCardProps) {
   const { isSelected } = useSelection();
-  const selected = selectable && isSelected(page.objectID);
-  const MimeIcon = getMimeIcon(page.mimeType);
+  const { currentShop, nearbyShops, setShop } = useClickCollect();
+  const { primaryCartStore } = useCart();
+  const imageUrl = product.primary_image || "";
+  const productName = product.name || "Untitled Product";
+  const productId = product.objectID;
 
-  if (!page.objectID) return null;
+  if (!productId) {
+    return null;
+  }
+
+  const highestCategory = getHighestCategoryLevel(product.hierarchical_categories);
+  const { price, originalPrice, hasDiscount, discountPercentage } = getPriceInfo(product);
+  const category = getPreferredCategory(product);
+
+  const smartGroupKey = getSmartGroupKey(product);
+  const selected = selectable && isSelected(productId);
 
   return (
-    <a
-      href={page.url}
-      target="_blank"
-      rel="noopener noreferrer"
+    <Link
+      href={`/products/${productId}`}
       className={cn(
-        "border rounded-lg overflow-hidden hover:shadow-lg transition-shadow cursor-pointer block relative group",
+        "border rounded-lg overflow-hidden hover:shadow-lg transition-shadow cursor-pointer block relative",
+        sponsoredLabel && "border-2 border-blue-300",
+        !sponsoredLabel && smartGroupKey && "border-2 border-amber-400",
         selected && "border-2 border-primary"
       )}
     >
-      {selectable && <SelectionCheckbox page={page} />}
-
-      {/* Top bar with icon and personalization */}
-      <div className="bg-muted/50 px-4 py-3 flex items-center gap-3 border-b">
-        <MimeIcon className="h-5 w-5 text-muted-foreground shrink-0" />
-        <span className="text-xs text-muted-foreground truncate flex-1">
-          {page.siteDomain}
-        </span>
-        {showBadges && <PersonalizationBadge page={page} />}
-        <ExternalLink className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
-      </div>
-
-      <div className="p-4">
-        <h3
-          className="font-semibold text-base mb-2 line-clamp-2 group-hover:text-primary transition-colors"
-          dangerouslySetInnerHTML={{ __html: getHighlightedTitle(page) }}
+      <SmartGroupBadge product={product} sponsoredLabel={sponsoredLabel} />
+      {selectable && <SelectionCheckbox product={product} />}
+      {showBadges && <ProductBadges product={product} />}
+      {showCartControls && (
+        <QuantityControls
+          productId={productId}
+          productName={productName}
+          price={price}
+          originalPrice={hasDiscount ? originalPrice : undefined}
+          imageUrl={imageUrl}
+          brand={product.brand}
+          category={category}
+          availableInStores={product.availableInStores}
         />
+      )}
 
-        <p
-          className="text-sm text-muted-foreground mb-3 line-clamp-3"
-          dangerouslySetInnerHTML={{ __html: getHighlightedSnippet(page) }}
-        />
-
-        <ContentBadges page={page} />
-
-        {page.lastIndexed > 0 && (
-          <p className="text-xs text-muted-foreground mt-2">
-            {formatDate(page.lastIndexed)}
-          </p>
+      <div className="relative w-full h-56 bg-gray-50">
+        {imageUrl ? (
+          <ProductImage
+            src={imageUrl}
+            alt={productName}
+            fill
+            className="object-contain"
+            sizes="(max-width: 768px) 50vw, 25vw"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs bg-muted">
+            No image
+          </div>
         )}
       </div>
-    </a>
+      <div className="p-4">
+        <h3 className="font-semibold text-lg mb-2">{productName}</h3>
+        {product.brand && <p className="text-sm text-primary mb-2">{product.brand}</p>}
+
+        {product.description && (
+          <p className="text-sm text-gray-700 mb-3 line-clamp-2">
+            {product.description}
+          </p>
+        )}
+
+        {highestCategory && (
+          <div className="flex flex-wrap gap-1 mb-3">
+            <span className="text-xs bg-gray-100 px-2 py-1 rounded">
+              {highestCategory}
+            </span>
+          </div>
+        )}
+
+        <ColorSwatches product={product} />
+
+        {price > 0 && (
+          <div className="flex items-center gap-2 mt-2">
+            <p className="text-xl font-bold text-foreground">
+              {formatPrice(price)}
+            </p>
+            {hasDiscount && (
+              <>
+                <p className="text-sm text-muted-foreground line-through">
+                  {formatPrice(originalPrice)}
+                </p>
+                <span className="text-xs font-semibold bg-red-500 text-white px-2 py-0.5 rounded">
+                  -{discountPercentage}%
+                </span>
+              </>
+            )}
+          </div>
+        )}
+        <AvailabilityBadge
+          product={product}
+          currentShop={currentShop}
+          nearbyShops={nearbyShops}
+          onShopSelect={setShop}
+          primaryCartStoreId={primaryCartStore?.storeId}
+          primaryCartStoreName={primaryCartStore?.storeName}
+        />
+      </div>
+    </Link>
   );
 }
 
 // ============================================================================
-// ContentListItem — exported as ProductListItem for compatibility
+// Product List Item Component (Full Size)
 // ============================================================================
 
 interface ProductListItemProps {
@@ -245,39 +725,128 @@ interface ProductListItemProps {
   showCartControls?: boolean;
   showBadges?: boolean;
   selectable?: boolean;
+  sponsoredLabel?: string;
 }
 
-export function ProductListItem({ product: page, showBadges = true, selectable = false }: ProductListItemProps) {
-  if (!page.objectID) return null;
+export function ProductListItem({ product, showCartControls = true, showBadges = true, selectable = false, sponsoredLabel }: ProductListItemProps) {
+  const { isSelected } = useSelection();
+  const { currentShop, nearbyShops, setShop } = useClickCollect();
+  const { primaryCartStore } = useCart();
+  const imageUrl = product.primary_image || "";
+  const productName = product.name || "Untitled Product";
+  const productLink = `/products/${product.objectID}`;
+  const productId = product.objectID;
+  const { price, originalPrice, hasDiscount, discountPercentage } = getPriceInfo(product);
+  const category = getPreferredCategory(product);
+
+  const smartGroupKey = getSmartGroupKey(product);
+  const selected = selectable && isSelected(productId);
+
+  if (!productId) {
+    return null;
+  }
 
   return (
-    <div className="py-6 group">
-      <a
-        href={page.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="block"
-      >
-        <h3 className="text-lg font-medium text-foreground underline underline-offset-2 decoration-1 group-hover:text-primary transition-colors inline">
-          <span dangerouslySetInnerHTML={{ __html: getHighlightedTitle(page) }} />
+    <Link
+      href={productLink}
+      className={cn(
+        "group flex gap-4 border border-border rounded-lg overflow-hidden bg-background hover:shadow-lg transition-all duration-300 p-4 relative",
+        sponsoredLabel && "border-2 border-blue-300",
+        !sponsoredLabel && smartGroupKey && "border-2 border-amber-400",
+        selected && "border-2 border-primary"
+      )}
+    >
+      <SmartGroupBadge product={product} sponsoredLabel={sponsoredLabel} />
+      {selectable && <SelectionCheckbox product={product} />}
+      {showBadges && <ProductBadges product={product} />}
+      {showCartControls && (
+        <QuantityControls
+          productId={productId}
+          productName={productName}
+          price={price}
+          originalPrice={hasDiscount ? originalPrice : undefined}
+          imageUrl={imageUrl}
+          brand={product.brand}
+          category={category}
+          availableInStores={product.availableInStores}
+        />
+      )}
+
+      <div className="relative w-32 h-32 shrink-0 bg-muted rounded-md overflow-hidden">
+        {imageUrl ? (
+          <ProductImage
+            src={imageUrl}
+            alt={productName}
+            fill
+            className="object-contain p-2"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">
+            No image
+          </div>
+        )}
+      </div>
+      <div className="flex-1 min-w-0">
+        {product.brand && (
+          <p className="text-xs text-primary font-medium mb-1 uppercase tracking-wide">
+            {product.brand}
+          </p>
+        )}
+        <h3 className="font-medium text-foreground line-clamp-2 mb-2 group-hover:text-primary transition-colors">
+          {productName}
         </h3>
-        <ExternalLink className="inline-block h-4 w-4 text-muted-foreground ml-2 -mt-1 align-middle" />
-      </a>
-
-      <p className="text-sm text-muted-foreground mt-1">
-        {page.siteDomain}
-      </p>
-
-      <p
-        className="text-sm text-foreground/80 mt-2 line-clamp-3"
-        dangerouslySetInnerHTML={{ __html: getHighlightedSnippet(page) }}
-      />
-    </div>
+        {product.description && (
+          <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
+            {product.description}
+          </p>
+        )}
+        {product.list_categories && product.list_categories.length > 0 && (
+          <div className="flex flex-wrap gap-1">
+            {product.list_categories.map((cat: string, idx: number) => (
+              <span
+                key={idx}
+                className="text-xs bg-muted px-2 py-0.5 rounded text-muted-foreground"
+              >
+                {cat}
+              </span>
+            ))}
+          </div>
+        )}
+        <div className="mt-2">
+          <ColorSwatches product={product} />
+        </div>
+      </div>
+      <div className="shrink-0 text-right">
+        {price > 0 && (
+          <div className="flex flex-col items-end gap-1">
+            <p className="text-xl font-bold text-foreground">{formatPrice(price)}</p>
+            {hasDiscount && (
+              <>
+                <p className="text-sm text-muted-foreground line-through">
+                  {formatPrice(originalPrice)}
+                </p>
+                <span className="text-xs font-semibold bg-red-500 text-white px-2 py-0.5 rounded">
+                  -{discountPercentage}%
+                </span>
+              </>
+            )}
+          </div>
+        )}
+        <AvailabilityBadge
+          product={product}
+          currentShop={currentShop}
+          nearbyShops={nearbyShops}
+          onShopSelect={setShop}
+          primaryCartStoreId={primaryCartStore?.storeId}
+          primaryCartStoreName={primaryCartStore?.storeName}
+        />
+      </div>
+    </Link>
   );
 }
 
 // ============================================================================
-// Compact Content Card (for chat display)
+// Compact Product Card Component (for chat display)
 // ============================================================================
 
 interface CompactProductCardProps {
@@ -287,32 +856,95 @@ interface CompactProductCardProps {
 }
 
 export const CompactProductCard = memo(function CompactProductCard({
-  product: page,
+  product,
+  showCartControls = true,
+  showBadges = true,
 }: CompactProductCardProps) {
-  if (!page.objectID) return null;
+  const imageUrl = product.primary_image || "";
+  const productName = product.name || "Product";
+  const productId = product.objectID;
+  const { price, originalPrice, hasDiscount, discountPercentage } = getPriceInfo(product);
+  const category = getPreferredCategory(product);
+
+  if (!productId) {
+    return null;
+  }
 
   return (
-    <a
-      href={page.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="group block border border-border rounded-lg overflow-hidden bg-background hover:shadow-md hover:border-primary/50 transition-all duration-200 w-40"
+    <Link
+      href={`/products/${productId}`}
+      className="group block border border-border rounded-lg overflow-hidden bg-background hover:shadow-md hover:border-primary/50 transition-all duration-200 relative w-40"
     >
-      <div className="p-2">
-        <h4 className="text-xs font-medium text-foreground line-clamp-2 group-hover:text-primary transition-colors leading-tight mb-1">
-          {page.title}
-        </h4>
-        <p className="text-[10px] text-muted-foreground line-clamp-2 mb-1">
-          {page.snippet}
-        </p>
-        <ContentBadges page={page} compact />
+      {showBadges && <ProductBadges product={product} compact />}
+      {showCartControls && (
+        <QuantityControls
+          productId={productId}
+          productName={productName}
+          price={price}
+          originalPrice={hasDiscount ? originalPrice : undefined}
+          imageUrl={imageUrl}
+          brand={product.brand}
+          category={category}
+          compact
+          availableInStores={product.availableInStores}
+        />
+      )}
+
+      <div className="relative w-full h-28 bg-muted">
+        {imageUrl ? (
+          <ProductImage
+            src={imageUrl}
+            alt={productName}
+            fill
+            className="object-contain p-2"
+            sizes="160px"
+            fallbackText="No img"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">
+            No img
+          </div>
+        )}
       </div>
-    </a>
+
+      <div className="p-2">
+        {product.brand && (
+          <p className="text-[10px] text-primary font-medium uppercase tracking-wide mb-0.5 truncate">
+            {product.brand}
+          </p>
+        )}
+        <h4 className="text-xs font-medium text-foreground line-clamp-2 group-hover:text-primary transition-colors leading-tight">
+          {productName}
+        </h4>
+        <div className="mt-1">
+          <ColorSwatches product={product} size="w-3 h-3" />
+        </div>
+        {price > 0 && (
+          <div className="mt-1">
+            <div className="flex items-center gap-1">
+              <p className="text-sm font-bold text-foreground">
+                {formatPrice(price)}
+              </p>
+              {hasDiscount && (
+                <span className="text-[9px] font-semibold bg-red-500 text-white px-1 py-0.5 rounded">
+                  -{discountPercentage}%
+                </span>
+              )}
+            </div>
+            {hasDiscount && (
+              <p className="text-[10px] text-muted-foreground line-through">
+                {formatPrice(originalPrice)}
+              </p>
+            )}
+          </div>
+        )}
+      </div>
+    </Link>
   );
 });
 
 // ============================================================================
-// Compact Content List Item (for autocomplete/chat)
+// Compact Product List Item Component (for chat display)
 // ============================================================================
 
 interface CompactProductListItemProps {
@@ -323,34 +955,89 @@ interface CompactProductListItemProps {
 }
 
 export const CompactProductListItem = memo(function CompactProductListItem({
-  product: page,
+  product,
+  showCartControls = true,
+  showBadges = true,
   className = "",
 }: CompactProductListItemProps) {
-  if (!page.objectID) return null;
+  const imageUrl = product.primary_image || "";
+  const productName = product.name || "Product";
+  const productId = product.objectID;
+  const { price, originalPrice, hasDiscount, discountPercentage } = getPriceInfo(product);
+  const category = getPreferredCategory(product);
 
-  const MimeIcon = getMimeIcon(page.mimeType);
+  if (!productId) {
+    return null;
+  }
 
   return (
-    <a
-      href={page.url}
-      target="_blank"
-      rel="noopener noreferrer"
+    <Link
+      href={`/products/${productId}`}
       className={cn(
-        "group flex items-center gap-3 p-3 rounded-lg border border-border bg-background hover:bg-muted/50 hover:border-primary/50 transition-all duration-200",
+        "group flex items-center gap-3 p-3 rounded-lg border border-border bg-background hover:bg-muted/50 hover:border-primary/50 transition-all duration-200 relative",
         className
       )}
     >
-      <div className="w-10 h-10 shrink-0 rounded-md bg-muted flex items-center justify-center">
-        <MimeIcon className="h-5 w-5 text-muted-foreground" />
-      </div>
+      {showBadges && <ProductBadges product={product} compact />}
+      {showCartControls && (
+        <QuantityControls
+          productId={productId}
+          productName={productName}
+          price={price}
+          originalPrice={hasDiscount ? originalPrice : undefined}
+          imageUrl={imageUrl}
+          brand={product.brand}
+          category={category}
+          compact
+          availableInStores={product.availableInStores}
+        />
+      )}
+
+      {imageUrl ? (
+        <div className="w-16 h-16 shrink-0 rounded-md overflow-hidden bg-muted relative">
+          <ProductImage
+            src={imageUrl}
+            alt={productName}
+            fill
+            className="object-contain p-0.5"
+            sizes="64px"
+            fallbackText="No img"
+          />
+        </div>
+      ) : (
+        <div className="w-16 h-16 shrink-0 rounded-md bg-muted flex items-center justify-center text-muted-foreground text-xs">
+          No img
+        </div>
+      )}
       <div className="flex-1 min-w-0">
-        <h4 className="text-sm font-medium text-foreground line-clamp-1 group-hover:text-primary transition-colors">
-          {page.title}
+        {product.brand && (
+          <p className="text-xs text-primary font-medium uppercase tracking-wide mb-0.5">
+            {product.brand}
+          </p>
+        )}
+        <h4 className="text-sm font-medium text-foreground line-clamp-2 group-hover:text-primary transition-colors">
+          {productName}
         </h4>
-        <p className="text-xs text-muted-foreground truncate">
-          {page.siteLabel || page.siteDomain}
-        </p>
+        {price > 0 && (
+          <div className="mt-1">
+            <div className="flex items-center gap-1">
+              <p className="text-sm font-bold text-foreground">
+                {formatPrice(price)}
+              </p>
+              {hasDiscount && (
+                <span className="text-[9px] font-semibold bg-red-500 text-white px-1 py-0.5 rounded">
+                  -{discountPercentage}%
+                </span>
+              )}
+            </div>
+            {hasDiscount && (
+              <p className="text-xs text-muted-foreground line-through">
+                {formatPrice(originalPrice)}
+              </p>
+            )}
+          </div>
+        )}
       </div>
-    </a>
+    </Link>
   );
 });

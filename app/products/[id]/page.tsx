@@ -2,12 +2,13 @@ import { algoliasearch } from "algoliasearch";
 import { redirect } from "next/navigation";
 import { Product } from "@/lib/types/product";
 import { ALGOLIA_CONFIG } from "@/lib/algolia-config";
+import ProductPage from "@/components/ProductPage";
 
 interface ProductPageParams {
   params: Promise<{ id: string }>;
 }
 
-async function getPage(objectID: string): Promise<Product | null> {
+async function getProduct(objectID: string): Promise<Product | null> {
   if (!ALGOLIA_CONFIG.APP_ID || !ALGOLIA_CONFIG.SEARCH_API_KEY || !objectID) {
     return null;
   }
@@ -26,12 +27,11 @@ async function getPage(objectID: string): Promise<Product | null> {
 
 export default async function ProductDetailPage({ params }: ProductPageParams) {
   const { id } = await params;
-  const page = await getPage(id);
+  const product = await getProduct(id);
 
-  if (page?.url) {
-    redirect(page.url);
+  if (!product) {
+    redirect("/");
   }
 
-  // Fallback: redirect to home
-  redirect("/");
+  return <ProductPage product={product} />;
 }
