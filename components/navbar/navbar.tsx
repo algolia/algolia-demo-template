@@ -79,7 +79,16 @@ export function NavBar() {
 
         {/* Mobile layout — 2 rows */}
         <div className="md:hidden flex flex-col gap-2 w-full">
-          {/* Row 1: Logo + Search + AI */}
+          {/* Row 1: Categories + User/Cart */}
+          <div className="flex items-center justify-between w-full">
+            <CategoriesSheet />
+            <div className="flex items-center gap-1">
+              <UserSelector />
+              <ClickCollectSelector />
+              <CartSheet />
+            </div>
+          </div>
+          {/* Row 2: Logo + Search + AI */}
           <div className="flex items-center gap-2 w-full">
             <Link
               href="/"
@@ -105,15 +114,6 @@ export function NavBar() {
                 </span>
               )}
             </Button>
-          </div>
-          {/* Row 2: Categories + User/Cart */}
-          <div className="flex items-center justify-between w-full">
-            <CategoriesSheet />
-            <div className="flex items-center gap-1">
-              <UserSelector />
-              <ClickCollectSelector />
-              <CartSheet />
-            </div>
           </div>
         </div>
       </div>
