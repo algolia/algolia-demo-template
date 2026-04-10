@@ -233,10 +233,10 @@ export async function hydrateContext(
     if (product) {
       const productSnapshot: ContextSnapshot['product'] = {
         objectID: product.objectID || objectID,
-        name: product.title,
-        brand: product.siteLabel,
-        price: undefined,
-        description: product.snippet?.slice(0, 200),
+        name: product.name,
+        brand: product.brand,
+        price: product.price?.value ? `${product.price.value}` : undefined,
+        description: product.description?.slice(0, 200),
       };
 
       // Cache the result

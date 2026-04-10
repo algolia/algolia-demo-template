@@ -122,6 +122,19 @@ export function useAgentStudio(config: AgentStudioConfig) {
             explanation: input.explanation,
           },
         });
+      } else if (toolCall.toolName === 'showArticles') {
+        const input = toolCall.input as { articles: Array<{ title: string; summary: string; url?: string; category?: string }>; title?: string };
+
+        chat.addToolOutput({
+          tool: 'showArticles',
+          toolCallId: toolCall.toolCallId,
+          state: 'output-available',
+          output: {
+            status: 'Successfully showed articles',
+            articles: input.articles,
+            title: input.title,
+          },
+        });
       }
     },
   });
@@ -157,5 +170,6 @@ export function useAgentStudio(config: AgentStudioConfig) {
     isGenerating,
     resetConversation,
     suggestions: extractedSuggestions,
+    stop: chat.stop,
   };
 }
