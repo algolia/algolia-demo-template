@@ -33,15 +33,11 @@ export const users: User[] = [
     },
     segments: ["senior_owner", "cane_grande"],
     preferences: {
-      categoryPageId: {
-        "Cane > Cibo Secco": 18,
-        "Cane > Snack": 15,
-        "Cane > Giochi": 16,
-      },
+      categoryPageId: {},
       "età.value": { ANZIANO: 10 },
       "taglia.value": { GRANDE: 18 },
       age_bucket: { "8+": 20, "7+": 18 },
-      brand: { "ROYAL CANIN": 8 },
+      brand: {},
       "funzione.value": { DIGESTIONE: 15, "SENSIBILITA'": 12 },
     },
   },

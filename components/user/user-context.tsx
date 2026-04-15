@@ -8,7 +8,7 @@ interface UserContextType {
   currentUser: User | null;
   setUser: (user: User | null) => void;
   selectUserById: (userId: string) => void;
-  personalizationFilters: string[] | undefined;
+  personalizationFilters: (string | string[])[] | undefined;
   segments: string[];
 }
 
@@ -49,20 +49,25 @@ export function UserProvider({ children }: { children: ReactNode }) {
       return undefined;
     }
 
-    const filters: string[] = [];
+    // Group filters by facet into nested arrays so scores accumulate across groups.
+    // optionalFilters: [["a:x<score=10>"], ["b:y<score=8>", "b:z<score=5>"]]
+    //   → values within an inner array are OR'd (max score wins)
+    //   → scores across separate arrays ADD UP
+    // This achieves the same effect as sumOrFiltersScores: true
+    const groups: (string | string[])[] = [];
 
-    // Iterate over all preference keys dynamically
     Object.entries(currentUser.preferences).forEach(([facetName, values]) => {
       if (values && typeof values === 'object') {
-        // Each facet contains key-value pairs of preferences with scores
-        Object.entries(values).forEach(([value, score]) => {
-          // Format: "facetName:value<score=N>"
-          filters.push(`${facetName}:${value}<score=${score}>`);
-        });
+        const group = Object.entries(values).map(
+          ([value, score]) => `${facetName}:${value}<score=${score}>`
+        );
+        if (group.length > 0) {
+          groups.push(group);
+        }
       }
     });
 
-    return filters.length > 0 ? filters : undefined;
+    return groups.length > 0 ? groups : undefined;
   }, [currentUser]);
 
   const segments = useMemo(() => {

@@ -37,11 +37,14 @@ interface ParsedPreference {
 }
 
 function parsePersonalizationFilters(
-  filters: string[] | undefined
+  filters: (string | string[])[] | undefined
 ): ParsedPreference[] {
   if (!filters) return [];
 
-  return filters
+  // Flatten nested arrays (used for score accumulation) into a flat list of filter strings
+  const flat = filters.flat();
+
+  return flat
     .map((filter) => {
       const match = filter.match(/^(.+?):(.+)<score=(\d+)>$/);
       if (!match) return null;

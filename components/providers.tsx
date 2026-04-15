@@ -34,8 +34,10 @@ function PersonalizedConfigure() {
   const prevSegmentsRef = useRef<string[]>([]);
 
   // Merge user personalization, shop boost, and cart store boost filters
+  // personalizationFilters uses nested arrays for score accumulation across facets;
+  // shop/cart boosts are flat strings — each becomes its own scoring group
   const optionalFilters = useMemo(() => {
-    const filters: string[] = [];
+    const filters: (string | string[])[] = [];
     if (personalizationFilters?.length) filters.push(...personalizationFilters);
     if (shopBoostFilters?.length) filters.push(...shopBoostFilters);
     if (cartStoreBoosts?.length) filters.push(...cartStoreBoosts);
